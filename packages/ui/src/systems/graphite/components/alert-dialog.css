@@ -1,0 +1,68 @@
+/* ============================================================
+   3층 — Alert Dialog 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Dialog 와 같은 면이라 색·여백·그림자·제목은 _surface-family.css 가 갖는다.
+   여기 남은 것은 애니메이션·폭·간격, 그리고 이 컴포넌트에만 있는 아이콘 배지와
+   그 배지를 낀 가운데 정렬 격자다.
+   mira: 면 gap-3 rounded-xl p-4 · default max-w-xs sm:max-w-sm · sm max-w-64 ·
+         배지 bg-muted mb-2 size-8 rounded-md · svg size-4
+
+   좁은 화면에서는 아이콘·제목·설명이 가운데로 모이고, 넓은 화면의 default
+   사이즈에서만 왼쪽 정렬로 펴진다. 그 전환이 격자 행 구성까지 바꾸므로
+   토큰이 아니라 규칙이며, 그래서 여기 남는다.
+
+   ⚠ 애니메이션·반응형·격자 구성만 @apply 로 남긴다.
+   ⚠ 업스트림에 있던 *-aria 규칙은 옮기지 않았다(Base UI 베이스라 미렌더).
+   ============================================================ */
+
+.cn-alert-dialog-overlay {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-100;
+}
+
+/* ⚠ 간격 12px 은 리터럴이다. Dialog 의 gap-4(--surface-gap-lg 16)보다 한 단 좁은
+   mira 의 gap-3 인데, surface 축의 간격 단계(4 · 16)에 없는 값이다. */
+.cn-alert-dialog-content {
+    gap: 12px;
+
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 duration-100 data-[size=default]:max-w-xs data-[size=sm]:max-w-64 data-[size=default]:sm:max-w-sm;
+}
+
+.cn-alert-dialog-header {
+    @apply grid grid-rows-[auto_1fr] place-items-center text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr];
+
+    /* 배지가 제목 왼쪽에 서는 배치에서는 가로 간격만 한 단계 넓힌다. mira: gap-x-4 */
+    &:has([data-slot="alert-dialog-media"]) {
+        column-gap: var(--surface-gap-lg);
+    }
+}
+
+/* 아이콘 배지 — mira: size-8 rounded-md mb-2 · svg size-4
+   ⚠ 32px 과 아래 여백 8px 은 리터럴이다. 배지는 컨트롤이 아니라 control 높이 축을
+      읽지 않고, surface 축에는 32·8 단계가 없다. 이 한 자리만 쓴다. */
+.cn-alert-dialog-media {
+    background-color: var(--muted);
+    border-radius: var(--surface-radius-sm);
+    margin-block-end: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    @apply sm:group-data-[size=default]/alert-dialog-content:row-span-2;
+}
+
+.cn-alert-dialog-title {
+    @apply sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2;
+}
+
+.cn-alert-dialog-description {
+    @apply text-balance md:text-pretty;
+}

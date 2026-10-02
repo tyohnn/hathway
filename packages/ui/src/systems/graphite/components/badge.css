@@ -1,0 +1,118 @@
+/* ============================================================
+   3층 — badge 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: h-5 gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-medium transition-all ·
+         아이콘 [&>svg]:size-2.5! · 아이콘 쪽 여백 pl-1.5/pr-1.5 ·
+         outline 변형은 bg-input/20(1층의 --input-fill)으로 채운다.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ hover 색이 알파 유틸리티(/80 · /10 · /20)로 남아 있다. 1층 규칙은
+      "hover 색을 계산하지 말고 토큰으로 명시한다"이지만, 배지의 hover 는
+      링크로 쓸 때(`[a]:hover`)만 나타나는 드문 경우라 토큰 여섯을 새로 만들
+      만큼 걸치지 않는다. Button 처럼 실사용이 잦아지면 그때 토큰으로 올린다.
+   ============================================================ */
+
+/* v4: 배지는 자기 축(--badge-*)을 갖는다. v3 까지는 control 축의 xs 단을 빌려 읽어,
+   xs 버튼을 키운 시스템이 배지까지 함께 키웠다. mira 의 숫자는 그대로다 —
+   기본값이 control 축 xs 의 별칭이라 계산 결과가 바뀌지 않는다. Kbd 도 같은 방식이다.
+   ⚠ 세로 여백(mira: py-0.5 = 2px)과 모서리(rounded-full)는 리터럴이었다.
+      이제 --badge-padding-y · --badge-radius 슬롯이 그 값을 갖는다. */
+.cn-badge {
+    height: var(--badge-height);
+    gap: var(--badge-gap);
+    padding-inline: var(--badge-padding-x);
+    padding-block: var(--badge-padding-y);
+    border: var(--badge-border-width) solid transparent;
+    border-radius: var(--badge-radius);
+    font-size: var(--badge-font-size);
+    letter-spacing: var(--badge-letter-spacing);
+    line-height: var(--badge-line-height);
+    font-weight: var(--badge-font-weight);
+    text-transform: var(--badge-text-transform);
+    transition-property: all;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    /* 아이콘은 호출부의 size 유틸리티보다 이겨야 하는 자리라(mira: [&>svg]:size-2.5!) !important 다. */
+    & > svg {
+        width: var(--badge-icon-size) !important;
+        height: var(--badge-icon-size) !important;
+    }
+
+    &:has([data-icon="inline-start"]) {
+        padding-inline-start: var(--badge-padding-x-icon);
+    }
+
+    &:has([data-icon="inline-end"]) {
+        padding-inline-end: var(--badge-padding-x-icon);
+    }
+}
+
+.cn-badge-variant-default {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    @apply [a]:hover:bg-primary/80;
+}
+
+.cn-badge-variant-secondary {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+    @apply [a]:hover:bg-secondary/80;
+}
+
+/* 아웃라인은 투명이 아니라 인풋과 같은 옅은 채움이다. mira: bg-input/20 dark:bg-input/30 */
+.cn-badge-variant-outline {
+    background-color: var(--input-fill);
+    border-color: var(--border);
+    color: var(--foreground);
+    @apply [a]:hover:bg-muted [a]:hover:text-muted-foreground;
+}
+
+.cn-badge-variant-destructive {
+    color: var(--destructive);
+    @apply bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20;
+}
+
+.cn-badge-variant-ghost {
+    @apply hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50;
+}
+
+/* mira 는 text-primary 다. 1층의 --link 가 그 값(primary)을 갖고 Button 의 link 변형도
+   같은 토큰을 읽으므로, 링크색을 갈라야 하면 토큰 값 하나만 바꾸면 된다. */
+.cn-badge-variant-link {
+    color: var(--link);
+    text-underline-offset: 4px;
+    @apply hover:underline;
+}
+
+/* --------------------------------------------------------
+   색조(태그) — <Badge data-tone="blue"> …
+   Badge 가 나머지 props 를
+   그대로 넘기므로 data-tone 이 붙는다. 어떤 variant 와 함께 써도 색조가 이기도록 속성 선택자로
+   명시도를 한 단 올린다(0,2,0 > variant 의 0,1,0).
+   모양은 2층 tag 축, 색은 1층 --tag-* 슬롯이 갖는다. foundation 의 태그는 아웃라인 배지와 같게 보인다.
+   글자 크기는 --tag-font-size(foundation 은 배지와 같은 --ui-text-xs).
+   높이는 v5 의 --tag-height(foundation 은 --badge-height 의 별칭)다.
+   ⚠ 컴포넌트가 가진 overflow-hidden 은 자기 그림자를 자르지 않는다.
+   -------------------------------------------------------- */
+.cn-badge[data-tone] {
+    height: var(--tag-height);
+    padding-inline: var(--tag-padding-x);
+    border-radius: var(--tag-radius);
+    font-size: var(--tag-font-size);
+    line-height: var(--tag-line-height);
+    font-weight: var(--ui-font-weight-regular);
+    box-shadow: var(--tag-shadow);
+}
+
+.cn-badge[data-tone="blue"] { background-color: var(--tag-blue-bg); border-color: var(--tag-blue-border); color: var(--tag-blue-fg); }
+.cn-badge[data-tone="purple"] { background-color: var(--tag-purple-bg); border-color: var(--tag-purple-border); color: var(--tag-purple-fg); }
+.cn-badge[data-tone="green"] { background-color: var(--tag-green-bg); border-color: var(--tag-green-border); color: var(--tag-green-fg); }
+.cn-badge[data-tone="orange"] { background-color: var(--tag-orange-bg); border-color: var(--tag-orange-border); color: var(--tag-orange-fg); }
+.cn-badge[data-tone="red"] { background-color: var(--tag-red-bg); border-color: var(--tag-red-border); color: var(--tag-red-fg); }
+.cn-badge[data-tone="yellow"] { background-color: var(--tag-yellow-bg); border-color: var(--tag-yellow-border); color: var(--tag-yellow-fg); }
+.cn-badge[data-tone="gray"] { background-color: var(--tag-gray-bg); border-color: var(--tag-gray-border); color: var(--tag-gray-fg); }

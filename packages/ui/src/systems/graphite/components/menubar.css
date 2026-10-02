@@ -1,0 +1,80 @@
+/* ============================================================
+   3층 — Menubar 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 목록 면·항목·라벨·구분선·단축키는 여기가 아니라 `_menu-family.css` 에 있다.
+      Dropdown Menu · Context Menu · Command 과 같은 축을 공유한다.
+
+   Menubar 에만 있는 것 둘을 여기서 정한다.
+     · 막대 자체와 그 트리거 — mira: h-9 rounded-lg border p-1 ·
+       트리거 rounded-[calc(var(--radius-md)-2px)] px-2 font-medium
+     · 체크·라디오 표시가 왼쪽에 앉는 배치 — 다른 셋은 오른쪽이다
+
+   ⚠ 왼쪽 표시는 업스트림의 드리프트가 아니라 의도된 차이다. 메뉴바는 열려 있는
+      동안 항목이 계속 바뀌는데, 표시가 오른쪽이면 항목 너비에 따라 좌우로 흔들린다.
+      다른 셋으로 맞추지 말 것.
+   ============================================================ */
+
+/* ⚠ 36px 은 리터럴이다. control 축(20 · 24 · 28 · 32)에 없는 값이고 메뉴바 한 자리만
+   읽는다. mira 의 h-9 다. 4px 여백을 빼면 안에 28(--control-height-md)이 남는다. */
+.cn-menubar {
+    height: 36px;
+    border: var(--control-border-width) solid var(--border);
+    border-radius: var(--surface-radius);
+    padding: var(--menubar-padding);
+    gap: var(--menubar-gap);
+}
+
+/* mira: rounded-[calc(var(--radius-md)-2px)] = 6px. --control-radius-xs 가 같은 6px 이다
+   (xs 버튼의 rounded-sm). 반경 축을 하나 더 만들지 않고 그 단을 읽는다.
+   ⚠ 세로 3px 은 리터럴이다. mira 는 py-[calc(--spacing(0.85))] = 3.4px 인데 하위픽셀이라
+      정수로 내렸다. control 축은 세로 패딩 단계를 갖지 않는다. */
+.cn-menubar-trigger {
+    border-radius: var(--control-radius-xs);
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: 3px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    font-weight: var(--ui-font-weight);
+
+    &:hover,
+    &[aria-expanded="true"] {
+        background-color: var(--muted);
+    }
+}
+
+/* 체크·라디오는 표시가 왼쪽이므로 시작 쪽을 비우고 끝쪽은 보통 값으로 둔다.
+   mira: pl-7.5 pr-2 */
+.cn-menubar-checkbox-item,
+.cn-menubar-radio-item {
+    padding-inline-start: var(--menubar-item-padding-inset);
+    padding-inline-end: var(--menu-item-padding-x);
+}
+
+/* mira: left-2 size-4 [&_svg:not([class*='size-'])]:size-4 — 오른쪽 표시(14)보다 한 단 크다. */
+.cn-menubar-checkbox-item-indicator,
+.cn-menubar-radio-item-indicator {
+    position: absolute;
+    inset-inline-start: var(--menu-item-padding-x);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-icon-size-lg);
+    height: var(--control-icon-size-lg);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+}
+
+.cn-menubar-content,
+.cn-menubar-sub-content {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-menubar-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}

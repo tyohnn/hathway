@@ -1,0 +1,198 @@
+/* ============================================================
+   3층 — Select 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Select 은 축을 둘 쓴다.
+     트리거 → control 축. Input·Button 과 같은 줄에 서므로 같은 값을 읽는다.
+     목록(content·item) → surface 축과 menu 축.
+
+   ⚠ 트리거의 좌우 패딩은 같다(mira px-2). nova 는 오른쪽을 한 단 좁혔는데
+      (pl-2.5 pr-2) mira 가 그 규칙을 뺐다. 값 표시와 화살표 사이 간격은
+      gap-1.5 로 control-gap 축(4)보다 한 단 넓다.
+   ⚠ 바탕은 채움(--input-fill)이다. mira: bg-input/20 dark:bg-input/30.
+      hover 는 mira 의 dark:hover:bg-input/50 이다. 어두운 쪽에만 있는 규칙이라 1층의 --select-hover 가
+      밝은 쪽에서 --input-fill 과 같은 값(변화 없음)을 갖는다.
+   ⚠ 애니메이션만 @apply 로 남긴다. tw-animate-css 의 키프레임을 손으로 옮겨 적으면
+      값이 아니라 동작을 복제하게 되고, 업스트림이 바뀔 때 조용히 어긋난다.
+   ⚠ 업스트림에 있던 *-aria 규칙은 옮기지 않았다. react-aria 베이스 전용인데
+      우리 베이스는 Base UI 라 그 클래스가 렌더되지 않는다.
+   ============================================================ */
+
+/* 표면 슬롯 — 바탕 --surface-control · 그림자 --shadow-control · 누르면 눌린 그림자(foundation 은 모두 none).
+   ⚠ 바탕이 background-image 라 hover 의 background-color(--select-hover)는 그 아래에 깔린다. */
+.cn-select-trigger {
+    border: var(--control-border-width) solid var(--input-border, var(--input));
+    border-bottom-color: var(--input-border-bottom, var(--input-border, var(--input)));
+    border-radius: var(--control-radius);
+    background-color: var(--input-fill);
+    background-image: var(--surface-control);
+    box-shadow: var(--shadow-control);
+    color: var(--foreground);
+
+    &:active {
+        box-shadow: var(--shadow-control-pressed);
+    }
+    letter-spacing: var(--control-letter-spacing);
+
+    /* ⚠ 6px 은 리터럴이다. mira gap-1.5 — 값 표시와 화살표 사이라 control-gap 축(4)이
+       아니고, 6px 인 --control-padding-x-icon-md 는 패딩 축이라 같이 움직일 이유가 없다. */
+    gap: 6px;
+
+    /* 아이콘은 크기와 무관하게 하나다. mira: [&_svg:not([class*='size-'])]:size-3.5 */
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    &[data-size="default"] {
+        min-height: var(--control-height-md);
+        padding-inline: var(--control-padding-x-field);
+        font-size: var(--control-font-size-field);
+        line-height: var(--control-line-height-field);
+    }
+
+    &[data-size="sm"] {
+        min-height: var(--control-height-sm);
+        padding-inline: var(--control-padding-x-sm);
+        font-size: var(--control-font-size-sm);
+        line-height: var(--control-line-height-sm);
+        border-radius: var(--control-radius-sm);
+    }
+
+    /* 아직 고르지 않았다는 표시. mira: data-placeholder:text-muted-foreground */
+    &[data-placeholder] {
+        color: var(--muted-foreground);
+    }
+
+    &:hover {
+        background-color: var(--select-hover);
+    }
+}
+
+.cn-select-trigger-icon {
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+    color: var(--muted-foreground);
+}
+
+/* mira: flex flex-1 text-left · *:data-[slot=select-value]:gap-1.5
+   ⚠ 6px 은 위 트리거와 같은 리터럴이다. */
+.cn-select-value {
+    display: flex;
+    flex: 1;
+    text-align: start;
+    gap: 6px;
+}
+
+/* --------------------------------------------------------
+   목록
+   -------------------------------------------------------- */
+
+.cn-select-content {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    border-radius: var(--surface-radius);
+    min-width: var(--menu-narrow-min-width);
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--menu-ring, var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent))),
+        var(--shadow-float);
+
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-select-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}
+
+.cn-select-group {
+    padding: var(--menu-padding);
+    scroll-margin-block: var(--menu-padding);
+}
+
+/* mira: text-muted-foreground px-2 py-1.5 text-xs
+   ⚠ 세로 6px 은 리터럴이다. 항목은 min-height 가 정본이라 menu 축에 세로 패딩 단계가 없다. */
+.cn-select-label {
+    color: var(--muted-foreground);
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: 6px;
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* mira: focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground
+         min-h-7 gap-2 rounded-md px-2 py-1 text-xs/relaxed [&_svg]:size-3.5
+   오른쪽 체크 표시 자리(nova 의 pr-8)는 mira 가 뺐다 — 표시는 절대 위치로 얹힌다.
+   ⚠ 세로 4px 은 리터럴이다. 높이는 min-height 가 정하고, 이 값은 글줄이 두 줄이 될 때만
+      드러나는 보정이라 축이 아니다. */
+.cn-select-item {
+    min-height: var(--menu-item-height);
+    border-radius: var(--menu-item-radius);
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: 4px;
+    gap: var(--select-item-gap);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    &:focus {
+        background-color: var(--accent);
+        color: var(--accent-foreground);
+    }
+
+    &:focus:not([data-variant="destructive"]) * {
+        color: var(--accent-foreground);
+    }
+
+    & > span:last-child {
+        display: flex;
+        align-items: center;
+        gap: var(--menu-item-gap);
+    }
+}
+
+/* mira: pointer-events-none absolute right-2 flex items-center justify-center — 크기는 안의 svg 가 갖는다. */
+.cn-select-item-indicator {
+    pointer-events: none;
+    position: absolute;
+    inset-inline-end: var(--menu-item-padding-x);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cn-select-item-text {
+    display: flex;
+    flex: 1;
+    gap: var(--menu-item-gap);
+}
+
+/* mira: bg-border/50 -mx-1 my-1 h-px */
+.cn-select-separator {
+    background-color: var(--border-subtle, color-mix(in oklab, var(--border) 50%, transparent));
+    height: var(--surface-border-width);
+    margin-inline: var(--menu-separator-margin-inline);
+    margin-block: var(--menu-separator-margin-block);
+}
+
+.cn-select-scroll-up-button,
+.cn-select-scroll-down-button {
+    background-color: var(--popover);
+    z-index: 10;
+    display: flex;
+    cursor: default;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--menu-padding);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}

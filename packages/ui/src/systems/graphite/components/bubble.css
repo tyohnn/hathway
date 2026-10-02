@@ -1,0 +1,142 @@
+/* ============================================================
+   3층 — bubble 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: 본문 rounded-lg border px-2.5 py-1.5 text-xs/relaxed · 반응 칩 rounded-full ring-2 ring-card
+         bg-muted gap-1 px-1.5 py-0.5 text-xs.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ `tinted` 변형의 바탕은 색 함수로 계산된다
+      (`oklch(from var(--primary) 0.93 calc(c * 0.4) h)`). Figma 변수는 이
+      식을 표현하지 못하므로 이 변형만 왕복 동기화에서 값이 아니라 결과색을
+      옮겨야 한다. 그래도 토큰으로 올리지 않는다 — 올리면 "말풍선에서만 쓰는
+      색" 넷(밝은·어두운 바탕 + 각 hover)이 시맨틱 층에 생기고, --primary 를
+      바꿀 때 그 넷을 손으로 다시 맞춰야 해서 지금보다 나빠진다.
+
+   ⚠ 눌리는 말풍선의 hover 색(primary/80 · destructive/20 · color-mix …)도
+      유틸리티로 남긴다. 말풍선은 대개 누르는 것이 아니라 읽는 것이라
+      hover 가 드물게만 나타난다 — Badge 의 `[a]:hover` 와 같은 판단이고,
+      실사용이 잦아지면 그때 Button 처럼 토큰으로 올린다.
+   ============================================================ */
+
+.cn-bubble {
+    @apply gap-1 data-[align=end]:self-end max-w-[80%] data-[variant=ghost]:max-w-full group-data-[align=end]/message:self-end;
+}
+
+/* 상자는 말풍선 자신의 축을 읽는다 — v4 슬롯 --bubble-radius · --bubble-padding-x ·
+   --bubble-padding-y · --bubble-line-height. foundation 값은 각각 --surface-radius ·
+   --surface-padding-sm(좌우 10px, surface 축의 sm = popover p-2.5 와 같은 단) · 6px ·
+   --ui-line-height-md 라 화면은 같다.
+   ⚠ 상하 6px 은 리터럴이었다. 글줄을 감싸는 말풍선이라 surface 축의 여백(10·16·24)은 위아래가 과하다 —
+      이제 --bubble-padding-y 에 들어 있다. */
+.cn-bubble-content {
+    border: var(--surface-border-width) solid transparent;
+    border-radius: var(--bubble-radius);
+    padding-inline: var(--bubble-padding-x);
+    padding-block: var(--bubble-padding-y);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--bubble-line-height);
+    @apply group-data-[align=end]/bubble:self-end;
+
+    /* 누를 수 있는 말풍선만 링을 받는다. 계열(_control-family.css)과 같은 한 겹이다. */
+    &:is(button, a) {
+        @apply outline-none;
+
+        &:focus-visible {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+        }
+    }
+}
+
+.cn-bubble-variant-default {
+    & > [data-slot="bubble-content"] {
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+    }
+
+    @apply [&>[data-slot=bubble-content]:is(button,a):hover]:bg-primary/80;
+}
+
+.cn-bubble-variant-secondary {
+    & > [data-slot="bubble-content"] {
+        background-color: var(--secondary);
+        color: var(--secondary-foreground);
+    }
+
+    /* ⚠ hover 는 --secondary-hover 를 읽지 않는다. 그 토큰은 Button 이
+       읽는 값이라 말풍선에 쓰기엔 대비가 세다 — 여기서는 글자색을 5%만
+       섞어 눌린 느낌만 낸다. 값을 맞추려면 두 곳을 함께 볼 것. */
+    @apply [&>[data-slot=bubble-content]:is(button,a):hover]:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)];
+}
+
+.cn-bubble-variant-muted {
+    & > [data-slot="bubble-content"] {
+        background-color: var(--muted);
+    }
+
+    @apply [&>[data-slot=bubble-content]:is(button,a):hover]:bg-[color-mix(in_oklch,var(--muted),var(--foreground)_5%)];
+}
+
+.cn-bubble-variant-tinted {
+    & > [data-slot="bubble-content"] {
+        color: var(--foreground);
+    }
+
+    @apply *:data-[slot=bubble-content]:bg-[oklch(from_var(--primary)_0.93_calc(c*0.4)_h)] dark:*:data-[slot=bubble-content]:bg-[oklch(from_var(--primary)_0.3_calc(c*0.4)_h)] [&>[data-slot=bubble-content]:is(button,a):hover]:bg-[oklch(from_var(--primary)_0.88_calc(c*0.5)_h)] dark:[&>[data-slot=bubble-content]:is(button,a):hover]:bg-[oklch(from_var(--primary)_0.35_calc(c*0.5)_h)];
+}
+
+.cn-bubble-variant-outline {
+    & > [data-slot="bubble-content"] {
+        background-color: var(--background);
+        border-color: var(--border);
+    }
+
+    @apply [&>[data-slot=bubble-content]:is(button,a):hover]:bg-muted [&>[data-slot=bubble-content]:is(button,a):hover]:text-foreground dark:[&>[data-slot=bubble-content]:is(button,a):hover]:bg-input/30;
+}
+
+.cn-bubble-variant-ghost {
+    @apply *:data-[slot=bubble-content]:rounded-none *:data-[slot=bubble-content]:bg-transparent *:data-[slot=bubble-content]:p-0 [&>[data-slot=bubble-content]:is(button,a):hover]:bg-muted [&>[data-slot=bubble-content]:is(button,a):hover]:text-foreground dark:[&>[data-slot=bubble-content]:is(button,a):hover]:bg-muted/50 border-none;
+}
+
+.cn-bubble-variant-destructive {
+    & > [data-slot="bubble-content"] {
+        color: var(--destructive);
+    }
+
+    @apply *:data-[slot=bubble-content]:bg-destructive/10 dark:*:data-[slot=bubble-content]:bg-destructive/20 [&>[data-slot=bubble-content]:is(button,a):hover]:bg-destructive/20 dark:[&>[data-slot=bubble-content]:is(button,a):hover]:bg-destructive/30;
+}
+
+/* 말풍선 위에 얹히는 반응 칩. 카드 색으로 링을 둘러 말풍선에서 떠 보이게
+   한다 — ring-2 는 포커스 링이 아니라 테두리 두께라 --focus-ring-width 와 무관하다. mira: ring-2 */
+.cn-bubble-reactions {
+    background-color: var(--muted);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    @apply rounded-full ring-2 ring-card shrink-0 gap-1 px-1.5 py-0.5 has-[button]:p-0;
+}
+
+.cn-bubble-reactions-side-top {
+    @apply top-0 -translate-y-3/4;
+}
+
+.cn-bubble-reactions-side-bottom {
+    @apply bottom-0 translate-y-3/4;
+}
+
+.cn-bubble-reactions-align-start {
+    @apply left-3;
+}
+
+.cn-bubble-reactions-align-end {
+    @apply right-3;
+}
+
+.cn-bubble-group {
+    @apply gap-2;
+}

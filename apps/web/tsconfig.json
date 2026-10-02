@@ -12,10 +12,16 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@investment/ui/icons": [
+        "../../packages/ui/src/icons/libraries/phosphor.tsx"
+      ]
     },
     "plugins": [
       {

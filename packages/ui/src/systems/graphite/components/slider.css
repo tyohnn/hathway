@@ -1,0 +1,89 @@
+/* ============================================================
+   3층 — slider 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 손잡이의 링은 _control-family.css 가 아니라 여기 있다. 계열의 다른
+      여덟은 포커스에서만 링이 뜨지만, 슬라이더 손잡이는 hover·active 에도
+      같은 링이 떠야 "이건 잡아끄는 것"이 드러난다. 조건이 셋으로 다르므로
+      계열 파일의 :focus-visible 목록에 넣을 수 없다 — 대신 값은 계열과
+      같은 --focus-ring-* 을 읽어 링 언어가 갈리지 않게 한다.
+
+   ⚠ 방향은 Base UI 가 내보내는 data-orientation 속성으로 읽는다. mira 의
+      data-horizontal · data-vertical 은 그 속성을 푸는 Tailwind 변형의 이름이지
+      DOM 속성이 아니다(separator.css 머리말과 같은 함정).
+   ============================================================ */
+
+/* mira: data-vertical:min-h-40 ⚠ 160px 은 리터럴이다. 세로 슬라이더의 최소 길이라 축이 없다. */
+.cn-slider {
+    &[data-orientation="vertical"] {
+        min-height: 160px;
+    }
+}
+
+/* mira: bg-muted rounded-md data-horizontal:h-1 data-horizontal:w-full data-vertical:h-full data-vertical:w-1
+   모서리는 full 이 아니라 rounded-md 다 — 4px 막대에서는 같아 보이지만 규칙이 다르다.
+   ⚠ 막대 두께는 axis contract v4 부터 --slider-track-thickness 가 갖는다(종전 4px 리터럴이
+      그대로 슬롯의 값이다). Progress 는 같은 값이지만 제 축에 남는다 — 둘이 나란히 서는
+      일이 없어 함께 움직일 이유가 없다.
+   ⚠ 바탕도 v4 의 --slider-track-fill 이 갖는다(foundation 값은 --muted 의 별칭). */
+.cn-slider-track {
+    background-color: var(--slider-track-fill, var(--muted));
+    border-radius: var(--control-radius);
+
+    &[data-orientation="horizontal"] {
+        height: var(--slider-track-thickness);
+        width: 100%;
+    }
+
+    &[data-orientation="vertical"] {
+        height: 100%;
+        width: var(--slider-track-thickness);
+    }
+}
+
+.cn-slider-range {
+    background-color: var(--primary);
+}
+
+/* mira: border-ring ring-ring/30 relative size-3 rounded-md border bg-white transition-[color,box-shadow]
+         after:absolute after:-inset-2 hover:ring-2 focus-visible:ring-2 focus-visible:outline-hidden active:ring-2
+   ⚠ 손잡이 바탕은 mira 에서 bg-white 리터럴이다. 다크 모드에서 흰 점만 남아 어두운
+      트랙 위에서 겉돌므로 --background 로 두어 모드를 따라가게 한다. 트랙과의 대비는
+      --ring 테두리가 담당한다.
+   ⚠ 12px 은 리터럴이다. 4px 트랙 위에 얹히는 크기라 control 축과 성격이 다르다.
+      모서리는 full 이 아니라 rounded-md(--control-radius)다 — 12px 손잡이에 8px 이라 둥근
+      네모로 보인다. 손가락 범위를 넓히는 after 의 8px 도 리터럴이다.
+   ⚠ 링은 계열과 같은 한 겹이다. mira: hover·focus-visible·active:ring-2 ring-ring/30 */
+.cn-slider-thumb {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    border: var(--control-border-width) solid var(--ring);
+    border-radius: var(--control-radius);
+    background-color: var(--slider-thumb-fill, #fff);
+
+    transition-property: color, box-shadow;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: -8px;
+    }
+
+    &:focus-visible {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    &:hover,
+    &:focus-visible,
+    &:active {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}

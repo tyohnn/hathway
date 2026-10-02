@@ -1,0 +1,49 @@
+/* ============================================================
+   3층 — message 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: message gap-1.5 text-xs/relaxed · avatar min-w-8 · content gap-2 ·
+         header · footer text-[0.625rem] font-medium muted px-2.5 · group gap-1.5.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 간격(6·8px)은 리터럴이다. 대화 줄의 세로 리듬은 2층에 축이 없다(Field 와 같은 사정).
+      머리·꼬리의 좌우 10px 만 surface 축의 sm 을 읽는다 — 말풍선 본문(cn-bubble-content)의
+      좌우 여백과 같아야 글자 왼쪽이 맞기 때문이다.
+   ============================================================ */
+
+.cn-message {
+    gap: 6px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* ⚠ 32px 은 --avatar-size-md 와 값이 같지만 읽지 않는다. 여기 쓰이는 것은
+   아바타 자신이 아니라 아바타가 들어앉을 자리의 최소 너비라, 아바타가
+   sm 이든 lg 이든 말풍선 왼쪽 기둥은 흔들리지 않아야 한다. */
+.cn-message-avatar {
+    @apply min-w-8 group-has-data-[slot=message-footer]/message:-translate-y-8;
+}
+
+.cn-message-content {
+    gap: 8px;
+    @apply group-data-[align=end]/message:*:data-slot:self-end;
+}
+
+.cn-message-header,
+.cn-message-footer {
+    padding-inline: var(--surface-padding-sm);
+    color: var(--muted-foreground);
+    font-size: var(--ui-text-xs);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-xs);
+    font-weight: var(--ui-font-weight);
+    @apply group-has-data-[variant=ghost]/message:px-0;
+}
+
+.cn-message-group {
+    gap: 6px;
+}

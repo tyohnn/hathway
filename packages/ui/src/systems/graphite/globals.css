@@ -1,0 +1,385 @@
+/* ============================================================
+   graphite — a complete, frozen design system snapshot.
+   Forked from foundation (1e327ac); every value this system tunes is replaced in place. Block comments
+   below still explain where the foundation (mira) structure came from; values on lines without a
+   trailing comment are this system's own. See ../DESIGN.md.
+   ============================================================ */
+
+/* ============================================================
+   tyohnn foundation — 1층 테마
+   ------------------------------------------------------------
+   shadcn 표준 형태(globals.css + @theme)를 그대로 쓰되, 1층은 **두 파일**이다.
+
+     · styles/theme.css  색 값 한 벌(팔레트 72개). registry/themes/<id>.json 에서 생성하고 손대지
+       않는다. 어떤 테마든 어떤 시스템에 입힐 수 있다 — 시스템을 고르는 일(여백 · 모양 · 글자 · 재질)과
+       색을 고르는 일이 여기서 갈린다. shadcn create 의 baseColor · theme 와 같은 축이다.
+     · 이 파일           팔레트에서 나오는 색의 **식**, 이 시스템만의 색과 재질, 그리고 색이 아닌 것
+       (글꼴 스택 · --radius · --color-scheme · @theme 매핑 · 정적 그림자).
+
+   값의 출처
+     · 팔레트(--background … --sidebar-ring · 차트 · 상태색 · 태그 · 아바타 톤 · --checked · --selection · --link)
+         theme.css 가 갖는다. 이 파일에 적지 말 것 — theme.css 가 뒤에 오므로 조용히 덮인다.
+     · 파생색(--primary-hover · --primary-soft · --input-fill · --ring-focus · --border-subtle ·
+       --muted-soft · --chip · --ghost-hover · --select-hover · --destructive-soft{,-hover} …)
+         3층이 알파 유틸리티(`bg-primary/80` · `ring-ring/30` · `bg-input/20`)로 계산하던 색이다.
+         **계산으로 적는다**: `color-mix(in oklab, var(--primary) 80%, transparent)`.
+         Tailwind 4 가 `bg-primary/80` 을 바로 이 꼴로 컴파일하므로 참조 앱과 픽셀이 같고, 테마를 바꾸면
+         같이 따라온다. 리터럴로 굳히지 말 것 — 굳히면 색만 테마를 안 따라가 혼자 남는다.
+         (2026-09-18, tooling/theme/classify.mjs 가 식과 원래 리터럴이 같은 픽셀인지 브라우저로 하나씩
+         확인하며 옮겼다.)
+     · 다크 전용 규칙
+         mira 가 `dark:hover:bg-input/50` 처럼 어두운 쪽에만 두는 규칙은 3층이 `.dark` 로 가르지 않고
+         이 층의 토큰이 밝은 쪽에서 「변화 없음」 값을 갖는 식으로 옮긴다(--ghost-hover · --select-hover ·
+         --switch-* · --drawer-border · --sidebar-input-fill).
+     · 이 시스템만의 색과 재질(--clay-* 와 팔레트로 설명되지 않는 신호색)
+         리터럴로 둔다. 재질은 테마가 아니라 시스템의 성격이다.
+
+   ⚠ 이 파일은 원본 앱의 같은 자리에서 가져왔고, 토큰의 **이름과 구조**는 그대로다.
+      3층(components/*.css)과 블록층이 그 이름으로 읽으므로 이름을 바꾸면 화면이 조용히
+      비는 자리가 생긴다.
+
+   ⚠ `:root` 와 `.dark` 는 한 파일이 함께 소유한다. 한 토큰을 재지정하면서 다크를 빠뜨리는 사고가
+      구조적으로 막힌다(원본 앱 2026-09-05 의 교훈). theme.css 도 같은 규칙이다. 가르지 말 것.
+
+   ⚠ shadcn CLI 의 `apply --only theme` 는 이 파일을 덮어쓴다. 표준 밖 시맨틱이 함께
+      지워지므로, 덮어썼으면 이 파일의 이력에서 그 줄들을 되살릴 것.
+
+   ⚠ mira 의 accent 는 muted 와 같은 값이다(둘 다 neutral-100). 원본 앱은 「선택」과
+      「hover」를 다른 색으로 갈라 두었는데, mira 를 따르기로 했으므로 같은 값으로 둔다.
+      선택된 행과 hover 행이 같은 색이 되는 것은 shadcn 기본 동작이다. 갈라야 하면 값만
+      바꾸면 되고 이름은 이미 있다.
+   ============================================================ */
+
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    /* Tailwind font-sans · font-heading · font-mono read the layer-1 stacks in :root below. */
+    --font-heading: var(--font-heading);
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-active-foreground: var(--sidebar-active-foreground, var(--sidebar-accent-foreground));
+    --color-sidebar-active: var(--sidebar-active, var(--sidebar-accent));
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-icon: var(--sidebar-icon, var(--muted-foreground));
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-overlay-backdrop: var(--overlay-backdrop, oklch(0 0 0 / 80%));
+    --color-ring-subtle: var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent));
+    --color-ring-invalid: var(--ring-invalid);
+    --color-ring-focus-strong: var(--ring-focus-strong, color-mix(in oklab, var(--ring) 50%, transparent));
+    --color-ring-focus: var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    --color-ring: var(--ring);
+    --color-link: var(--link);
+    --color-input-fill-hover: var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent));
+    --color-input-fill: var(--input-fill);
+    --color-input: var(--input);
+    --color-border-subtle: var(--border-subtle, color-mix(in oklab, var(--border) 50%, transparent));
+    --color-border-strong: var(--border-strong);
+    --color-border: var(--border);
+    --color-destructive-soft-hover: var(--destructive-soft-hover);
+    --color-destructive-soft: var(--destructive-soft);
+    --color-destructive: var(--destructive);
+    --color-warning-soft: var(--warning-soft);
+    --color-warning: var(--warning);
+    --color-success-soft: var(--success-soft);
+    --color-success: var(--success);
+    --color-info-soft: var(--info-soft);
+    --color-info: var(--info);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted-soft: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    --color-muted: var(--muted);
+    --color-chip: var(--chip, color-mix(in oklab, var(--muted-foreground) 10%, transparent));
+    --color-secondary-hover: var(--secondary-hover, color-mix(in oklab, var(--secondary) 95%, var(--foreground)));
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-hover: var(--primary-hover, color-mix(in oklab, var(--primary) 80%, transparent));
+    --color-primary-soft-strong: var(--primary-soft-strong, color-mix(in oklab, var(--primary) 10%, transparent));
+    --color-primary-soft: var(--primary-soft);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground-subtle: var(--foreground-subtle, var(--ring));
+    --color-foreground: var(--foreground);
+    --color-canvas: var(--canvas);
+    --color-skeleton: var(--skeleton, var(--muted));
+    --color-background: var(--background);
+    /* shadcn create 가 내놓는 반경 스케일 그대로다. --radius 10px 기준 6 · 8 · 10 · 14 · 18 · 22 · 26.
+       (원본 앱은 배수식 0.6 · 0.8 · 1 · 1.4 였는데 10px 에서 같은 값이다.) */
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* 그림자와 이징 — ⚠ `static` 이어야 한다.
+   `@theme inline` 은 유틸리티에 값을 박아 넣을 뿐 CSS 변수를 내보내지 않아서,
+   3층의 순수 CSS 가 `var(--shadow-float)` 로 읽으면 빈 값이 된다.
+   `static` 은 유틸리티(`shadow-float`)와 변수를 **둘 다** 내보낸다.
+
+   값은 mira 가 각 면에 쓰는 Tailwind 그림자다.
+     card    mira 의 카드는 그림자가 없고 ring-1 ring-foreground/10 만 있다 → 없음
+     float   popover · dropdown · select · sheet 의 shadow-md
+     chip    floating sidebar 의 shadow-sm
+
+   ⚠ --shadow-raised is not a static theme shadow any more. The name belongs to the layer-2 control
+      shadow axis (tokens.css), which systems build from the --clay-* materials below. sheet.css
+      reads --shadow-float instead.
+
+   ⚠ --ease-out 은 Tailwind 기본값을 덮어쓴 것이다. 브라우저·Tailwind 기본 이징은
+      UI 에 약하다(emil-design-eng / apple-design). `ease-in` 은 UI 에 쓰지 말 것. */
+@theme static {
+    --shadow-card: 0 0 #0000;
+    --shadow-float: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-chip: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+    /* Typography — built from system.json fonts (sans pretendard · heading inherit · mono system ·
+       hangulFallback pretendard) and the registry/fonts catalog; tooling/validate-system checks
+       these three lines. Order: the system font (catalog family, then the family its package registers) →
+       the Hangul fallback → platform fallbacks. Fonts are loaded by the app, never by these files. */
+    --font-sans: "Pretendard", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Pretendard", monospace;
+
+    /* 네이티브 위젯(스크롤바 · <option> 목록 · 기본 폼 컨트롤)의 색은 CSS 가 아니라 color-scheme 이
+       정한다. 아래 `@layer base` 의 `:root` 가 이 슬롯을 읽는다. */
+    --color-scheme: light;
+
+    /* 앱의 바탕 판. 카드가 얹히는 면이고 사이드바와 같은 단(neutral-50)이다.
+       ⚠ --background 를 회색으로 내리지 말 것. 그 토큰은 문서 바탕이면서 동시에 컨트롤의
+          채움이라(input · select · checkbox · outline 버튼 · 포커스 링 오프셋) 회색으로 바꾸면
+          인풋이 죄다 회색이 된다. 로그인 같은 셸 없는 화면은 이 토큰을 읽지 않는다. */
+    --canvas: var(--primary-foreground);
+
+    /* 켜진 체크박스를 감싼 필드 라벨. mira: has-data-checked:bg-primary/5 dark:has-data-checked:bg-primary/10 */
+    --primary-soft: color-mix(in oklab, var(--primary) 5%, transparent);
+
+    /* 고스트 버튼 · 고스트 배지의 hover. mira: hover:bg-muted dark:hover:bg-muted/50 — 밝은 쪽은 muted 그대로다. */
+    --ghost-hover: var(--secondary);
+
+    /* 로딩 자리표시. mira 는 bg-muted 를 쓰지만 흰 카드 위 대비가 1.08 이라 형태가 보이지
+       않는다(원본 앱 실측). 한 단 진한 neutral-200 으로 둔다. 읽는 곳은 skeleton.css 하나다. */
+    --skeleton: var(--border);
+
+    /* destructive 는 채움이 아니라 옅은 배경 + 진한 글자로 쓴다.
+       mira: bg-destructive/10 hover:bg-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 */
+    --destructive-soft: color-mix(in oklab, var(--destructive) 10%, transparent);
+    --destructive-soft-hover: color-mix(in oklab, var(--destructive) 20%, transparent);
+
+    /* 테두리 두 단. mira 는 컨트롤 테두리에 --border, 메뉴 구분선에 bg-border/50 을 쓴다.
+       strong 은 outline 컨트롤의 hover 테두리이고 mira 에는 없는 축이라 neutral-400 으로 둔다. */
+    --border-strong: var(--ring);       /* neutral-400 */
+    /* mira 의 인풋 · 셀렉트 · 텍스트에어리어 · 아웃라인 배지 · OTP 칸은 투명이 아니라 bg-input/20 이고
+       (다크 input/30), 아웃라인 버튼의 hover 는 bg-input/50 이다. */
+    --input-fill: color-mix(in oklab, var(--input) 20%, transparent);
+    /* 셀렉트 트리거 · 네이티브 셀렉트의 hover. mira: dark:hover:bg-input/50 — 밝은 쪽에는 hover 가 없으므로
+       --input-fill 과 같은 값이다. */
+    --select-hover: color-mix(in oklab, var(--border) 20%, transparent);
+    /* 포커스 링의 색. --ring 은 테두리(focus-visible:border-ring)로도 읽혀 불투명이어야 하므로 링만 따로 둔다.
+       mira: 컨트롤 대부분 ring-ring/30 · 라디오와 토글 ring-ring/50 · 검증 실패 ring-destructive/20 (다크 /40) */
+    --ring-invalid: color-mix(in oklab, var(--destructive) 20%, transparent);
+    /* 검증 실패의 테두리. mira: aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 */
+    --border-invalid: var(--destructive);
+
+    /* 스위치. mira: data-unchecked:bg-input dark:data-unchecked:bg-input/80 ·
+       손잡이 bg-background dark:data-unchecked:bg-foreground dark:data-checked:bg-primary-foreground.
+       밝은 쪽 손잡이는 켜고 꺼도 같은 흰색이고, 어두운 쪽에서만 색이 뒤집힌다. */
+    --switch-track-off: var(--border);
+    --switch-thumb-off: var(--background);
+    --switch-thumb-on: var(--background);
+    /* 드로어 틀의 테두리. mira: border-popover dark:border-border — 밝은 쪽은 판과 같은 색이라 보이지 않는다. */
+    --drawer-border: var(--background);
+    /* 사이드바 안의 검색 칸. mira: bg-muted/20 dark:bg-muted/30 */
+    --sidebar-input-fill: color-mix(in oklab, var(--sidebar-accent) 20%, transparent);
+
+    /* Primary button border. mira draws the default button with a transparent border. */
+    --primary-border: oklch(0.205 0 0);
+    /* Unchecked checkbox border. mira: --input. */
+    --checkbox-border: color-mix(in oklab, var(--muted) 76%, var(--muted-foreground));
+    /* Sidebar count badge text. mira: the item text colour. */
+    --sidebar-badge-foreground: color-mix(in oklab, var(--sidebar) 27%, var(--sidebar-foreground));
+    /* Sidebar item edges, hover and count badge plate. mira: the item has no border (colour stays
+       --border), hover fills --sidebar-accent, the badge has no plate and takes the accent text on hover
+       and when its item is active. */
+    --sidebar-item-border: transparent;
+    --sidebar-item-active-border: var(--border-strong);
+    --sidebar-item-hover-background: transparent;
+    --sidebar-group-label-foreground: var(--foreground-subtle, var(--ring));
+    --sidebar-badge-background: var(--sidebar-accent);
+    --sidebar-badge-active-background: var(--sidebar);
+    --sidebar-badge-hover-foreground: var(--sidebar-badge-foreground, var(--sidebar-foreground));
+    --sidebar-badge-active-foreground: var(--sidebar-badge-foreground, var(--sidebar-foreground));
+    /* Table divider between body rows and head text. mira: --border and --foreground. */
+    --table-row-divider: var(--border-subtle, color-mix(in oklab, var(--border) 50%, transparent));
+    --table-head-foreground: var(--muted-foreground);
+    /* Button variant edges and ghost text. mira: secondary has the transparent button border,
+       outline uses --border, ghost inherits its text colour (`initial` = inherit). */
+    --button-secondary-border: var(--border-strong);
+    --button-outline-border: var(--input);
+    --button-outline-fill: var(--input-fill);
+    --button-ghost-foreground: var(--muted-foreground);
+    /* 슬라이더 손잡이의 바탕(foundation 슬롯). 이 시스템은 면 색을 그대로 쓴다. */
+    --slider-thumb-fill: var(--background);
+    --checkbox-fill: transparent;
+    --checkbox-indeterminate-fill: var(--checked);
+    --checkbox-indeterminate-border: var(--checked);
+    --checkbox-indeterminate-foreground: var(--checked-foreground);
+
+    /* Clay materials. Layer 2 composes them into --shadow-control · --shadow-raised ·
+       --surface-control … when a system opts into raised controls. Foundation is flat. */
+    --clay-highlight: rgb(255 255 255 / 0.55);
+    --clay-contact: rgb(0 0 0 / 0.06);
+    --clay-contact-soft: rgb(0 0 0 / 0.05);
+    --clay-surface-top: oklch(1 0 0);
+    --clay-surface-bottom: oklch(1 0 0);
+    --clay-primary-highlight: rgb(255 255 255 / 0.1);
+    --clay-primary-top: oklch(0.205 0 0);
+    --clay-primary-bottom: oklch(0.205 0 0);
+
+    /* shadcn create 의 radius "default". 10px. --radius-md 8px · --radius-lg 10px · --radius-xl 14px 를 낳는다.
+       2층의 --control-radius 8px(mira 의 rounded-md)과 같은 계열이다. */
+    --radius: 0.625rem;
+    --secondary-hover: color-mix(in oklab, var(--secondary) 95%, var(--foreground));
+    --foreground-subtle: var(--ring);
+    --border-subtle: color-mix(in oklab, var(--border) 50%, transparent);
+    --input-fill-hover: color-mix(in oklab, var(--input) 50%, transparent);
+    --sidebar-icon: var(--muted-foreground);
+}
+
+.dark {
+    --color-scheme: dark;
+
+    /* 어두운 쪽은 카드가 바탕보다 밝다. 판은 배경과 같은 단이면 충분하다. */
+    --canvas: color-mix(in oklab, var(--background) 54%, var(--ring));
+
+    --primary-soft: color-mix(in oklab, var(--primary) 10%, transparent);
+
+    --secondary-hover: var(--input);
+
+    --ghost-hover: color-mix(in oklab, var(--secondary) 50%, transparent);
+    --skeleton: color-mix(in oklab, var(--background) 65%, var(--ring));
+    --foreground-subtle: color-mix(in oklab, var(--foreground) 31%, var(--secondary));
+
+    --destructive-soft: color-mix(in oklab, var(--destructive) 20%, transparent);
+    --destructive-soft-hover: color-mix(in oklab, var(--destructive) 30%, transparent);
+
+    --border-subtle: color-mix(in oklab, var(--border) 81%, var(--background));
+    --border-strong: color-mix(in oklab, var(--border) 95%, var(--foreground));
+    /* --input 이 15% 알파라 input/30 은 4.5%, input/50 은 7.5% 다 */
+    --input-fill: var(--sidebar);
+    --input-fill-hover: var(--card);
+    --select-hover: var(--card);
+    --ring-invalid: color-mix(in oklab, var(--destructive) 40%, transparent);
+    --border-invalid: color-mix(in oklab, var(--destructive) 50%, transparent);
+
+    --sidebar-icon: var(--sidebar-foreground);
+
+    --switch-track-off: color-mix(in oklab, var(--primary-foreground) 12%, transparent);  /* input/80 */
+    --switch-thumb-off: var(--foreground);
+    --switch-thumb-on: var(--primary-foreground);
+    --drawer-border: var(--secondary);
+    --sidebar-input-fill: color-mix(in oklab, var(--sidebar-accent) 30%, transparent);
+
+    /* Primary button border. mira draws the default button with a transparent border. */
+    --primary-border: #5460e0;
+    /* Unchecked checkbox border. mira: --input. */
+    --checkbox-border: color-mix(in oklab, var(--muted) 76%, var(--muted-foreground));
+    /* Sidebar count badge text. mira: the item text colour. */
+    --sidebar-badge-foreground: color-mix(in oklab, var(--sidebar-foreground) 46%, var(--sidebar-primary-foreground));
+    /* Sidebar item edges, hover and count badge plate. mira: the item has no border (colour stays
+       --border), hover fills --sidebar-accent, the badge has no plate and takes the accent text on hover
+       and when its item is active. */
+    --sidebar-item-border: transparent;
+    --sidebar-item-active-border: var(--border-strong);
+    --sidebar-item-hover-background: transparent;
+    --sidebar-group-label-foreground: var(--foreground-subtle, var(--ring));
+    --sidebar-badge-background: var(--sidebar-accent);
+    --sidebar-badge-active-background: var(--sidebar);
+    --sidebar-badge-hover-foreground: var(--sidebar-badge-foreground, var(--sidebar-foreground));
+    --sidebar-badge-active-foreground: var(--sidebar-badge-foreground, var(--sidebar-foreground));
+    /* Table divider between body rows and head text. mira: --border and --foreground. */
+    --table-row-divider: var(--border-subtle, color-mix(in oklab, var(--border) 50%, transparent));
+    --table-head-foreground: var(--muted-foreground);
+    /* Button variant edges and ghost text. mira: secondary has the transparent button border,
+       outline uses --border, ghost inherits its text colour (`initial` = inherit). */
+    --button-secondary-border: var(--border-strong);
+    --button-outline-border: var(--input);
+    --button-outline-fill: var(--input-fill);
+    --button-ghost-foreground: var(--muted-foreground);
+    /* 슬라이더 손잡이의 바탕(foundation 슬롯). 이 시스템은 면 색을 그대로 쓴다. */
+    --slider-thumb-fill: var(--background);
+    --checkbox-fill: transparent;
+    --checkbox-indeterminate-fill: var(--checked);
+    --checkbox-indeterminate-border: var(--checked);
+    --checkbox-indeterminate-foreground: var(--checked-foreground);
+
+    /* Clay materials. Layer 2 composes them into --shadow-control · --shadow-raised ·
+       --surface-control … when a system opts into raised controls. Foundation is flat. */
+    --clay-highlight: rgb(255 255 255 / 0.03);
+    --clay-contact: rgb(0 0 0 / 0.2);
+    --clay-contact-soft: rgb(0 0 0 / 0.12);
+    --clay-surface-top: #191919;
+    --clay-surface-bottom: #191919;
+    --clay-primary-highlight: rgb(255 255 255 / 0.1);
+    --clay-primary-top: #4a5af7;
+    --clay-primary-bottom: #3443ea;
+}
+
+/* 접근성 — apple-design 요구.
+   "reduced motion 은 피드백을 없애라는 뜻이 아니라 전정기관을 건드리지 않는 등가물을 쓰라는 뜻." */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@layer base {
+  :root {
+    color-scheme: var(--color-scheme);
+    }
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+/* ---- Backfilled from foundation: axis contract v4 slots. Tune in place. ---- */
+:root {
+}
+
+.dark {
+}

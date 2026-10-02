@@ -1,0 +1,32 @@
+/* ============================================================
+   3층 — Tooltip 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   크기·모서리·여백·화살표는 _surface-family.css 가 갖는다
+   (mira: inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs).
+   색은 컴포넌트 TSX 가 bg-foreground / text-background 로 직접 준다 —
+   작고 잠깐 뜨는 것이라 다른 면과 색을 맞추면 오히려 안 보인다.
+
+   여기 남은 것은 애니메이션과, 툴팁 안에 키캡(kbd)이 들어올 때의 보정이다.
+   키캡은 자기 배경을 갖고 있어 오른쪽 여백을 한 단계 줄여야 붙어 보이지 않는다.
+   ============================================================ */
+
+.cn-tooltip-content {
+    @apply data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2;
+
+    /* 키캡이 있으면 끝쪽 여백을 좁힌다.
+       ⚠ 이 두 값(6px 여백, 6px 모서리)은 어느 축에도 걸치지 않는다.
+          툴팁 안 키캡이라는 한 자리에만 쓰이므로 토큰을 만들지 않고
+          유틸리티로 둔다. 억지로 가까운 토큰에 붙이면 그 토큰을 바꿀 때
+          엉뚱한 곳이 함께 움직인다. */
+    @apply has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm;
+}
+
+.cn-tooltip-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}
+
+.cn-tooltip-arrow-logical {
+    @apply data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2;
+}

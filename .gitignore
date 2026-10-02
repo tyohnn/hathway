@@ -7,9 +7,9 @@
 # 구버전 백업 (git 히스토리가 버전관리를 대신함)
 backup/
 
-# 설치된 외부 스킬 (팀원 각자 설치, 저장소에 불필요)
+# 각자 설치하는 외부 스킬. 저장소가 함께 쓰는 스킬은 .claude/skills/ 에 사본으로 들어 있고
+# 그 출처와 해시는 skills-lock.json 이 고정한다.
 .agents/
-skills-lock.json
 
 # Web app (apps/web)
 apps/web/node_modules/
@@ -37,3 +37,6 @@ platform/data/
 
 # 개인 저작 노트 (34 MB·613파일) — 저장소의 교재/·강의/ 와 성격은 같지만 로컬 전용이다
 /내 주식강의/
+
+# tsc 의 증분 빌드 기록
+*.tsbuildinfo

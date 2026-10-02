@@ -1,0 +1,115 @@
+/* ============================================================
+   3층 — Drawer 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   색·글자·제목·설명은 _surface-family.css 가 갖는다.
+
+   mira 의 Drawer 는 화면 가장자리에 붙지 않는다. 8px 안쪽으로 띄운 틀이
+   네 모서리가 다 둥근 채(rounded-xl) 떠 있고, 가장자리에는 아무것도 닿지 않는다.
+   그래서 nova 의 "맞닿는 변에만 선을 긋고 그쪽 두 모서리만 둥글리는" 방향 규칙이
+   전부 사라지고, 대신 틀의 기하만 남는다.
+     · popup   [--drawer-inset:--spacing(2)] [--drawer-bleed-background:transparent]
+               rounded-xl border border-popover dark:border-border
+     · content bg-transparent p-2 relative + before:(absolute inset-2 -z-10 rounded-xl border bg-popover)
+
+   ⚠ 기하는 TSX 가 갖는다. `cn-drawer-popup` 의 className 이 `m-(--drawer-inset,0px)` 로
+      여백을, `after:bg-(--drawer-bleed-background,…)` 로 스와이프 때 드러나는 여분을,
+      `--closed-transform` 계산에 `var(--drawer-inset,0px)` 을 읽는다. 3층은 그 두 변수에
+      값을 넣을 뿐이다. 변수 이름은 Base UI 의 것이라 토큰 스캔의 허용 목록에 있다.
+
+   ⚠ 클래스가 두 벌이다.
+      · popup / content-base / header-base / footer-base — Base UI 판. 지금 쓰는 것.
+      · content / handle / header / footer — vaul 판. 우리 TSX 는 렌더하지 않지만
+        클래스 이름이 업스트림과의 계약이라 남겨 둔다. 값은 같이 맞춰 둔다.
+      새 규칙을 넣을 때 어느 쪽인지 확인하십시오. 한쪽만 고치면 나중에
+      베이스를 바꿀 때 조용히 어긋난다.
+
+   ⚠ 이동·감속·스와이프 진행률 같은 모션은 전부 컴포넌트 TSX 가 갖는다.
+      여기 다시 적지 말 것.
+   ============================================================ */
+
+/* ⚠ 안쪽 여백 8px 은 리터럴이다. surface 축의 여백 단계(10 · 16 · 24)에 없는 값이고
+   Drawer 의 틀 한 자리만 읽는다(vaul 판의 p-2 · before:inset-2 도 같은 값).
+   ⚠ 테두리는 라이트에서 면과 같은 색(border-popover)이라 보이지 않고, 다크에서만
+      --border 로 드러난다. 그 차이는 1층의 --drawer-border 가 갖는다 — 3층은 .dark 로 가르지 않는다.
+      그림자는 mira 에 없다(80% 막 위라 보이지 않는다). */
+.cn-drawer-popup {
+    --drawer-inset: 8px;
+    --drawer-bleed-background: transparent;
+
+    border-radius: var(--surface-radius-lg);
+    border: var(--surface-border-width) solid var(--drawer-border);
+}
+
+/* vaul 판. 판 자체는 투명하고, 8px 안쪽에 ::before 가 틀을 그린다. */
+.cn-drawer-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    padding: 8px;
+    background-color: transparent;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        z-index: -10;
+        background-color: var(--popover);
+        border: var(--surface-border-width) solid var(--border);
+        border-radius: var(--surface-radius-lg);
+    }
+}
+
+/* --------------------------------------------------------
+   손잡이 — 쥐고 끌 수 있다는 표시.
+   mira: bg-muted mx-auto mt-4 hidden h-1.5 w-[100px] shrink-0 rounded-full
+   ⚠ 100 × 6px 은 리터럴이다. 어느 축에도 걸치지 않는 일회성 값이다.
+   -------------------------------------------------------- */
+
+.cn-drawer-handle {
+    background-color: var(--muted);
+    border-radius: 9999px;
+    width: 100px;
+    height: 6px;
+
+    @apply mx-auto mt-4 hidden shrink-0;
+}
+
+/* 판의 어느 변에 붙었느냐에 따라 방향과 길이가 바뀐다. 값이 아니라 배치라
+   유틸리티로 둔다. mira: 손잡이 길이 12(48px) — nova 의 24 에서 절반이 됐다. */
+.cn-drawer-swipe-handle {
+    @apply after:block after:shrink-0 after:rounded-full after:bg-muted group-data-[swipe-axis=y]/drawer-popup:h-3 group-data-[swipe-axis=y]/drawer-popup:w-full group-data-[swipe-axis=y]/drawer-popup:justify-center group-data-[swipe-axis=y]/drawer-popup:after:h-1 group-data-[swipe-axis=y]/drawer-popup:after:w-12 group-data-[swipe-direction=down]/drawer-popup:items-end group-data-[swipe-direction=up]/drawer-popup:items-start group-data-[swipe-axis=x]/drawer-popup:h-full group-data-[swipe-axis=x]/drawer-popup:w-3 group-data-[swipe-axis=x]/drawer-popup:items-center group-data-[swipe-axis=x]/drawer-popup:after:h-12 group-data-[swipe-axis=x]/drawer-popup:after:w-1 group-data-[swipe-direction=left]/drawer-popup:justify-start group-data-[swipe-direction=right]/drawer-popup:justify-end;
+}
+
+/* --------------------------------------------------------
+   헤더와 푸터 — mira: gap-1 p-4 · 푸터 gap-2 p-4
+   손잡이가 위아래를 차지하므로 맞닿는 쪽 여백은 비운다.
+   ⚠ 푸터의 8px 은 리터럴이다. sheet.css 와 같은 이유로 아직 토큰이 아니다.
+   -------------------------------------------------------- */
+
+.cn-drawer-header-base {
+    padding: var(--surface-padding-md);
+    padding-block-end: 0;
+
+    @apply md:text-left;
+}
+
+.cn-drawer-footer-base {
+    padding: var(--surface-padding-md);
+    padding-block-start: 0;
+    gap: 8px;
+}
+
+/* vaul 판 — 손잡이가 따로 없어 사방 여백을 그대로 둔다. */
+.cn-drawer-header {
+    padding: var(--surface-padding-md);
+
+    @apply md:text-left;
+}
+
+.cn-drawer-footer {
+    padding: var(--surface-padding-md);
+    gap: 8px;
+}

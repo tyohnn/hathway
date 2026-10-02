@@ -1,0 +1,137 @@
+/* ============================================================
+   3층 — item 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   목록 한 줄의 일반형. 모양(rounded-md · 8px 간격)은 메뉴 항목과 같아 menu 축을 빌리되,
+   높이는 읽지 않는다 — 내용이 높이를 정하므로 세로 패딩만 갖는다.
+
+   mira: rounded-md border text-xs/relaxed · default·sm gap-2.5 px-3 py-2.5 · xs gap-2.5 px-2.5 py-2 ·
+         muted 변형 bg-muted/50 · 썸네일 size-8(xs 6) rounded-sm · 제목·설명 text-xs/relaxed ·
+         묶음 gap-4(sm 2.5 · xs 2) · 구분선 my-2.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다.
+   ⚠ 10·12px 여백은 리터럴이다. 항목의 리듬(12·10·8)은 2층의 어느 축에도 없고, surface 축의
+      sm(10)·md(16)와도 단계가 다르다. 한 컴포넌트 안의 값이라 토큰을 만들지 않았다.
+   ============================================================ */
+
+.cn-item {
+    border: var(--surface-border-width) solid var(--border);
+    border-radius: var(--menu-item-radius);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    @apply [a]:hover:bg-muted;
+}
+
+.cn-item-variant-default {
+    border-color: transparent;
+}
+
+.cn-item-variant-outline {
+    border-color: var(--border);
+}
+
+/* mira 의 bg-muted/50 — 1층이 --muted-soft 로 푼 값. 불투명 --muted 로 바꾸면 목록 안에서
+   칠한 행이 되어 무엇이 선택된 것인지와 구분되지 않는다. */
+.cn-item-variant-muted {
+    background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    border-color: transparent;
+}
+
+/* ⚠ default 와 sm 의 값이 같다. 업스트림이 그렇게 정의했고, 값을 바꾸면
+   size prop 의 의미가 코드와 갈린다 — 고치려면 컴포넌트 cva 부터 봐야 한다. */
+.cn-item-size-default,
+.cn-item-size-sm {
+    gap: 10px;
+    padding-inline: 12px;
+    padding-block: 10px;
+}
+
+.cn-item-size-xs {
+    gap: 10px;
+    padding-inline: 10px;
+    padding-block: 8px;
+    @apply in-data-[slot=dropdown-menu-content]:p-0;
+}
+
+/* 간격은 항목 자신의 축이다 — v4 슬롯 --item-gap(foundation 은 --menu-item-gap 의 별칭).
+   이 파일의 gap · --cn-item-separator 의 margin-block 이 모두 이 이름을 읽는다. */
+.cn-item-media {
+    gap: var(--item-gap);
+    @apply group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start;
+}
+
+.cn-item-media-variant-default {
+    background-color: transparent;
+}
+
+/* 아이콘 썸네일의 글리프는 항목 자신의 축이다 — v4 슬롯 --item-media-icon-size
+   (foundation 은 --control-icon-size-lg 의 별칭). */
+.cn-item-media-variant-icon svg:not([class*="size-"]) {
+    width: var(--item-media-icon-size);
+    height: var(--item-media-icon-size);
+}
+
+/* ⚠ 32·32·24 는 리터럴이다. avatar 축과 값이 겹치지만 같은 축이 아니다 —
+   여기는 항목의 썸네일이라 아바타 크기를 바꿨다고 따라 움직이면 안 된다.
+   모서리는 rounded-sm(6)이라 control 축의 xs 반경을 읽는다. */
+.cn-item-media-variant-image {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--control-radius-xs);
+    @apply overflow-hidden [&_img]:size-full [&_img]:object-cover;
+
+    .group\/item[data-size="sm"] & { width: 32px; height: 32px; }
+    .group\/item[data-size="xs"] & { width: 24px; height: 24px; }
+}
+
+.cn-item-content {
+    gap: var(--control-gap-xs);
+
+    /* ⚠ 2px 은 리터럴이다. mira 의 gap-0.5 로, 어느 축에도 없는 가장 좁은 단이다. */
+    .group\/item[data-size="xs"] & {
+        gap: 2px;
+    }
+}
+
+/* 제목의 행간만 text-xs/relaxed 가 아니라 leading-snug(1.375)다 — mira 그대로. */
+.cn-item-title {
+    gap: var(--item-gap);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: 1.375;
+    font-weight: var(--ui-font-weight);
+    text-underline-offset: 4px;
+}
+
+.cn-item-description {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    color: var(--muted-foreground);
+    text-align: start;
+}
+
+.cn-item-actions,
+.cn-item-header,
+.cn-item-footer {
+    gap: var(--item-gap);
+}
+
+/* ⚠ 10·8px 은 리터럴이다. 항목 크기에 따라 묶음의 간격을 한 단씩 줄이는 자리라 위의 리듬과 같다. */
+.cn-item-group {
+    gap: var(--surface-gap-lg);
+
+    &:has([data-size="sm"]) {
+        gap: 10px;
+    }
+
+    &:has([data-size="xs"]) {
+        gap: 8px;
+    }
+}
+
+.cn-item-separator {
+    margin-block: var(--item-gap);
+}

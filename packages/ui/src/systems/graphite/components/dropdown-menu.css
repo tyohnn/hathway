@@ -1,0 +1,31 @@
+/* ============================================================
+   3층 — Dropdown Menu 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 목록 면·항목·라벨·구분선·단축키는 여기가 아니라 `_menu-family.css` 에 있다.
+      Context Menu · Menubar · Command 과 같은 축을 공유하며, 값을 이 파일에
+      다시 적으면 그 넷이 어긋나기 시작한다.
+
+   이 파일에는 애니메이션과 폭 상한만 남는다. tw-animate-css 의 키프레임을 순수 CSS 로
+   옮겨 적으면 값이 아니라 동작을 복제하게 되고, 업스트림이 바뀔 때 조용히
+   어긋나므로 @apply 를 유지한다. duration-100 은 mira 의 값이다.
+
+   ⚠ mira 의 `cn-dropdown-menu-subcontent`(shadow-lg)는 TSX 가 붙이지 않는 이름이라
+      규칙을 두지 않는다. 하위 목록은 `cn-dropdown-menu-sub-content` 로 계열의
+      shadow-md 를 그대로 받는다.
+   ============================================================ */
+
+/* ⚠ 폭의 상한이다. 2026-09-11 에 컴포넌트에서 `w-(--anchor-width)` 를 걷어내면서 둔 것이고,
+   2026-09-15 shadcn 4.21.0 동기화로 그 유틸리티(트리거 폭 · min-w-32)가 돌아온 뒤로는
+   긴 라벨이 줄바꿈되므로 거의 닿지 않는 안전장치로만 남는다(mira 에는 없다).
+   Base UI 의 Positioner 가 내보내는 `--available-width` 가 그 자리에서 남은 폭이다. */
+.cn-dropdown-menu-content,
+.cn-dropdown-menu-sub-content {
+    max-width: var(--available-width);
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-dropdown-menu-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}

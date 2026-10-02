@@ -1,0 +1,86 @@
+/* ============================================================
+   3층 — Command 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 목록 면·항목·라벨·구분선·단축키는 여기가 아니라 `_menu-family.css` 에 있다.
+      Dropdown Menu · Context Menu · Menubar 와 같은 축을 공유한다.
+
+   Command 에만 있는 것은 위쪽의 검색 입력과 스크롤되는 목록, 그리고 면의 모서리다.
+   mira 는 메뉴 넷을 rounded-lg 로 두면서 팔레트만 rounded-xl 로 한 단 크게 가져간다
+   (대화상자 안에 통째로 들어앉는 면이라 Dialog 와 같은 단이다).
+   강조가 `:focus` 가 아니라 `[data-selected]` 인 것도 이 컴포넌트뿐인데,
+   cmdk 가 키보드 이동을 그렇게 표시하기 때문이다. 그 규칙도 공용 파일에 있다.
+
+   ⚠ mira 의 항목·그룹 제목은 px-2.5(10px)인데 계열의 8px 을 그대로 둔다. 계열 파일이
+      항목의 좌우 여백을 하나로 정하는 자리라, 여기서 다시 적으면 드리프트가 되살아난다.
+   ============================================================ */
+
+/* mira: rounded-xl */
+.cn-command {
+    border-radius: var(--surface-radius-lg);
+}
+
+.cn-command-input-wrapper {
+    padding: var(--menu-padding);
+    padding-bottom: 0;
+}
+
+/* 검색 입력 — mira: bg-input/20 dark:bg-input/30 h-8!
+   팔레트 안에 들어앉는 컨트롤이라 통(input-group)의 md(28)보다 한 단 크다.
+   ⚠ 선택자가 wrapper 의 자식으로 적혀 있는 것은 명시도를 (0,2,0)으로 올리기 위해서다.
+      배럴이 알파벳 순서라 input-group.css 가 이 파일보다 **뒤에** 읽히고, 같은
+      (0,1,0)이면 `.cn-input-group` 의 height 가 이긴다. mira 의 `h-8!` 이 같은 사정이다. */
+.cn-command-input-wrapper > .cn-command-input-group {
+    height: var(--control-height-lg);
+    background-color: var(--command-input-fill, var(--input-fill));
+}
+
+.cn-command-input {
+    width: 100%;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* mira: size-3.5 shrink-0 opacity-50 — 색이 아니라 투명도로 가라앉힌다. */
+.cn-command-input-icon {
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+.cn-command-list {
+    max-height: var(--menu-list-max-height);
+    scroll-padding-block: var(--menu-padding);
+    outline: none;
+
+    /* 스크롤바를 숨기는 유틸리티는 shadcn 이 정의한 것이라 그대로 쓴다. */
+    @apply no-scrollbar;
+}
+
+/* mira: text-foreground overflow-hidden p-1 · 제목은 계열의 라벨 규칙에 font-medium 을 더한다. */
+.cn-command-group {
+    overflow: hidden;
+    padding: var(--menu-padding);
+    color: var(--foreground);
+
+    & [cmdk-group-heading] {
+        font-weight: var(--ui-font-weight);
+    }
+}
+
+/* mira: py-6 text-center text-xs/relaxed — 글자색을 따로 주지 않는다. */
+.cn-command-empty {
+    padding-block: var(--surface-padding-lg);
+    text-align: center;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* 대화상자 안에 들어갈 때는 대화상자가 면을 이미 그리므로 모서리만 맞춘다. mira: rounded-xl! p-0 */
+.cn-command-dialog {
+    border-radius: var(--surface-radius-lg);
+}

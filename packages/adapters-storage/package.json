@@ -1,0 +1,25 @@
+{
+    "name": "@investment/adapters-storage",
+    "version": "0.0.1",
+    "private": true,
+    "//": "Supabase 의 HTTP 를 지나는 포트를 구현한다. packages/access 의 AuthSettings(인증 서버의 공개 설정)와 packages/market 의 FilingDocuments(저장소의 공시 본문 조각)다. server-only 다.",
+    "exports": {
+        "./*": "./src/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@investment/access": "workspace:*",
+        "@investment/market": "workspace:*",
+        "@investment/shared": "workspace:*",
+        "effect": "4.0.0-rc.112",
+        "server-only": "^0.0.1"
+    },
+    "devDependencies": {
+        "typescript": "^5",
+        "vitest": "^4.1.11",
+        "@types/node": "^22"
+    }
+}

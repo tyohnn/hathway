@@ -1,0 +1,240 @@
+/* ============================================================
+   3층 — questionnaire 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 선택지의 지시자는 Checkbox·Radio 와 같은 물건이라 지시자 축
+      (--control-indicator-*)을 그대로 읽는다. 값이 이미 16·4·14·8 로
+      일치했다 — 축을 새로 만든 것이 아니라 이름을 붙인 것이다.
+
+   ⚠ 세로 리듬(16 · 12 · 6 · 2px)은 리터럴이다. 2층에 폼 세로 리듬 축이
+      없다 — Field 와 같은 사정이다.
+
+   ⚠ 고른 답의 바탕은 --primary-soft(mira data-checked:bg-primary/10)다. 테두리는
+      mira 의 border-primary/40 에 맞는 토큰이 없어 --ring 으로 둔다. 손이 올라간
+      답은 --input-fill-hover(mira hover:bg-input/40)라 둘이 갈린다.
+   ============================================================ */
+
+.cn-questionnaire {
+    gap: 16px;
+}
+
+.cn-questionnaire-progress {
+    font-size: var(--ui-text-xs);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-xs);
+}
+
+/* mira: flex flex-col gap-3 */
+.cn-questionnaire-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* mira: text-sm font-semibold [&:not(:has(~[data-slot=questionnaire-description]))]:mb-3
+   ⚠ 굵기 600 은 리터럴이다. ui 축의 굵기는 500 하나이고, 설문 제목만 한 단 굵다. */
+.cn-questionnaire-title {
+    font-size: var(--ui-text-lg);
+    line-height: var(--ui-line-height-lg);
+    letter-spacing: var(--ui-letter-spacing);
+    font-weight: 600;
+
+    &:not(:has(~ [data-slot="questionnaire-description"])) {
+        margin-block-end: 12px;
+    }
+}
+
+/* mira: text-xs/relaxed — 글자색은 컴포넌트의 text-muted-foreground 가 준다. */
+.cn-questionnaire-description {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+.cn-questionnaire-choices {
+    gap: 6px;
+}
+
+/* 선택지 카드. 링은 _control-family.css 와 같은 한 겹(ring-2 ring-ring/30)이다 — 카드
+   사이에 간격이 있어 간격 겹이 옆 카드를 지우지 않는다.
+   mira: border-input hover:bg-input/40 data-checked:border-primary/40 data-checked:bg-primary/10
+         data-invalid:border-destructive gap-2.5 rounded-xl border px-3 py-2.5 text-xs/relaxed
+   모서리는 컨트롤(8)이 아니라 rounded-xl(14)이라 면 축의 --surface-radius-lg 를 읽는다.
+   바탕은 없다 — nova 의 dark:bg-input/20 을 mira 가 뺐다.
+   ⚠ 좌우 12px · 상하 10px · 간격 10px 은 리터럴이다. control 축은 높이가 정본이라
+      세로 패딩 단계를 갖지 않고, 이 카드는 설명이 두 줄이 될 수 있어 높이를 고정할 수 없다.
+   ⚠ 켜짐은 shadcn 의 data-checked 변형과 같은 두 형태를 본다([data-state=checked] ·
+      [data-checked]). 손으로 옮기면서 하나를 빠뜨리면 구현에 따라 색이 안 켜진다. */
+.cn-questionnaire-choice {
+    gap: 10px;
+    padding-inline: 12px;
+    padding-block: 10px;
+    border: var(--control-border-width) solid var(--input);
+    border-radius: var(--surface-radius-lg);
+    background-color: var(--questionnaire-choice-fill, transparent);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    &:hover {
+        background-color: var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent));
+    }
+
+    &:is([data-state="checked"], [data-checked]:not([data-checked="false"])) {
+        border-color: var(--ring);
+        /* mira: data-checked:bg-primary/10 — 필드 라벨의 /5 보다 한 단 진하다 */
+        background-color: var(--primary-soft-strong, color-mix(in oklab, var(--primary) 10%, transparent));
+    }
+
+    /* mira: has-[>input:focus-visible]:border-ring …:ring-2 …:ring-ring/30 */
+    &:has(> input:focus-visible) {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+
+    /* mira: data-invalid:border-destructive — data-* 변형이 has-* 뒤에 오므로 포커스 중에도 붉다.
+       포커스 규칙의 명시도가 더 높아 같은 선택자를 함께 적는다. */
+    &[data-invalid],
+    &[data-invalid]:has(> input:focus-visible) {
+        border-color: var(--destructive);
+    }
+}
+
+/* mira: border-input dark:bg-input/30 … size-4 rounded-[4px] — 바탕은 Checkbox 와 같은 --input-fill 이다. */
+.cn-questionnaire-choice-indicator {
+    width: var(--control-indicator-size);
+    height: var(--control-indicator-size);
+    border-radius: var(--control-indicator-radius);
+    border-color: var(--input);
+    background-color: var(--input-fill);
+    /* ⚠ 켜졌을 때의 색은 유틸리티로 남긴다. `data-checked` 변형이
+       [data-state=checked] 와 [data-checked]:not([data-checked=false]) 둘을
+       함께 매치하는데, 손으로 옮겨 적으면 그중 하나가 빠져 라디오·체크박스
+       구현에 따라 색이 안 켜진다. 위 background-color 보다 뒤에 있어야 이긴다(명시도가 같다). */
+    @apply translate-y-[--spacing(0.45)] group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-checked/questionnaire-choice:bg-primary dark:group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground group-data-checked/questionnaire-choice:border-primary;
+}
+
+.cn-questionnaire-choice-indicator-dot {
+    width: var(--control-indicator-dot-size);
+    height: var(--control-indicator-dot-size);
+    background-color: var(--primary-foreground);
+}
+
+.cn-questionnaire-choice-indicator-check {
+    width: var(--control-indicator-icon-size);
+    height: var(--control-indicator-icon-size);
+}
+
+.cn-questionnaire-choice-content {
+    gap: 2px;
+}
+
+.cn-questionnaire-choice-description {
+    color: var(--muted-foreground);
+}
+
+/* 번호 키캡. mira: border-input bg-background/80 text-muted-foreground size-4 rounded-sm border
+   font-mono text-[0.5625rem] font-medium leading-none
+   ⚠ 16px 상자와 9px 글자는 리터럴이다. 상자가 지시자 축(16)과 같은 것은 우연이고,
+      글자는 ui 축의 xs(10)보다도 작은 mira 의 값이다 — 16px 상자 안에 들어가는 한 자리
+      숫자라 축에 올릴 값이 아니다. 바탕의 /80 은 토큰이 없어 --background 로 둔다. */
+.cn-questionnaire-shortcut {
+    width: 16px;
+    height: 16px;
+    border: var(--control-border-width) solid var(--questionnaire-shortcut-border, var(--input));
+    border-radius: var(--control-radius-xs);
+    background-color: var(--background);
+    color: var(--muted-foreground);
+    font-size: 9px;
+    font-weight: var(--ui-font-weight);
+    line-height: 1;
+    @apply translate-y-[--spacing(0.45)] group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 items-center justify-center font-mono;
+}
+
+.cn-questionnaire-input-wrapper {
+    width: 100%;
+}
+
+/* 설문 한 줄 입력칸. Input 컴포넌트를 쓰지 않아 같은 규칙을 여기 다시 적는다.
+   mira: bg-input/20 dark:bg-input/30 border-input h-7 rounded-md border px-2 py-0.5 text-sm md:text-xs/relaxed
+   높이는 Input 과 같은 control md 다. 컴포넌트의 min-h-11 sm:min-h-0 이 모바일에서만 누를 자리를 넓힌다. */
+.cn-questionnaire-input {
+    height: var(--control-height-md);
+    padding-inline: var(--control-padding-x-md);
+    border: var(--control-border-width) solid var(--input);
+    border-radius: var(--control-radius);
+    background-color: var(--input-fill);
+    font-size: var(--control-font-size-md);
+    line-height: var(--control-line-height-md);
+    letter-spacing: var(--control-letter-spacing);
+
+    /* mira: selection:bg-primary selection:text-primary-foreground — 컴포넌트가 들고 있던 선택 색을
+       --selection 슬롯으로 내렸다. 값은 그대로다. */
+    &::selection {
+        background-color: var(--selection);
+        color: var(--selection-foreground);
+    }
+
+    /* mira: focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 */
+    &:focus-visible {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+
+    /* Input 과 같다 — 늘 그리고, 포커스보다 뒤에 두어 이긴다. */
+    &[aria-invalid="true"] {
+        border-color: var(--border-invalid);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+    }
+}
+
+.cn-questionnaire-error {
+    margin-block-start: 8px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* ⚠ 이 규칙은 2026-09-05 토큰화 4차에서 실수로 빠졌다가 되살렸다. 컴포넌트가
+   `grid-cols-[minmax(0,1fr)_auto_auto]` 만 갖고 열 간격은 여기서 주므로, 빠지면
+   '건너뛰기'와 '다음' 버튼이 맞닿는다. 지우지 말 것.
+   mira: gap-1.5 sm:min-h-7 — sm 이상의 최소 높이는 컴포넌트의 min-h-11 유틸리티가 이겨
+   실제로는 닿지 않는다. 규칙만 mira 대로 적어 둔다. */
+.cn-questionnaire-actions {
+    gap: 6px;
+
+    @media (width >= 40rem) {
+        min-height: var(--control-height-md);
+    }
+}
+
+/* ⚠ 바닥 버튼 넷의 높이는 height 로 준다. 업스트림은 버튼 높이를 h-* 로 주고
+   min-h-11 sm:min-h-0 으로 모바일에서만 누를 자리를 넓힌다. 그런데 이 저장소의 3층은
+   버튼 높이를 min-height 로 주므로(button.css 의 cn-button-size-*) sm:min-h-0 이 그
+   min-height 를 지워, sm 이상에서 버튼이 글자 높이로 줄었다(2026-09-11, 디자인
+   싱크 채점에서 실측). 유틸리티(utilities 레이어)가 3층(base)을 이기므로 min-height 로는
+   되돌릴 수 없어, 겹치지 않는 height 로 준다. 모바일의 min-h-11(44px)은 그대로 이긴다. */
+.cn-questionnaire-previous,
+.cn-questionnaire-skip,
+.cn-questionnaire-next,
+.cn-questionnaire-submit {
+    &[data-size="xs"] {
+        height: var(--control-height-xs);
+    }
+
+    &[data-size="sm"] {
+        height: var(--control-height-sm);
+    }
+
+    &[data-size="default"] {
+        height: var(--control-height-md);
+    }
+
+    &[data-size="lg"] {
+        height: var(--control-height-lg);
+    }
+}

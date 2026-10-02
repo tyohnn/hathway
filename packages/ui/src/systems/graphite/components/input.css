@@ -1,0 +1,42 @@
+/* ============================================================
+   3층 — Input 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Input 은 사이즈 속성이 없다. 폼에서 Button 과 나란히 서므로
+   control 축의 md 단계(= Button 의 default)를 그대로 읽는다.
+   두 컴포넌트가 다른 단계를 읽으면 같은 줄에서 높이가 어긋난다.
+
+   ⚠ 바탕은 투명이 아니라 채움이다. mira: bg-input/20 dark:bg-input/30 — 1층의
+      --input-fill 이 두 값을 갖는다. 비활성 바탕은 두지 않는다(_control-family.css).
+
+   ⚠ 컴포넌트가 이미 갖고 있어 여기서 손댈 수 없는 것들:
+      w-full, min-w-0, outline-none, placeholder:text-muted-foreground,
+      disabled:pointer-events-none, disabled:cursor-not-allowed, disabled:opacity-50.
+   ============================================================ */
+
+.cn-input {
+    min-height: var(--control-height-md);
+    padding-inline: var(--control-padding-x-field);
+    /* graphite: no vertical padding — --control-padding-y-field is 0px (the height is a min-height). */
+    padding-block: var(--control-padding-y-field);
+
+    border: var(--control-border-width) solid var(--input-border, var(--input));
+    border-bottom-color: var(--input-border-bottom, var(--input-border, var(--input)));
+    border-radius: var(--control-radius);
+    background-color: var(--input-fill);
+    color: var(--foreground);
+
+    font-size: var(--control-font-size-field);
+    line-height: var(--control-line-height-field);
+    letter-spacing: var(--control-letter-spacing-field);
+
+    /* 파일 선택 버튼은 인풋 안에 들어앉는 작은 컨트롤이라 한 단계 아래를 읽는다.
+       mira: file:h-6 file:text-xs/relaxed file:font-medium */
+    &::file-selector-button {
+        height: var(--control-height-sm);
+        font-size: var(--control-font-size-sm);
+        line-height: var(--control-line-height-sm);
+        font-weight: var(--control-font-weight);
+    }
+}

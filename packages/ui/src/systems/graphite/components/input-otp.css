@@ -1,0 +1,85 @@
+/* ============================================================
+   3층 — input-otp 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 포커스 링은 칸이 아니라 「활성 칸」(data-active)에 그린다. 실제 포커스는 숨은
+      input 하나가 받고, 컴포넌트가 지금 글자를 받을 칸에 data-active 를 붙인다.
+      mira: data-[active=true]:border-ring data-[active=true]:ring-2 data-[active=true]:ring-ring/30
+            aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 (다크 /40)
+            묶음 has-aria-invalid:ring-2 has-aria-invalid:ring-destructive/20 (다크 /40)
+   ============================================================ */
+
+.cn-input-otp {
+    /* mira gap-2. ⚠ 8px 은 리터럴이다 — control-gap 축(4)은 라벨과 아이콘 사이
+       간격이라 다른 자리이고, 칸 묶음 사이 간격에는 축이 없다. */
+    gap: 8px;
+}
+
+.cn-input-otp-group {
+    border-radius: var(--control-radius);
+
+    &:has([aria-invalid="true"]) {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+    }
+}
+
+/* 한 글자가 들어가는 정사각 칸. mira: size-7 — Input 과 같은 높이(control md)라
+   같은 폼에 나란히 서도 어긋나지 않는다. 바탕은 채움이다(bg-input/20 dark:bg-input/30). */
+.cn-input-otp-slot {
+    width: var(--control-height-md);
+    height: var(--control-height-md);
+
+    border-block: var(--control-border-width) solid var(--input);
+    border-inline-end: var(--control-border-width) solid var(--input);
+    background-color: var(--input-fill);
+    font-size: var(--control-font-size-md);
+    line-height: var(--control-line-height-md);
+    outline-style: none;
+
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    &:first-child {
+        border-inline-start: var(--control-border-width) solid var(--input);
+        border-start-start-radius: var(--control-radius);
+        border-end-start-radius: var(--control-radius);
+    }
+
+    &:last-child {
+        border-start-end-radius: var(--control-radius);
+        border-end-end-radius: var(--control-radius);
+    }
+
+    &[data-active="true"] {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+
+    /* 검증 실패는 활성보다 뒤에 두어 테두리가 붉게 남는다. 링은 활성 칸에만 붉게 그린다. */
+    &[aria-invalid="true"] {
+        border-color: var(--destructive);
+    }
+
+    &[data-active="true"][aria-invalid="true"] {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+    }
+}
+
+/* ⚠ 커서 높이 16px 은 리터럴이다. mira h-4 — 글자에 맞춘 값이라 control 축의
+   아이콘·높이 어느 쪽도 아니다. */
+.cn-input-otp-caret-line {
+    height: 16px;
+    background-color: var(--foreground);
+    @apply animate-caret-blink w-px duration-1000;
+}
+
+/* mira: [&_svg:not([class*='size-'])]:size-4 */
+.cn-input-otp-separator > svg:not([class*="size-"]) {
+    width: var(--control-icon-size-lg);
+    height: var(--control-icon-size-lg);
+}

@@ -1,0 +1,184 @@
+/* ============================================================
+   3층 — navigation-menu 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 이 컴포넌트는 _menu-family.css 에 넣지 않는다. 계열 넷(Dropdown ·
+      Context · Menubar · Command)은 "항목이 줄지어 있는 목록"이지만, 내비
+      메뉴의 패널은 임의의 레이아웃(설명·그림·여러 열)이 들어가는 판이라
+      항목 축(--menu-item-*)이 판 전체에 걸리지 않는다. 대신 같은 토큰을
+      읽어 값이 갈리지 않게 한다 — 뜨는 판은 surface 축, 그 안의 링크는
+      menu 항목 축이다.
+
+   mira 가 주는 것
+     · 트리거   rounded-lg px-2.5 py-1.5 text-xs/relaxed font-medium ·
+                열려 있는 동안 bg-muted/50, hover·focus 는 bg-muted
+     · 링크     rounded-lg p-2 gap-1.5 text-xs/relaxed · svg size-4 ·
+                판 안(in-data-[slot=navigation-menu-content])에서는 rounded-md ·
+                data-active 는 bg-muted/50
+     · 판       p-1.5 · 뷰포트 없이 뜨면 rounded-xl shadow-md ring-1
+     · 뷰포트·팝업  rounded-xl ring-1 · 뷰포트 shadow-md, 팝업 shadow
+
+   ⚠ 이징이 업스트림에서 cubic-bezier(0.22,1,0.36,1) 리터럴로 세 군데
+      적혀 있었다. 1층의 --ease-out(0.23,1,0.32,1)과 눈으로 구분되지 않는
+      값이라 --control-ease 로 합쳤다. 유틸리티가 읽어 갈 --tw-ease 를
+      채우는 방식인 이유는, 컴포넌트·@apply 의 transition 유틸리티가
+      base 레이어의 transition-timing-function 선언을 덮기 때문이다.
+
+   ⚠ 열려 있는 동안의 bg-muted/50 은 1층의 --muted-soft 가 갖는다(mira 이관 때 생긴 토큰).
+   ============================================================ */
+
+.cn-navigation-menu {
+    @apply max-w-max;
+}
+
+.cn-navigation-menu-list {
+    @apply gap-0;
+}
+
+/* mira: rounded-lg px-2.5 — 10px 좌우 여백은 control 축의 lg 단이 같은 값이다. */
+.cn-navigation-menu-trigger {
+    border-radius: var(--surface-radius);
+    padding-inline: var(--control-padding-x-lg);
+    font-size: var(--control-font-size-sm);
+    line-height: var(--control-line-height-sm);
+
+    --tw-duration: var(--control-duration);
+    --tw-ease: var(--control-ease);
+
+    /* ⚠ 세로 여백 6px 은 리터럴이다. control 축은 높이가 정본이라 세로
+       패딩 단계를 갖지 않는데, 이 트리거는 TSX 가 h-9 를 주므로 이 값은
+       글줄이 두 줄이 될 때만 드러나는 보정이다. */
+    @apply py-1.5 font-medium transition-all disabled:opacity-50;
+
+    &[data-open],
+    &[data-popup-open] {
+        background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    }
+
+    &:hover,
+    &:focus,
+    &[data-open]:hover,
+    &[data-open]:focus,
+    &[data-popup-open]:hover {
+        background-color: var(--muted);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}
+
+/* mira: rounded-lg p-2 gap-1.5 text-xs/relaxed [&_svg:not([class*='size-'])]:size-4
+   ⚠ 간격 6px 은 리터럴이다. 2층에 6px 간격 단계가 없다(--menu-item-gap 은 8).
+   ⚠ 활성 표시는 `[data-active]` 로 읽는다. mira 는 data-[active=true] 로 적지만 Base UI 는
+      불리언 상태를 빈 값(data-active="")으로 내보내므로 값을 비교하면 맞지 않는다. */
+.cn-navigation-menu-link {
+    border-radius: var(--surface-radius);
+    padding: var(--menu-item-padding-x);
+    gap: 6px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    --tw-duration: var(--control-duration);
+    --tw-ease: var(--control-ease);
+
+    @apply flex items-center transition-all outline-none;
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    /* 판 안에 줄지어 서면 메뉴 항목과 같은 모서리를 읽는다. mira: in-data-[slot=navigation-menu-content]:rounded-md */
+    :where([data-slot="navigation-menu-content"]) & {
+        border-radius: var(--menu-item-radius);
+    }
+
+    &[data-active] {
+        background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    }
+
+    &:hover,
+    &:focus,
+    &[data-active]:hover,
+    &[data-active]:focus {
+        background-color: var(--muted);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}
+
+/* mira: size-3 — 여닫힘을 알리는 꺾쇠라 항목 아이콘(14)보다 한 단 작다. */
+.cn-navigation-menu-trigger-icon {
+    width: var(--control-icon-size-sm);
+    height: var(--control-icon-size-sm);
+
+    @apply relative top-px ml-1 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180 group-data-popup-open/navigation-menu-trigger:rotate-180;
+}
+
+/* ⚠ 판의 안쪽 여백 6px 은 리터럴이다. mira 의 p-1.5 이고, 메뉴 목록의 --menu-padding(4)과
+   다른 값이라 그 토큰을 읽지 않는다. 2층에 6px 여백 단계가 없다. */
+.cn-navigation-menu-content {
+    padding: 6px;
+
+    --tw-ease: var(--control-ease);
+
+    @apply data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 group-data-[viewport=false]/navigation-menu:data-open:animate-in group-data-[viewport=false]/navigation-menu:data-closed:animate-out group-data-[viewport=false]/navigation-menu:data-closed:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-open:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-open:fade-in-0 group-data-[viewport=false]/navigation-menu:data-closed:fade-out-0 group-data-[viewport=false]/navigation-menu:duration-300;
+
+    /* 뷰포트를 쓰지 않으면 이 판이 곧 떠 있는 면이 된다. mira: rounded-xl shadow-md ring-1 */
+    .group\/navigation-menu[data-viewport="false"] & {
+        background-color: var(--popover);
+        color: var(--popover-foreground);
+        border-radius: var(--surface-radius-lg);
+        box-shadow:
+            0 0 0 var(--surface-border-width) var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent)),
+            var(--shadow-float);
+    }
+}
+
+/* mira: 둘 다 rounded-xl ring-1. 그림자는 뷰포트가 shadow-md, 팝업이 shadow(= shadow-sm)로
+   갈려 있는데 같은 자리에 뜨는 하나의 면이라 --shadow-float 하나로 둔다. Dialog·Popover·
+   드롭다운과 같은 그림자다. */
+.cn-navigation-menu-viewport,
+.cn-navigation-menu-popup {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    border-radius: var(--surface-radius-lg);
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent)),
+        var(--shadow-float);
+}
+
+.cn-navigation-menu-viewport {
+    @apply data-open:animate-in data-closed:animate-out data-closed:zoom-out-90 data-open:zoom-in-90 duration-100;
+}
+
+.cn-navigation-menu-popup {
+    --tw-ease: var(--control-ease);
+
+    @apply transition-all outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0;
+}
+
+.cn-navigation-menu-indicator {
+    @apply data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
+}
+
+/* mira: bg-border rounded-tl-sm shadow-md — 45° 돌아간 8px 상자라 물리 모서리 하나만 둥글린다. */
+.cn-navigation-menu-indicator-arrow {
+    background-color: var(--border);
+    border-top-left-radius: var(--control-radius-xs);
+    box-shadow: var(--shadow-float);
+}
+
+.cn-navigation-menu-positioner {
+    --tw-ease: var(--control-ease);
+
+    @apply transition-[top,left,right,bottom] duration-300 data-[side=bottom]:before:top-[-10px] data-[side=bottom]:before:right-0 data-[side=bottom]:before:left-0;
+}

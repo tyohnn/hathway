@@ -1,0 +1,277 @@
+/* ============================================================
+   3층 — Button 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+   Token slots: variant surfaces (--surface-*), shadows (--shadow-control*), the primary border,
+   the quieter weight (--control-font-weight-regular) and the icon-button axis.
+   Foundation values keep all of them at the mira look (flat, no gradient, 500).
+
+   컴포넌트(packages/ui/src/components/button.tsx)는 cn-* 클래스만 갖고,
+   눈에 보이는 성질은 전부 이 파일이 정한다.
+
+   클래스 계약 (shadcn 업스트림과 이름이 같다. 바꾸지 말 것):
+     .cn-button                     공통 바탕
+     .cn-button-variant-{default,outline,secondary,ghost,destructive,link}
+     .cn-button-size-{xs,sm,default,lg}
+     .cn-button-size-icon{,-xs,-sm,-lg}
+
+   ⚠ 컴포넌트가 이미 갖고 있어서 여기서 손댈 수 없는 것들이 있다.
+      inline-flex, items-center, justify-center, whitespace-nowrap,
+      transition-all, outline-none, select-none,
+      disabled:pointer-events-none, disabled:opacity-50.
+      이것들은 유틸리티 레이어에 있고 이 파일은 base 레이어에 있어서,
+      같은 속성을 여기서 다시 선언해도 이기지 못한다.
+      구조와 행동은 컴포넌트가 소유한다는 경계가 여기서 드러난다.
+
+   ⚠ 값을 직접 적지 말고 반드시 2층 토큰(tokens.css)을 참조할 것.
+      Figma 에서 변수를 바꾸면 화면이 따라 바뀌는 성질이 여기서 성립한다.
+
+   ⚠ 포커스 링·검증 실패·전환은 _control-family.css 가 갖는다.
+      컨트롤 아홉이 같은 언어를 써야 하므로 여기 다시 적지 말 것.
+   ============================================================ */
+
+.cn-button {
+    /* --button-shape-radius is set only by data-shape below; unset, the size radius applies. */
+    border-radius: var(--button-shape-radius, var(--control-radius));
+
+    /* 채움 버튼에도 투명 테두리를 두어, outline 버튼과 바깥 크기를 맞춘다.
+       mira: border border-transparent bg-clip-padding */
+    border: var(--control-border-width) solid transparent;
+    background-clip: padding-box;
+
+    font-weight: var(--control-font-weight);
+    letter-spacing: var(--control-letter-spacing);
+    text-transform: var(--control-text-transform);
+
+    /* 눌림 — mira: active:not-aria-[haspopup]:translate-y-px. 줄어드는 것이 아니라
+       1px 내려앉는다. 메뉴를 여는 버튼(aria-haspopup)은 눌린 채로 머무르므로 뺀다. */
+    &:active:not([aria-haspopup]) {
+        translate: 0 var(--control-press-offset);
+    }
+}
+
+/* --------------------------------------------------------
+   variant — 색과 표면
+   -------------------------------------------------------- */
+
+.cn-button-variant-default {
+    background-color: var(--primary);
+    background-image: var(--surface-primary);
+    border-color: var(--primary-border, transparent);
+    box-shadow: var(--shadow-control-primary);
+    color: var(--primary-foreground);
+
+    &:hover {
+        background-color: var(--primary-hover, color-mix(in oklab, var(--primary) 80%, transparent));
+    }
+}
+
+.cn-button-variant-secondary {
+    background-color: var(--secondary);
+    background-image: var(--surface-control);
+    border-color: var(--button-secondary-border, transparent);
+    box-shadow: var(--shadow-control);
+    color: var(--secondary-foreground);
+    font-weight: var(--control-font-weight-regular);
+
+    &:hover {
+        background-color: var(--secondary-hover, color-mix(in oklab, var(--secondary) 95%, var(--foreground)));
+    }
+}
+
+/* mira: border-border dark:bg-input/30 hover:bg-input/50 hover:text-foreground
+         aria-expanded:bg-muted aria-expanded:text-foreground
+   바탕은 밝은 쪽이 없고 어두운 쪽만 input/30 인데, 다크 값은 1층이 갖는 규칙이라
+   --input-fill 하나로 읽는다(밝은 쪽 값 input/20 은 흰 바탕과 거의 같다).
+   hover 는 테두리를 진하게 하는 것이 아니라 바탕을 채운다. 글자색은 바탕(foreground)을
+   그대로 물려받는다 — 종전의 --muted-foreground 는 nova 에도 mira 에도 없는 규칙이었다. */
+.cn-button-variant-outline {
+    background-color: var(--button-outline-fill);
+    background-image: var(--surface-control);
+    border-color: var(--button-outline-border, var(--border));
+    box-shadow: var(--shadow-control);
+    font-weight: var(--control-font-weight-regular);
+
+    &:hover {
+        background-color: var(--button-outline-hover-fill, var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent)));
+        color: var(--foreground);
+    }
+
+    &[aria-expanded="true"] {
+        background-color: var(--muted);
+        color: var(--foreground);
+    }
+}
+
+/* mira: hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted
+   hover 는 어두운 쪽에서만 반투명해진다(--ghost-hover). 열린 메뉴(aria-expanded)는 두 모드 모두 --muted 다. */
+.cn-button-variant-ghost {
+    color: var(--button-ghost-foreground);
+    font-weight: var(--control-font-weight-regular);
+
+    &:hover {
+        background-color: var(--ghost-hover);
+        color: var(--foreground);
+    }
+
+    &[aria-expanded="true"] {
+        background-color: var(--muted);
+        color: var(--foreground);
+    }
+}
+
+.cn-button-variant-destructive {
+    background-color: var(--destructive-soft);
+    color: var(--destructive);
+
+    &:hover {
+        background-color: var(--destructive-soft-hover);
+    }
+}
+
+.cn-button-variant-link {
+    color: var(--link);
+    text-underline-offset: 4px;
+
+    &:hover {
+        text-decoration-line: underline;
+    }
+}
+
+/* 눌림 — 솟은 그림자가 안으로 꺼진다(--shadow-control-pressed; foundation 은 none). 포커스 · 검증 실패 링은 _control-family 가 더 먼저
+   선언하지만 같은 명시도라, 누르는 동안에는 이 그림자가 이긴다. */
+.cn-button-variant-default,
+.cn-button-variant-outline,
+.cn-button-variant-secondary {
+    &:active {
+        box-shadow: var(--shadow-control-pressed);
+    }
+}
+
+/* 모양 — <Button data-shape="round|pill">. The attribute only sets --button-shape-radius, which the
+   radius declarations above read with the size radius as fallback. Foundation slot values are `initial`, so
+   foundation buttons keep their size radius (mira has no shapes); a system gives the shapes a radius. */
+.cn-button[data-shape="round"] {
+    --button-shape-radius: var(--button-round-radius);
+}
+
+.cn-button[data-shape="pill"] {
+    --button-shape-radius: var(--button-pill-radius);
+}
+
+/* --------------------------------------------------------
+   size — 밀도
+   높이가 정본이고 세로 패딩은 두지 않는다. 세로 가운데 정렬은
+   컴포넌트의 items-center 가 이미 담당하므로, 높이 하나로 결정된다.
+   -------------------------------------------------------- */
+
+/* xs 만 모서리가 한 단 작다. mira: rounded-sm */
+.cn-button-size-xs {
+    min-height: var(--control-height-xs);
+    padding-inline: var(--control-padding-x-xs);
+    gap: var(--control-gap-xs);
+    border-radius: var(--button-shape-radius, var(--control-radius-xs));
+    font-size: var(--control-font-size-xs);
+    line-height: var(--control-line-height-xs);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-xs);
+        height: var(--control-icon-size-xs);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-xs); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-xs); }
+}
+
+.cn-button-size-sm {
+    min-height: var(--control-height-sm);
+    padding-inline: var(--control-padding-x-sm);
+    gap: var(--control-gap-sm);
+    border-radius: var(--button-shape-radius, var(--control-radius-sm));
+    font-size: var(--control-font-size-sm);
+    line-height: var(--control-line-height-sm);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-sm);
+        height: var(--control-icon-size-sm);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-sm); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-sm); }
+}
+
+.cn-button-size-default {
+    min-height: var(--control-height-md);
+    padding-inline: var(--control-padding-x-md);
+    gap: var(--control-gap-md);
+    font-size: var(--control-font-size-md);
+    line-height: var(--control-line-height-md);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    &:has([data-icon="inline-start"]) {
+        padding-inline-start: var(--button-icon-start-padding-start-md);
+        padding-inline-end: var(--button-icon-start-padding-end-md);
+    }
+
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-md); }
+}
+
+.cn-button-size-lg {
+    min-height: var(--control-height-lg);
+    padding-inline: var(--control-padding-x-lg);
+    gap: var(--control-gap-lg);
+    font-size: var(--control-font-size-lg);
+    line-height: var(--control-line-height-lg);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-lg); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-lg); }
+}
+
+/* 아이콘 전용 — 정사각이므로 높이 토큰을 너비에도 쓴다.
+   별도의 square 토큰을 두지 않는 이유는, 두 값이 갈리는 순간
+   아이콘 버튼만 라벨 버튼과 높이가 어긋나기 때문이다. */
+
+/* xs 만 모서리가 한 단 작다. mira: size-5 rounded-sm */
+.cn-button-size-icon-xs {
+    width: var(--control-height-xs);
+    height: var(--control-height-xs);
+    padding-inline: 0;
+    border-radius: var(--button-shape-radius, var(--control-radius-xs));
+
+    & svg:not([class*="size-"]) { width: var(--control-icon-size-xs); height: var(--control-icon-size-xs); }
+}
+
+.cn-button-size-icon-sm {
+    width: var(--control-height-sm);
+    height: var(--control-height-sm);
+    padding-inline: 0;
+    border-radius: var(--button-shape-radius, var(--control-radius-sm));
+
+    & svg:not([class*="size-"]) { width: var(--control-icon-button-icon-size-sm); height: var(--control-icon-button-icon-size-sm); }
+}
+
+/* 라벨 버튼 높이와 갈라 둔 아이콘 버튼 축을 읽는다(tokens.css; foundation 은 같은 값). */
+.cn-button-size-icon {
+    width: var(--control-icon-button-size-md);
+    height: var(--control-icon-button-size-md);
+    padding-inline: 0;
+
+    & svg:not([class*="size-"]) { width: var(--control-icon-button-icon-size-md); height: var(--control-icon-button-icon-size-md); }
+}
+
+.cn-button-size-icon-lg {
+    width: var(--control-height-lg);
+    height: var(--control-height-lg);
+    padding-inline: 0;
+
+    & svg:not([class*="size-"]) { width: var(--control-icon-size-lg); height: var(--control-icon-size-lg); }
+}

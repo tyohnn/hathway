@@ -1,0 +1,97 @@
+/* ============================================================
+   tyohnn foundation — 3층: 스타일 규칙 배럴
+   ------------------------------------------------------------
+   shadcn 의 style-nova.css 와 같은 자리에 있는 파일이다.
+   업스트림은 62개 컴포넌트를 1,700줄짜리 한 파일에 담지만,
+   여기서는 컴포넌트마다 파일을 나눈다. 사람이 읽고 리뷰하는 문서이기 때문이다.
+
+   ⚠ 이 파일은 base 레이어로 읽혀야 한다.
+      앱이 `@import "<system>/styles/style.css" layer(base);` 로 불러오며,
+      그래야 호출부가 className 으로 준 유틸리티가 여기를 이길 수 있다.
+
+   ⚠ 밑줄로 시작하는 파일은 여러 컴포넌트가 공유하는 규칙이라 **먼저** 읽어야 한다.
+      컴포넌트별 파일이 그 뒤에 와야 개별 예외가 공용 규칙을 이길 수 있다.
+
+   토큰화 상태 — 2026-09-05 로 전 파일이 2층 토큰을 참조하는 정본 형태다.
+   계열 파일이 값을 갖고, 컴포넌트별 파일은 그 계열에 없는 것만 갖는다.
+
+     _control-family + button · input · textarea · select 트리거 ·
+                       native-select · checkbox · radio-group · switch ·
+                       toggle · toggle-group
+     _menu-family    + dropdown-menu · context-menu · menubar · command ·
+                       combobox
+     _surface-family + dialog · alert-dialog · sheet · drawer ·
+                       popover · hover-card · tooltip
+     단독            + 나머지 전부
+
+   ⚠ 토큰이 거의 없는 파일 넷(carousel · message-scroller · scroll-area ·
+      toast)은 미완이 아니다. 쥘 것이 없거나(값이 컴포넌트 유틸리티에
+      박혀 base 레이어가 못 이긴다) 축에 걸치지 않는 값 하나뿐이다.
+      각 파일 머리말에 사유가 있으니 "아직 안 한 것"으로 읽지 말 것.
+
+   ⚠ 유틸리티로 남은 값에도 전부 사유가 붙어 있다. 대개 둘 중 하나다 —
+      2층에 그 축이 없거나(폼 세로 리듬 등), 알파 색이라 1층에 대응 토큰이
+      없거나. 축 신설은 별건이므로 여기서 즉흥으로 만들지 말 것.
+   ============================================================ */
+
+@import "./components/_shared.css";
+@import "./components/_control-family.css";
+@import "./components/_menu-family.css";
+@import "./components/_surface-family.css";
+@import "./components/accordion.css";
+@import "./components/alert-dialog.css";
+@import "./components/alert.css";
+@import "./components/attachment.css";
+@import "./components/avatar.css";
+@import "./components/badge.css";
+@import "./components/breadcrumb.css";
+@import "./components/bubble.css";
+@import "./components/button-group.css";
+@import "./components/button.css";
+@import "./components/calendar.css";
+@import "./components/card.css";
+@import "./components/carousel.css";
+@import "./components/chart.css";
+@import "./components/checkbox.css";
+@import "./components/combobox.css";
+@import "./components/command.css";
+@import "./components/context-menu.css";
+@import "./components/dialog.css";
+@import "./components/drawer.css";
+@import "./components/dropdown-menu.css";
+@import "./components/empty.css";
+@import "./components/field.css";
+@import "./components/hover-card.css";
+@import "./components/input-group.css";
+@import "./components/input-otp.css";
+@import "./components/input.css";
+@import "./components/item.css";
+@import "./components/kbd.css";
+@import "./components/label.css";
+@import "./components/marker.css";
+@import "./components/menubar.css";
+@import "./components/message-scroller.css";
+@import "./components/message.css";
+@import "./components/native-select.css";
+@import "./components/navigation-menu.css";
+@import "./components/pagination.css";
+@import "./components/popover.css";
+@import "./components/progress.css";
+@import "./components/questionnaire.css";
+@import "./components/radio-group.css";
+@import "./components/resizable.css";
+@import "./components/scroll-area.css";
+@import "./components/select.css";
+@import "./components/separator.css";
+@import "./components/sheet.css";
+@import "./components/sidebar.css";
+@import "./components/skeleton.css";
+@import "./components/slider.css";
+@import "./components/switch.css";
+@import "./components/table.css";
+@import "./components/tabs.css";
+@import "./components/textarea.css";
+@import "./components/toast.css";
+@import "./components/toggle-group.css";
+@import "./components/toggle.css";
+@import "./components/tooltip.css";

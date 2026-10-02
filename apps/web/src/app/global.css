@@ -1,0 +1,163 @@
+/* tyohnn:begin system */
+/* Design system graphite (tyohnn). One system per app; this order is the cascade contract: tailwindcss → layer 1
+   globals → layer 1 theme colours → layer 2 tokens → typeset → layer 3 rules in layer(base), so className utilities still win. */
+@import "tailwindcss";
+@import "@investment/ui/systems/graphite/globals.css";
+@import "@investment/ui/systems/graphite/theme.css";
+@import "@investment/ui/systems/graphite/tokens.css";
+@import "@investment/ui/systems/graphite/typeset.css";
+@import "@investment/ui/systems/graphite/typeset-preset.css";
+@import "@investment/ui/systems/graphite/style.css" layer(base);
+/* tyohnn:end system */
+
+/* 우리 것이다. 시스템 축에 속하지 않는 제품 토큰이고, tyohnn 블록 뒤에서 읽혀 시스템 토큰을 덮는다. */
+@import "@investment/ui/product.css";
+@import 'katex/dist/katex.min.css';
+
+/* tyohnn:begin theme */
+/* Tailwind does not scan workspace packages by itself; the system folders hold CSS, not class names. */
+@source "../../../../packages/ui/src";
+@source not "../../../../packages/ui/src/systems";
+
+/* Font stacks on the next/font variables of the root layout (next/font registers its own family names). */
+:root {
+    --font-sans: var(--font-sans-pretendard), ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", var(--font-sans-pretendard), monospace;
+}
+/* tyohnn:end theme */
+
+/* ⚠ Tailwind 는 여기 적힌 곳만 훑어 유틸리티를 만든다. 블록 층을 빠뜨리면 클래스가 생성되지 않아 블록이 스타일 없이
+   렌더된다. 오류가 나지 않아 증상이 조용하다. CLI 는 tyohnn 블록 사이만 다시 쓰므로 packages/blocks 는 여기에 적는다. */
+@source "../../../../packages/blocks/src";
+
+/*
+ * 이 파일은 진입점이다. 3층 CSS 의 실체는 `@investment/ui/systems/<system>` 이 갖고, 위 `tyohnn:*` 블록은
+ * tyohnn CLI 가 다시 쓴다. 손으로 고치지 않고 `tyohnn use <system>` · `tyohnn theme <name>` 으로 바꾼다.
+ * 블록 밖은 우리 것이다. 아래에는 이 앱의 화면에만 있는 규칙을 둔다.
+ */
+
+/*
+ * 교재 본문(`/book`)의 조판 프리셋.
+ *
+ * 규칙과 글꼴 연결과 한글 줄바꿈(`keep-all`)은 시스템의 typeset 이 준다. 여기서는 교재가 고른 크기와
+ * 줄 간격만 건다(값은 product.css). 시스템 프리셋이 `@layer components` 안에 있고 이 규칙은 레이어 밖이라
+ * 이쪽이 이긴다.
+ */
+.typeset.typeset-notes {
+    --typeset-size: var(--typeset-notes-size);
+    --typeset-leading: var(--typeset-notes-leading);
+    --typeset-flow: var(--typeset-notes-flow);
+}
+
+/*
+ * GFM footnotes (교재 구루·원전 인용).
+ *
+ * typeset styles the footnote section and `sup a`, but keeps the UA's
+ * `sup { line-height: 0 }`, which collapses the anchor's hit box — the number
+ * looks present but isn't clickable. Give the mark a real box, and enough
+ * scroll-margin that jumping to it clears the sticky reader header.
+ */
+.typeset a[data-footnote-ref] {
+    display: inline-block;
+    min-width: 1.1em;
+    padding: 0 0.2em;
+    margin-inline-start: 0.15em;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.typeset a[data-footnote-ref]:hover {
+    text-decoration: underline;
+}
+
+.typeset [id^='user-content-fn-'],
+.typeset a[data-footnote-ref] {
+    scroll-margin-top: 6rem;
+}
+
+/* remark-rehype marks the footnote label sr-only; textbook readers want it. */
+.typeset .typeset-footnote-label {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+/* Headings are anchor targets from the chapter TOC — clear the sticky header. */
+.typeset :is(h1, h2, h3, h4)[id] {
+    scroll-margin-top: 6rem;
+}
+
+/*
+ * Book text measure, with an escape hatch.
+ *
+ * Prose is held to typeset's recommended ~37em so a line stays readable,
+ * but the 교재's charts and wide tables need more room than a book column. A
+ * full-bleed grid gives both: children default to the `measure` column, and
+ * anything marked `.book-bleed` spans the page's full width instead.
+ *
+ * `.book-contents` (the typeset container) is `display: contents` so the
+ * compiled Markdown runs become grid items of the page itself — that's what
+ * lets a chart break the measure while the chapter opener above it stays
+ * aligned with the body text.
+ */
+.book-flow {
+    display: grid;
+    grid-template-columns:
+        [full-start] minmax(0, 1fr)
+        [measure-start] min(37em, 100%) [measure-end]
+        minmax(0, 1fr) [full-end];
+    align-content: start;
+}
+
+.book-contents {
+    display: contents;
+}
+
+.book-flow > *,
+.book-flow > .book-contents > * {
+    grid-column: measure;
+    min-width: 0;
+}
+
+.book-flow > .book-bleed,
+.book-flow > .book-contents > .book-bleed {
+    grid-column: full;
+}
+
+.research-grid .react-grid-item.react-grid-placeholder {
+    background: var(--primary);
+    opacity: 0.18;
+    border-radius: var(--radius);
+}
+
+.research-grid .react-grid-item > .react-resizable-handle::after {
+    border-color: var(--muted-foreground);
+}
+
+.research-grid-outer > .react-grid-item {
+    overflow: visible;
+}
+
+.research-grid-outer > .react-grid-item > * {
+    height: 100%;
+}
+
+.research-flow {
+    background: var(--background);
+}
+
+.research-flow .react-flow__node-groupSlide {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.research-flow .react-flow__attribution {
+    display: none;
+}

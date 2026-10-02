@@ -1,0 +1,65 @@
+/* ============================================================
+   3층 — calendar 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 날짜 칸의 크기·모서리는 react-day-picker 가 읽는 지역 변수
+      (--cell-size · --cell-radius)로 여기서 한 번만 정한다. 크기 24px 은
+      --control-height-sm 과 같기는 해도 우연이라 축에 붙이지 않는다. 달력 칸은
+      손으로 누르는 컨트롤의 높이 축을 따라야 할 물건이 아니라 7×6 격자의 한 칸이고,
+      컨트롤 축을 키우면 달력만 격자가 깨진다. 모서리는 mira 의 --radius-md(8) 인데
+      그 변수는 @theme inline 이라 순수 CSS 가 읽을 수 없어 같은 값인 --control-radius 를 읽는다.
+   ============================================================ */
+
+/* mira: p-3 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(6)]
+   ⚠ 안쪽 여백 12px 은 리터럴이다. 면 축(10·16·24)의 어느 단에도 없다. */
+.cn-calendar {
+    padding: 12px;
+    --cell-radius: var(--control-radius);
+    --cell-size: 24px;
+
+    /* 물려받은 행간을 비율로 바꿔 아래로 넘긴다. 자기 줄상자는 그대로다(1lh 는 부모의 행간, 1em 은
+       물려받은 글자 크기). 1층의 행간 축이 px 이라 그대로 물려주면 글자 크기가 다른 자손(요일
+       0.8rem)이 부모의 px 를 받지만, upstream 은 text-xs 같은 유틸리티가 비율을 남겨 자손이 제 크기에
+       그 비율을 곱한다 — 사이드바 안의 요일 칸이 그래서 12.8 × 16/12 = 17.07px 이다.
+       ⚠ 길이끼리 나누는 calc 를 못 읽는 브라우저는 이 줄을 버리고 px 를 물려받는다(1px 안팎). */
+    line-height: calc(1lh / 1em);
+}
+
+/* 연·월 고르는 셀렉트. 링은 _control-family.css 와 같은 한 겹(ring-2 ring-ring/30)이다 —
+   달력 머리에 홀로 서 있어 옆을 지울 걱정이 없다.
+   mira: has-focus:border-ring border-input border has-focus:ring-2 */
+.cn-calendar-dropdown-root {
+    border: var(--control-border-width) solid var(--input);
+
+    &:has(:focus) {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}
+
+/* 요일 머리글과 주 번호. 둘 다 2026-09-06 에 TSX 의 text-[0.8rem](12.8px)에서
+   ui-text 의 xs 로 옮겼다. 0.8rem 은 어느 축에도 없는 임의값이라 Figma 가
+   그 자리만 숫자로 들고 있었고, 코드와 대조할 수단이 없었다.
+   ⚠ 그때 cn-calendar-weekday · cn-calendar-week-number 두 이름을 새로 붙였다.
+      react-day-picker 의 슬롯에는 업스트림 클래스가 없어서 3층이 잡을 자리가
+      아예 없었기 때문이다. */
+.cn-calendar-weekday,
+.cn-calendar-week-number {
+    font-size: var(--ui-text-xs);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-xs);
+}
+
+/* 연·월 셀렉트 위에 보이는 글자 자리. mira: bg-input/20 dark:bg-input/30 h-7 pr-1.5 pl-2
+   ⚠ 28px 과 좌우 8·6px 은 리터럴이다. 달력 머리의 글자 자리라 control 축과 성격이
+      다르다 — 값이 md 와 같은 것은 우연이고, md 를 옮겨도 이 글자 자리는 따라가면 안 된다. */
+.cn-calendar-caption-label {
+    height: 28px;
+    padding-inline-start: 8px;
+    padding-inline-end: 6px;
+    background-color: var(--input-fill);
+}

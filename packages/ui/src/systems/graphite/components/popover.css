@@ -1,0 +1,22 @@
+/* ============================================================
+   3층 — Popover 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   면의 색·모서리·여백·간격·그림자·제목·설명은 전부 _surface-family.css 가 갖는다
+   (mira: flex flex-col gap-4 rounded-lg p-2.5 text-xs shadow-md ring-1 · 헤더 gap-1 ·
+   제목 text-sm font-medium). 폭(w-72)은 컴포넌트 TSX 가 갖는다.
+   그래서 여기 남은 것은 애니메이션뿐이다.
+
+   ⚠ 애니메이션만 @apply 로 남긴다. tw-animate-css 의 키프레임을 손으로 옮겨
+      적으면 값이 아니라 동작을 복제하게 되고, 업스트림이 바뀔 때 조용히 어긋난다.
+   ⚠ 업스트림에 있던 *-aria 규칙은 옮기지 않았다(Base UI 베이스라 미렌더).
+   ============================================================ */
+
+.cn-popover-content {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-popover-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}

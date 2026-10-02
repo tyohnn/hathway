@@ -1,0 +1,62 @@
+/* ============================================================
+   3층 — Toggle Group 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   토글을 여럿 붙여 놓은 것이라 자기 밀도가 없다. 항목은 전부 toggle.css 를
+   읽고, 여기서는 붙였을 때의 모서리와 좌우 패딩만 정한다.
+
+   spacing=0 이면 항목이 서로 맞닿으므로 바깥 두 모서리만 남기고 안쪽은 각지게
+   한다. 좌우 패딩은 mira 대로 붙었을 때 md 단계(8 · 아이콘 쪽 6)로 맞춘다 —
+   default·sm 은 원래 그 값이라 lg(10 · 8)만 좁아진다.
+
+   ⚠ 모서리는 세 슬롯이다(axis contract v5). 묶음 자신은 --toggle-group-joined-radius
+      (foundation 값은 --control-radius 의 별칭), sm 묶음은 --toggle-group-joined-radius-sm,
+      맞닿은 항목의 바깥 모서리는 --toggle-group-item-radius — 뒤의 둘은 앞의 것의 별칭이라
+      지금 값과 같다. mira 의 sm 예외 rounded-[min(var(--radius-md),8px)] 도 8px 로 같은 값이다.
+   ⚠ 좌우 패딩은 v5 의 --toggle-group-item-padding-x 다.
+      foundation 값은 「묶음 안 컨트롤」 축 --control-padding-x-grouped(= md)의 별칭이다.
+   ⚠ 컴포넌트가 갖고 있는 것: flex, w-fit, items-center, 항목 사이 gap,
+      세로 방향 전환, 맞닿는 쪽 테두리 제거(outline 변형).
+   ============================================================ */
+
+.cn-toggle-group {
+    border-radius: var(--toggle-group-joined-radius);
+
+    &[data-size="sm"] {
+        border-radius: var(--toggle-group-joined-radius-sm);
+    }
+}
+
+.cn-toggle-group-item {
+    /* 떨어져 있을 때는 각 항목이 제 모서리를 갖는다. toggle.css 가 이미 준다. */
+
+    /* mira: group-data-[spacing=0]/toggle-group:rounded-none …:px-2 …:has-data-[icon=inline-end]:pr-1.5 …:pl-1.5 */
+    .cn-toggle-group[data-spacing="0"] > & {
+        border-radius: 0;
+        padding-inline: var(--toggle-group-item-padding-x);
+
+        &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-md); }
+        &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-md); }
+    }
+
+    .cn-toggle-group[data-spacing="0"][data-orientation="horizontal"] > &:first-child {
+        border-start-start-radius: var(--toggle-group-item-radius);
+        border-end-start-radius: var(--toggle-group-item-radius);
+    }
+
+    .cn-toggle-group[data-spacing="0"][data-orientation="horizontal"] > &:last-child {
+        border-start-end-radius: var(--toggle-group-item-radius);
+        border-end-end-radius: var(--toggle-group-item-radius);
+    }
+
+    .cn-toggle-group[data-spacing="0"][data-orientation="vertical"] > &:first-child {
+        border-start-start-radius: var(--toggle-group-item-radius);
+        border-start-end-radius: var(--toggle-group-item-radius);
+    }
+
+    .cn-toggle-group[data-spacing="0"][data-orientation="vertical"] > &:last-child {
+        border-end-start-radius: var(--toggle-group-item-radius);
+        border-end-end-radius: var(--toggle-group-item-radius);
+    }
+}

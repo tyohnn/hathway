@@ -1,12 +1,12 @@
-# 숫자로 읽는 주식투자 (Next.js + shadcn)
+# 숫자로 읽는 주식투자 (Next.js + tyohnn)
 
 저장소 루트 `교재/` 마크다운을 **읽는 책**(`/book`)으로 서빙합니다.
 모노레포 앱 위치: `apps/web`.
 
-UI는 shadcn/ui(`radix-mira` 프리셋)이고, 본문 조판은
-[shadcn/typeset](https://ui.shadcn.com/docs/typeset)이 담당합니다 — `app/typeset.css`
-한 장이 `.typeset` 컨테이너 안의 모든 마크다운 결과물을 조판하고,
-`.typeset-notes` 프리셋(`app/global.css`)이 이 책의 글꼴·크기·행간을 정합니다.
+UI 는 `packages/ui` 가 갖는 tyohnn 디자인 시스템(`graphite`, shadcn + Base UI)입니다. 정본은
+`docs/design-system/README.md` 입니다. 본문 조판은 그 시스템의 typeset 이 맡습니다. `.typeset` 컨테이너 안의
+마크다운 결과물을 전부 조판하고, `.typeset-notes` 프리셋(`src/app/global.css`, 값은 `packages/ui/src/product.css`)이
+이 책의 크기와 행간을 정합니다.
 
 ## 개발
 
@@ -49,7 +49,7 @@ pnpm dev
 
 ## 렌더 파이프라인
 
-`lib/book/render.ts`가 remark/rehype로 장 본문을 컴파일합니다
+`src/lib/book/render.ts`가 remark/rehype로 장 본문을 컴파일합니다
 (gfm · math(`$$…$$`만) · katex · slug, 넓은 표는 `.typeset-scroll`로 감쌈).
 본문 안 `@@TEXTBOOK_CHART:<id>@@` 자리표시자는 `<TextbookChart />`로 치환되며,
 차트는 `.book-bleed`로 본문 폭(37em)을 넘어 펼쳐집니다.

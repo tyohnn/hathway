@@ -1,0 +1,60 @@
+/* ============================================================
+   3층 — 공용 클래스(특정 컴포넌트에 속하지 않음) 규칙
+   ------------------------------------------------------------
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ `cn-menu-translucent` 는 메뉴 계열 TSX 가 **무조건** 붙인다
+      (dropdown · context · menubar · combobox · select 의 content·sub-content).
+      그래서 여기 적는 것은 전부 `_menu-family.css` 와 같은 노드를 노린다.
+      2026-09-05 에 실측해 보니 그 겹침이 계열 규칙을 조용히 덮고 있었다.
+
+      · 항목 강조   `**:…-item:focus` 는 `:is(.cn-menu-translucent *)[data-slot$=-item]:focus`
+                    (0,3,0)로 컴파일돼 계열의 `.cn-dropdown-menu-item:focus`(0,2,0)를 이겼다.
+                    계열이 정한 --accent 가 아니라 foreground/10 이 떴다.
+      · 파괴적 항목 `text-accent-foreground!` 가 계열의 --destructive 를 `!important` 로
+                    눌러, **「삭제」 항목이 빨갛지 않았다.** 되돌릴 수 없는 동작에서
+                    위험 신호가 사라지는 것이라 셋 중 제일 나쁘다.
+      · 구분선      `bg-foreground/5` 가 계열의 --border 를 덮었다.
+
+      셋 다 지웠다. 메뉴의 색은 `_menu-family.css` 하나가 정한다 — 그 파일 머리말이
+      "한 화면에 두 언어가 같이 뜨면 어느 쪽이 규칙인지 알 수 없다"고 적어 둔 그대로다.
+      ⚠ 여기에 메뉴 항목·구분선의 색을 다시 넣지 말 것.
+
+   ⚠ 반투명은 **이미 죽어 있다.** `bg-popover/70` 은 계열의 불투명
+      `background-color: var(--popover)` 와 명시도가 같은데(둘 다 0,1,0)
+      `_menu-family.css` 가 뒤에 import 되어 계열이 이긴다. 그래서 면은 불투명하고,
+      뒤에 깔린 `before:backdrop-blur-2xl` 은 **보이지 않는 채로 합성 비용만** 쓴다.
+      지우지 않고 남긴 이유는 "메뉴를 서리유리로 할 것인가"가 값이 아니라 디자인
+      결정이기 때문이다. 서리유리로 갈 거면 계열에서 메뉴 면의 불투명 배경을 빼야 하고,
+      아니라면 여기 `bg-popover/70` 과 `before:*` 를 지워야 한다. 둘 중 하나를 고를 것.
+
+   ⚠ 트리거(`**:…-trigger:…`)는 남겨 두었다. 계열이 트리거의 바탕을 정하지 않아
+      지우면 열린 메뉴바 트리거의 강조가 통째로 사라진다.
+   ============================================================ */
+
+.cn-menu-translucent {
+    @apply animate-none! relative bg-popover/70 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 **:data-[slot$=-trigger]:focus:bg-foreground/10 **:data-[slot$=-trigger]:aria-expanded:bg-foreground/10!;
+}
+
+.cn-menu-translucent-aria {
+    @apply **:data-[slot$=-item]:data-focused:bg-foreground/10;
+}
+
+/* ⚠ `cn-rtl-flip` 은 업스트림에서 **CLI 가 지우는 표식**이다. `components.json` 의
+   `rtl: true` 로 컴포넌트를 받으면 shadcn 이 이 이름을 `rtl:rotate-180` 으로 바꿔
+   적는데, 이 저장소는 `rtl: false` 로 받아 표식이 그대로 남았고 뜻을 정한 규칙도
+   없었다. 그래서 `dir="rtl"` 아래에서 Breadcrumb 구분자·Pagination·Carousel 화살표가
+   ltr 방향을 가리킨 채로 남았다(2026-09-11, 디자인 싱크 채점에서 실측).
+   컴포넌트 원본을 CLI 변환본으로 바꾸는 대신 표식의 뜻을 여기서 한 번 정한다. */
+.cn-rtl-flip {
+    @apply rtl:rotate-180;
+}
+
+/* `cn-font-heading` is the upstream heading marker (card · dialog · sheet · drawer · alert-dialog ·
+   empty · questionnaire titles). shadcn's CLI rewrites it to `font-heading`; this repository keeps
+   the marker and gives it its meaning once: headings read the layer-1 --font-heading stack, which
+   is var(--font-sans) when system.json fonts.heading is `inherit`. */
+.cn-font-heading {
+    font-family: var(--font-heading);
+}

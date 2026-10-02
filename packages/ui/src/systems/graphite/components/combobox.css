@@ -1,0 +1,188 @@
+/* ============================================================
+   3층 — combobox 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   면(색·모서리·최소 너비·그림자)과 항목·라벨·구분선·표시자는
+   _menu-family.css 가 갖는다. 2026-09-05 에 합류했고 무엇이 바뀌었는지는
+   그 파일 머리말에 있다.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ⚠ 값을 여기 다시 적으면 계열과 어긋난다. 여기 남기는 것은 애니메이션과,
+      Combobox 에만 있는 것(검색칸·칩·목록 여백)뿐이다.
+   ============================================================ */
+
+/* 면 안의 검색칸(input-group). 면이 테두리를 그리므로 칸의 테두리는 벗기고,
+   높이는 Input 과 같은 control md(mira h-7), 바탕은 채움(bg-input/20)이다.
+   mira: *:data-[slot=input-group]:bg-input/20 …:m-1 …:mb-0 …:h-7 …:border-none …:shadow-none */
+.cn-combobox-content,
+.cn-combobox-content-aria {
+    max-height: var(--menu-list-max-height);
+    overflow: hidden;
+
+    & > [data-slot="input-group"] {
+        margin: var(--menu-padding);
+        margin-block-end: 0;
+        height: var(--control-height-md);
+        border: none;
+        background-color: var(--input-fill);
+        box-shadow: none;
+    }
+}
+
+.cn-combobox-content {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-combobox-content-aria {
+    @apply data-entering:animate-in data-exiting:animate-out data-exiting:fade-out-0 data-entering:fade-in-0 data-exiting:zoom-out-95 data-entering:zoom-in-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-combobox-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}
+
+/* mira: data-highlighted:bg-accent … not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground py-1
+   ⚠ 세로 4px 은 리터럴이다. 항목 높이는 계열이 min-height 로 정하고, 이
+      값은 글줄이 두 줄이 될 때만 드러나는 보정이라 축이 아니다. */
+.cn-combobox-item {
+    padding-block: 4px;
+
+    &[data-highlighted]:not([data-variant="destructive"]) * {
+        color: var(--accent-foreground);
+    }
+}
+
+.cn-combobox-item-aria {
+    &[data-focused] {
+        background-color: var(--accent);
+        color: var(--accent-foreground);
+    }
+
+    &[data-focused]:not([data-variant="destructive"]) * {
+        color: var(--accent-foreground);
+    }
+}
+
+.cn-combobox-item-indicator {
+    pointer-events: none;
+}
+
+.cn-combobox-item-text {
+    display: flex;
+    flex: 1;
+    gap: var(--menu-item-gap);
+}
+
+.cn-combobox-empty {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    color: var(--muted-foreground);
+    @apply hidden w-full justify-center py-2 text-center group-data-empty/combobox-content:flex;
+}
+
+/* 여백을 면이 아니라 이 목록이 갖는다 — 위 검색칸이 면 안에 함께 있어서다. */
+.cn-combobox-list {
+    padding: var(--menu-padding);
+    @apply no-scrollbar max-h-[min(calc(--spacing(72)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto data-empty:p-0;
+}
+
+/* mira: [&_svg:not([class*='size-'])]:size-3.5 */
+.cn-combobox-trigger {
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}
+
+.cn-combobox-trigger-icon {
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+    color: var(--muted-foreground);
+}
+
+/* 칩이 여러 줄로 쌓이는 입력칸. 링은 _control-family.css 와 같은 2중
+   그림자다 — 폼에서 홀로 서는 컨트롤이라 옆을 지울 걱정이 없다.
+   mira: bg-input/20 dark:bg-input/30 border-input flex min-h-7 flex-wrap items-center gap-1
+         rounded-md border bg-clip-padding px-2 py-0.5 text-xs/relaxed transition-colors
+         has-data-[slot=combobox-chip]:px-1
+   최소 높이는 Input 과 같은 control md 다. 칩이 한 줄이면 Input 과 같은 높이로 선다.
+   ⚠ 세로 2px 과 칩이 있을 때의 좌우 4px 은 리터럴이다. 칩을 담는 통 안의 보정이라 축이 없다. */
+.cn-combobox-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--control-gap-md);
+    min-height: var(--control-height-md);
+    padding-inline: var(--control-padding-x-md);
+    padding-block: 2px;
+
+    border: var(--control-border-width) solid var(--input);
+    border-radius: var(--control-radius);
+    background-color: var(--input-fill);
+    background-clip: padding-box;
+    font-size: var(--control-font-size-md);
+    line-height: var(--control-line-height-md);
+
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    &:has([data-slot="combobox-chip"]) {
+        padding-inline: 4px;
+    }
+
+    /* mira: focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 */
+    &:focus-within {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+
+    /* 검증 실패는 포커스와 무관하게 늘 그리고, 포커스보다 뒤에 두어 이긴다.
+       mira: has-aria-invalid:border-destructive dark:…/50 has-aria-invalid:ring-2 ring-destructive/20 dark:…/40 */
+    &:has([aria-invalid="true"]) {
+        border-color: var(--border-invalid);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+    }
+}
+
+/* mira: bg-muted-foreground/10 text-foreground flex h-[calc(--spacing(4.75))] w-fit items-center
+         justify-center gap-1 rounded-[calc(var(--radius-sm)-2px)] px-1.5 text-xs/relaxed font-medium
+         whitespace-nowrap has-data-[slot=combobox-chip-remove]:pr-0
+   ⚠ 19px 높이 · 4px 모서리 · 좌우 6px · 간격 4px 은 리터럴이다. 입력칸 안에 들어앉는
+      조각이라 위 통을 기준으로 정해져 있고, 모서리가 --control-indicator-radius(4px)와
+      같은 것은 우연이다 — 체크박스 모서리를 바꾼다고 칩이 따라가면 안 된다. */
+.cn-combobox-chip {
+    display: flex;
+    width: fit-content;
+    height: 19px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 4px;
+    padding-inline: 6px;
+    /* v4: 칩의 바탕은 --combobox-chip-fill 이다(기본값이 1층의 --chip). */
+    background-color: var(--combobox-chip-fill, var(--chip, color-mix(in oklab, var(--muted-foreground) 10%, transparent)));
+    color: var(--foreground);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    font-weight: var(--ui-font-weight);
+    white-space: nowrap;
+
+    &:has([data-slot="combobox-chip-remove"]) {
+        padding-inline-end: 0;
+    }
+}
+
+/* mira: -ml-1 opacity-50 hover:opacity-100 */
+.cn-combobox-chip-remove {
+    margin-inline-start: -4px;
+    opacity: 0.5;
+
+    &:hover {
+        opacity: 1;
+    }
+}

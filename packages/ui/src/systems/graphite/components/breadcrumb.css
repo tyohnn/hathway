@@ -1,0 +1,59 @@
+/* ============================================================
+   3층 — breadcrumb 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: 목록 gap-1.5 text-xs/relaxed muted · 항목 gap-1 · 링크 hover:text-foreground ·
+         현재 자리 text-foreground font-normal · 구분자 svg size-3.5 · 접힘 표시 size-4, svg size-3.5.
+         구분자에 따로 색을 주지 않는다 — 경로 글자색을 그대로 물려받는다.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ============================================================ */
+
+/* ⚠ 6px 간격은 리터럴이다. control 축의 gap 은 4 하나뿐이고 mira 의 gap-1.5 는 그 사이 값이다. */
+.cn-breadcrumb-list {
+    gap: 6px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    color: var(--muted-foreground);
+}
+
+.cn-breadcrumb-item {
+    gap: var(--control-gap-xs);
+}
+
+.cn-breadcrumb-link {
+    transition-property: color;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    &:hover {
+        color: var(--foreground);
+    }
+}
+
+/* 지금 있는 자리는 링크가 아니다. 굵기를 올리지 않고 색만 진하게 한다 —
+   경로에서 굵은 글자가 하나 있으면 그것이 제목처럼 읽힌다. */
+.cn-breadcrumb-page {
+    color: var(--foreground);
+    font-weight: 400;
+}
+
+/* 구분자와 접힘 표시의 아이콘은 컨트롤의 md 아이콘(14)과 같은 단이다. mira: [&>svg]:size-3.5 */
+.cn-breadcrumb-separator > svg {
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+}
+
+/* ⚠ 16px 은 리터럴이다. 접힘 표시(…)의 상자라 lg 아이콘(16)과 값만 같고 아이콘이 아니다. */
+.cn-breadcrumb-ellipsis {
+    width: 16px;
+    height: 16px;
+
+    & > svg {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}

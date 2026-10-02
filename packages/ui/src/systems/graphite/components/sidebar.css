@@ -1,0 +1,453 @@
+/* ============================================================
+   3층 — sidebar 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Axis slots (foundation values = mira): --sidebar-item-height-active · --sidebar-item-font-size ·
+   --sidebar-item-line-height · --sidebar-badge-* · --sidebar-group-label-* · --shadow-raised (active item
+   and badge; foundation none) · --sidebar-badge-foreground (layer 1).
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 사이드바는 색 계통이 따로다(--sidebar · --sidebar-border ·
+      --sidebar-accent · --sidebar-ring …). 본문과 다른 판이라 1층이 계통을
+      나눠 두었으니, 여기서 --background·--border·--accent 로 바꾸지 말 것 —
+      바꾸면 사이드바가 본문과 같은 색이 되어 경계가 사라진다.
+
+   mira 의 사이드바
+     · 항목    menu-button h-8 · p-2 · gap-2 · rounded-[calc(var(--radius-sm)+2px)](8) · text-xs ·
+               [&_svg]:size-4 · 평소 400 이고 data-active 에서만 font-medium ·
+               sm h-7 · lg h-12 · 접힌 모드(collapsible=icon)는 size-8 p-2 의 정사각.
+     · 부속    menu-action w-5 aspect-square · rounded-[calc(var(--radius-sm)-2px)](4) · right-1 ·
+               top 은 행 크기별(default 6 · sm 4 · lg 10) · badge 도 같은 자리, h-5 min-w-5 px-1.
+     · 하위    menu-sub mx-3.5 px-2.5 py-0.5 gap-1 border-l · sub-button h-7 px-2 gap-2 rounded-md,
+               svg size-4 · 굵기 없음.
+     · 묶음    group px-2 py-1 · group-label h-8 rounded-md px-2 text-xs text-sidebar-foreground/70
+               (font-medium 없음), svg size-4 · group-action w-5 rounded-md · menu gap-px ·
+               group-content text-xs.
+     · 판      floating 변형 rounded-lg ring-1 ring-sidebar-border shadow-sm ·
+               inset 본문 rounded-xl shadow-sm · 검색칸 h-8 bg-muted/20 border-input ·
+               separator mx-2 · header · footer gap-2 p-2.
+
+   값은 2층의 sidebar-item 축(--sidebar-item-*)이 갖는다. 항목 · 그룹 라벨 · 부속 · 하위
+   항목이 전부 그 축을 읽는다 — mira 에서 넷이 같은 h-8 · p-2 · size-4 를 쓰기 때문이다.
+   헤더 · 푸터 · 그룹의 8px 여백만 menu 축(--menu-item-padding-x · --menu-padding)을 읽는다.
+
+   ⚠ 포커스 링은 --sidebar-ring 한 겹이다. 계열의 30% 링과 달리 사이드바는 mira 도 불투명 링이다.
+      항목이 세로로 빽빽이 붙어 있어 간격 겹(바탕색)이 위아래 항목을 지운다.
+      OTP 칸과 같은 이유이며, 두께만은 --focus-ring-width 를 읽어 굵기가
+      갈리지 않게 했다. 색은 --sidebar-ring 이다(mira: focus-visible:ring-2 ring-sidebar-ring).
+
+   ⚠ mira 에 없는 것 하나를 1층의 결정으로 남긴다 — 항목 아이콘의 색 --sidebar-icon.
+      mira 는 아이콘이 글자색을 그대로 물려받지만, globals.css 가 그룹 라벨의
+      text-sidebar-foreground/70 을 --sidebar-icon 으로 풀면서 「아이콘도 그 단으로 둔다」고
+      정했다. hover · 선택에서는 행의 색을 따라간다.
+
+   ⚠ h-7(28) · h-12(48) · h-4(16) · right-1(4) · lg 의 top-2.5(10) 는 리터럴이다. sidebar-item
+      축은 기본 행(32)만 갖고, control 축(20·24·28·32)은 손으로 누르는 컨트롤의 축이라
+      목록 행이 읽을 이유가 없다.
+   ============================================================ */
+
+.cn-sidebar-gap {
+    @apply transition-[width] duration-200 ease-linear;
+}
+
+/* 떠 있는 변형은 판 전체가 하나의 면이라 surface 축의 모서리(rounded-lg)를 읽고,
+   테두리는 다른 면과 같이 안쪽 링으로 그린다. 그림자는 mira 의 shadow-sm(--shadow-chip). */
+.cn-sidebar-inner {
+    background-color: var(--sidebar);
+
+    .group[data-variant="floating"] & {
+        border-radius: var(--surface-radius);
+        box-shadow:
+            0 0 0 var(--surface-border-width) var(--sidebar-border),
+            var(--shadow-chip);
+    }
+}
+
+.cn-sidebar-rail {
+    @apply hover:after:bg-sidebar-border;
+}
+
+/* inset 변형의 본문은 카드처럼 떠 보이는 큰 판이라 surface 축의 큰 모서리(rounded-xl)를
+   읽는다. 여백(m-2 · ml-0 · 접혔을 때 ml-2)과 md 분기는 유틸리티로 남긴다 — peer 선택자와
+   미디어 쿼리를 손으로 옮겨 적으면 업스트림이 규칙을 바꿀 때 조용히 어긋난다. */
+.cn-sidebar-inset {
+    background-color: var(--background);
+    @apply md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-[var(--surface-radius-lg)] md:peer-data-[variant=inset]:shadow-chip md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2;
+}
+
+/* 검색칸. Input 컴포넌트 위에 얹는 예외다 — mira 는 h-8 에 bg-muted/20(1층이 --muted-soft 로
+   푼 단)이고 테두리는 --input 이다. 사이드바 안에서 인풋(h-7)보다 한 단 크다. */
+.cn-sidebar-input {
+    height: var(--sidebar-input-height);
+    /* mira: bg-muted/20 dark:bg-muted/30 border-input */
+    background-color: var(--sidebar-input-fill);
+    border-color: var(--input);
+    @apply w-full;
+}
+
+.cn-sidebar-header,
+.cn-sidebar-footer {
+    gap: var(--sidebar-surface-gap);
+    padding: var(--sidebar-surface-padding);
+}
+
+.cn-sidebar-content {
+    @apply no-scrollbar gap-0;
+}
+
+/* ⚠ 세로 여백은 mira 에 없다(mx-2 뿐). 2층의 --sidebar-separator-margin-block 이 그 값을
+   갖고 있어 읽는 자리를 남긴다 — 읽지 않으면 사문 토큰이 된다. 0 으로 두려면 토큰 값을 고칠 것. */
+.cn-sidebar-separator {
+    background-color: var(--sidebar-border);
+    margin-inline: var(--sidebar-separator-margin-inline);
+    margin-block: var(--sidebar-separator-margin-block);
+}
+
+/* mira: px-2 py-1. 세로 4px 은 menu 축의 목록 여백(--menu-padding)과 같은 단이다. */
+.cn-sidebar-group {
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: var(--menu-padding);
+}
+
+.cn-sidebar-menu {
+    gap: var(--sidebar-item-spacing);
+}
+
+.cn-sidebar-group-content {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* 그룹 라벨은 항목과 같은 행(h-8 · px-2 · rounded-md · svg size-4)이라 sidebar-item 축을 읽는다.
+   색은 한 단 옅은 --sidebar-icon(mira: text-sidebar-foreground/70)이고 굵기를 주지 않는다.
+   접힌 모드에서는 제 높이만큼 위로 올려 숨긴다(mira: -mt-8 opacity-0). */
+.cn-sidebar-group-label {
+    height: var(--sidebar-group-label-height);
+    border-radius: var(--sidebar-part-radius);
+    padding-inline: var(--sidebar-group-label-padding-x);
+    color: var(--sidebar-group-label-foreground, color-mix(in oklab, var(--sidebar-foreground) 70%, transparent));
+    font-size: var(--sidebar-group-label-font-size);
+    font-weight: var(--sidebar-group-label-font-weight);
+    letter-spacing: var(--sidebar-group-label-letter-spacing);
+    line-height: var(--sidebar-group-label-line-height);
+    text-transform: var(--sidebar-group-label-text-transform);
+    @apply transition-[margin,opacity] duration-200 ease-linear;
+
+    & > svg {
+        width: var(--sidebar-item-icon-size);
+        height: var(--sidebar-item-icon-size);
+    }
+
+    .group[data-collapsible="icon"] & {
+        margin-top: calc(var(--sidebar-item-height) * -1);
+        opacity: 0;
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--sidebar-ring);
+    }
+}
+
+/* 그룹 라벨 옆의 부속. 항목의 부속(menu-action)과 같은 자리 크기라 그 축을 읽는다.
+   ⚠ top-3.5(14) · right-3(12) 는 유틸리티로 남긴다. 그룹의 여백(8·4)과 라벨 높이에서
+      계산되는 값이 아니라 mira 가 손으로 맞춘 자리다. */
+.cn-sidebar-group-action {
+    width: var(--sidebar-item-action-size);
+    border-radius: var(--sidebar-part-radius);
+    color: var(--sidebar-foreground);
+    @apply absolute top-3.5 right-3 p-0;
+
+    & > svg {
+        width: var(--sidebar-item-action-icon-size);
+        height: var(--sidebar-item-action-icon-size);
+    }
+
+    &:hover {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-accent-foreground);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--sidebar-ring);
+    }
+}
+
+.cn-sidebar-menu-button {
+    border-radius: var(--sidebar-item-radius);
+    padding-block: var(--sidebar-item-padding-y);
+    padding: var(--sidebar-item-padding-x);
+    gap: var(--sidebar-item-gap);
+    color: var(--sidebar-foreground);
+    /* The border is always drawn (width 0 in foundation) so an active border never shifts the label. */
+    border: var(--sidebar-item-border-width) solid var(--sidebar-item-border, var(--border));
+    font-weight: var(--sidebar-item-font-weight-idle);
+    @apply text-left transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8;
+
+    /* 아이콘 크기는 컴포넌트의 `[&_svg]:size-4` 리터럴이 아니라 여기서 정한다.
+       하위 항목(cn-sidebar-menu-sub-button)과 오른쪽 부속(cn-sidebar-menu-action)이
+       같은 방식이라 셋의 자리를 맞춘 것이다.
+       크기는 업스트림의 `[&_svg]` 처럼 자손 svg 전부에 준다 — 팀 전환기의 로고처럼
+       div.size-8 안에 든 글리프도 16 이 된다(sidebar-07 · 10 · 15). 선택자의 구체성은
+       종전의 `& > svg` 와 같다(0,1,1).
+       색은 직계 자식에만 준다. 1층의 결정대로 한 단 옅은 --sidebar-icon 이며(머리말 참조),
+       안에 든 글리프는 제 판(bg-sidebar-primary 의 text-sidebar-primary-foreground 등)의
+       색을 물려받아야 한다. */
+    /* ⚠ 크기만은 !important 다 — 3층에서 유틸리티를 이기는 유일한 예외(DESIGN.md 1절).
+       upstream 의 `[&_svg]:size-4` 는 유틸리티 층에서 (0,1,1) 이라 호출부가 svg 에 붙인 크기
+       유틸리티(달력 목록의 체크 글리프 `size-3`)까지 덮어 16 으로 그린다. 여기는 layer(base) 라
+       그대로 두면 거꾸로 유틸리티에 진다. 이 파일 안의 `@layer utilities` 는 base 안에 중첩되어
+       (base.utilities) 이기지 못하므로 !important 로 그 자리를 잡는다. */
+    & svg {
+        width: var(--sidebar-item-icon-size) !important;
+        height: var(--sidebar-item-icon-size) !important;
+    }
+
+    & > svg {
+        color: var(--sidebar-icon, var(--muted-foreground));
+    }
+
+    /* hover · 눌림 · 열림 — mira: hover:bg-sidebar-accent … data-open:hover:bg-sidebar-accent.
+       아이콘도 행의 색을 따라간다. 위의 `& > svg` 가 상태 블록보다 구체적이라
+       여기서 다시 적지 않으면 배경만 바뀌고 아이콘은 옅은 채로 남는다. */
+    &:hover,
+    &:active,
+    &[data-open]:hover {
+        background-color: var(--sidebar-item-hover-background, var(--sidebar-accent));
+        color: var(--sidebar-accent-foreground);
+
+        & > svg {
+            color: var(--sidebar-accent-foreground);
+        }
+    }
+
+    /* 선택 — mira: data-active:bg-sidebar-accent data-active:font-medium.
+       선택과 hover 가 같은 색이고 선택은 굵기로 갈린다. 1층의 --sidebar-active 는 그 뜻으로
+       --sidebar-accent 와 같은 값을 갖고, 2층의 굵기 축은 활성 항목의 값(500)을 갖는다. */
+    &[data-active] {
+        height: var(--sidebar-item-height-active);
+        background-color: var(--sidebar-active, var(--sidebar-accent));
+        border-color: var(--sidebar-item-active-border, var(--border));
+        box-shadow: var(--shadow-raised);
+        color: var(--sidebar-active-foreground, var(--sidebar-accent-foreground));
+        font-weight: var(--sidebar-item-font-weight);
+
+        & > svg {
+            color: var(--sidebar-active-foreground, var(--sidebar-accent-foreground));
+        }
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--sidebar-ring);
+    }
+
+    /* 접힌 모드에서는 행 높이의 정사각이 되고(mira: size-8! p-2!), 아이콘이 그 한가운데에
+       서도록 여백을 사각과 아이콘의 차이에서 끌어낸다. 아이콘이 16 이면 mira 의 p-2 와 같다.
+       ⚠ lg 행은 mira 가 p-0! 로 왼쪽에 붙이는데 그러면 기둥의 아이콘이 들쭉날쭉해서
+          (2026-09-11 사용자 지적) 세 크기 모두 같은 계산으로 가운데에 둔다.
+          !important 는 mira 의 `!` 와 같은 자리다 — 크기 클래스와 호출부 유틸리티를 이겨야 한다. */
+    .group[data-collapsible="icon"] & {
+        width: var(--sidebar-item-height) !important;
+        height: var(--sidebar-item-height) !important;
+        padding: calc((var(--sidebar-item-height) - var(--sidebar-item-icon-size)) / 2) !important;
+    }
+}
+
+.cn-sidebar-menu-button-aria {
+    &[aria-expanded="true"]:hover {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-accent-foreground);
+    }
+}
+
+.cn-sidebar-menu-button-variant-default {
+    &:hover {
+        background-color: var(--sidebar-item-hover-background, var(--sidebar-accent));
+        color: var(--sidebar-accent-foreground);
+    }
+}
+
+/* 테두리를 box-shadow 로 그린다. 실제 border 를 쓰면 행 높이가 2px 늘어
+   같은 목록의 default 변형과 줄이 어긋난다. mira: shadow-[0_0_0_1px_var(--sidebar-border)] */
+.cn-sidebar-menu-button-variant-outline {
+    background-color: var(--background);
+    box-shadow: 0 0 0 var(--surface-border-width) var(--sidebar-border);
+
+    &:hover {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-accent-foreground);
+        box-shadow: 0 0 0 var(--surface-border-width) var(--sidebar-accent);
+    }
+}
+
+/* 세 크기 모두 text-xs(12/16)다. mira 는 행 크기를 높이로만 가른다. */
+.cn-sidebar-menu-button-size-default {
+    height: var(--sidebar-item-height);
+    font-size: var(--sidebar-item-font-size);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--sidebar-item-line-height);
+}
+
+.cn-sidebar-menu-button-size-sm {
+    height: 28px;
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+.cn-sidebar-menu-button-size-lg {
+    height: 48px;
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* 부속 — 행 오른쪽 끝의 펼침 표시 · 자물쇠. mira: absolute w-5 aspect-square right-1 p-0 ·
+   rounded-[calc(var(--radius-sm)-2px)](4 = 지시자 반경) · [&>svg]:size-4 · top 은 행 크기별.
+
+   ⚠ `top: 50%` 가 아니다. 기준이 되는 상자는 행이 아니라 항목(SidebarMenuItem)이고,
+   그 항목은 하위 목록까지 감싼다. 가운데를 잡으면 하위가 펼쳐진 항목에서 표시가
+   목록 한가운데로 내려가 두 번째 하위 행 옆에 선다(실측). 행의 위에서부터 재야 한다.
+   default(6)와 sm(4)은 행 높이와 부속 크기에서 계산되고, lg 만 mira 의 top-2.5(10) 리터럴이다 —
+   48px 행의 가운데(14)가 아니라 첫 줄에 맞춘 자리다.
+
+   ⚠ right-1(4px)은 리터럴이다. 행의 좌우 여백(8)보다 안쪽으로 4px 더 붙는 자리라 그 축을
+      읽지 않는다. 뱃지도 같은 자리를 쓴다. */
+.cn-sidebar-menu-action {
+    width: var(--sidebar-item-action-size);
+    height: var(--sidebar-item-action-size);
+    inset-inline-end: 4px;
+    top: calc((var(--sidebar-item-height) - var(--sidebar-item-action-size)) / 2);
+    border-radius: var(--control-indicator-radius);
+    color: var(--sidebar-foreground);
+    @apply peer-hover/menu-button:text-sidebar-accent-foreground absolute p-0;
+
+    & > svg {
+        width: var(--sidebar-item-action-icon-size);
+        height: var(--sidebar-item-action-icon-size);
+    }
+
+    &:hover {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-accent-foreground);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--sidebar-ring);
+    }
+
+    .peer\/menu-button[data-size="sm"] ~ & {
+        top: calc((28px - var(--sidebar-item-action-size)) / 2);
+    }
+
+    .peer\/menu-button[data-size="lg"] ~ & {
+        top: 10px;
+    }
+}
+
+/* 뱃지는 부속과 같은 자리에 앉는다. 크기(h-5 min-w-5)도 부속(w-5)과 같은 축이고,
+   세로 자리도 같은 계산이라 행 높이를 고쳤을 때 둘이 어긋나지 않는다. mira: px-1 text-xs font-medium */
+.cn-sidebar-menu-badge {
+    height: var(--sidebar-badge-height);
+    min-width: var(--sidebar-badge-min-width);
+    inset-inline-end: var(--sidebar-badge-inset-end);
+    top: calc((var(--sidebar-item-height) - var(--sidebar-badge-height)) / 2);
+    border-radius: var(--sidebar-badge-radius);
+    padding-inline: var(--sidebar-badge-padding-x);
+    background-color: var(--sidebar-badge-background, transparent);
+    box-shadow: var(--shadow-raised);
+    color: var(--sidebar-badge-foreground, var(--sidebar-foreground));
+    font-size: var(--sidebar-badge-font-size);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--sidebar-badge-line-height);
+    font-weight: var(--sidebar-badge-font-weight);
+    @apply peer-hover/menu-button:text-(color:--sidebar-badge-hover-foreground) peer-data-active/menu-button:text-(color:--sidebar-badge-active-foreground) pointer-events-none absolute flex;
+
+    .peer\/menu-button[data-active] ~ & {
+        top: calc((var(--sidebar-item-height-active) - var(--sidebar-badge-height)) / 2);
+        background-color: var(--sidebar-badge-active-background, transparent);
+    }
+
+    .peer\/menu-button[data-size="sm"] ~ & {
+        top: calc((28px - var(--sidebar-badge-height)) / 2);
+    }
+
+    .peer\/menu-button[data-size="lg"] ~ & {
+        top: 10px;
+    }
+}
+
+.cn-sidebar-menu-skeleton {
+    height: var(--sidebar-item-height);
+    gap: var(--sidebar-item-gap);
+    border-radius: var(--sidebar-part-radius);
+    padding-inline: var(--sidebar-item-padding-x);
+}
+
+.cn-sidebar-menu-skeleton-icon {
+    width: var(--sidebar-item-icon-size);
+    height: var(--sidebar-item-icon-size);
+    border-radius: var(--sidebar-part-radius);
+}
+
+.cn-sidebar-menu-skeleton-text {
+    height: 16px;
+}
+
+/* 하위 목록은 왼쪽 선 하나로 깊이를 나타낸다. 선은 상위 항목 아이콘의 가운데에 서고
+   (--sidebar-sub-rail-offset), 거기서 --sidebar-sub-item-indent 만큼 들어간 자리에 글자가 앉아
+   상위 라벨의 왼쪽과 맞는다. mira 의 mx-3.5 + px-2.5 + 하위 버튼 px-2 (14+10+8 = 32)와 같은 셈이다.
+   하위 버튼이 자기 좌우 여백(--sidebar-item-padding-x)을 가지므로 목록의 안쪽 여백은
+   들여쓰기에서 그만큼을 뺀 값이다 — 그래야 hover 바탕이 글자보다 8px 앞에서 시작한다(mira 와
+   같은 자리). 오른쪽도 같은 값을 비운다(mira 의 mx · px 는 양쪽이다).
+   ⚠ 하위 목록의 항목 간격 4px 과 세로 2px 은 리터럴이다. mira 는 상위 목록(gap-px)과 달리
+      gap-1 py-0.5 를 주고, 2층에 이 단이 없다. */
+.cn-sidebar-menu-sub {
+    border-inline-start: var(--surface-border-width) solid var(--sidebar-border);
+    margin-inline: var(--sidebar-sub-rail-offset);
+    padding-inline: calc(var(--sidebar-sub-item-indent) - var(--sidebar-item-padding-x));
+    padding-block: 2px;
+    gap: 4px;
+    @apply translate-x-px group-data-[collapsible=icon]:hidden;
+}
+
+/* mira: h-7 gap-2 rounded-md px-2 · svg size-4 text-sidebar-accent-foreground ·
+   data-[size=md]:text-xs data-[size=sm]:text-xs · 굵기를 주지 않는다(선택도 색만 바뀐다). */
+.cn-sidebar-menu-sub-button {
+    height: var(--sidebar-sub-item-height);
+    border-radius: var(--sidebar-part-radius);
+    padding-inline: var(--sidebar-item-padding-x);
+    gap: var(--sidebar-item-gap);
+    color: var(--sidebar-foreground);
+
+    & > svg {
+        width: var(--sidebar-item-icon-size);
+        height: var(--sidebar-item-icon-size);
+        color: var(--sidebar-accent-foreground);
+    }
+
+    &[data-size="md"],
+    &[data-size="sm"] {
+        font-size: var(--ui-text-sm);
+        letter-spacing: var(--ui-letter-spacing);
+        line-height: var(--ui-line-height-sm);
+    }
+
+    &:hover,
+    &:active {
+        background-color: var(--sidebar-accent);
+        color: var(--sidebar-accent-foreground);
+    }
+
+    &[data-active] {
+        background-color: var(--sidebar-active, var(--sidebar-accent));
+        color: var(--sidebar-active-foreground, var(--sidebar-accent-foreground));
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--sidebar-ring);
+    }
+}

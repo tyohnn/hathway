@@ -1,0 +1,127 @@
+/* ============================================================
+   3층 — table 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+   Axis slots: --table-row-height · --table-cell-padding-x · --table-checkbox-inset · --table-*-font-size ·
+   --table-*-line-height · --ui-font-weight-regular. Foundation values give the mira table.
+
+   mira: 표 글자 text-xs(12/16) · 머리 h-10 px-2 font-medium · 셀 p-2 ·
+         줄 border-b(--border) · 행 hover bg-muted/50 · 선택 bg-muted ·
+         푸터 bg-muted/50 border-t font-medium · 캡션 mt-4 text-xs.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 줄의 색은 --border 다. 원본 앱은 --border-subtle 로 한 단 옅게 두었는데
+      mira 의 `border-b` 는 그냥 --border 라 되돌렸다. 옅은 줄이 필요하면 여기서
+      토큰 이름만 바꿀 것.
+
+   ⚠ 셀의 좌우 8px 은 menu 축(--menu-item-padding-x)을 읽는다. table 축은 머리 높이와
+      셀 세로 여백만 갖고, 좌우 값은 목록 항목의 px-2 와 같은 단이다.
+   ============================================================ */
+
+.cn-table-container {
+    @apply relative w-full overflow-x-auto;
+}
+
+.cn-table {
+    font-size: var(--table-font-size);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--table-line-height);
+    @apply w-full caption-bottom;
+}
+
+.cn-table-header tr {
+    border-bottom: var(--surface-border-width) solid var(--border);
+}
+
+.cn-table-body tr:last-child {
+    border-bottom: 0;
+}
+
+/* 푸터의 바탕은 mira 의 bg-muted/50 — 1층이 --muted-soft 로 푼 값이다. */
+.cn-table-footer {
+    background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    border-top: var(--surface-border-width) solid var(--border);
+    font-weight: var(--ui-font-weight);
+
+    & > tr:last-child {
+        border-bottom: 0;
+    }
+}
+
+/* hover 는 한 단 옅은 --muted-soft, 선택은 --muted 다. 둘이 한 단 차이라
+   마우스를 올린 행과 고른 행이 구별된다. mira: hover:bg-muted/50 data-[state=selected]:bg-muted */
+.cn-table-row {
+    border-bottom: var(--surface-border-width) solid var(--table-row-divider, var(--border));
+    transition-property: color, background-color;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+
+    &:hover {
+        background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    }
+
+    &[data-state="selected"] {
+        background-color: var(--muted);
+    }
+}
+
+.cn-table-row-aria {
+    &[data-selected] {
+        background-color: var(--muted);
+    }
+}
+
+/* 머리 높이는 표 전용 토큰이다. control 축은 손으로 누르는 컨트롤의 축이라 표 머리가 읽을 이유가 없다.
+   --table-head-height 는 밀도를 바꾸는 쪽(DataTable 블록)이 compact 토큰으로 덮는 간접 변수다. */
+.cn-table-head {
+    height: var(--table-head-height, var(--table-head-height-default));
+    padding-inline: var(--table-cell-padding-x);
+    color: var(--table-head-foreground, var(--foreground));
+    font-size: var(--table-head-font-size);
+    line-height: var(--table-head-line-height);
+    letter-spacing: var(--table-head-letter-spacing);
+    font-weight: var(--ui-font-weight-regular);
+    /* v4: 머리글의 자간과 대소문자는 슬롯이다. foundation 은 mira 그대로(normal · initial). */
+    text-transform: var(--table-head-text-transform);
+    @apply text-left align-middle whitespace-nowrap;
+}
+
+.cn-table-head-aria {
+    @apply [&:has([data-slot=checkbox])]:pr-0;
+}
+
+/* 행 높이는 셀의 높이로 준다(표 셀의 height 는 최소 높이다). 세로 여백 토큰은 내용이 두 줄이 될 때의
+   바닥으로 남는다. */
+.cn-table-cell {
+    height: var(--table-row-height);
+    padding-block: var(--table-cell-padding-y, var(--table-cell-padding-y-default));
+    padding-inline: var(--table-cell-padding-x);
+    @apply align-middle whitespace-nowrap;
+}
+
+/* 체크박스만 든 칸의 왼쪽 여백. foundation 은 셀 여백과 같고 오른쪽은 mira 의 pr-0 이다. */
+.cn-table-head,
+.cn-table-cell {
+    &:has(> [role="checkbox"]) {
+        padding-inline-start: var(--table-checkbox-inset);
+    }
+
+    /* mira: [&:has([role=checkbox])]:pr-0 — any descendant checkbox, physical right padding. */
+    &:has([role="checkbox"]) {
+        padding-right: var(--table-checkbox-inset-end);
+    }
+}
+
+.cn-table-cell-aria {
+    @apply [&:has([data-slot=checkbox])]:pr-0;
+}
+
+.cn-table-caption {
+    margin-top: var(--surface-padding-md);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    color: var(--muted-foreground);
+}

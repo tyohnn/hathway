@@ -1,0 +1,27 @@
+/* ============================================================
+   3층 — Context Menu 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 목록 면·항목·라벨·구분선·단축키는 여기가 아니라 `_menu-family.css` 에 있다.
+      Dropdown Menu · Menubar · Command 과 같은 축을 공유한다.
+
+   하위 목록(`cn-context-menu-sub-content`)은 `ContextMenuContent` 를 감싸므로 면 규칙을
+   물려받고, 그림자만 한 단 깊다(mira: shadow-lg → --menu-sub-shadow).
+   ============================================================ */
+
+.cn-context-menu-content {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+/* mira: shadow-lg — 하위 목록만 부모보다 한 단 깊다.
+   링은 계열 면과 같은 v4 슬롯(--menu-ring)을 읽는다 — 기본값은 --ring-subtle 이다. */
+.cn-context-menu-sub-content {
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--menu-ring, var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent))),
+        var(--menu-sub-shadow);
+}
+
+.cn-context-menu-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}

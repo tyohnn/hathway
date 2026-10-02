@@ -1,0 +1,110 @@
+/* ============================================================
+   3층 — Alert 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Alert 은 떠 있는 면 계열이 아니다. 본문에 눌러앉는 배너라 _surface-family.css
+   에서 빠져 있고, 대신 같은 surface 축을 여기서 직접 읽는다.
+
+   mira: grid gap-0.5 rounded-lg border px-2 py-1.5 text-xs/relaxed ·
+         아이콘이 있으면 grid-cols-[auto_1fr] gap-x-1.5, 아이콘 size-3.5 ·
+         제목 font-medium · 설명 text-xs/relaxed muted · 액션 absolute top-1.5 right-2.
+
+   ⚠ 테두리가 안쪽 링이 아니라 진짜 border 인 것은 의도한 차이다.
+      Card·Dialog 는 다른 면 위에 얹히니 링으로 두께를 숨기지만, Alert 은
+      본문 흐름 안에 서서 "여기부터 여기까지가 경고"를 스스로 그어야 한다.
+
+   ⚠ 컴포넌트가 갖고 있는 것: relative, w-full. display 는 여기서 준다.
+
+   격자로 짜는 이유: 앞머리에 아이콘이 오면 아이콘 한 칸 + 글자 한 칸이 되고,
+   아이콘이 없으면 한 칸짜리가 된다. 그 전환을 :has 로 판정한다.
+   ============================================================ */
+
+.cn-alert {
+    /* 안쪽 여백은 지역 변수다. 오른쪽 위의 액션(cn-alert-action)이 같은 값으로 자리를
+       잡아야 제목과 위가 맞는다.
+       ⚠ 8·6px 은 리터럴이다. surface 축의 sm 여백은 10(popover)이라 배너는 그보다
+          한 단 더 조밀하고, 2층에 그 단이 없다. mira: px-2 py-1.5 */
+    --alert-padding-x: 8px;
+    --alert-padding-y: 6px;
+
+    display: grid;
+    /* ⚠ 제목과 설명 사이 2px 은 리터럴이다. mira 의 gap-0.5 로, surface 축의 gap(4)보다 좁다. */
+    gap: 2px;
+    padding-inline: var(--alert-padding-x);
+    padding-block: var(--alert-padding-y);
+    border: var(--surface-border-width) solid var(--border);
+    border-radius: var(--surface-radius);
+    text-align: start;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    /* 앞머리 아이콘이 있으면 두 칸으로 나뉜다. */
+    &:has(> svg) {
+        grid-template-columns: auto 1fr;
+        column-gap: var(--surface-icon-gap);
+    }
+
+    & > svg {
+        grid-row: span 2;
+        color: currentcolor;
+    }
+
+    & > svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    /* ⚠ 아이콘을 2px 내리는 것과 버튼 자리로 72px 을 비우는 것은 축에 없는
+       광학 보정이다. Alert 한 곳에만 쓰이므로 토큰을 만들지 않았다. */
+    @apply *:[svg]:translate-y-0.5 has-data-[slot=alert-action]:pr-18;
+}
+
+.cn-alert-variant-default {
+    background-color: var(--card);
+    color: var(--card-foreground);
+}
+
+.cn-alert-variant-destructive {
+    background-color: var(--card);
+    color: var(--destructive);
+
+    & > svg {
+        color: currentcolor;
+    }
+
+    /* 설명은 한 단계 흐리게 — 경고문 전체가 붉으면 제목이 묻힌다. */
+    & [data-slot="alert-description"] {
+        color: color-mix(in oklab, var(--destructive) 90%, transparent);
+    }
+}
+
+.cn-alert-title {
+    font-weight: var(--ui-font-weight);
+
+    /* 아이콘이 있으면 제목은 둘째 칸에서 시작한다. */
+    .cn-alert:has(> svg) & {
+        grid-column-start: 2;
+    }
+}
+
+.cn-alert-description {
+    color: var(--muted-foreground);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    @apply text-balance md:text-pretty;
+
+    & p:not(:last-child) {
+        margin-block-end: var(--surface-padding-md);
+    }
+}
+
+/* 액션은 배너의 안쪽 여백과 같은 자리에 앉는다. mira: top-1.5 right-2 */
+.cn-alert-action {
+    position: absolute;
+    inset-block-start: var(--alert-padding-y);
+    inset-inline-end: var(--alert-padding-x);
+}

@@ -1,0 +1,103 @@
+/* ============================================================
+   3층 — attachment 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: rounded-lg(xs 는 rounded-md) · 글자 세 크기 모두 text-xs(12/16) ·
+         default gap-2, 내용 px-2 py-1.5, 미리보기 p-1.5 · sm gap-2.5, px-1.5 py-1, p-1 ·
+         xs gap-1.5, px-1.5 py-1, p-1 · 미리보기 상자 w-10(sm 8 · xs 7) rounded-md(xs rounded-sm) ·
+         설명 mt-0.5 text-xs.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 크기 축(default·sm·xs)의 여백·간격은 유틸리티로 남는다. 값이 8·6·4 로
+      촘촘히 내려가는데 2층에는 이 리듬을 담는 축이 없고, control 축의 패딩
+      (8·8·8·10)과는 방향도 단계도 다르다. 첨부 칩 한 곳에만 쓰이는 값을
+      2층에 올리면 그 축을 바꿀 때 엉뚱한 곳이 함께 움직인다.
+
+   ⚠ 미리보기 상자(cn-attachment-media)의 폭 40·32·28 과 group-* 로 갈라지는
+      아이콘 크기·모서리도 같은 이유로 유틸리티다. 크기 축 세 단계와 방향 축 두
+      가지가 곱해지는 자리라, 축이 아니라 표에 가깝다.
+   ============================================================ */
+
+/* ⚠ 포커스 링이 mira 에서 ring-1 + ring-ring/30 이다 — 1px 을 반투명으로 그려
+   실제로는 거의 보이지 않는다. 링은 mira 대로 한 겹(ring-1 ring-ring/30)이다.
+   칩 사이 간격이 12px 이라 간격 겹이 옆을 지우지 않는다. 값이 다른 것이므로
+   되돌리려면 계열 파일을 함께 볼 것. */
+.cn-attachment {
+    border-radius: var(--surface-radius);
+    @apply w-fit;
+
+    &:focus-within {
+        box-shadow: 0 0 0 1px var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}
+
+.cn-attachment-orientation-horizontal {
+    @apply min-w-40;
+}
+
+.cn-attachment-orientation-vertical {
+    @apply w-24 has-data-[slot=attachment-content]:w-30;
+}
+
+.cn-attachment-size-default {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    @apply gap-2 has-data-[slot=attachment-content]:px-2 has-data-[slot=attachment-content]:py-1.5 has-data-[slot=attachment-media]:p-1.5;
+}
+
+.cn-attachment-size-sm {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    @apply gap-2.5 has-data-[slot=attachment-content]:px-1.5 has-data-[slot=attachment-content]:py-1 has-data-[slot=attachment-media]:p-1;
+}
+
+/* 가장 작은 단계만 모서리를 한 단계 줄인다. mira: rounded-md */
+.cn-attachment-size-xs {
+    border-radius: var(--surface-radius-sm);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    @apply gap-1.5 has-data-[slot=attachment-content]:px-1.5 has-data-[slot=attachment-content]:py-1 has-data-[slot=attachment-media]:p-1;
+}
+
+.cn-attachment-media {
+    background-color: var(--muted);
+    color: var(--foreground);
+    @apply w-10 rounded-md group-data-[size=sm]/attachment:w-8 group-data-[size=xs]/attachment:w-7 group-data-[size=xs]/attachment:rounded-sm [&_svg:not([class*='size-'])]:size-4 group-data-[size=xs]/attachment:[&_svg:not([class*='size-'])]:size-3.5 group-data-[orientation=vertical]/attachment:w-full group-data-[orientation=vertical]/attachment:[&_svg:not([class*='size-'])]:size-6 group-data-[orientation=vertical]/attachment:*:data-[slot=spinner]:size-6!;
+}
+
+.cn-attachment-media-variant-image {
+    @apply opacity-60 group-data-[state=idle]/attachment:opacity-100 group-data-[state=done]/attachment:opacity-100;
+}
+
+.cn-attachment-content {
+    @apply leading-tight group-data-[orientation=vertical]/attachment:px-1;
+}
+
+.cn-attachment-title {
+    font-weight: var(--ui-font-weight);
+}
+
+.cn-attachment-description {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    @apply mt-0.5;
+}
+
+.cn-attachment-actions {
+    @apply group-data-[orientation=vertical]/attachment:absolute group-data-[orientation=vertical]/attachment:top-3 group-data-[orientation=vertical]/attachment:right-3 relative z-20 group-data-[orientation=vertical]/attachment:gap-1;
+}
+
+.cn-attachment-group {
+    @apply gap-3 scroll-px-1 py-1;
+}
+
+.cn-attachment-trigger {
+    @apply absolute inset-0 z-10 outline-none;
+}

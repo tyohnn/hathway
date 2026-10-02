@@ -1,0 +1,27 @@
+{
+    "name": "@investment/market",
+    "version": "0.0.1",
+    "private": true,
+    "//": "적재된 시장 데이터(회사 · 재무 기간 · 공시)를 읽는 도메인. 읽은 행을 접는 순수 규칙과 포트를 둔다. 행의 타입은 @investment/schema 의 계약을 그대로 쓴다.",
+    "exports": {
+        "./domain/*": "./src/domain/*.ts",
+        "./rules/*": "./src/rules/*.ts",
+        "./ports/*": "./src/ports/*.ts",
+        "./testing/*": "./src/testing/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@investment/schema": "workspace:*",
+        "effect": "4.0.0-rc.112"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "@types/node": "^22",
+        "typescript": "^5",
+        "vitest": "^4.1.11"
+    }
+}

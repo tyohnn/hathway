@@ -1,0 +1,63 @@
+/* ============================================================
+   3층 — marker 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: gap-2 text-xs/relaxed muted min-h-4 · svg size-3.5 · 아이콘 상자 size-3.5 ·
+         separator 변형은 양옆 1px 선(bg-border) · border 변형은 border-b pb-2.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ `[a]:` 로 시작하는 것들은 유틸리티로 남긴다. Tailwind 의 임의 변형이
+      만드는 선택자를 손으로 옮겨 적으면 업스트림이 규칙을 바꿀 때 조용히
+      어긋난다 — Popover 의 애니메이션을 남겨 둔 것과 같은 이유다.
+   ============================================================ */
+
+/* ⚠ 8px 간격과 16px 최소 높이는 리터럴이다. control 축의 gap 은 "라벨과
+   아이콘 사이"이고 이쪽은 글줄 사이 표식이라, 값이 같아도 함께 움직여야
+   할 이유가 없다. 아이콘은 컨트롤의 md 아이콘(14)과 같은 단이다. */
+.cn-marker {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    color: var(--muted-foreground);
+    @apply gap-2 min-h-4 text-left [a]:hover:text-foreground [a]:underline-offset-3 [a]:underline;
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}
+
+/* 양옆으로 뻗는 실선. 두께는 구분선과 같은 1px 이지만 separator.css 와
+   마찬가지로 리터럴이다 — 테두리를 굵히는 결정이 여기까지 번지면 안 된다. */
+.cn-marker-variant-separator {
+    &::before,
+    &::after {
+        height: 1px;
+        background-color: var(--border);
+        @apply min-w-0 flex-1;
+    }
+
+    @apply before:mr-1 after:ml-1;
+}
+
+.cn-marker-variant-border {
+    border-bottom: var(--surface-border-width) solid var(--border);
+    @apply pb-2;
+}
+
+.cn-marker-icon {
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}
+
+.cn-marker-content {
+    @apply group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center *:[a]:hover:text-foreground *:[a]:underline *:[a]:underline-offset-3;
+}

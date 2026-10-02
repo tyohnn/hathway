@@ -1,0 +1,255 @@
+/* ============================================================
+   3층 — 떠 있는 면 계열 공용 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Dialog · Alert Dialog · Sheet · Drawer · Popover · Hover Card · Tooltip 은
+   같은 물건이다. 본문 위에 떠서 무언가를 보여 주고, 볼일이 끝나면 사라진다.
+
+   mira 가 주는 것
+     · 막        bg-black/80 · supports-backdrop-filter:backdrop-blur-xs · duration-100
+     · 모달      dialog · alert-dialog 는 rounded-xl p-4 text-xs/relaxed ring-1 ring-foreground/10 ·
+                 헤더 gap-1 · 제목 text-sm font-medium · 설명 text-xs/relaxed ·
+                 푸터는 gap-2 뿐 (nova 의 muted 띠와 위쪽 선이 없다)
+     · 팝오버    popover 는 rounded-lg p-2.5 gap-4 text-xs shadow-md ring-1 · 헤더 gap-1 ·
+                 제목 text-sm font-medium · hover-card 는 rounded-lg p-2.5 text-xs/relaxed shadow-md
+     · 가장자리  sheet · drawer 는 각자 파일이 갖는다(sheet 는 p-6 shadow-lg, drawer 는 안쪽 틀)
+     · 툴팁      inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs
+
+   ⚠ 이 파일이 있는 이유는 드리프트다. 업스트림(base-nova)에서 일곱이 따로
+      적혀 있었고 값이 서로 어긋나 있었다. mira 에서는 반경이 두 단으로 나뉜다 —
+      모달(dialog · alert-dialog · drawer · command)은 rounded-xl, 팝오버 계열은
+      rounded-lg, 툴팁은 rounded-md. 2층의 --surface-radius-lg · --surface-radius ·
+      --surface-radius-sm 가 그 세 단이다.
+      의도된 차이로 남긴 것
+        · sheet·drawer 의 한쪽 border — 화면 가장자리에 붙는 판이라 링이 아니라
+          맞닿는 변에만 선이 필요하다. 방향 규칙은 각 파일에 있다.
+        · tooltip 의 반전색 — 컴포넌트가 bg-foreground 로 직접 준다. 작고 잠깐
+          뜨는 것이라 다른 면과 색을 맞추면 오히려 안 보인다.
+      mira 와 다르게 둔 것
+        · dialog · alert-dialog 의 그림자 — mira 는 링만 있고 그림자가 없다. 80% 막 위라
+          보이지 않는 값이지만 계열이 --shadow-float 하나로 서 있어 그대로 둔다.
+
+   ⚠ 컴포넌트별 파일에는 애니메이션·방향 규칙·그 컴포넌트에만 있는 것만 남긴다.
+      값을 컴포넌트별 파일에 다시 적으면 드리프트가 되살아난다.
+
+   ⚠ Alert 은 이 계열이 아니다. 뜨지 않고 본문에 눌러앉는 배너라 alert.css 가
+      따로 갖는다. 다만 같은 surface 토큰을 읽는다.
+   ============================================================ */
+
+/* --------------------------------------------------------
+   뒤에 까는 막
+   mira: bg-black/80 supports-backdrop-filter:backdrop-blur-xs
+   (100ms 전환은 각 파일의 duration-100 이 갖는다)
+   -------------------------------------------------------- */
+
+.cn-dialog-overlay,
+.cn-alert-dialog-overlay,
+.cn-sheet-overlay,
+.cn-drawer-overlay {
+    background-color: var(--overlay-backdrop, oklch(0 0 0 / 80%));
+}
+
+@supports (backdrop-filter: blur(1px)) {
+    .cn-dialog-overlay,
+    .cn-alert-dialog-overlay,
+    .cn-sheet-overlay,
+    .cn-drawer-overlay {
+        backdrop-filter: blur(var(--overlay-backdrop-blur));
+    }
+}
+
+/* --------------------------------------------------------
+   떠 있는 면
+   -------------------------------------------------------- */
+
+.cn-dialog-content,
+.cn-alert-dialog-content,
+.cn-sheet-content,
+.cn-drawer-content,
+.cn-drawer-popup,
+.cn-popover-content,
+.cn-hover-card-content {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+}
+
+/* 본문 글자. mira: text-xs/relaxed — Popover 만 text-xs(12/16)다. */
+.cn-dialog-content,
+.cn-alert-dialog-content,
+.cn-sheet-content,
+.cn-drawer-content,
+.cn-drawer-popup,
+.cn-hover-card-content {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+.cn-popover-content {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* 화면 가운데 뜨는 것은 사방이 링이고 모서리도 사방이다.
+   가장자리에 붙는 sheet·drawer 는 여기서 빠지고 각자 파일이 방향을 정한다. */
+.cn-popover-content,
+.cn-hover-card-content {
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent)),
+        var(--shadow-float);
+}
+
+/* 모달 면의 그림자는 --dialog-shadow 슬롯이 갖는다(foundation 슬롯). */
+.cn-dialog-content,
+.cn-alert-dialog-content {
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent)),
+        var(--dialog-shadow);
+}
+
+/* 반경이 두 단이다. 모달은 rounded-xl, 팝오버 계열은 rounded-lg. */
+.cn-dialog-content,
+.cn-alert-dialog-content {
+    border-radius: var(--surface-radius-lg);
+}
+
+.cn-popover-content,
+.cn-hover-card-content {
+    border-radius: var(--surface-radius);
+}
+
+/* 밀도가 둘이다. 모달은 p-4, 팝오버는 p-2.5.
+   간격은 dialog gap-4 · popover gap-4 이고, alert-dialog 의 gap-3 은 자기 파일에,
+   hover-card 는 간격이 없다. */
+.cn-dialog-content,
+.cn-alert-dialog-content {
+    padding: var(--surface-padding-md);
+}
+
+.cn-dialog-content,
+.cn-popover-content {
+    gap: var(--surface-gap-lg);
+}
+
+.cn-popover-content,
+.cn-hover-card-content {
+    padding: var(--surface-padding-sm);
+}
+
+/* ⚠ 아래 셋은 컴포넌트가 레이아웃을 주지 않는다. TSX 에 display 가 없고
+   업스트림 CSS 가 대신 주고 있었다(dialog 는 grid, popover 와 그 헤더는 flex flex-col,
+   tooltip 은 inline-flex items-center). 그 자리를 여기서 잇는다.
+   빠뜨리면 위에서 준 gap 이 통째로 먹지 않는다.
+   같은 계열이라도 컴포넌트마다 다르니 규칙을 옮기기 전에 TSX 의 className 을
+   먼저 확인하십시오 — sheet·drawer·alert-dialog 의 헤더는 TSX 가 이미 준다.
+   Hover Card 는 mira 에서 block 이고 간격도 없다. */
+.cn-dialog-content {
+    display: grid;
+}
+
+.cn-popover-content,
+.cn-popover-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.cn-tooltip-content {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* --------------------------------------------------------
+   제목과 설명
+   -------------------------------------------------------- */
+
+/* mira: gap-1. Sheet 만 gap-1.5 라 sheet.css 가 갖는다. */
+.cn-dialog-header,
+.cn-alert-dialog-header,
+.cn-drawer-header,
+.cn-drawer-header-base,
+.cn-popover-header {
+    gap: var(--surface-gap);
+}
+
+/* mira: text-sm font-medium — Popover 의 제목도 같은 단이다. */
+.cn-dialog-title,
+.cn-alert-dialog-title,
+.cn-sheet-title,
+.cn-drawer-title,
+.cn-popover-title {
+    color: var(--popover-foreground);
+    font-size: var(--ui-text-lg);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-lg);
+    font-weight: var(--ui-font-weight);
+}
+
+/* mira: text-muted-foreground text-xs/relaxed */
+.cn-dialog-description,
+.cn-alert-dialog-description,
+.cn-sheet-description,
+.cn-drawer-description {
+    color: var(--muted-foreground);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* Popover 의 설명은 색만 준다. 크기는 면의 text-xs 를 물려받는다. */
+.cn-popover-description {
+    color: var(--muted-foreground);
+}
+
+/* 설명 안의 링크는 밑줄로만 구분한다. 색까지 바꾸면 문단이 얼룩진다. */
+.cn-dialog-description a,
+.cn-alert-dialog-description a {
+    text-decoration-line: underline;
+    text-underline-offset: 3px;
+
+    &:hover {
+        color: var(--foreground);
+    }
+}
+
+/* --------------------------------------------------------
+   푸터 — mira 는 gap-2 뿐이다. nova 의 muted 띠와 위쪽 선을 걷어냈다.
+   그 gap-2 는 dialog · alert-dialog 의 TSX 가 이미 갖고 있어 여기 적을 것이 없다.
+   Sheet·Drawer 의 푸터 여백은 각자 파일이 갖는다.
+   -------------------------------------------------------- */
+
+/* --------------------------------------------------------
+   닫기 버튼 — mira 는 dialog top-2 right-2, sheet top-4 right-4 로 갈린다.
+   각자 파일이 갖는다.
+   -------------------------------------------------------- */
+
+/* --------------------------------------------------------
+   Tooltip — 같은 계열이지만 색은 컴포넌트가 소유한다.
+   작고 잠깐 뜨는 것이라 반전색을 쓰며, 여기서는 크기와 형태만 정한다.
+   mira: gap-1.5 rounded-md px-3 py-1.5 text-xs
+   ⚠ 좌우 12px · 상하 6px 은 리터럴이다. surface 축의 여백 단계(10 · 16 · 24)에
+      없는 값이고 툴팁 한 자리만 읽는다.
+   -------------------------------------------------------- */
+
+.cn-tooltip-content {
+    border-radius: var(--surface-radius-sm);
+    padding-inline: 12px;
+    padding-block: 6px;
+    gap: var(--surface-icon-gap);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* ⚠ transform 이 아니라 translate·rotate 개별 속성이다. 컴포넌트가 방향별로
+   `-translate-y-1/2` 같은 유틸리티를 얹는데, Tailwind v4 의 그 유틸리티는
+   translate 속성을 쓴다. 여기서 transform 을 쓰면 덮이지 않고 두 번 적용된다.
+   10px 는 축에 없는 일회성 값이다(화살표는 이 하나뿐이라 토큰을 만들지 않았다). */
+.cn-tooltip-arrow {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    translate: 0 calc(-50% - 2px);
+    rotate: 45deg;
+}

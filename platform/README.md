@@ -32,6 +32,55 @@ gunzip -c supabase/seed-filing-sections.sql.gz | \
 이미 떠 있는 스택에 최신 시드를 다시 앉히려면 `supabase db reset`(마이그레이션 재적용 +
 `seed.sql` 자동 재로드 — **로컬 DB의 기존 데이터를 지운다**) 후 위 `gunzip` 한 줄만 다시 실행.
 
+## 로그인과 앱 롤 (종목 화면을 읽고 리서치 보드를 고치려면)
+
+교재(`/book/**`)는 이 절 없이도 선다. 종목 · 재무 · 공시 화면의 조회와 리서치 보드의 쓰기와 로그인은 앱 전용 롤
+`web_app` 을 딛는다(마이그레이션 `20261002*`). web 은 PostgREST 를 지나지 않고 그 롤로 `pg` 에 직접 붙는다.
+롤의 로그인과 비밀번호는 마이그레이션이 만들지 않아서, 적재 덤프(`seed.sql`)와 따로 로그인 시드를 한 번 넣는다.
+
+```bash
+cd platform && supabase start        # 마이그레이션이 org 스키마와 web_app 롤을 세운다
+docker exec -i supabase_db_platform psql -v ON_ERROR_STOP=1 \
+  postgresql://postgres:postgres@127.0.0.1:5432/postgres < supabase/seeds/org.sql
+cp ../apps/web/.env.example ../apps/web/.env.local
+```
+
+- 시드는 테넌트 셋(운영팀 1 · 고객사 A 2 · 고객사 B 3)과 계정과 로컬 로그인을 심고, `web_app` 에 LOGIN · BYPASSRLS · 비밀번호를
+  준다. 여러 번 넣어도 된다. 로컬 계정의 비밀번호는 모두 `hathway-local` 이다.
+
+  | 계정 | 누구 | 보드 |
+  |---|---|---|
+  | `ops@example.test` | 운영팀 소유주 | 운영팀의 보드를 고치고 지운다. 이미 있던 보드는 운영팀의 것이다 |
+  | `kim@example.test` · `lee@example.test` | 고객사 A 구성원 · 소유주 | 고객사 A 의 보드만 |
+  | `park@example.test` | 고객사 B 소유주 | 고객사 B 의 보드만 |
+  | `gone@example.test` · `outsider@example.test` | 나간 사람 · 명부에 없는 사람 | 로그인은 되지만 고치지 못한다 |
+
+- ⚠ **이미 떠 있는 스택에는 마이그레이션부터 올린다**: `supabase migration up --local`. 그 스택을 다른 작업과 같이 쓰고 있으면
+  먼저 알린다. 보드 표에 `tenant_id` 가 NOT NULL 로 서므로 옛 코드의 보드 쓰기가 그때부터 막힌다.
+- ⚠ **로컬 계정 칸은 개발 서버에서만 선다.** 배포의 로그인은 구글이다.
+- ⚠ 다른 저장소의 앱과 같은 브라우저에서 `localhost` 로 함께 열면 세션 쿠키(`sb-127-auth-token`)가 서로 덮어쓴다.
+  로컬 Supabase 는 어느 스택이든 쿠키 이름이 같다. 로그인이 자꾸 풀리면 `http://hathway.localhost:3000` 으로 연다.
+
+**원격에 올릴 때** 마이그레이션만으로는 web 이 붙지 못한다. 소유자가 한 번 넣는다.
+
+```sql
+alter role web_app login password '<비밀번호>' bypassrls;
+```
+
+그리고 배포 환경변수에 `WEB_DATABASE_URL`(풀러의 6543 포트)과 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 를 넣고, 대시보드에서
+「Confirm email」을 켜고, 구글 로그인의 Redirect URL 에 `https://<호스트>/auth/callback` 을 더한다. **첫 소유자 한 사람**의 계정과
+멤버십은 `org.account` · `org.membership` 에 직접 넣는다. 그 뒤의 사람은 소유자가 설정의 팀 화면(`/settings/team`)에서 초대한다.
+초대 메일은 가지 않는다. 초대한 주소의 구글 계정이 처음 로그인할 때 이어진다. 값의 모양은 `apps/web/.env.example` 에 있다.
+
+⚠ **순서가 있다.** 마이그레이션이 새 코드보다 먼저 나가면 배포된 옛 코드의 보드 쓰기가 막힌다(읽기는 된다). 새 코드가
+환경변수보다 먼저 나가면 **종목 화면이 500 이 되고** 보드 목록이 비고 쓰기가 닫힌다. `WEB_DATABASE_URL` 이 없을 때
+로컬 주소로 떨어지지 않게 했기 때문이다. 롤과 환경변수 → 마이그레이션 → 코드의 차례로 낸다.
+
+팀 화면이 쓰는 칸은 `20261002000400` 이 컬럼 단위로 연다(`org.account` 의 `email` · `name`, `org.membership` 의 `role` · `active`).
+`web_app` 이 읽는 표는 `20261002000300` 이 적는다(`companies` · `fin_periods` · `filings` · `filing_correction_chains` ·
+`events` · `ownership_txns` · `trackings`). 앱이 새 표를 읽으면 그 마이그레이션처럼 GRANT 를 더한다. 공시 본문 조각은
+표가 아니라 저장소(`platform-raw/docs/<회사>/<접수번호>.sections.json.gz`)에 있어 service role 키로 읽는다.
+
 ## 처음부터 DART 재수집 (덤프 없이, 또는 새 종목 추가 시)
 
 ```bash
@@ -185,7 +234,8 @@ done
     (strict는 전 상장사에서 반드시 깨진다). **검증은 쓰기가 아니라 읽기 경계**에서 — ingest는
     원본 보존, UI가 해석. `FinancialConcept` enum이 UI의 닫힌 축(account_id는 열린 집합).
   - 포매터: `formatWon`(원→조/억), `formatFactDate`(정밀도별 원표기 복원) 등. DB는 원 단위 원본.
-- **`apps/web/lib/platform/db.ts`** — `getCompanyPageData(stockCode)` 하나로 페이지 데이터 병렬 fetch.
+- **`apps/web/src/lib/platform/db.ts`** — `getCompanyPageData(stockCode)` 하나로 페이지 데이터 병렬 fetch.
+  (2026-10-02 부터 조립은 `src/usecases/market.ts`, 읽는 길은 `packages/market` 의 포트와 `pg` 다.)
 - **`/company/[stockCode]`** — 헤더·재무차트(recharts 이중축)·핵심지표·사실시계열·공시타임라인·
   정정체인·주요사항 이벤트. Server Component + 차트만 client.
 

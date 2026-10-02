@@ -1,0 +1,40 @@
+/* ============================================================
+   3층 — kbd 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: h-5 min-w-5 gap-1 rounded-xs px-1 font-sans text-[0.625rem] font-medium ·
+         bg-muted muted-foreground · 툴팁 안에서는 반전(bg-background/20) · svg size-3.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ============================================================ */
+
+/* v4: 키캡은 자기 축(--kbd-*)을 갖는다. 더는 xs 컨트롤의 축이 아니다 —
+   mira 가 둘에 같은 숫자(h-5)를 주었을 뿐, 키캡은 xs 버튼이 아니다.
+   기본값이 control 축 xs 의 별칭이라 계산 결과는 그대로다.
+   모서리는 rounded-xs(4) 라 체크박스와 같은 지시자 반경이다.
+   ⚠ 좌우 4px 은 리터럴이었다. 이제 --kbd-padding-x 슬롯이 그 값을 갖는다. */
+.cn-kbd {
+    height: var(--kbd-height);
+    min-width: var(--kbd-min-width);
+    gap: var(--kbd-gap);
+    padding-inline: var(--kbd-padding-x);
+    font-size: var(--kbd-font-size);
+    letter-spacing: var(--kbd-letter-spacing);
+    line-height: var(--kbd-line-height);
+    font-weight: var(--kbd-font-weight);
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    border-radius: var(--kbd-radius);
+    @apply w-fit font-sans in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background dark:in-data-[slot=tooltip-content]:bg-background/10;
+
+    & svg:not([class*="size-"]) {
+        width: var(--kbd-icon-size);
+        height: var(--kbd-icon-size);
+    }
+}
+
+.cn-kbd-group {
+    gap: var(--kbd-gap);
+}

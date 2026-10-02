@@ -1,0 +1,32 @@
+/* ============================================================
+   3층 — Dialog 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   면의 색·모서리·여백·그림자·제목·설명은 전부 _surface-family.css 가 갖는다.
+   여기 남은 것은 애니메이션과 폭, 그리고 닫기 버튼 자리뿐이다.
+   mira: 막·면 모두 duration-100 · 면은 max-w-[calc(100%-2rem)] sm:max-w-sm · 닫기 top-2 right-2
+
+   ⚠ 애니메이션과 반응형 폭만 @apply 로 남긴다.
+      키프레임을 손으로 옮겨 적으면 값이 아니라 동작을 복제하게 되고,
+      중단점(sm:)은 Tailwind 설정이 정본이라 CSS 에 다시 적으면 어긋난다.
+   ⚠ 업스트림에 있던 *-aria 규칙은 옮기지 않았다. react-aria 베이스 전용인데
+      우리 베이스는 Base UI 라 그 클래스가 렌더되지 않는다.
+   ============================================================ */
+
+.cn-dialog-overlay {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-100;
+}
+
+.cn-dialog-content {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 max-w-[calc(100%-2rem)] duration-100 sm:max-w-sm;
+}
+
+/* 닫기 버튼 — 면의 오른쪽 위 모서리에 앉는다. mira: top-2 right-2
+   ⚠ 8px 은 리터럴이다. surface 축의 여백 단계(10 · 16 · 24)에 없는 값이고,
+      Sheet 의 닫기(16)와 다르므로 계열에서 하나로 묶지 않는다. */
+.cn-dialog-close {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-end: 8px;
+}

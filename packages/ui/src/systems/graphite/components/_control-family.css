@@ -1,0 +1,160 @@
+/* ============================================================
+   3층 — 컨트롤 공용 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Button · Input · Textarea · Select 트리거 · Native Select · Checkbox ·
+   Radio · Switch · Toggle 은 성질이 하나로 묶인다. 사용자가 손으로 누르거나
+   입력하는 대상이고, 그래서 포커스·검증 실패·전환이 같은 언어여야 한다.
+
+   ⚠ 이 파일이 있는 이유는 드리프트다. 포커스와 검증 실패를 컴포넌트마다 적으면 한 화면에 두 링이
+      뜬다. 링은 여기서만 그리고, 컴포넌트별 파일은 테두리 색도 다시 적지 않는다 — 같은 명시도로 뒤에
+      오는 컴포넌트 파일이 검증 실패의 붉은 테두리를 포커스 색으로 덮는다.
+
+   mira 가 주는 것
+     · 포커스    focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30
+                 라디오만 ring-3 ring-ring/50 · 토글은 두께를 컴포넌트가 갖고 색만 ring-ring/50
+     · 검증 실패  aria-invalid:border-destructive dark:aria-invalid:border-destructive/50
+                 aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40
+                 포커스와 무관하게 늘 그린다. 포커스와 함께 걸리면 검증 실패가 이긴다 — Tailwind 가
+                 aria-* 변형을 focus-visible 뒤에 두기 때문이고, 여기서는 규칙의 순서로 같게 만든다.
+   링은 테두리 바깥에 간격 없이 그리는 box-shadow 하나다. 색은 1층의 --ring-focus(30%) ·
+   --ring-focus-strong(50%) · --ring-invalid 가 갖는다. --ring 은 테두리 색으로도 읽혀 불투명이어야 한다.
+
+   ⚠ 컴포넌트별 파일에는 그 컨트롤에만 있는 것(모양·밀도·변형)만 남긴다.
+      포커스·검증·전환을 컴포넌트별 파일에 다시 적으면 드리프트가 되살아난다.
+
+   ⚠ 비활성 바탕은 두지 않는다. nova 는 Input·Textarea·Native Select 에
+      disabled:bg-input/50 을 주었고 이 파일이 그것을 --muted 로 옮겨 갖고 있었는데,
+      mira 는 그 규칙을 뺐다 — 비활성은 컴포넌트가 가진 disabled:opacity-50 하나로
+      알린다. 채움(--input-fill)이 이미 있어 바탕까지 갈 필요가 없다.
+   ============================================================ */
+
+/* --------------------------------------------------------
+   포커스 링
+   -------------------------------------------------------- */
+
+.cn-button,
+.cn-input,
+.cn-textarea,
+.cn-select-trigger,
+.cn-native-select,
+.cn-checkbox,
+.cn-switch {
+    &:focus-visible {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+    }
+}
+
+/* 라디오만 한 단 굵고 진하다. mira: focus-visible:ring-3 focus-visible:ring-ring/50 */
+.cn-radio-group-item:focus-visible {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 var(--focus-ring-width-strong) var(--ring-focus-strong, color-mix(in oklab, var(--ring) 50%, transparent));
+}
+
+/* ⚠ Toggle 은 이 목록에 없다. 컴포넌트 cva 에 focus-visible:ring-[3px] 가 박혀 있어
+   유틸리티 레이어가 여기 box-shadow 를 덮는다. toggle.css 가 그 유틸리티의 색만 채운다. */
+
+/* 파괴 버튼은 링과 테두리를 붉은 계열로 바꾼다.
+   mira: focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 focus-visible:border-destructive/40 */
+.cn-button-variant-destructive:focus-visible {
+    border-color: var(--destructive-focus-border, color-mix(in oklab, var(--destructive) 40%, transparent));
+    box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+}
+
+/* --------------------------------------------------------
+   검증 실패 — 포커스 규칙보다 뒤에 둔다
+   -------------------------------------------------------- */
+
+.cn-button,
+.cn-input,
+.cn-textarea,
+.cn-select-trigger,
+.cn-native-select,
+.cn-checkbox,
+.cn-switch {
+    &[aria-invalid="true"] {
+        border-color: var(--border-invalid);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-invalid);
+    }
+}
+
+.cn-radio-group-item[aria-invalid="true"] {
+    border-color: var(--border-invalid);
+    box-shadow: 0 0 0 var(--focus-ring-width-strong) var(--ring-invalid);
+}
+
+/* 이미 켜져 있는 체크박스·라디오는 테두리를 그대로 둔다.
+   채워진 상자의 테두리까지 붉히면 무엇이 잘못됐는지가 아니라
+   무엇이 켜져 있는지가 안 보인다. mira: aria-invalid:aria-checked:border-primary
+   체크박스의 켜진 색은 --checked 슬롯이 갖는다(foundation 에서는 --primary 와 같다). */
+.cn-checkbox[aria-invalid="true"][data-checked] {
+    border-color: var(--checkbox-invalid-checked-border, var(--checked));
+}
+
+.cn-radio-group-item[aria-invalid="true"][data-checked] {
+    border-color: var(--primary);
+}
+
+/* --------------------------------------------------------
+   비활성 채움 — 입력 계열(Input · Textarea · Native Select · Select 트리거)
+   axis contract v4. mira 는 비활성에 바탕을 따로 주지 않으므로
+   --input-fill-disabled 의 foundation 값은 --input-fill 의 별칭이다(v5: Select 트리거와
+   Native Select 는 --select-fill-disabled 를 읽고, 그 기본값이 --input-fill-disabled 다). 즉 이
+   선언은 계산값을 바꾸지 않고, 비활성 칸을 한 단 눌러 두려는 시스템이 3층
+   규칙을 고치지 않고 슬롯만 바꾸도록 자리를 만들어 둔다(DESIGN.md 5절).
+
+   ⚠ 이 파일이 배럴에서 가장 먼저 읽힌다. 그래서 통 안에서 껍데기를 벗는
+      `.cn-input-group .cn-input-group-input`(0,2,0)과 native-select·select 트리거의
+      :hover(0,2,0)가 뒤에 와서 그대로 이긴다 — 지금 보이는 화면은 달라지지 않는다.
+   -------------------------------------------------------- */
+
+.cn-input:disabled,
+.cn-textarea:disabled {
+    background-color: var(--input-fill-disabled, var(--input-fill));
+}
+
+.cn-native-select:disabled,
+.cn-select-trigger[data-disabled] {
+    background-color: var(--select-fill-disabled, var(--input-fill-disabled, var(--input-fill)));
+}
+
+/* --------------------------------------------------------
+   전환
+   컴포넌트가 transition-* 유틸리티를 갖고 있으면 그 유틸리티가 읽어 갈
+   변수만 채우고, 없으면 여기서 직접 선언한다. 두 방식이 섞이는 이유는
+   유틸리티 레이어를 base 레이어가 이길 수 없기 때문이다.
+   -------------------------------------------------------- */
+
+/* 컴포넌트가 transition-all 을 갖고 있는 쪽 */
+.cn-button,
+.cn-switch,
+.cn-switch-thumb {
+    --tw-duration: var(--control-duration);
+    --tw-ease: var(--control-ease);
+}
+
+/* 컴포넌트에 transition 유틸리티가 없는 쪽. mira 는 이 다섯에 transition-colors
+   (Input · Textarea · Select 트리거 · Native Select) 또는 transition-all(Toggle)을
+   준다 — 어느 쪽이든 색·테두리·그림자가 함께 움직인다. Radio 는 mira 에 전환이
+   없지만 계열의 언어를 따라 같은 목록에 둔다. */
+.cn-input,
+.cn-textarea,
+.cn-select-trigger,
+.cn-native-select,
+.cn-radio-group-item,
+.cn-toggle {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+}
+
+/* Checkbox 만 그림자(포커스 링)만 움직인다. mira: transition-shadow.
+   켜질 때 바탕이 --primary 로 바뀌는데 그 색까지 움직이면 체크 표시가 먼저 뜨고
+   바탕이 뒤따라 차오르는 어긋남이 보인다. */
+.cn-checkbox {
+    transition-property: box-shadow;
+    transition-duration: var(--control-duration);
+    transition-timing-function: var(--control-ease);
+}
