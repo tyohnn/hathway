@@ -1,81 +1,82 @@
-import Link from 'next/link';
-import type { ReactNode } from 'react';
-import { TRUST_LABELS, type AnalysisWidgetMeta, type TrustLevel } from '@/lib/analysis';
-import { isHiddenBookHref } from '@/lib/hidden-books';
-import { Badge } from '@investment/ui/components/badge';
-import { MotionCard } from '@/lib/motion/motion-card';
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { TRUST_LABELS, type AnalysisWidgetMeta, type TrustLevel } from "@/lib/analysis";
+import { isHiddenBookHref } from "@/lib/hidden-books";
+import { Badge } from "@investment/ui/components/badge";
+import { MotionCard } from "@/lib/motion/motion-card";
 
 const TRUST_CLASS: Record<TrustLevel, string> = {
-  filing: 'bg-success-soft text-success',
-  ir: 'bg-info-soft text-info',
-  news: 'bg-warning-soft text-warning',
-  estimate: 'bg-muted text-foreground',
-  secondary: 'bg-muted text-muted-foreground',
+    filing: "bg-success-soft text-success",
+    ir: "bg-info-soft text-info",
+    news: "bg-warning-soft text-warning",
+    estimate: "bg-muted text-foreground",
+    secondary: "bg-muted text-muted-foreground",
 };
 
 export function WidgetShell({
-  meta,
-  claim,
-  evidence,
-  children,
-  empty,
-  emptyHint = '데이터 없음 / 수집 필요',
+    meta,
+    claim,
+    evidence,
+    children,
+    empty,
+    emptyHint = "데이터 없음 / 수집 필요",
 }: {
-  meta: AnalysisWidgetMeta;
-  /** 런타임 주장 — 없으면 meta.claim */
-  claim?: string;
-  evidence?: string;
-  children?: ReactNode;
-  empty?: boolean;
-  emptyHint?: string;
-}) {
-  const displayClaim = claim ?? meta.claim;
-  // Textbook deep-links may target a hidden book (see lib/hidden-books.ts) — drop
-  // those rather than link to a page that doesn't exist.
-  const visibleTextbooks = meta.textbooks.filter((t) => !isHiddenBookHref(t.href));
+    meta: AnalysisWidgetMeta;
+    /** 런타임 주장 — 없으면 meta.claim */
+    claim?: string;
+    evidence?: string;
+    children?: ReactNode;
+    empty?: boolean;
+    emptyHint?: string;
+})
+{
+    const displayClaim = claim ?? meta.claim;
+    // Textbook deep-links may target a hidden book (see lib/hidden-books.ts) — drop
+    // those rather than link to a page that doesn't exist.
+    const visibleTextbooks = meta.textbooks.filter((t) => !isHiddenBookHref(t.href));
 
-  return (
-    <MotionCard className="flex flex-col rounded-xl border border-border bg-card p-4 sm:p-5">
-      <header className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0 space-y-1">
-          <h3 className="text-sm font-semibold leading-snug">{meta.title}</h3>
-          {meta.question && (
-            <p className="text-xs text-muted-foreground">질문: {meta.question}</p>
-          )}
-        </div>
-        <Badge className={`shrink-0 ${TRUST_CLASS[meta.trust]}`}>{TRUST_LABELS[meta.trust]}</Badge>
-      </header>
+    return (
+        <MotionCard className="flex flex-col rounded-xl border border-border bg-card p-4 sm:p-5">
+            <header className="flex flex-wrap items-start justify-between gap-2">
+                <div className="min-w-0 space-y-1">
+                    <h3 className="text-sm font-semibold leading-snug">{meta.title}</h3>
+                    {meta.question && (
+                        <p className="text-xs text-muted-foreground">질문: {meta.question}</p>
+                    )}
+                </div>
+                <Badge className={`shrink-0 ${TRUST_CLASS[meta.trust]}`}>{TRUST_LABELS[meta.trust]}</Badge>
+            </header>
 
-      <p className="mt-3 text-sm leading-relaxed text-foreground">{displayClaim}</p>
+            <p className="mt-3 text-sm leading-relaxed text-foreground">{displayClaim}</p>
 
-      {evidence && (
-        <p className="mt-1.5 text-xs text-muted-foreground">근거: {evidence}</p>
-      )}
+            {evidence && (
+                <p className="mt-1.5 text-xs text-muted-foreground">근거: {evidence}</p>
+            )}
 
-      <div className="mt-3 min-h-0 flex-1">
-        {empty ? (
-          <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
-            {emptyHint}
-          </p>
-        ) : (
-          children
-        )}
-      </div>
+            <div className="mt-3 min-h-0 flex-1">
+                {empty ? (
+                    <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
+                        {emptyHint}
+                    </p>
+                ) : (
+                    children
+                )}
+            </div>
 
-      {visibleTextbooks.length > 0 && (
-        <footer className="mt-4 flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 text-xs">
-          <span className="text-muted-foreground">방법론</span>
-          {visibleTextbooks.map((t) => (
-            <Link
-              key={t.href}
-              href={t.href}
-              className="text-primary underline-offset-2 hover:underline"
-            >
-              {t.label}
-            </Link>
-          ))}
-        </footer>
-      )}
-    </MotionCard>
-  );
+            {visibleTextbooks.length > 0 && (
+                <footer className="mt-4 flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 text-xs">
+                    <span className="text-muted-foreground">방법론</span>
+                    {visibleTextbooks.map((t) => (
+                        <Link
+                            key={t.href}
+                            href={t.href}
+                            className="text-primary underline-offset-2 hover:underline"
+                        >
+                            {t.label}
+                        </Link>
+                    ))}
+                </footer>
+            )}
+        </MotionCard>
+    );
 }

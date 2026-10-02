@@ -1,10 +1,11 @@
-import type { Metadata } from 'next';
-import { HomeLanding } from '../_components/home-landing';
+import type { Metadata } from "next";
+import { HomeLanding } from "../_components/home-landing";
 
 export const metadata: Metadata = {
-  title: '주식',
+    title: "주식",
 };
 
-export default function StocksHomePage() {
-  return <HomeLanding />;
+export default function StocksHomePage()
+{
+    return <HomeLanding />;
 }

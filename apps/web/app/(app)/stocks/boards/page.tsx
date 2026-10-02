@@ -1,14 +1,15 @@
-import type { Metadata } from 'next';
-import { ResearchBoardList } from '@/components/research/research-board-list';
-import { listResearchBoards } from '@/lib/platform/research-boards';
+import type { Metadata } from "next";
+import { ResearchBoardList } from "@/components/research/research-board-list";
+import { listResearchBoards } from "@/lib/platform/research-boards";
 
 export const metadata: Metadata = {
-  title: '리서치 보드',
+    title: "리서치 보드",
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export default async function ResearchBoardListPage() {
-  const boards = await listResearchBoards('stocks');
-  return <ResearchBoardList theme="stocks" boards={boards} />;
+export default async function ResearchBoardListPage()
+{
+    const boards = await listResearchBoards("stocks");
+    return <ResearchBoardList theme="stocks" boards={boards} />;
 }

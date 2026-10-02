@@ -40,26 +40,26 @@
 export const VALUE_CHAIN_TAXONOMY_VERSION = "2026.08.1";
 
 export interface ValueChainDetail {
-  id: string;
-  /** 사용자에게 보이는 이름 — "양극재" */
-  name: string;
-  /** 이 단계가 체인에서 하는 일 한 줄 */
-  note?: string;
+    id: string;
+    /** 사용자에게 보이는 이름 — "양극재" */
+    name: string;
+    /** 이 단계가 체인에서 하는 일 한 줄 */
+    note?: string;
 }
 
 export interface ValueChainStage {
-  id: string;
-  name: string;
-  /** 상류 → 하류 순서. 화면이 흐름으로 그린다. */
-  order: number;
-  details: ValueChainDetail[];
+    id: string;
+    name: string;
+    /** 상류 → 하류 순서. 화면이 흐름으로 그린다. */
+    order: number;
+    details: ValueChainDetail[];
 }
 
 export interface ValueChainCategory {
-  id: string;
-  name: string;
-  tagline: string;
-  stages: ValueChainStage[];
+    id: string;
+    name: string;
+    tagline: string;
+    stages: ValueChainStage[];
 }
 
 /**
@@ -70,15 +70,15 @@ export interface ValueChainCategory {
  * 시작하면 이 축 전체의 신뢰가 무너진다.
  */
 export interface ValueChainMembership {
-  stockCode: string;
-  /** `ValueChainDetail.id` */
-  detailId: string;
-  /** 왜 여기 넣었는가 — 출처가 되는 사실 */
-  evidence: string;
-  /** 근거의 기준 시점 (YYYY-MM) */
-  asOf: string;
-  /** 이 사업이 회사 매출에서 차지하는 비중. 확인 못 했으면 생략한다. */
-  revenueShare?: number;
+    stockCode: string;
+    /** `ValueChainDetail.id` */
+    detailId: string;
+    /** 왜 여기 넣었는가 — 출처가 되는 사실 */
+    evidence: string;
+    /** 근거의 기준 시점 (YYYY-MM) */
+    asOf: string;
+    /** 이 사업이 회사 매출에서 차지하는 비중. 확인 못 했으면 생략한다. */
+    revenueShare?: number;
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -90,89 +90,89 @@ export interface ValueChainMembership {
  * ──────────────────────────────────────────────────────────────────────────── */
 
 export const VALUE_CHAINS: ValueChainCategory[] = [
-  {
-    id: "ev-battery",
-    name: "전기차·배터리",
-    tagline: "광물에서 완성차까지 — 같은 뉴스가 단계마다 다른 의미를 갖는다",
-    stages: [
-      {
-        id: "ev-minerals",
-        name: "광물·원자재",
-        order: 1,
-        details: [
-          { id: "ev-lithium", name: "리튬" },
-          { id: "ev-nickel", name: "니켈·코발트" },
-          { id: "ev-graphite", name: "흑연" },
+    {
+        id: "ev-battery",
+        name: "전기차·배터리",
+        tagline: "광물에서 완성차까지 — 같은 뉴스가 단계마다 다른 의미를 갖는다",
+        stages: [
+            {
+                id: "ev-minerals",
+                name: "광물·원자재",
+                order: 1,
+                details: [
+                    { id: "ev-lithium", name: "리튬" },
+                    { id: "ev-nickel", name: "니켈·코발트" },
+                    { id: "ev-graphite", name: "흑연" },
+                ],
+            },
+            {
+                id: "ev-materials",
+                name: "소재",
+                order: 2,
+                details: [
+                    { id: "ev-cathode", name: "양극재", note: "셀 원가의 최대 비중" },
+                    { id: "ev-anode", name: "음극재" },
+                    { id: "ev-separator", name: "분리막" },
+                    { id: "ev-electrolyte", name: "전해액·전해질" },
+                    { id: "ev-precursor", name: "전구체" },
+                    { id: "ev-foil", name: "동박·알루미늄박" },
+                ],
+            },
+            {
+                id: "ev-cell",
+                name: "셀·팩",
+                order: 3,
+                details: [
+                    { id: "ev-cell-maker", name: "셀 제조" },
+                    { id: "ev-module-pack", name: "모듈·팩" },
+                    { id: "ev-bms", name: "BMS" },
+                ],
+            },
+            {
+                id: "ev-equipment",
+                name: "장비",
+                order: 4,
+                details: [
+                    { id: "ev-eq-electrode", name: "전극공정 장비" },
+                    { id: "ev-eq-assembly", name: "조립공정 장비" },
+                    { id: "ev-eq-formation", name: "화성공정 장비" },
+                    { id: "ev-eq-inspection", name: "검사 장비" },
+                ],
+            },
+            {
+                id: "ev-driveline",
+                name: "구동부품",
+                order: 5,
+                details: [
+                    { id: "ev-motor", name: "구동모터" },
+                    { id: "ev-inverter", name: "인버터·전력반도체" },
+                    { id: "ev-reducer", name: "감속기" },
+                    { id: "ev-thermal", name: "열관리" },
+                ],
+            },
+            {
+                id: "ev-oem",
+                name: "완성차",
+                order: 6,
+                details: [{ id: "ev-oem-maker", name: "전기차 OEM" }],
+            },
+            {
+                id: "ev-infra",
+                name: "충전 인프라",
+                order: 7,
+                details: [
+                    { id: "ev-charger", name: "충전기 제조" },
+                    { id: "ev-charging-ops", name: "충전 운영" },
+                ],
+            },
+            {
+                id: "ev-circular",
+                name: "순환",
+                order: 8,
+                details: [{ id: "ev-recycling", name: "폐배터리 재활용" }],
+            },
         ],
-      },
-      {
-        id: "ev-materials",
-        name: "소재",
-        order: 2,
-        details: [
-          { id: "ev-cathode", name: "양극재", note: "셀 원가의 최대 비중" },
-          { id: "ev-anode", name: "음극재" },
-          { id: "ev-separator", name: "분리막" },
-          { id: "ev-electrolyte", name: "전해액·전해질" },
-          { id: "ev-precursor", name: "전구체" },
-          { id: "ev-foil", name: "동박·알루미늄박" },
-        ],
-      },
-      {
-        id: "ev-cell",
-        name: "셀·팩",
-        order: 3,
-        details: [
-          { id: "ev-cell-maker", name: "셀 제조" },
-          { id: "ev-module-pack", name: "모듈·팩" },
-          { id: "ev-bms", name: "BMS" },
-        ],
-      },
-      {
-        id: "ev-equipment",
-        name: "장비",
-        order: 4,
-        details: [
-          { id: "ev-eq-electrode", name: "전극공정 장비" },
-          { id: "ev-eq-assembly", name: "조립공정 장비" },
-          { id: "ev-eq-formation", name: "화성공정 장비" },
-          { id: "ev-eq-inspection", name: "검사 장비" },
-        ],
-      },
-      {
-        id: "ev-driveline",
-        name: "구동부품",
-        order: 5,
-        details: [
-          { id: "ev-motor", name: "구동모터" },
-          { id: "ev-inverter", name: "인버터·전력반도체" },
-          { id: "ev-reducer", name: "감속기" },
-          { id: "ev-thermal", name: "열관리" },
-        ],
-      },
-      {
-        id: "ev-oem",
-        name: "완성차",
-        order: 6,
-        details: [{ id: "ev-oem-maker", name: "전기차 OEM" }],
-      },
-      {
-        id: "ev-infra",
-        name: "충전 인프라",
-        order: 7,
-        details: [
-          { id: "ev-charger", name: "충전기 제조" },
-          { id: "ev-charging-ops", name: "충전 운영" },
-        ],
-      },
-      {
-        id: "ev-circular",
-        name: "순환",
-        order: 8,
-        details: [{ id: "ev-recycling", name: "폐배터리 재활용" }],
-      },
-    ],
-  },
+    },
 ];
 
 /**
@@ -183,72 +183,80 @@ export const VALUE_CHAINS: ValueChainCategory[] = [
  * `evidence` 는 아직 "확인 필요"인 것이 많다 — 채우기 전에는 화면에 비중을 쓰지 않는다.
  */
 export const VALUE_CHAIN_MEMBERSHIPS: ValueChainMembership[] = [
-  // 소재 — KSIC 로는 28202·204·2629 로 흩어진다
-  { stockCode: "247540", detailId: "ev-cathode", evidence: "양극재 전업 (KSIC 28202)", asOf: "2026-08" },
-  { stockCode: "066970", detailId: "ev-cathode", evidence: "양극재 전업 (KSIC 28202)", asOf: "2026-08" },
-  // 한 종목이 여러 상세에 속하는 경우 — 이 축이 중복을 허용하는 이유
-  { stockCode: "003670", detailId: "ev-cathode", evidence: "양극재·음극재 병행 (KSIC 282)", asOf: "2026-08" },
-  { stockCode: "003670", detailId: "ev-anode", evidence: "국내 유일 흑연계 음극재 양산", asOf: "2026-08" },
-  { stockCode: "078600", detailId: "ev-anode", evidence: "실리콘 음극재 (KSIC 2629)", asOf: "2026-08" },
-  { stockCode: "393890", detailId: "ev-separator", evidence: "분리막 전업 (KSIC 28202)", asOf: "2026-08" },
-  { stockCode: "361610", detailId: "ev-separator", evidence: "분리막 (KSIC 282)", asOf: "2026-08" },
-  { stockCode: "348370", detailId: "ev-electrolyte", evidence: "전해액 (KSIC 20119)", asOf: "2026-08" },
-  { stockCode: "278280", detailId: "ev-electrolyte", evidence: "전해질 첨가제 (KSIC 201)", asOf: "2026-08" },
-  // 같은 동박인데 KSIC 가 204 와 2629 로 갈린다 — 자동 분류가 불가능한 직접 증거
-  { stockCode: "011790", detailId: "ev-foil", evidence: "동박 (KSIC 204)", asOf: "2026-08" },
-  { stockCode: "020150", detailId: "ev-foil", evidence: "동박 (KSIC 2629)", asOf: "2026-08" },
+    // 소재 — KSIC 로는 28202·204·2629 로 흩어진다
+    { stockCode: "247540", detailId: "ev-cathode", evidence: "양극재 전업 (KSIC 28202)", asOf: "2026-08" },
+    { stockCode: "066970", detailId: "ev-cathode", evidence: "양극재 전업 (KSIC 28202)", asOf: "2026-08" },
+    // 한 종목이 여러 상세에 속하는 경우 — 이 축이 중복을 허용하는 이유
+    { stockCode: "003670", detailId: "ev-cathode", evidence: "양극재·음극재 병행 (KSIC 282)", asOf: "2026-08" },
+    { stockCode: "003670", detailId: "ev-anode", evidence: "국내 유일 흑연계 음극재 양산", asOf: "2026-08" },
+    { stockCode: "078600", detailId: "ev-anode", evidence: "실리콘 음극재 (KSIC 2629)", asOf: "2026-08" },
+    { stockCode: "393890", detailId: "ev-separator", evidence: "분리막 전업 (KSIC 28202)", asOf: "2026-08" },
+    { stockCode: "361610", detailId: "ev-separator", evidence: "분리막 (KSIC 282)", asOf: "2026-08" },
+    { stockCode: "348370", detailId: "ev-electrolyte", evidence: "전해액 (KSIC 20119)", asOf: "2026-08" },
+    { stockCode: "278280", detailId: "ev-electrolyte", evidence: "전해질 첨가제 (KSIC 201)", asOf: "2026-08" },
+    // 같은 동박인데 KSIC 가 204 와 2629 로 갈린다 — 자동 분류가 불가능한 직접 증거
+    { stockCode: "011790", detailId: "ev-foil", evidence: "동박 (KSIC 204)", asOf: "2026-08" },
+    { stockCode: "020150", detailId: "ev-foil", evidence: "동박 (KSIC 2629)", asOf: "2026-08" },
 
-  // 셀 — 소재와 같은 KSIC 28202 를 쓴다
-  { stockCode: "006400", detailId: "ev-cell-maker", evidence: "각형·원통형 셀 (KSIC 28202)", asOf: "2026-08" },
-  { stockCode: "373220", detailId: "ev-cell-maker", evidence: "파우치·원통형 셀 (KSIC 28202)", asOf: "2026-08" },
+    // 셀 — 소재와 같은 KSIC 28202 를 쓴다
+    { stockCode: "006400", detailId: "ev-cell-maker", evidence: "각형·원통형 셀 (KSIC 28202)", asOf: "2026-08" },
+    { stockCode: "373220", detailId: "ev-cell-maker", evidence: "파우치·원통형 셀 (KSIC 28202)", asOf: "2026-08" },
 ];
 
 /* ── 조회 헬퍼 ───────────────────────────────────────────────────────────── */
 
 const DETAIL_INDEX: Map<string, { category: ValueChainCategory; stage: ValueChainStage; detail: ValueChainDetail }> =
-  new Map();
-for (const category of VALUE_CHAINS) {
-  for (const stage of category.stages) {
-    for (const detail of stage.details) {
-      DETAIL_INDEX.set(detail.id, { category, stage, detail });
+    new Map();
+for (const category of VALUE_CHAINS)
+{
+    for (const stage of category.stages)
+    {
+        for (const detail of stage.details)
+        {
+            DETAIL_INDEX.set(detail.id, { category, stage, detail });
+        }
     }
-  }
 }
 
 export interface ValueChainPlacement {
-  category: ValueChainCategory;
-  stage: ValueChainStage;
-  detail: ValueChainDetail;
-  membership: ValueChainMembership;
+    category: ValueChainCategory;
+    stage: ValueChainStage;
+    detail: ValueChainDetail;
+    membership: ValueChainMembership;
 }
 
 /** 이 종목이 어느 밸류체인 어느 단계에 있는가. 없으면 빈 배열 — 대부분의 종목이 그렇다. */
-export function placementsForStock(stockCode: string | null | undefined): ValueChainPlacement[] {
-  if (!stockCode) return [];
-  const out: ValueChainPlacement[] = [];
-  for (const membership of VALUE_CHAIN_MEMBERSHIPS) {
-    if (membership.stockCode !== stockCode) continue;
-    const found = DETAIL_INDEX.get(membership.detailId);
-    // 매핑이 가리키는 상세가 사라졌으면 조용히 버리지 않고 드러낸다.
-    if (!found) throw new Error(`알 수 없는 밸류체인 상세: ${membership.detailId}`);
-    out.push({ ...found, membership });
-  }
-  return out;
+export function placementsForStock(stockCode: string | null | undefined): ValueChainPlacement[]
+{
+    if (!stockCode) return [];
+    const out: ValueChainPlacement[] = [];
+    for (const membership of VALUE_CHAIN_MEMBERSHIPS)
+    {
+        if (membership.stockCode !== stockCode) continue;
+        const found = DETAIL_INDEX.get(membership.detailId);
+        // 매핑이 가리키는 상세가 사라졌으면 조용히 버리지 않고 드러낸다.
+        if (!found) throw new Error(`알 수 없는 밸류체인 상세: ${membership.detailId}`);
+        out.push({ ...found, membership });
+    }
+    return out;
 }
 
 /** 한 상세 카테고리에 속한 종목코드 — peer 비교나 목록에 쓴다. */
-export function stockCodesInDetail(detailId: string): string[] {
-  return VALUE_CHAIN_MEMBERSHIPS.filter((m) => m.detailId === detailId).map((m) => m.stockCode);
+export function stockCodesInDetail(detailId: string): string[]
+{
+    return VALUE_CHAIN_MEMBERSHIPS.filter((m) => m.detailId === detailId).map((m) => m.stockCode);
 }
 
 /** 한 카테고리(테마) 전체에 속한 종목코드 — 중복 제거. */
-export function stockCodesInCategory(categoryId: string): string[] {
-  const category = VALUE_CHAINS.find((c) => c.id === categoryId);
-  if (!category) return [];
-  const detailIds = new Set(category.stages.flatMap((s) => s.details.map((d) => d.id)));
-  return [...new Set(VALUE_CHAIN_MEMBERSHIPS.filter((m) => detailIds.has(m.detailId)).map((m) => m.stockCode))];
+export function stockCodesInCategory(categoryId: string): string[]
+{
+    const category = VALUE_CHAINS.find((c) => c.id === categoryId);
+    if (!category) return [];
+    const detailIds = new Set(category.stages.flatMap((s) => s.details.map((d) => d.id)));
+    return [...new Set(VALUE_CHAIN_MEMBERSHIPS.filter((m) => detailIds.has(m.detailId)).map((m) => m.stockCode))];
 }
 
-export function getValueChain(categoryId: string): ValueChainCategory | undefined {
-  return VALUE_CHAINS.find((c) => c.id === categoryId);
+export function getValueChain(categoryId: string): ValueChainCategory | undefined
+{
+    return VALUE_CHAINS.find((c) => c.id === categoryId);
 }

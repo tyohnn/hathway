@@ -1,4 +1,4 @@
-import type { TextbookChartSpec } from './types';
+import type { TextbookChartSpec } from "./types";
 
 /**
  * id → TextbookChartSpec.
@@ -53,15 +53,19 @@ import type { TextbookChartSpec } from './types';
  */
 const registry = new Map<string, TextbookChartSpec>();
 
-export function registerTextbookCharts(specs: TextbookChartSpec[]) {
-  for (const spec of specs) {
-    if (registry.has(spec.id)) {
-      throw new Error(`Duplicate textbook chart id: "${spec.id}"`);
+export function registerTextbookCharts(specs: TextbookChartSpec[])
+{
+    for (const spec of specs)
+    {
+        if (registry.has(spec.id))
+        {
+            throw new Error(`Duplicate textbook chart id: "${spec.id}"`);
+        }
+        registry.set(spec.id, spec);
     }
-    registry.set(spec.id, spec);
-  }
 }
 
-export function getTextbookChart(id: string): TextbookChartSpec | undefined {
-  return registry.get(id);
+export function getTextbookChart(id: string): TextbookChartSpec | undefined
+{
+    return registry.get(id);
 }

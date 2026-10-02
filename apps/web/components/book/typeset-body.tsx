@@ -1,6 +1,6 @@
-import { TextbookChart } from '@/components/charts/textbook/textbook-chart';
-import { cn } from '@/lib/cn';
-import type { Block } from '@/lib/book/render';
+import { TextbookChart } from "@/components/charts/textbook/textbook-chart";
+import { cn } from "@/lib/cn";
+import type { Block } from "@/lib/book/render";
 
 /**
  * The reading surface: shadcn/typeset over compiled 교재 Markdown.
@@ -20,27 +20,28 @@ import type { Block } from '@/lib/book/render';
  * `book-flow` parent, or the bleed has nothing to bleed into.
  */
 export function TypesetBody({
-  blocks,
-  className,
+    blocks,
+    className,
 }: {
-  blocks: Block[];
-  className?: string;
-}) {
-  return (
-    <div className={cn('typeset typeset-notes book-contents', className)}>
-      {blocks.map((block, index) =>
-        block.kind === 'chart' ? (
-          <div key={`chart-${block.id}-${index}`} className="book-bleed not-typeset">
-            <TextbookChart id={block.id} />
-          </div>
-        ) : (
-          <div
-            key={`html-${index}`}
-            // Authored 교재 Markdown compiled at build time — not user input.
-            dangerouslySetInnerHTML={{ __html: block.html }}
-          />
-        ),
-      )}
-    </div>
-  );
+    blocks: Block[];
+    className?: string;
+})
+{
+    return (
+        <div className={cn("typeset typeset-notes book-contents", className)}>
+            {blocks.map((block, index) =>
+                block.kind === "chart" ? (
+                    <div key={`chart-${block.id}-${index}`} className="book-bleed not-typeset">
+                        <TextbookChart id={block.id} />
+                    </div>
+                ) : (
+                    <div
+                        key={`html-${index}`}
+                        // Authored 교재 Markdown compiled at build time — not user input.
+                        dangerouslySetInnerHTML={{ __html: block.html }}
+                    />
+                ),
+            )}
+        </div>
+    );
 }
