@@ -7,7 +7,10 @@
     "build": "pnpm --filter @investment/web build",
     "start": "pnpm --filter @investment/web start",
     "sync": "pnpm --filter @investment/web sync",
-    "types:check": "pnpm --filter @investment/web types:check"
+    "types:check": "pnpm --filter @investment/web types:check",
+    "test": "pnpm -r --if-present test",
+    "check:tokens": "pnpm --filter @investment/ui check:tokens",
+    "check:comments": "node scripts/check-comments.mjs"
   },
   "dependencies": {
     "zod": "^4.4.3"

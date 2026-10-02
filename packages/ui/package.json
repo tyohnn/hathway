@@ -14,7 +14,9 @@
         "./systems/*": "./src/systems/*"
     },
     "scripts": {
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "test": "node scripts/scan-tokens.mjs",
+        "check:tokens": "node scripts/scan-tokens.mjs"
     },
     "dependencies": {
         "@base-ui/react": "1.8.0",
