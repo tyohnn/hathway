@@ -42,6 +42,7 @@ const TOKEN_FILES = [
 /** 토큰을 읽는 트리. 없는 폴더는 건너뛴다 */
 const USAGE_ROOTS = [
     join(uiRoot, "src"),
+    join(repoRoot, "packages/blocks/src"),
     join(repoRoot, "apps/web/src"),
 ];
 

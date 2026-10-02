@@ -22,6 +22,13 @@
     --shadow-card-hover: 0 12px 24px -8px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.06);
     --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 18%, transparent);
 
+    /* 블록 층이 읽는 제품 치수 셋. 스캐폴드와 같은 값이다.
+       한 건을 읽고 고치는 시트의 폭, 접힌 사이드바의 폭(AppShell 이 --sidebar-width-icon 으로 넘긴다),
+       좌 목록과 우 본문으로 갈리는 짜임에서 왼쪽 기둥의 폭이다. */
+    --sheet-width: 560px;
+    --sidebar-collapsed-width: 56px;
+    --workbench-aside-width: 360px;
+
     /* 교재 본문(`/book`)의 조판. 시스템의 문서 프리셋(18px)보다 촘촘한데, 숫자와 표가 많은 교재를
        한 화면에 더 담으려는 값이다. `.typeset-notes` 가 읽는다(진입 CSS). */
     --typeset-notes-size: 15px;

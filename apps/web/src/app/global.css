@@ -27,6 +27,10 @@
 }
 /* tyohnn:end theme */
 
+/* ⚠ Tailwind 는 여기 적힌 곳만 훑어 유틸리티를 만든다. 블록 층을 빠뜨리면 클래스가 생성되지 않아 블록이 스타일 없이
+   렌더된다. 오류가 나지 않아 증상이 조용하다. CLI 는 tyohnn 블록 사이만 다시 쓰므로 packages/blocks 는 여기에 적는다. */
+@source "../../../../packages/blocks/src";
+
 /*
  * 이 파일은 진입점이다. 3층 CSS 의 실체는 `@investment/ui/systems/<system>` 이 갖고, 위 `tyohnn:*` 블록은
  * tyohnn CLI 가 다시 쓴다. 손으로 고치지 않고 `tyohnn use <system>` · `tyohnn theme <name>` 으로 바꾼다.
