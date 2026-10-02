@@ -29,4 +29,6 @@ export const paths = {
     home: (): string => "/",
     login: (redirect?: string, error?: "failed" | "credentials"): string => withQuery("/login", { redirect, error }),
     noAccess: (): string => "/no-access",
+    team: (): string => "/settings/team",
+    account: (): string => "/settings/account",
 };
