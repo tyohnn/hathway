@@ -1,0 +1,24 @@
+{
+    "name": "@investment/adapters-storage",
+    "version": "0.0.1",
+    "private": true,
+    "//": "Supabase 의 HTTP 를 지나는 포트를 구현한다. 지금은 packages/access 의 AuthSettings 를 인증 서버의 공개 설정으로 구현하는 것 하나다. server-only 다.",
+    "exports": {
+        "./*": "./src/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@investment/access": "workspace:*",
+        "@investment/shared": "workspace:*",
+        "effect": "4.0.0-rc.112",
+        "server-only": "^0.0.1"
+    },
+    "devDependencies": {
+        "typescript": "^5",
+        "vitest": "^4.1.11",
+        "@types/node": "^22"
+    }
+}
