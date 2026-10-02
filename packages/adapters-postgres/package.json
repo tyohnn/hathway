@@ -2,7 +2,7 @@
     "name": "@investment/adapters-postgres",
     "version": "0.0.1",
     "private": true,
-    "//": "packages/access · packages/research 포트의 Postgres 구현. PostgREST 를 지나지 않고 pg 로 직결한다. 전송(풀·TLS·트랜잭션)은 src/connection.ts 하나이고 도메인은 그 아래 폴더로 가른다. server-only 라 클라이언트 번들에 섞이면 빌드가 깨진다.",
+    "//": "packages/access · packages/research · packages/market 포트의 Postgres 구현. PostgREST 를 지나지 않고 pg 로 직결한다. 전송(풀·TLS·트랜잭션)은 src/connection.ts 하나이고 도메인은 그 아래 폴더로 가른다. server-only 라 클라이언트 번들에 섞이면 빌드가 깨진다.",
     "exports": {
         "./*": "./src/*.ts"
     },
@@ -13,7 +13,9 @@
     },
     "dependencies": {
         "@investment/access": "workspace:*",
+        "@investment/market": "workspace:*",
         "@investment/research": "workspace:*",
+        "@investment/schema": "workspace:*",
         "@investment/shared": "workspace:*",
         "effect": "4.0.0-rc.112",
         "pg": "^8.22.0",

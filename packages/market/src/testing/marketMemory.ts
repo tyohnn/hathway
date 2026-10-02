@@ -60,9 +60,11 @@ export const marketMemory = (seed: MarketSeed = {}): Layer.Layer<CompanyDirector
     const periods = seed.periods ?? [];
     const filings = seed.filings ?? [];
     const ofCorp = (corpCode: string) => filings.filter((filing) => filing.corp_code === corpCode);
+    // 접수일이 같으면 접수번호가 큰 것이 먼저다. 한도에 걸릴 때 어느 공시가 잘리는지가 흔들리지 않는다
+    const latestFirst = (a: Filing, b: Filing): number => byText(b.rcept_dt, a.rcept_dt) || byText(b.rcept_no, a.rcept_no);
     const matching = (corpCode: string, patterns: ReadonlyArray<string>) =>
         ofCorp(corpCode).filter((filing) => patterns.some((pattern) => filing.report_nm.includes(pattern)))
-            .sort(desc((filing) => filing.rcept_dt));
+            .sort(latestFirst);
 
     return Layer.mergeAll(
         Layer.succeed(CompanyDirectory, CompanyDirectory.of({
@@ -106,7 +108,7 @@ export const marketMemory = (seed: MarketSeed = {}): Layer.Layer<CompanyDirector
 
         Layer.succeed(FilingLedger, FilingLedger.of({
             recent: (corpCode, limit) =>
-                Effect.succeed(ofCorp(corpCode).sort(desc((filing) => filing.rcept_dt)).slice(0, limit)),
+                Effect.succeed(ofCorp(corpCode).sort(latestFirst).slice(0, limit)),
 
             themed: (corpCode, limit) => Effect.succeed(matching(corpCode, THEMED_FILING_PATTERNS).slice(0, limit)),
 
@@ -118,7 +120,9 @@ export const marketMemory = (seed: MarketSeed = {}): Layer.Layer<CompanyDirector
             findByRceptNo: (rceptNo) => Effect.succeed(filings.find((filing) => filing.rcept_no === rceptNo) ?? null),
 
             correctionChains: (corpCode, limit) => Effect.succeed(
-                chainsOf(filings, corpCode).sort(desc((chain) => chain.correction_dt)).slice(0, limit),
+                chainsOf(filings, corpCode)
+                    .sort((a, b) => byText(b.correction_dt, a.correction_dt) || byText(b.correction_rcept_no, a.correction_rcept_no))
+                    .slice(0, limit),
             ),
 
             events: (corpCode) => Effect.succeed(
@@ -134,7 +138,7 @@ export const marketMemory = (seed: MarketSeed = {}): Layer.Layer<CompanyDirector
 
             trackings: (corpCode) => Effect.succeed(
                 (seed.trackings ?? []).filter((fact) => fact.corp_code === corpCode)
-                    .sort((a, b) => byText(a.fact_date, b.fact_date)),
+                    .sort((a, b) => byText(a.fact_date, b.fact_date) || a.id - b.id),
             ),
         })),
 

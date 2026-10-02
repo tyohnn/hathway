@@ -172,9 +172,15 @@ importers:
       '@investment/access':
         specifier: workspace:*
         version: link:../access
+      '@investment/market':
+        specifier: workspace:*
+        version: link:../market
       '@investment/research':
         specifier: workspace:*
         version: link:../research
+      '@investment/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@investment/shared':
         specifier: workspace:*
         version: link:../shared
