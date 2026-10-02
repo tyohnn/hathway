@@ -18,6 +18,7 @@
     "@investment/adapters-postgres": "workspace:*",
     "@investment/adapters-storage": "workspace:*",
     "@investment/blocks": "workspace:*",
+    "@investment/market": "workspace:*",
     "@investment/research": "workspace:*",
     "@investment/schema": "workspace:*",
     "@investment/ui": "workspace:*",

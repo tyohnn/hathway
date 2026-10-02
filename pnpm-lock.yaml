@@ -29,6 +29,9 @@ importers:
       '@investment/blocks':
         specifier: workspace:*
         version: link:../../packages/blocks
+      '@investment/market':
+        specifier: workspace:*
+        version: link:../../packages/market
       '@investment/research':
         specifier: workspace:*
         version: link:../../packages/research
@@ -215,6 +218,9 @@ importers:
       '@investment/access':
         specifier: workspace:*
         version: link:../access
+      '@investment/market':
+        specifier: workspace:*
+        version: link:../market
       '@investment/shared':
         specifier: workspace:*
         version: link:../shared
