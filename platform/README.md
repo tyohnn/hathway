@@ -32,10 +32,11 @@ gunzip -c supabase/seed-filing-sections.sql.gz | \
 이미 떠 있는 스택에 최신 시드를 다시 앉히려면 `supabase db reset`(마이그레이션 재적용 +
 `seed.sql` 자동 재로드 — **로컬 DB의 기존 데이터를 지운다**) 후 위 `gunzip` 한 줄만 다시 실행.
 
-## 로그인과 앱 롤 (리서치 보드를 만들고 고치려면)
+## 로그인과 앱 롤 (종목 화면을 읽고 리서치 보드를 고치려면)
 
-읽는 화면은 위 절차만으로 선다. 리서치 보드의 쓰기와 로그인은 `org` 스키마와 앱 전용 롤 `web_app` 을 딛는다
-(마이그레이션 `20261002*`). 적재 덤프(`seed.sql`)와 따로, 로그인 시드를 한 번 넣는다.
+교재(`/book/**`)는 이 절 없이도 선다. 종목 · 재무 · 공시 화면의 조회와 리서치 보드의 쓰기와 로그인은 앱 전용 롤
+`web_app` 을 딛는다(마이그레이션 `20261002*`). web 은 PostgREST 를 지나지 않고 그 롤로 `pg` 에 직접 붙는다.
+롤의 로그인과 비밀번호는 마이그레이션이 만들지 않아서, 적재 덤프(`seed.sql`)와 따로 로그인 시드를 한 번 넣는다.
 
 ```bash
 cd platform && supabase start        # 마이그레이션이 org 스키마와 web_app 롤을 세운다
@@ -71,7 +72,12 @@ alter role web_app login password '<비밀번호>' bypassrls;
 멤버십을 `org.account` · `org.membership` 에 넣는다(팀을 관리하는 화면은 아직 없다). 값의 모양은 `apps/web/.env.example` 에 있다.
 
 ⚠ **순서가 있다.** 마이그레이션이 새 코드보다 먼저 나가면 배포된 옛 코드의 보드 쓰기가 막힌다(읽기는 된다). 새 코드가
-환경변수보다 먼저 나가면 보드 목록이 비고 쓰기가 닫힌다. 롤과 환경변수 → 마이그레이션 → 코드의 차례로 낸다.
+환경변수보다 먼저 나가면 **종목 화면이 500 이 되고** 보드 목록이 비고 쓰기가 닫힌다. `WEB_DATABASE_URL` 이 없을 때
+로컬 주소로 떨어지지 않게 했기 때문이다. 롤과 환경변수 → 마이그레이션 → 코드의 차례로 낸다.
+
+`web_app` 이 읽는 표는 `20261002000300` 이 적는다(`companies` · `fin_periods` · `filings` · `filing_correction_chains` ·
+`events` · `ownership_txns` · `trackings`). 앱이 새 표를 읽으면 그 마이그레이션처럼 GRANT 를 더한다. 공시 본문 조각은
+표가 아니라 저장소(`platform-raw/docs/<회사>/<접수번호>.sections.json.gz`)에 있어 service role 키로 읽는다.
 
 ## 처음부터 DART 재수집 (덤프 없이, 또는 새 종목 추가 시)
 
@@ -227,6 +233,7 @@ done
     원본 보존, UI가 해석. `FinancialConcept` enum이 UI의 닫힌 축(account_id는 열린 집합).
   - 포매터: `formatWon`(원→조/억), `formatFactDate`(정밀도별 원표기 복원) 등. DB는 원 단위 원본.
 - **`apps/web/src/lib/platform/db.ts`** — `getCompanyPageData(stockCode)` 하나로 페이지 데이터 병렬 fetch.
+  (2026-10-02 부터 조립은 `src/usecases/market.ts`, 읽는 길은 `packages/market` 의 포트와 `pg` 다.)
 - **`/company/[stockCode]`** — 헤더·재무차트(recharts 이중축)·핵심지표·사실시계열·공시타임라인·
   정정체인·주요사항 이벤트. Server Component + 차트만 client.
 

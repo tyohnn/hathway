@@ -12,7 +12,7 @@
 2. **테스트 이름을 먼저 짓고 확인받는다.** `it(...)` 목록을 사용자에게 보인다. 코드가 무엇을 하는지의 정본은 테스트 이름이다.
    무엇을 왜 만드는지(PRD · 스토리 · 계획 · ADR)의 정본은 종전대로 Notion 이다(아래 Oh My Docs).
 3. **빨간 것을 먼저 세운다**(`.claude/skills/tdd/SKILL.md`).
-4. **판정과 계산은 순수 함수에 둔다.** 도메인 패키지(`packages/access` · `packages/research`)의 순수 규칙이 먼저 서고,
+4. **판정과 계산은 순수 함수에 둔다.** 도메인 패키지(`packages/access` · `packages/research` · `packages/market`)의 순수 규칙이 먼저 서고,
    포트와 어댑터는 다른 커밋이다. 표기와 분류는 `packages/schema`, 화면의 계산은 `apps/web/src/lib/<영역>` 이다.
 5. **커밋은 책임 하나다.** 도구, 의존성, 패키지 골격, 순수 규칙, 데이터 접근, 앱 배선, 인프라, 문서의 순서로 나눈다.
    문서는 코드와 같은 커밋에 넣지 않는다.
@@ -93,18 +93,19 @@ bash /workspace/scripts/sync-runtime-env.sh
   not work**; the one live component is the `@@TEXTBOOK_CHART:<id>@@` placeholder that
   `scripts/sync-content.mjs` writes for `<!-- MEDIA:chart -->` markers.
 - **`/stocks/analysis/**` (and `/company/**`, which 301s there) needs the local
-  Supabase stack** (`apps/web/src/lib/platform/db.ts` reads PostgREST at
-  `http://127.0.0.1:54321` with the built-in local **service_role** key, so
-  **no env vars are required** — just have the stack running). Every read goes through the
-  service role: since migration `20260802000005` nothing in `public` is anon-readable, by
-  design (the anon key ships in the client bundle, so anon-readable == world-readable).
-  To point the app at the hosted project instead, set `NEXT_PUBLIC_SUPABASE_URL` and
-  `SUPABASE_SERVICE_KEY` in `apps/web/.env.local` (gitignored). Without a backend,
-  `/stocks/analysis` 500s.
-  **Vercel production** needs the same pair as project Environment Variables
-  (`SUPABASE_REST_URL` is accepted as the URL). If they are missing, `db.ts` falls
-  back to `127.0.0.1:54321`, the layout swallows `ECONNREFUSED`, and the stock
-  search shows only static 산업/교재 entries.
+  Supabase stack and `WEB_DATABASE_URL`.** The reads no longer go through PostgREST:
+  `apps/web/src/lib/platform/db.ts` is a thin entry over `src/usecases/market.ts`, which reads
+  through the `@investment/market` ports with `pg` as the app role `web_app`
+  (`docs/개발-방법론.md` 「조회의 길」). **There is no local fallback** — without
+  `WEB_DATABASE_URL` every market read fails, `/stocks/analysis` 500s, the layout swallows
+  the error, and the stock search shows only static 산업/교재 entries.
+  `cp apps/web/.env.example apps/web/.env.local` gives the local values; the role's login is
+  set by `platform/supabase/seeds/org.sql` (`platform/README.md` 「로그인과 앱 롤」).
+  Nothing in `public` is anon-readable (migration `20260802000005`), and `web_app` reads only
+  the tables it was granted (`20261002000300`). The service role key is used for one thing:
+  filing section bodies in Storage (`NEXT_PUBLIC_SUPABASE_URL` or `SUPABASE_REST_URL`, plus
+  `SUPABASE_SERVICE_KEY`; these still fall back to the local demo values).
+  **Vercel production** needs `WEB_DATABASE_URL` (pooler, port 6543) in addition to that pair.
   App chrome is theme → section. Sidebar top switches `주식` (`/stocks`) and
   `부동산` (`/real-estate`). Under each theme: 종목 분석 `/analysis`, 거시경제
   `/macro`, 전체 뉴스 `/news`, 리서치 보드 `/boards`.
@@ -244,8 +245,8 @@ filing_corrections 236,303. 공시는 2026-07-29까지 최신.
   (`opm_pct · npm_pct · roe_pct · debt_ratio_pct · gpm_pct`). **계정명 매칭을 직접 하지 마라.**
   다만 `cogs · sga · gross_profit · ebitda · depreciation · amortisation`은 부분 결측이다.
 - `period_type`: `A`(연간, 22,603) · `Q1~Q4`(각 2만 내외) · **`TTM`(26,002)**. `period_key`는
-  `2021A` 꼴. **분기·TTM이 이미 적재돼 있는데 `apps/web/src/lib/platform/db.ts`는 전부
-  `period_type='A'`로 하드코딩해 읽는다** — LTM 매출이 필요한 밸류에이션은 TTM을 쓸 수 있다.
+  `2021A` 꼴. **TTM이 이미 적재돼 있는데 앱의 조회(`apps/web/src/usecases/market.ts`)는
+  연간과 분기만 읽는다** — LTM 매출이 필요한 밸류에이션은 TTM을 쓸 수 있다.
 - **연결(CFS)이 아예 없는 회사가 있다.** 종속회사가 없으면 별도(OFS)만 존재한다
   (에코프로머티 등). `fs_div`로 구분되며 CFS 우선·OFS 폴백이고 기준을 표기한다.
 - **`filing_sections`와 `trackings`는 원격에 0행**이다(로컬 시드에만 존재). 공시 본문이
