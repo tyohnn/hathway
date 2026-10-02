@@ -3,7 +3,9 @@ const config = {
     reactStrictMode: true,
     // 워크스페이스 패키지(@investment/schema)는 컴파일 전 TS 소스를 export 하므로
     // Next 컴파일러가 직접 변환하도록 명시한다.
-    transpilePackages: ["@investment/schema", "@investment/ui" /* tyohnn */, "@investment/blocks", "@investment/shared"],
+    transpilePackages: ["@investment/schema", "@investment/ui" /* tyohnn */, "@investment/blocks", "@investment/shared",
+        "@investment/access", "@investment/research", "@investment/adapters-postgres", "@investment/adapters-storage",
+    ],
     async redirects()
     {
         return [

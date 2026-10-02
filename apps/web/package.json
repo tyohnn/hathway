@@ -14,12 +14,18 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@investment/access": "workspace:*",
+    "@investment/adapters-postgres": "workspace:*",
+    "@investment/adapters-storage": "workspace:*",
     "@investment/blocks": "workspace:*",
+    "@investment/research": "workspace:*",
     "@investment/schema": "workspace:*",
     "@investment/ui": "workspace:*",
     "@phosphor-icons/react": "^2.1.10",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.110.8",
     "@xyflow/react": "^12.11.6",
+    "effect": "4.0.0-rc.112",
     "gsap": "^3.15.0",
     "hast-util-to-string": "^3.0.1",
     "katex": "^0.16.22",
@@ -50,6 +56,7 @@
     "postcss": "^8.5.21",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "@effect/vitest": "4.0.0-rc.112"
   }
 }

@@ -66,8 +66,9 @@ const isCanvas = (pathname: string): boolean => /^\/[^/]+\/boards\/[^/]+/.test(p
 
 /**
  * 앱 셸. 사이드바와 상단 띠와 본문 우물은 블록(`AppShell`)이 갖고, 이 파일은 메뉴와 현재 위치만 넘긴다.
+ * 계정 자리(`account`)는 세션을 읽어야 해서 서버 컴포넌트가 그려 넘긴다.
  */
-export function Shell({ children }: { children: ReactNode })
+export function Shell({ account, children }: { account: ReactNode; children: ReactNode })
 {
     const pathname = usePathname();
     const { stockCode } = parseAppPath(pathname);
@@ -80,8 +81,11 @@ export function Shell({ children }: { children: ReactNode })
             nav={<AppShellNav groups={groups} pathname={pathname} />}
             title={<AppCrumbs />}
             user={(
-                <div className="flex items-center justify-end group-data-[collapsible=icon]:justify-center">
-                    <ThemeToggle />
+                <div className="flex flex-col gap-2">
+                    {account}
+                    <div className="flex items-center justify-end group-data-[collapsible=icon]:justify-center">
+                        <ThemeToggle />
+                    </div>
                 </div>
             )}
             layout={isCanvas(pathname) ? "full" : "well"}

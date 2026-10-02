@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { getManifest } from "@/lib/book/manifest";
 import { INDUSTRIES } from "@/lib/industry";
 import { listCompanyIndex } from "@/lib/platform/db";
 import type { ChapterIndex, CompanyIndex, IndustryIndex } from "@/lib/platform/company-index";
 import { Shell } from "@/components/app-shell";
+import { AccountSlot } from "./_components/account-slot";
 import { SymbolCommandProvider } from "@/components/symbol-command";
 
 export const revalidate = 0;
@@ -59,7 +60,15 @@ export default async function AppLayout({ children }: { children: ReactNode })
 
     return (
         <SymbolCommandProvider companies={companies} industries={industryIndex()} chapters={chapters}>
-            <Shell>{children}</Shell>
+            <Shell
+                account={(
+                    <Suspense fallback={null}>
+                        <AccountSlot />
+                    </Suspense>
+                )}
+            >
+                {children}
+            </Shell>
         </SymbolCommandProvider>
     );
 }
