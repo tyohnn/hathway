@@ -223,7 +223,10 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# ⚠ 끄지 않는다. 첫 로그인은 확인된 주소로 명부의 계정을 잇는데(INV-ACCESS-08), 이 값이 꺼져 있으면
+#    비밀번호 가입이 메일 확인 없이 확인된 것으로 서서 남의 주소로 가입한 사람이 그 계정을 가져간다.
+#    원격 프로젝트는 이 파일을 읽지 않으므로 대시보드의 「Confirm email」도 켜져 있어야 한다.
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
