@@ -37,12 +37,12 @@ export default async function FilingSectionPage(
       <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           {section.is_note && (
-            <span className="rounded-full bg-amber-500/15 px-2 py-0.5 font-semibold text-amber-600 dark:text-amber-400">
+            <span className="rounded-full bg-warning-soft px-2 py-0.5 font-semibold text-warning">
               ★ 주석
             </span>
           )}
           {section.is_biz && (
-            <span className="rounded-full bg-sky-500/15 px-2 py-0.5 font-semibold text-sky-600 dark:text-sky-400">
+            <span className="rounded-full bg-info-soft px-2 py-0.5 font-semibold text-info">
               ☆ 사업의 내용
             </span>
           )}
@@ -58,7 +58,7 @@ export default async function FilingSectionPage(
         >
           DART 원문 열기 →
         </a>
-        <p className="mt-3 rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
+        <p className="mt-3 rounded-lg bg-warning-soft px-3 py-2 text-xs text-warning">
           자동 변환 결과이며 표 서식이 원문과 다를 수 있다. 수치를 인용하기 전에 위 원문 링크와
           대조한다.
         </p>

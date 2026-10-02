@@ -34,7 +34,7 @@ export function FilingTimeline({ filings }: { filings: Filing[] }) {
                     {f.report_nm}
                   </a>
                   {f.is_correction && (
-                    <span className="ml-2 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                    <span className="ml-2 rounded-full bg-warning-soft px-1.5 py-0.5 text-[10px] font-semibold text-warning">
                       기재정정
                     </span>
                   )}

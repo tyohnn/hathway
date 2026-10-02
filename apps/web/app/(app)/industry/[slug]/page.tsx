@@ -166,7 +166,7 @@ export default async function IndustryDetailPage(props: PageProps<'/industry/[sl
             넓게 던진 그물이라 무관한 회사가 대량으로 걸린다.
           </p>
           {missing.length > 0 && (
-            <p className="mt-2 text-[11px] text-amber-700 dark:text-amber-300">
+            <p className="mt-2 text-[11px] text-warning">
               DB 에서 찾지 못한 종목코드: {missing.join(', ')}
             </p>
           )}

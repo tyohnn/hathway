@@ -158,7 +158,7 @@ function MemberRow({
             {year} 매출 {formatEok(row.revenue)}
           </span>
           <span>이익률 {row.opm_pct === null ? '—' : `${row.opm_pct.toFixed(1)}%`}</span>
-          {row.fs_div === 'OFS' && <span className="text-amber-700 dark:text-amber-300">별도</span>}
+          {row.fs_div === 'OFS' && <span className="text-warning">별도</span>}
         </p>
       )}
       {member.stockCode && !row && (
@@ -166,7 +166,7 @@ function MemberRow({
       )}
 
       {member.conglomerate && (
-        <p className="mt-1 text-[10px] leading-snug text-amber-700 dark:text-amber-300">
+        <p className="mt-1 text-[10px] leading-snug text-warning">
           그룹 전체 수치다 — 이 산업 부문만 분리되지 않는다
         </p>
       )}

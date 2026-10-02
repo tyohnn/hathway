@@ -103,11 +103,11 @@ export function ResearchWidgetCard({
         <span
           className={cn(
             'shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium',
-            widget.kind === 'news' && 'bg-sky-500/10 text-sky-700 dark:text-sky-300',
+            widget.kind === 'news' && 'bg-info-soft text-info',
             widget.kind === 'note' && 'bg-muted text-muted-foreground',
             widget.kind === 'metric' && 'bg-primary/10 text-primary',
-            widget.kind === 'link' && 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-            widget.kind === 'chart' && 'bg-violet-500/10 text-violet-700 dark:text-violet-300',
+            widget.kind === 'link' && 'bg-success-soft text-success',
+            widget.kind === 'chart' && 'bg-muted text-foreground',
           )}
         >
           {kindLabel(widget.kind)}

@@ -42,8 +42,8 @@ export function SectionsList({
                     href={`/stocks/analysis/${stockCode}/filing/${rceptNo}/${s.sec_no}`}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-sm hover:bg-accent/40"
                   >
-                    {s.is_note && <span className="text-amber-500">★</span>}
-                    {s.is_biz && <span className="text-sky-500">☆</span>}
+                    {s.is_note && <span className="text-warning">★</span>}
+                    {s.is_biz && <span className="text-info">☆</span>}
                     {s.title}
                   </Link>
                 </li>

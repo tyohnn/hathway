@@ -17,11 +17,11 @@ export function TextbookChart({ id }: { id: string }) {
     return (
       <div
         role="alert"
-        className="my-6 w-full rounded-lg border-2 border-dashed border-red-500 bg-red-50 p-4 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+        className="my-6 w-full rounded-lg border-2 border-dashed border-destructive bg-destructive-soft p-4 text-sm text-destructive"
       >
         <strong className="font-semibold">TextbookChart: unknown id</strong>{' '}
-        <code className="rounded bg-red-100 px-1 py-0.5 dark:bg-red-900">{id}</code>
-        <p className="mt-1 text-red-600 dark:text-red-400">
+        <code className="rounded bg-destructive-soft px-1 py-0.5">{id}</code>
+        <p className="mt-1 text-destructive">
           `registry.ts`에 등록되지 않았습니다. 챕터 데이터 모듈에서
           `registerTextbookCharts`를 호출했는지, `data/index.ts`가 그 모듈을
           import하는지 확인하세요.

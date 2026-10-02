@@ -3,9 +3,9 @@ import { formatKoDate, dartUrl } from './format';
 
 function daysBadgeClass(days: number | null): string {
   if (days === null) return 'bg-secondary text-secondary-foreground';
-  if (days >= 90) return 'bg-red-500/15 text-red-600 dark:text-red-400';
-  if (days >= 30) return 'bg-amber-500/15 text-amber-600 dark:text-amber-400';
-  return 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400';
+  if (days >= 90) return 'bg-destructive-soft text-destructive';
+  if (days >= 30) return 'bg-warning-soft text-warning';
+  return 'bg-success-soft text-success';
 }
 
 export function CorrectionChains({ corrections }: { corrections: CorrectionChain[] }) {

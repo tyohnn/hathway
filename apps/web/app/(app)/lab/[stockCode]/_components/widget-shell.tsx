@@ -6,10 +6,10 @@ import { Badge } from '@investment/ui/components/badge';
 import { MotionCard } from '@/lib/motion/motion-card';
 
 const TRUST_CLASS: Record<TrustLevel, string> = {
-  filing: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  ir: 'bg-sky-500/15 text-sky-700 dark:text-sky-300',
-  news: 'bg-amber-500/15 text-amber-800 dark:text-amber-300',
-  estimate: 'bg-violet-500/15 text-violet-700 dark:text-violet-300',
+  filing: 'bg-success-soft text-success',
+  ir: 'bg-info-soft text-info',
+  news: 'bg-warning-soft text-warning',
+  estimate: 'bg-muted text-foreground',
   secondary: 'bg-muted text-muted-foreground',
 };
 

@@ -5,8 +5,8 @@ import { Badge } from '@investment/ui/components/badge';
 import { cn } from '@/lib/cn';
 
 const STATE_BADGE: Record<AnalysisBoardMeta['dataState'], string> = {
-  live: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-  partial: 'bg-amber-500/15 text-amber-800 dark:text-amber-300',
+  live: 'bg-success-soft text-success',
+  partial: 'bg-warning-soft text-warning',
   agent: 'bg-muted text-muted-foreground',
 };
 
