@@ -11,9 +11,12 @@ import { Button } from '@investment/ui/components/button';
 export function ResearchBoardList({
   theme,
   boards,
+  writable,
 }: {
   theme: ResearchBoardTheme;
   boards: ResearchBoard[];
+  /** 쓰기 관문(`boardWritesAllowed`)의 판정. 닫혀 있으면 만드는 단추를 세우지 않는다. */
+  writable: boolean;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -42,14 +45,18 @@ export function ResearchBoardList({
             그룹이 슬라이드입니다. 툴바로 넘기면 카메라가 그 그룹으로 이동합니다.
           </p>
         </div>
-        <Button type="button" size="sm" disabled={pending} onClick={() => void onCreate()}>
-          {pending ? '만드는 중' : '새 보드'}
-        </Button>
+        {writable && (
+          <Button type="button" size="sm" disabled={pending} onClick={() => void onCreate()}>
+            {pending ? '만드는 중' : '새 보드'}
+          </Button>
+        )}
       </div>
       {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
 
       {boards.length === 0 ? (
-        <p className="mt-10 text-sm text-muted-foreground">아직 보드가 없습니다. 새 보드로 시작하세요.</p>
+        <p className="mt-10 text-sm text-muted-foreground">
+          아직 보드가 없습니다.{writable && ' 새 보드로 시작하세요.'}
+        </p>
       ) : (
         <ul className="mt-8 space-y-3">
           {boards.map((board) => (
