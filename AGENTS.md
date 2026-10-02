@@ -42,7 +42,7 @@ pnpm check:tokens       # 읽는데 정의가 없는 디자인 토큰
 pnpm check:comments     # 주석의 한국어(적용 범위는 스크립트의 SCOPE)
 ```
 
-**코드 스타일.** 그 파일이 이미 쓰는 스타일을 따른다(`apps/web` 은 2칸 · 같은 줄 중괄호 · 작은따옴표). 새 주석과 커밋 메시지는
+**코드 스타일.** Allman brace · 4칸 들여쓰기 · 큰따옴표 · 세미콜론이다. 여는 중괄호는 다음 줄에 둔다. 새 주석과 커밋 메시지는
 한국어로 쓴다. 커밋 제목은 `feat(web): …` 꼴이고 교재와 리서치의 커밋은 종전대로다. `any` 를 쓰지 않는다.
 
 ## Cursor Cloud specific instructions
