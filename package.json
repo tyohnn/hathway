@@ -10,7 +10,8 @@
     "types:check": "pnpm --filter @investment/web types:check",
     "test": "pnpm -r --if-present test",
     "check:tokens": "pnpm --filter @investment/ui check:tokens",
-    "check:comments": "node scripts/check-comments.mjs"
+    "check:comments": "node scripts/check-comments.mjs",
+    "check:invariants": "pnpm --filter @investment/shared check:invariants"
   },
   "dependencies": {
     "zod": "^4.4.3"
