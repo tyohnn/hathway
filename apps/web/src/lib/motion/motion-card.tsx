@@ -3,6 +3,7 @@
 import { useRef, type ElementType, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Card } from "@investment/ui/components/card";
 import { cn } from "@/lib/cn";
 
 /**
@@ -78,4 +79,14 @@ export function MotionCard({
             {children}
         </Tag>
     );
+}
+
+/**
+ * 시스템의 `Card` 에 같은 움직임을 얹은 것. 면과 여백은 `Card` 가 정한다.
+ *
+ * ⚠ 서버 컴포넌트는 클라이언트 컴포넌트에 함수(`as={Card}`)를 넘기지 못한다. 그래서 고르는 일을 이 파일 안에서 한다.
+ */
+export function MotionSurface({ className, children }: { className?: string; children: ReactNode })
+{
+    return <MotionCard as={Card} {...(className === undefined ? {} : { className })}>{children}</MotionCard>;
 }

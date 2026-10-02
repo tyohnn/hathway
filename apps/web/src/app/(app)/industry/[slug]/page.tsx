@@ -1,4 +1,7 @@
+import { PageHeader } from "@investment/blocks/page-header";
 import { SectionHeader } from "@investment/blocks/section-header";
+import { Badge } from "@investment/ui/components/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@investment/ui/components/card";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -74,33 +77,24 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
 
     return (
         <div className="mx-auto w-full max-w-7xl">
-            <nav className="text-xs text-muted-foreground">
-                <Link href="/stocks/macro/industries" className="hover:text-foreground">
-                    산업 지도
-                </Link>
-                <span className="mx-1.5">/</span>
-                <span>{industry.name}</span>
-            </nav>
-
-            <header className="mt-2">
-                <div className="flex flex-wrap items-baseline gap-3">
-                    <h1 className="text-2xl font-bold tracking-tight">{industry.name}</h1>
-                    <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                        채 {industry.sieveStage}단계 · {SIEVE_LABELS[industry.sieveStage]}
-                    </span>
-                    <span className="text-xs text-muted-foreground">기준일 {industry.asOf}</span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">{industry.tagline}</p>
-                <p className="mt-3 max-w-3xl text-sm leading-relaxed">{industry.summary}</p>
-            </header>
+            <PageHeader
+                breadcrumb={[{ label: "산업 지도", href: "/stocks/macro/industries" }, { label: industry.name }]}
+                title={industry.name}
+                description={industry.tagline}
+                actions={(
+                    <>
+                        <Badge variant="secondary">채 {industry.sieveStage}단계 · {SIEVE_LABELS[industry.sieveStage]}</Badge>
+                        <span className="text-xs text-muted-foreground">기준일 {industry.asOf}</span>
+                    </>
+                )}
+            />
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed">{industry.summary}</p>
 
             <div className="mt-6 flex flex-wrap gap-1.5">
                 {VERDICT_ORDER.filter((v) => counts[v] > 0).map((v) => (
                     <VerdictBadge key={v} verdict={v} count={counts[v]} />
                 ))}
-                <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    판정 합계 {judged}건
-                </span>
+                <Badge variant="outline">판정 합계 {judged}건</Badge>
             </div>
             {unlisted.length > 0 && (
                 <p className="mt-2 text-[11px] text-muted-foreground">
@@ -111,12 +105,11 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
             )}
 
             <section className="mt-10">
-                <SectionHeader level={2} title="밸류체인 지도" />
-                <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                    매출·이익률은 카탈로그가 아니라 <code className="text-xs">fin_periods</code> 에서 읽은{" "}
-                    {DISPLAY_YEAR}년 연간 값이다(연결 우선, 연결이 없는 회사만 별도로 표시된다). 판정과
-                    체인 위치는 {industry.asOf} 실행의 손 확정값이다.
-                </p>
+                <SectionHeader
+                    level={2}
+                    title="밸류체인 지도"
+                    description={`매출과 이익률은 DB 에서 읽은 ${DISPLAY_YEAR}년 연간 값이에요. 연결이 먼저이고 연결이 없는 회사만 별도예요. 판정과 체인 위치는 ${industry.asOf} 에 손으로 확정했어요.`}
+                />
                 <div className="mt-5">
                     <ValueChain stages={industry.stages} facts={facts} year={DISPLAY_YEAR} />
                 </div>
@@ -127,27 +120,31 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                     <SectionHeader level={2} title="산업 국면 3문" />
                     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                         {industry.phase.map((p) => (
-                            <article
-                                key={p.question}
-                                className="rounded-xl border border-border bg-card p-4"
-                            >
-                                <h3 className="text-sm font-semibold leading-snug">{p.question}</h3>
-                                <p className="mt-2 text-sm font-medium text-primary">{p.verdict}</p>
-                                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{p.detail}</p>
-                            </article>
+                            <Card key={p.question} size="sm">
+                                <CardHeader>
+                                    <CardTitle role="heading" aria-level={3}>{p.question}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex flex-col gap-2">
+                                    <p className="text-sm font-medium text-primary">{p.verdict}</p>
+                                    <p className="text-xs leading-relaxed text-muted-foreground">{p.detail}</p>
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 </section>
             )}
 
             <section className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div className="rounded-xl border border-border bg-card p-5">
-                    <h2 className="text-sm font-semibold">KSIC 로는 한 덩어리가 아니다</h2>
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                        소속 {companies.length}개사가 중분류 {divisions.size}개에 흩어져 있다. 산업의 경계를
-                        업종코드로 잡을 수 없다는 것이 이 표다.
-                    </p>
-                    <ul className="mt-3 space-y-1.5">
+                <Card>
+                    <CardHeader>
+                        <CardTitle role="heading" aria-level={2}>KSIC 로는 한 덩어리가 아니에요</CardTitle>
+                        <CardDescription>
+                            소속 {companies.length}개사가 중분류 {divisions.size}개에 흩어져 있어요. 산업의 경계를
+                            업종코드로 잡을 수 없다는 것을 이 표가 보여요.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <ul className="flex flex-col gap-1.5">
                         {[...divisions.entries()]
                             .sort((a, b) => b[1] - a[1])
                             .map(([division, n]) => (
@@ -160,25 +157,28 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                                 </li>
                             ))}
                     </ul>
-                    <p className="mt-3 border-t border-border pt-3 text-[11px] text-muted-foreground">
-                        채 0단계에서 후보를 긁을 때 쓴 접두:{" "}
-                        <span className="font-mono">{industry.ksicPrefixes.join(" · ")}</span> — 재현율을 위해
-                        넓게 던진 그물이라 무관한 회사가 대량으로 걸린다.
-                    </p>
-                    {missing.length > 0 && (
-                        <p className="mt-2 text-[11px] text-warning">
-                            DB 에서 찾지 못한 종목코드: {missing.join(", ")}
+                    </CardContent>
+                    <CardFooter className="flex-col items-start gap-2 text-[11px] text-muted-foreground">
+                        <p>
+                            채 0단계에서 후보를 긁을 때 쓴 접두:{" "}
+                            <span className="font-mono">{industry.ksicPrefixes.join(" · ")}</span>. 빠뜨리지 않으려고
+                            넓게 던진 그물이라 무관한 회사가 많이 걸려요.
                         </p>
-                    )}
-                </div>
+                        {missing.length > 0 && (
+                            <p className="text-warning">DB 에서 찾지 못한 종목코드: {missing.join(", ")}</p>
+                        )}
+                    </CardFooter>
+                </Card>
 
-                <div className="rounded-xl border border-border bg-card p-5">
-                    <h2 className="text-sm font-semibold">출처</h2>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                        판정의 근거 문서. 이 저장소의 <code>리서치/</code> 는 웹에 게시되지 않으므로 경로로만
-                        적는다.
-                    </p>
-                    <ul className="mt-3 space-y-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle role="heading" aria-level={2}>출처</CardTitle>
+                        <CardDescription>
+                            판정의 근거 문서예요. 이 저장소의 <code>리서치/</code> 는 웹에 올리지 않아서 경로만 적어요.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    <ul className="flex flex-col gap-2">
                         {industry.sources.map((s) => (
                             <li key={s.path} className="text-xs">
                                 <span className="font-medium">{s.label}</span>
@@ -188,7 +188,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                         ))}
                     </ul>
                     <h3 className="mt-5 text-sm font-semibold">방법론</h3>
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-2 flex flex-col gap-1">
                         {industry.textbooks.map((t) =>
                         {
                             const linkable = t.href && !isHiddenBookHref(t.href);
@@ -211,11 +211,12 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                             );
                         })}
                     </ul>
-                </div>
+                    </CardContent>
+                </Card>
             </section>
 
             <p className="mt-10 text-[11px] leading-relaxed text-muted-foreground">
-                교재 방법론에 따른 학습·분석 자료이며 종목 추천이나 투자 권유가 아니다.
+                교재의 방법론을 따라 공부하고 분석한 자료예요. 종목 추천이나 투자 권유가 아니에요.
             </p>
         </div>
     );

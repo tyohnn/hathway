@@ -2,8 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { companyHref } from "@/lib/company";
 import { listCompanies } from "@/lib/platform/db";
+import { EmptyState } from "@investment/blocks/empty-state";
+import { PageHeader } from "@investment/blocks/page-header";
 import { Badge } from "@investment/ui/components/badge";
-import { MotionCard } from "@/lib/motion/motion-card";
+import { CardAction, CardContent, CardHeader, CardTitle } from "@investment/ui/components/card";
+import { MotionSurface } from "@/lib/motion/motion-card";
 import { StaggerReveal } from "@/lib/motion/stagger-reveal";
 
 export const metadata: Metadata = {
@@ -17,28 +20,24 @@ export default async function StockAnalysisListPage()
     const companies = await listCompanies();
 
     return (
-        <div className="mx-auto w-full max-w-5xl">
-            <h1 className="text-2xl font-bold tracking-tight">종목 분석</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-                DART 공시·사실 시계열이 적재된 종목입니다. 카드를 누르면 Snapshot으로 이동합니다.
-            </p>
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+            <PageHeader title="종목 분석" description="DART 공시와 사실 시계열을 적재한 종목이에요. 카드를 누르면 그 종목의 Snapshot 을 열어요." />
 
             {companies.length === 0 ? (
-                <p className="mt-8 rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                    데이터 없음
-                </p>
+                <EmptyState title="적재한 종목이 아직 없어요" />
             ) : (
-                <StaggerReveal className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <StaggerReveal className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {companies
                         .filter((c): c is typeof c & { stock_code: string } => Boolean(c.stock_code))
                         .map((c) => (
                             <Link key={c.corp_code} href={companyHref(c.stock_code)} className="group block">
-                                <MotionCard className="rounded-xl border border-border bg-card p-5 transition-colors group-hover:border-primary/60">
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-lg font-semibold group-hover:text-primary">{c.name}</h2>
-                                        {c.market && <Badge variant="secondary">{c.market}</Badge>}
-                                    </div>
-                                    <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                                <MotionSurface>
+                                    <CardHeader>
+                                        <CardTitle role="heading" aria-level={2} className="group-hover:text-primary">{c.name}</CardTitle>
+                                        {c.market && <CardAction><Badge variant="secondary">{c.market}</Badge></CardAction>}
+                                    </CardHeader>
+                                    <CardContent>
+                                    <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-muted-foreground">
                                         <div className="flex justify-between">
                                             <dt>종목코드</dt>
                                             <dd className="font-mono text-foreground">{c.stock_code}</dd>
@@ -48,7 +47,8 @@ export default async function StockAnalysisListPage()
                                             <dd className="text-foreground">{c.ceo ?? "—"}</dd>
                                         </div>
                                     </dl>
-                                </MotionCard>
+                                    </CardContent>
+                                </MotionSurface>
                             </Link>
                         ))}
                 </StaggerReveal>

@@ -1,10 +1,19 @@
 import type { Tone } from "@investment/blocks/tone";
+import { EmptyState } from "@investment/blocks/empty-state";
 import { StatusBadge } from "@investment/blocks/status-badge";
+import {
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@investment/ui/components/card";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { TRUST_LABELS, type AnalysisWidgetMeta, type TrustLevel } from "@/lib/analysis";
 import { isHiddenBookHref } from "@/lib/hidden-books";
-import { MotionCard } from "@/lib/motion/motion-card";
+import { MotionSurface } from "@/lib/motion/motion-card";
 
 const TRUST_TONE: Record<TrustLevel, Tone> = {
     filing: "success",
@@ -14,13 +23,18 @@ const TRUST_TONE: Record<TrustLevel, Tone> = {
     secondary: "neutral",
 };
 
+/**
+ * 분석 위젯 하나의 틀. 제목과 질문, 출처의 등급, 주장과 근거, 본문, 방법론 링크가 선다.
+ *
+ * 면과 여백과 모서리는 시스템의 `Card` 가 정한다. `MotionSurface` 는 그 카드에 올리는 움직임만 얹는다.
+ */
 export function WidgetShell({
     meta,
     claim,
     evidence,
     children,
     empty,
-    emptyHint = "데이터 없음 / 수집 필요",
+    emptyHint = "아직 모은 자료가 없어요",
 }: {
     meta: AnalysisWidgetMeta;
     /** 런타임 주장 — 없으면 meta.claim */
@@ -32,40 +46,31 @@ export function WidgetShell({
 })
 {
     const displayClaim = claim ?? meta.claim;
-    // Textbook deep-links may target a hidden book (see lib/hidden-books.ts) — drop
-    // those rather than link to a page that doesn't exist.
+    // 교재 링크가 숨긴 책(lib/hidden-books.ts)을 가리키면 없는 화면으로 보내지 않고 뺀다
     const visibleTextbooks = meta.textbooks.filter((t) => !isHiddenBookHref(t.href));
 
     return (
-        <MotionCard className="flex flex-col rounded-xl border border-border bg-card p-4 sm:p-5">
-            <header className="flex flex-wrap items-start justify-between gap-2">
-                <div className="min-w-0 space-y-1">
-                    <h3 className="text-sm font-semibold leading-snug">{meta.title}</h3>
-                    {meta.question && (
-                        <p className="text-xs text-muted-foreground">질문: {meta.question}</p>
-                    )}
+        <MotionSurface>
+            <CardHeader>
+                <CardTitle role="heading" aria-level={3}>{meta.title}</CardTitle>
+                {meta.question && <CardDescription>질문: {meta.question}</CardDescription>}
+                <CardAction>
+                    <StatusBadge tone={TRUST_TONE[meta.trust]} label={TRUST_LABELS[meta.trust]} className="shrink-0" />
+                </CardAction>
+            </CardHeader>
+
+            <CardContent className="flex min-h-0 flex-1 flex-col gap-3">
+                <div className="flex flex-col gap-1.5">
+                    <p className="text-sm leading-relaxed text-foreground">{displayClaim}</p>
+                    {evidence && <p className="text-xs text-muted-foreground">근거: {evidence}</p>}
                 </div>
-                <StatusBadge tone={TRUST_TONE[meta.trust]} label={TRUST_LABELS[meta.trust]} className="shrink-0" />
-            </header>
-
-            <p className="mt-3 text-sm leading-relaxed text-foreground">{displayClaim}</p>
-
-            {evidence && (
-                <p className="mt-1.5 text-xs text-muted-foreground">근거: {evidence}</p>
-            )}
-
-            <div className="mt-3 min-h-0 flex-1">
-                {empty ? (
-                    <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
-                        {emptyHint}
-                    </p>
-                ) : (
-                    children
-                )}
-            </div>
+                <div className="min-h-0 flex-1">
+                    {empty ? <EmptyState title={emptyHint} /> : children}
+                </div>
+            </CardContent>
 
             {visibleTextbooks.length > 0 && (
-                <footer className="mt-4 flex flex-wrap gap-x-3 gap-y-1 border-t border-border pt-3 text-xs">
+                <CardFooter className="flex-wrap gap-x-3 gap-y-1 text-xs">
                     <span className="text-muted-foreground">방법론</span>
                     {visibleTextbooks.map((t) => (
                         <Link
@@ -76,8 +81,8 @@ export function WidgetShell({
                             {t.label}
                         </Link>
                     ))}
-                </footer>
+                </CardFooter>
             )}
-        </MotionCard>
+        </MotionSurface>
     );
 }
