@@ -17,8 +17,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../../..");
 
 /** 세션이나 Supabase 토큰으로 사람이 들어오는 자리. 앱이 늘면 여기에 한 줄이 는다 */
+// 이 저장소에서 세션으로 들어오는 자리는 web 하나다. 스캐폴드에는 agent 앱과 MCP 의 토큰 길이 더 있다
 const SESSION_ENTRIES = [
-    "apps/agent/src/lib/auth.ts",
     "apps/web/src/lib/auth.ts",
 ] as const;
 
