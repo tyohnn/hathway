@@ -1,0 +1,29 @@
+{
+    "name": "@investment/research",
+    "version": "0.0.1",
+    "private": true,
+    "//": "리서치 보드 도메인. 보드의 타입과 순수 규칙(누가 고치고 지우는가 · 판 대조 · 새 보드)과 포트를 둔다. 런타임 의존은 effect 뿐이다.",
+    "exports": {
+        "./invariants": "./src/invariants.ts",
+        "./domain/*": "./src/domain/*.ts",
+        "./rules/*": "./src/rules/*.ts",
+        "./ports/*": "./src/ports/*.ts",
+        "./testing/*": "./src/testing/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@investment/access": "workspace:*",
+        "@investment/shared": "workspace:*",
+        "effect": "4.0.0-rc.112"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "@types/node": "^22",
+        "typescript": "^5",
+        "vitest": "^4.1.11"
+    }
+}
