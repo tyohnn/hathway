@@ -142,7 +142,7 @@ export function ResearchGroupPane({
                 ) : (
                     <div className="flex flex-col gap-2">
                         {group.widgets.length === 0 && (
-                            <p className="px-1 py-6 text-center text-xs text-muted-foreground">카드가 없습니다</p>
+                            <p className="px-1 py-6 text-center text-xs text-muted-foreground">카드가 없어요</p>
                         )}
                         {group.widgets.map((widget) => (
                             <div key={widget.id} style={{ minHeight: PLAIN_CARD_MIN_PX }}>

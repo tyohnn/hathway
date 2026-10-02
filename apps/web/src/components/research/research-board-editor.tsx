@@ -131,11 +131,11 @@ export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>이 보드를 삭제할까요?</DialogTitle>
-                        <DialogDescription>그룹과 칸이 함께 지워집니다. 되돌릴 수 없습니다.</DialogDescription>
+                        <DialogDescription>그룹과 칸도 함께 지워져요. 되돌릴 수 없어요.</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setConfirmDelete(false)}>
-                            취소
+                            닫기
                         </Button>
                         <Button type="button" variant="destructive" onClick={() => void onDelete()}>
                             삭제
