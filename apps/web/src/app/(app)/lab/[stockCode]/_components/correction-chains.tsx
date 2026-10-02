@@ -1,12 +1,16 @@
+import { SectionHeader } from "@investment/blocks/section-header";
+import type { Tone } from "@investment/blocks/tone";
+import { StatusBadge } from "@investment/blocks/status-badge";
 import type { CorrectionChain } from "@investment/schema";
 import { formatKoDate, dartUrl } from "./format";
 
-function daysBadgeClass(days: number | null): string
+/** 정정까지 걸린 날이 길수록 최초 공시를 덜 믿을 만했다는 뜻이다. 30일과 90일에서 tone 이 갈린다 */
+function daysTone(days: number | null): Tone
 {
-    if (days === null) return "bg-secondary text-secondary-foreground";
-    if (days >= 90) return "bg-destructive-soft text-destructive";
-    if (days >= 30) return "bg-warning-soft text-warning";
-    return "bg-success-soft text-success";
+    if (days === null) return "neutral";
+    if (days >= 90) return "danger";
+    if (days >= 30) return "warning";
+    return "success";
 }
 
 export function CorrectionChains({ corrections }: { corrections: CorrectionChain[] })
@@ -15,7 +19,7 @@ export function CorrectionChains({ corrections }: { corrections: CorrectionChain
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">기재정정 체인</h2>
+            <SectionHeader level={2} title="기재정정 체인" />
             <p className="mt-1 text-xs text-muted-foreground">
                 정정본 → 원본 연결. 시차가 클수록 최초 공시의 신뢰도가 낮았다는 신호입니다.
             </p>
@@ -41,13 +45,11 @@ export function CorrectionChains({ corrections }: { corrections: CorrectionChain
                                 )}
                             </div>
                         </div>
-                        <span
-                            className={`shrink-0 self-start rounded-full px-2.5 py-1 text-xs font-semibold sm:self-center ${daysBadgeClass(
-                                c.days_after_original,
-                            )}`}
-                        >
-                            {c.days_after_original === null ? "시차 미상" : `${c.days_after_original}일 후 정정`}
-                        </span>
+                        <StatusBadge
+                            tone={daysTone(c.days_after_original)}
+                            label={c.days_after_original === null ? "시차 미상" : `${c.days_after_original}일 후 정정`}
+                            className="shrink-0 self-start sm:self-center"
+                        />
                     </li>
                 ))}
             </ul>

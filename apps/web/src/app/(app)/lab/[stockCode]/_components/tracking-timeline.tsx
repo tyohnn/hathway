@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import { formatFactDate, type TrackingFact } from "@investment/schema";
 
 export function TrackingTimeline({ trackings }: { trackings: TrackingFact[] })
@@ -18,7 +19,7 @@ export function TrackingTimeline({ trackings }: { trackings: TrackingFact[] })
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">사실 시계열</h2>
+            <SectionHeader level={2} title="사실 시계열" />
             <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {[...byTopic.entries()].map(([topic, facts]) => (
                     <div key={topic} className="rounded-xl border border-border bg-card p-4">

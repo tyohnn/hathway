@@ -1,3 +1,4 @@
+import { StatusBadge } from "@investment/blocks/status-badge";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -39,14 +40,10 @@ export default async function FilingSectionPage(
             <div className="rounded-xl border border-border bg-card p-5">
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {section.is_note && (
-                        <span className="rounded-full bg-warning-soft px-2 py-0.5 font-semibold text-warning">
-                            ★ 주석
-                        </span>
+                        <StatusBadge tone="warning" label="★ 주석" />
                     )}
                     {section.is_biz && (
-                        <span className="rounded-full bg-info-soft px-2 py-0.5 font-semibold text-info">
-                            ☆ 사업의 내용
-                        </span>
+                        <StatusBadge tone="info" label="☆ 사업의 내용" />
                     )}
                     {filing && <span>{filing.report_nm}</span>}
                     {filing && <span>· 접수 {formatKoDate(filing.rcept_dt)}</span>}

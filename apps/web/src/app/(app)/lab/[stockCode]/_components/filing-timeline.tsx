@@ -1,3 +1,5 @@
+import { SectionHeader } from "@investment/blocks/section-header";
+import { StatusBadge } from "@investment/blocks/status-badge";
 import type { Filing } from "@investment/schema";
 import { formatKoDate, dartUrl } from "./format";
 
@@ -7,7 +9,7 @@ export function FilingTimeline({ filings }: { filings: Filing[] })
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">공시 타임라인</h2>
+            <SectionHeader level={2} title="공시 타임라인" />
             <p className="mt-1 text-xs text-muted-foreground">최근 {filings.length}건</p>
             <div className="mt-3 overflow-x-auto rounded-xl border border-border">
                 <table className="w-full min-w-[560px] text-sm">
@@ -35,9 +37,7 @@ export function FilingTimeline({ filings }: { filings: Filing[] })
                                         {f.report_nm}
                                     </a>
                                     {f.is_correction && (
-                                        <span className="ml-2 rounded-full bg-warning-soft px-1.5 py-0.5 text-[10px] font-semibold text-warning">
-                                            기재정정
-                                        </span>
+                                        <StatusBadge tone="warning" label="기재정정" className="ml-2" />
                                     )}
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-2 align-top text-muted-foreground">

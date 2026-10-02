@@ -1,5 +1,7 @@
 "use client";
 
+import type { Tone } from "@investment/blocks/tone";
+import { StatusBadge } from "@investment/blocks/status-badge";
 import Link from "next/link";
 import { DotsSixVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import type { ResearchBoard, ResearchWidget } from "@/lib/research";
@@ -102,18 +104,7 @@ export function ResearchWidgetCard({
                 >
                     <TrashIcon className="size-3.5" />
                 </Button>
-                <span
-                    className={cn(
-                        "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium",
-                        widget.kind === "news" && "bg-info-soft text-info",
-                        widget.kind === "note" && "bg-muted text-muted-foreground",
-                        widget.kind === "metric" && "bg-primary/10 text-primary",
-                        widget.kind === "link" && "bg-success-soft text-success",
-                        widget.kind === "chart" && "bg-muted text-foreground",
-                    )}
-                >
-                    {kindLabel(widget.kind)}
-                </span>
+                <StatusBadge tone={KIND_TONE[widget.kind]} label={kindLabel(widget.kind)} className="shrink-0" />
             </header>
             <div className="min-h-0 flex-1 overflow-auto px-2.5 py-2 text-sm">
                 {widget.kind === "metric" && widget.metric && (
@@ -164,6 +155,15 @@ export function ResearchWidgetCard({
         </article>
     );
 }
+
+/** 칸의 갈래를 가르는 색. 뉴스와 링크만 색을 갖고 나머지는 조용히 선다 */
+const KIND_TONE: Record<ResearchWidget["kind"], Tone> = {
+    news: "info",
+    note: "neutral",
+    metric: "neutral",
+    link: "success",
+    chart: "neutral",
+};
 
 export function kindLabel(kind: ResearchWidget["kind"]): string
 {

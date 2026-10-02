@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ksicDivision } from "@investment/schema";
@@ -11,7 +12,7 @@ import {
 } from "@/lib/industry";
 import { getCompaniesByStockCodes, getListedDivisionCounts } from "@/lib/platform/db";
 import { SectorGrid, type DivisionCoverage } from "./_components/sector-grid";
-import { VERDICT_CLASS } from "./_components/verdict";
+import { VerdictBadge } from "./_components/verdict";
 
 export const metadata: Metadata = {
     title: "산업 지도",
@@ -59,7 +60,7 @@ export default async function IndustryMapPage()
     }
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-6 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl">
             <header>
                 <h1 className="text-2xl font-bold tracking-tight">산업 지도</h1>
                 <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
@@ -70,7 +71,7 @@ export default async function IndustryMapPage()
             </header>
 
             <section className="mt-8">
-                <h2 className="text-lg font-semibold tracking-tight">분석된 산업</h2>
+                <SectionHeader level={2} title="분석된 산업" />
                 <p className="mt-1 text-sm text-muted-foreground">
                     경계와 밸류체인 단계를 손으로 확정한 산업. 소속 {coveredCompanies}개사 / 상장{" "}
                     {totalListed.toLocaleString()}개사.
@@ -83,7 +84,7 @@ export default async function IndustryMapPage()
             </section>
 
             <section className="mt-12">
-                <h2 className="text-lg font-semibold tracking-tight">KSIC 중분류 격자</h2>
+                <SectionHeader level={2} title="KSIC 중분류 격자" />
                 <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
                     한 칸이 하나의 밸류체인이라는 뜻은 아니다 — 행정 분류이기 때문이다. 이차전지
                     28개사만 해도 일곱 칸에 흩어져 있고, 반대로 한 칸에는 그 산업과 무관한 회사가 훨씬
@@ -144,12 +145,7 @@ function IndustryCard({ industry, listed }: { industry: Industry; listed: number
 
             <div className="mt-4 flex flex-wrap gap-1.5">
                 {VERDICT_ORDER.filter((v) => counts[v] > 0).map((v) => (
-                    <span
-                        key={v}
-                        className={`rounded-md px-1.5 py-0.5 text-[10px] font-medium ${VERDICT_CLASS[v]}`}
-                    >
-                        {v} {counts[v]}
-                    </span>
+                    <VerdictBadge key={v} verdict={v} count={counts[v]} />
                 ))}
             </div>
 

@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import { fieldSpec, formatFieldValue, type DartEvent } from "@investment/schema";
 import { formatKoDate, dartUrl } from "./format";
 
@@ -19,7 +20,7 @@ export function EventsSection({ events }: { events: DartEvent[] })
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">주요사항 이벤트</h2>
+            <SectionHeader level={2} title="주요사항 이벤트" />
             <div className="mt-3 space-y-6">
                 {[...byType.entries()].map(([eventType, list]) => (
                     <div key={eventType}>

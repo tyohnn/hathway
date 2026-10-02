@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import type { AnnualSummary } from "@investment/schema";
 import type { BoundSection } from "@/lib/company/guide-bound";
 import { cn } from "@/lib/cn";
@@ -10,7 +11,7 @@ function SectionHead({ title, note }: { title?: string; note?: string })
     if (!title && !note) return null;
     return (
         <div>
-            {title && <h2 className="text-lg font-semibold">{title}</h2>}
+            {title && <SectionHeader level={2} title={title} />}
             {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
         </div>
     );

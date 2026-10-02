@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import Link from "next/link";
 import type { NoteSectionListItem } from "@/lib/platform/db";
 import { formatKoDate } from "./format";
@@ -24,7 +25,7 @@ export function SectionsList({
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">사업보고서 주석·사업의 내용</h2>
+            <SectionHeader level={2} title="사업보고서 주석·사업의 내용" />
             <p className="mt-1 text-xs text-muted-foreground">
                 ★주석 · ☆사업의 내용 — 수치 인용 전 원문 대조 원칙 (표 서식 일부 손실 가능)
             </p>

@@ -1,5 +1,6 @@
 "use client";
 
+import { SectionHeader } from "@investment/blocks/section-header";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { BoundRow } from "@/lib/company/guide-bound";
@@ -66,7 +67,7 @@ export function GuideTreeTable({
 
     return (
         <section>
-            <h2 className="text-lg font-semibold">{title}</h2>
+            <SectionHeader level={2} title={title} />
             {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
             <div className="mt-3 overflow-x-auto rounded-xl border border-border">
                 <table className="w-full min-w-[640px] text-sm">

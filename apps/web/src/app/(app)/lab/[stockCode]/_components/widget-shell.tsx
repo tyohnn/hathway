@@ -1,16 +1,17 @@
+import type { Tone } from "@investment/blocks/tone";
+import { StatusBadge } from "@investment/blocks/status-badge";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { TRUST_LABELS, type AnalysisWidgetMeta, type TrustLevel } from "@/lib/analysis";
 import { isHiddenBookHref } from "@/lib/hidden-books";
-import { Badge } from "@investment/ui/components/badge";
 import { MotionCard } from "@/lib/motion/motion-card";
 
-const TRUST_CLASS: Record<TrustLevel, string> = {
-    filing: "bg-success-soft text-success",
-    ir: "bg-info-soft text-info",
-    news: "bg-warning-soft text-warning",
-    estimate: "bg-muted text-foreground",
-    secondary: "bg-muted text-muted-foreground",
+const TRUST_TONE: Record<TrustLevel, Tone> = {
+    filing: "success",
+    ir: "info",
+    news: "warning",
+    estimate: "neutral",
+    secondary: "neutral",
 };
 
 export function WidgetShell({
@@ -44,7 +45,7 @@ export function WidgetShell({
                         <p className="text-xs text-muted-foreground">질문: {meta.question}</p>
                     )}
                 </div>
-                <Badge className={`shrink-0 ${TRUST_CLASS[meta.trust]}`}>{TRUST_LABELS[meta.trust]}</Badge>
+                <StatusBadge tone={TRUST_TONE[meta.trust]} label={TRUST_LABELS[meta.trust]} className="shrink-0" />
             </header>
 
             <p className="mt-3 text-sm leading-relaxed text-foreground">{displayClaim}</p>

@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,7 +14,7 @@ import {
 } from "@/lib/industry";
 import { getAnnualByCorpCodes, getCompaniesByStockCodes } from "@/lib/platform/db";
 import { ValueChain, type MemberFacts } from "../_components/value-chain";
-import { VERDICT_CLASS } from "../_components/verdict";
+import { VerdictBadge } from "../_components/verdict";
 
 // 다른 DB 화면들과 같이 요청 시점 렌더다. 업종 구성은 상장·폐지로만 바뀌니 캐시해도
 // 될 것 같지만, **빌드 환경에는 DB 자격증명이 없다** — 프리렌더를 시도하면 db.ts 의
@@ -72,7 +73,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
     );
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-6 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl">
             <nav className="text-xs text-muted-foreground">
                 <Link href="/stocks/macro/industries" className="hover:text-foreground">
                     산업 지도
@@ -95,12 +96,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
 
             <div className="mt-6 flex flex-wrap gap-1.5">
                 {VERDICT_ORDER.filter((v) => counts[v] > 0).map((v) => (
-                    <span
-                        key={v}
-                        className={`rounded-md px-2 py-0.5 text-xs font-medium ${VERDICT_CLASS[v]}`}
-                    >
-                        {v} {counts[v]}
-                    </span>
+                    <VerdictBadge key={v} verdict={v} count={counts[v]} />
                 ))}
                 <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                     판정 합계 {judged}건
@@ -115,7 +111,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
             )}
 
             <section className="mt-10">
-                <h2 className="text-lg font-semibold tracking-tight">밸류체인 지도</h2>
+                <SectionHeader level={2} title="밸류체인 지도" />
                 <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
                     매출·이익률은 카탈로그가 아니라 <code className="text-xs">fin_periods</code> 에서 읽은{" "}
                     {DISPLAY_YEAR}년 연간 값이다(연결 우선, 연결이 없는 회사만 별도로 표시된다). 판정과
@@ -128,7 +124,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
 
             {industry.phase && (
                 <section className="mt-12">
-                    <h2 className="text-lg font-semibold tracking-tight">산업 국면 3문</h2>
+                    <SectionHeader level={2} title="산업 국면 3문" />
                     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                         {industry.phase.map((p) => (
                             <article

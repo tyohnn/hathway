@@ -1,5 +1,6 @@
 "use client";
 
+import { SectionHeader } from "@investment/blocks/section-header";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -16,7 +17,7 @@ export function GuideTabs({
 
     return (
         <section>
-            {title && <h2 className="text-lg font-semibold">{title}</h2>}
+            {title && <SectionHeader level={2} title={title} />}
             <div className={cn("flex flex-wrap gap-1 border-b border-border", title && "mt-3")}>
                 {tabs.map((tab) => (
                     <button

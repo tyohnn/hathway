@@ -1,3 +1,4 @@
+import { SectionHeader } from "@investment/blocks/section-header";
 import { notFound } from "next/navigation";
 import { getBoard, type BoardId } from "@/lib/analysis";
 import { getCompanyPageData } from "@/lib/platform/db";
@@ -58,7 +59,7 @@ export async function BoardScreen({
                     {latestYear && <KeyMetrics latest={latestYear} previous={previousYear} />}
                     {annual.length > 0 && (
                         <section>
-                            <h2 className="text-lg font-semibold">재무 추이</h2>
+                            <SectionHeader level={2} title="재무 추이" />
                             <p className="mt-1 text-xs text-muted-foreground">
                                 연도별 매출·영업이익(막대, 좌축) · 영업이익률(선, 우축) —{" "}
                                 {annual[0].bsns_year}~{annual[annual.length - 1].bsns_year}
