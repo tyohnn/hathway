@@ -40,7 +40,7 @@ const BOOK_ROUTE = "/book";
  * ─────────────────────────────────────────────────────────────────────
  */
 const HIDDEN_BOOKS = new Set(
-    Object.entries(JSON.parse(fs.readFileSync(path.join(ROOT, "lib", "hidden-books.json"), "utf8")))
+    Object.entries(JSON.parse(fs.readFileSync(path.join(ROOT, "src", "lib", "hidden-books.json"), "utf8")))
         .filter(([key, value]) => key !== "_comment" && value === true)
         .map(([key]) => key),
 );
@@ -650,7 +650,7 @@ function writeSourceMap()
 {
     const obj = Object.fromEntries(SOURCE_MAP);
     fs.writeFileSync(
-        path.join(ROOT, "lib", "source-map.json"),
+        path.join(ROOT, "src", "lib", "source-map.json"),
         `${JSON.stringify(obj, null, 2)}\n`,
         "utf8",
     );

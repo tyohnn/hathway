@@ -16,7 +16,7 @@
     "incremental": true,
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ],
       "@investment/ui/icons": [
         "../../packages/ui/src/icons/libraries/phosphor.tsx"

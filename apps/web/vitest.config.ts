@@ -5,11 +5,11 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
     resolve: {
         alias: {
-            "@": fileURLToPath(new URL(".", import.meta.url)),
+            "@": fileURLToPath(new URL("./src", import.meta.url)),
             "server-only": fileURLToPath(new URL("./test/server-only.ts", import.meta.url)),
         },
     },
     test: {
-        include: ["app/**/*.test.{ts,tsx}", "components/**/*.test.{ts,tsx}", "lib/**/*.test.{ts,tsx}"],
+        include: ["src/**/*.test.{ts,tsx}"],
     },
 });

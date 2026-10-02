@@ -31,7 +31,7 @@
                 "hangulFallback": "pretendard"
             },
             "mode": "dark",
-            "css": "apps/web/app/global.css"
+            "css": "apps/web/src/app/global.css"
         }
     },
     "packages": {

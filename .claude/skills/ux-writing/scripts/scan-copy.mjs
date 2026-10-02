@@ -2,7 +2,7 @@
 /**
  * 화면의 글 가운데 기계로 잴 수 있는 것만 잰다. `ux-writing` 스킬의 마지막 확인이다.
  *
- *   node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/app apps/web/components
+ *   node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/src/app apps/web/src/components
  *
  * `.tsx` · `.ts` 에서 한글이 든 문자열과 JSX 글을, `.mdx` 에서 코드 블록 밖의 줄을 뽑아 여섯 가지를 본다.
  *

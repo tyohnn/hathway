@@ -16,8 +16,8 @@
 
 /* tyohnn:begin theme */
 /* Tailwind does not scan workspace packages by itself; the system folders hold CSS, not class names. */
-@source "../../../packages/ui/src";
-@source not "../../../packages/ui/src/systems";
+@source "../../../../packages/ui/src";
+@source not "../../../../packages/ui/src/systems";
 
 /* Font stacks on the next/font variables of the root layout (next/font registers its own family names). */
 :root {

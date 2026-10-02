@@ -42,9 +42,7 @@ const TOKEN_FILES = [
 /** 토큰을 읽는 트리. 없는 폴더는 건너뛴다 */
 const USAGE_ROOTS = [
     join(uiRoot, "src"),
-    join(repoRoot, "apps/web/app"),
-    join(repoRoot, "apps/web/components"),
-    join(repoRoot, "apps/web/lib"),
+    join(repoRoot, "apps/web/src"),
 ];
 
 const SCANNED_EXTENSIONS = new Set([".css", ".ts", ".tsx"]);
