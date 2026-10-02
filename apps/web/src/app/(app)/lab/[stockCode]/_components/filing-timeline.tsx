@@ -1,53 +1,56 @@
-import { SectionHeader } from "@investment/blocks/section-header";
-import { StatusBadge } from "@investment/blocks/status-badge";
-import type { Filing } from "@investment/schema";
-import { formatKoDate, dartUrl } from "./format";
+"use client";
 
+import { DataTableRoot, type ColumnSpec } from "@investment/blocks/data-table";
+import { SectionHeader } from "@investment/blocks/section-header";
+import type { Filing } from "@investment/schema";
+
+import { dartUrl, filingRemark, formatKoDate } from "./format";
+
+type FilingRow = {
+    readonly id: string;
+    readonly date: string;
+    readonly report: string;
+    readonly correction: string;
+    readonly filer: string;
+    readonly remark: string;
+};
+
+const COLUMNS: ReadonlyArray<ColumnSpec<FilingRow>> = [
+    { key: "date", label: "접수일" },
+    { key: "correction", label: "정정", kind: "badge", tone: () => "warning", sortable: false },
+    { key: "report", label: "보고서명" },
+    { key: "filer", label: "제출인" },
+    { key: "remark", label: "비고" },
+];
+
+/**
+ * 최근 공시의 표. 면과 줄과 글자는 블록(`DataTable`)이 정한다. 줄을 누르면 DART 원문이 새 창에 열린다.
+ *
+ * ⚠ 「비고」는 DART 가 한 글자(유 · 코 · 공 …)로 주는 값이라 풀어서 적는다(`filingRemark`).
+ */
 export function FilingTimeline({ filings }: { filings: Filing[] })
 {
     if (filings.length === 0) return null;
 
+    const rows: FilingRow[] = filings.map((filing) => ({
+        id: filing.rcept_no,
+        date: formatKoDate(filing.rcept_dt),
+        report: filing.report_nm.trim(),
+        correction: filing.is_correction ? "기재정정" : "",
+        filer: filing.flr_nm ?? "—",
+        remark: filingRemark(filing.rm),
+    }));
+
     return (
-        <section>
+        <section className="flex flex-col gap-3">
             <SectionHeader level={2} title="최근 공시" count={filings.length} />
-            <div className="mt-3 overflow-x-auto rounded-xl border border-border">
-                <table className="w-full min-w-[560px] text-sm">
-                    <thead className="bg-muted/50 text-xs text-muted-foreground">
-                        <tr>
-                            <th className="px-3 py-2 text-left font-medium">접수일</th>
-                            <th className="px-3 py-2 text-left font-medium">보고서명</th>
-                            <th className="px-3 py-2 text-left font-medium">제출인</th>
-                            <th className="px-3 py-2 text-left font-medium">비고</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                        {filings.map((f) => (
-                            <tr key={f.rcept_no} className="hover:bg-accent/30">
-                                <td className="whitespace-nowrap px-3 py-2 align-top tabular-nums text-muted-foreground">
-                                    {formatKoDate(f.rcept_dt)}
-                                </td>
-                                <td className="px-3 py-2 align-top">
-                                    <a
-                                        href={dartUrl(f.rcept_no)}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="hover:text-primary hover:underline"
-                                    >
-                                        {f.report_nm}
-                                    </a>
-                                    {f.is_correction && (
-                                        <StatusBadge tone="warning" label="기재정정" className="ml-2" />
-                                    )}
-                                </td>
-                                <td className="whitespace-nowrap px-3 py-2 align-top text-muted-foreground">
-                                    {f.flr_nm ?? "—"}
-                                </td>
-                                <td className="px-3 py-2 align-top text-muted-foreground">{f.rm ?? ""}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTableRoot
+                rows={rows}
+                columns={COLUMNS}
+                features={{ surface: "card", density: "compact", sorting: "single" }}
+                defaultView={{ pagination: { pageIndex: 0, pageSize: 10 } }}
+                onRowPress={(row) => window.open(dartUrl(row.id), "_blank", "noopener,noreferrer")}
+            />
         </section>
     );
 }
