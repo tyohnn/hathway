@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { ArrowRightIcon, BookOpenIcon } from '@phosphor-icons/react/dist/ssr';
 import { BookShell } from '@/components/book/book-shell';
 import { getManifest } from '@/lib/book/manifest';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@investment/ui/components/separator';
 
 export const metadata: Metadata = {
   title: '서가',

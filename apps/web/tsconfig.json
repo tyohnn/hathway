@@ -15,7 +15,12 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ],
+      "@investment/ui/icons": [
+        "../../packages/ui/src/icons/libraries/phosphor.tsx"
+      ]
     },
     "plugins": [
       {

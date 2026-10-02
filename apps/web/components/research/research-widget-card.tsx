@@ -5,15 +5,15 @@ import { DotsSixVerticalIcon, TrashIcon } from '@phosphor-icons/react';
 import type { ResearchBoard, ResearchWidget } from '@/lib/research';
 import { moveWidget, removeWidget, renameWidget } from '@/lib/research/document';
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@investment/ui/components/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@investment/ui/components/popover';
 
 export const WIDGET_MIME = 'text/research-widget';
 
@@ -70,11 +70,7 @@ export function ResearchWidgetCard({
         </div>
         {otherGroups.length > 0 && (
           <Popover>
-            <PopoverTrigger asChild>
-              <Button type="button" variant="ghost" size="xs">
-                그룹
-              </Button>
-            </PopoverTrigger>
+            <PopoverTrigger render={<Button type="button" variant="ghost" size="xs" />}>그룹</PopoverTrigger>
             <PopoverContent className="w-56 p-0" align="end">
               <Command>
                 <CommandList>

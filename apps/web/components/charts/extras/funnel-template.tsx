@@ -7,7 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 
 export type FunnelStep = { step: string; value: number }
 

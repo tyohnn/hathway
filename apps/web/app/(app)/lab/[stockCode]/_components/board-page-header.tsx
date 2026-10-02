@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { DATA_STATE_LABELS, type AnalysisBoardMeta } from '@/lib/analysis';
 import { isHiddenBookHref } from '@/lib/hidden-books';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@investment/ui/components/badge';
 import { cn } from '@/lib/cn';
 
 const STATE_BADGE: Record<AnalysisBoardMeta['dataState'], string> = {

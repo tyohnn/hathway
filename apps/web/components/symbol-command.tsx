@@ -38,9 +38,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { Button } from '@/components/ui/button';
-import { Kbd, KbdGroup } from '@/components/ui/kbd';
+} from '@investment/ui/components/command';
+import { Button } from '@investment/ui/components/button';
+import { Kbd, KbdGroup } from '@investment/ui/components/kbd';
 
 const RECENT_KEY = 'symbol-command:recent';
 const RECENT_MAX = 8;

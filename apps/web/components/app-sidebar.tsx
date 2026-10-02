@@ -33,7 +33,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
-} from '@/components/ui/sidebar';
+} from '@investment/ui/components/sidebar';
 
 const SECTION_ICON: Record<ThemeSectionId, typeof SquaresFourIcon> = {
   analysis: SquaresFourIcon,
@@ -92,11 +92,9 @@ export function AppSidebar() {
               const Icon = SECTION_ICON[item.id];
               return (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-                    <Link href={href}>
-                      <Icon weight={active ? 'fill' : 'regular'} />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
+                  <SidebarMenuButton render={<Link href={href} />} isActive={active} tooltip={item.label}>
+                    <Icon weight={active ? 'fill' : 'regular'} />
+                    <span className="truncate">{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               );
@@ -110,14 +108,12 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
+              render={<Link href="/book" />}
               isActive={pathname === '/book' || pathname.startsWith('/book/')}
               tooltip="교재"
             >
-              <Link href="/book">
-                <BookOpenTextIcon />
-                <span>교재</span>
-              </Link>
+              <BookOpenTextIcon />
+              <span>교재</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

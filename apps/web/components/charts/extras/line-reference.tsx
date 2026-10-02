@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 
 const chartData = [
   { month: "Jan", sessions: 210 },

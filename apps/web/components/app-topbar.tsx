@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getTheme, getThemeSection, parseAppPath, sectionHref, themeHref } from '@/lib/nav';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarTrigger } from '@investment/ui/components/sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +11,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+} from '@investment/ui/components/breadcrumb';
 import { StockAnalysisCrumbs } from '@/components/stock-analysis-crumbs';
 
 export function AppTopbar() {
@@ -27,17 +27,15 @@ export function AppTopbar() {
       <Breadcrumb className="min-w-0 flex-1">
         <BreadcrumbList className="flex-nowrap overflow-x-auto">
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href={themeHref(theme)}>{themeMeta.label}</Link>
-            </BreadcrumbLink>
+            <BreadcrumbLink render={<Link href={themeHref(theme)} />}>{themeMeta.label}</BreadcrumbLink>
           </BreadcrumbItem>
           {sectionMeta && (
             <>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {stockCode ? (
-                  <BreadcrumbLink asChild>
-                    <Link href={sectionHref(theme, sectionMeta.id)}>{sectionMeta.label}</Link>
+                  <BreadcrumbLink render={<Link href={sectionHref(theme, sectionMeta.id)} />}>
+                    {sectionMeta.label}
                   </BreadcrumbLink>
                 ) : (
                   <BreadcrumbPage className="font-medium">{sectionMeta.label}</BreadcrumbPage>

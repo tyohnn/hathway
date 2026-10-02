@@ -6,7 +6,7 @@ import { deleteResearchBoardAction, saveResearchBoardAction } from '@/lib/resear
 import { fitBoardGroupHeights } from '@/lib/research/document';
 import type { ResearchBoard } from '@/lib/research/types';
 import { researchBoardsHref } from '@/lib/nav';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@investment/ui/components/dialog';
 import { ResearchBoardFlow } from '@/components/research/research-board-flow';
 
 type SaveState = 'saved' | 'saving' | 'error';

@@ -6,7 +6,7 @@ import type { ChapterIndex, CompanyIndex, IndustryIndex } from '@/lib/platform/c
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppTopbar } from '@/components/app-topbar';
 import { SymbolCommandProvider } from '@/components/symbol-command';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@investment/ui/components/sidebar';
 
 export const revalidate = 0;
 

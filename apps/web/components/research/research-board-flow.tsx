@@ -20,7 +20,7 @@ import {
   packFlowGroups,
   type FlowGroupBox,
 } from '@/lib/research/flow-layout';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 import { ResearchGroupPane } from '@/components/research/research-group-pane';
 
 type Focus =

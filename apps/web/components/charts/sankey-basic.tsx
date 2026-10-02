@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 import { SankeyLinkShape, SankeyNodeShape } from "./sankey-parts"
 
 export type SankeyData = {

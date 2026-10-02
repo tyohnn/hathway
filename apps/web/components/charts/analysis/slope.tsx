@@ -9,7 +9,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 
 /** Two-period slope: each series connects start → end. */
 const chartData = [

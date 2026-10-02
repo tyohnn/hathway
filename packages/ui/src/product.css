@@ -1,0 +1,51 @@
+/* 제품 토큰. 디자인 시스템이 아니라 이 제품의 화면이 정한 값이다.
+
+   3층 CSS 는 tyohnn 이 소유하고(`src/systems/<system>`), 시스템이나 색을 갈아도 살아남아야 하는
+   우리 값만 여기 둔다. 진입 CSS 의 `tyohnn:end system` 블록 뒤에서 읽으므로 시스템 토큰을 덮는다.
+   덮을 생각이 없다면 시스템이 쓰는 이름과 겹치지 않게 짓는다(`tyohnn doctor` 가 겹친 이름을 알린다). */
+:root {
+    /* 범주형 차트 팔레트. 색(theme)이 주는 `--chart-*` 는 한 색상의 농담 다섯 단이라 순서형 척도에는 맞지만,
+       이 앱의 대부분인 여러 계열 재무 차트에서는 계열이 구분되지 않는다. 그래서 일부러 덮는다. */
+    --chart-1: #6366f1; /* indigo */
+    --chart-2: #22c55e; /* emerald */
+    --chart-3: #f59e0b; /* amber */
+    --chart-4: #f43f5e; /* rose */
+    --chart-5: #0ea5e9; /* sky */
+
+    /* 오른 값과 내린 값. 새 색을 두지 않고 차트 팔레트를 가리켜서, 지표 카드의 화살표가 그 위 차트의
+       선과 늘 같은 색이다. var() 참조라 밝은 모드와 어두운 모드에서 각자의 `--chart-2` · `--chart-4` 로 풀린다. */
+    --positive: var(--chart-2);
+    --negative: var(--chart-4);
+
+    /* 대시보드 카드의 띄움. 평소에는 옅고 hover 에서 조금 더 뜬다. */
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-card-hover: 0 12px 24px -8px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.06);
+    --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 18%, transparent);
+
+    /* 교재 본문(`/book`)의 조판. 시스템의 문서 프리셋(18px)보다 촘촘한데, 숫자와 표가 많은 교재를
+       한 화면에 더 담으려는 값이다. `.typeset-notes` 가 읽는다(진입 CSS). */
+    --typeset-notes-size: 15px;
+    --typeset-notes-leading: 1.75;
+    --typeset-notes-flow: 1.25em;
+}
+
+.dark {
+    /* 밝은 모드의 값은 검정에 가까운 바닥 위에서 너무 어둡게 읽혀서 같은 색상의 밝은 단을 쓴다. */
+    --chart-1: #818cf8;
+    --chart-2: #4ade80;
+    --chart-3: #fbbf24;
+    --chart-4: #fb7185;
+    --chart-5: #38bdf8;
+
+    /* 검정에 가까운 카드 면은 밝은 모드보다 깊고 또렷한 그림자가 있어야 뜬 것이 보인다. */
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-card-hover: 0 16px 32px -8px rgb(0 0 0 / 0.55), 0 4px 10px -4px rgb(0 0 0 / 0.4);
+    --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 45%, transparent),
+        0 0 28px -10px color-mix(in oklch, var(--sidebar-primary) 55%, transparent);
+}
+
+/* 제품 토큰을 Tailwind 유틸리티로 연다(`text-positive` · `bg-negative/10`). */
+@theme inline {
+    --color-positive: var(--positive);
+    --color-negative: var(--negative);
+}

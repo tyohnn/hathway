@@ -12,7 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 
 const defaultChartConfig = {
   score: { label: "Score", color: "var(--chart-1)" },

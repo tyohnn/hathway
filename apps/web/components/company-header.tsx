@@ -1,5 +1,5 @@
 import { classifySector, type Company } from '@investment/schema';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@investment/ui/components/badge';
 
 function formatKoDate(date: string | null | undefined): string {
   if (!date) return '—';

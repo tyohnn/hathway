@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CaretDownIcon } from '@phosphor-icons/react';
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 import {
   Command,
   CommandEmpty,
@@ -12,8 +12,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@investment/ui/components/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@investment/ui/components/popover';
 
 export type PathComboboxItem = {
   value: string;
@@ -52,17 +52,18 @@ export function PathCombobox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          aria-expanded={open}
-          className={cn('h-8 max-w-[14rem] gap-1 px-2 text-sm font-medium', className)}
-        >
-          <span className="truncate">{label}</span>
-          <CaretDownIcon className="size-3.5 shrink-0 text-muted-foreground" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn('h-8 max-w-[14rem] gap-1 px-2 text-sm font-medium', className)}
+          />
+        }
+      >
+        <span className="truncate">{label}</span>
+        <CaretDownIcon className="size-3.5 shrink-0 text-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0">
         <Command>

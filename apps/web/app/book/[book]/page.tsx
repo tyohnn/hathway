@@ -5,7 +5,7 @@ import { BookShell } from '@/components/book/book-shell';
 import { TypesetBody } from '@/components/book/typeset-body';
 import { getBook, getManifest, readMarkdown } from '@/lib/book/manifest';
 import { renderMarkdown } from '@/lib/book/render';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@investment/ui/components/separator';
 
 export async function generateStaticParams() {
   const manifest = await getManifest();

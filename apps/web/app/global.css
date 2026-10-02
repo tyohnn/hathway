@@ -1,203 +1,49 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
-@import './typeset.css';
+/* tyohnn:begin system */
+/* Design system graphite (tyohnn). One system per app; this order is the cascade contract: tailwindcss → layer 1
+   globals → layer 1 theme colours → layer 2 tokens → typeset → layer 3 rules in layer(base), so className utilities still win. */
+@import "tailwindcss";
+@import "@investment/ui/systems/graphite/globals.css";
+@import "@investment/ui/systems/graphite/theme.css";
+@import "@investment/ui/systems/graphite/tokens.css";
+@import "@investment/ui/systems/graphite/typeset.css";
+@import "@investment/ui/systems/graphite/typeset-preset.css";
+@import "@investment/ui/systems/graphite/style.css" layer(base);
+/* tyohnn:end system */
+
+/* 우리 것이다. 시스템 축에 속하지 않는 제품 토큰이고, tyohnn 블록 뒤에서 읽혀 시스템 토큰을 덮는다. */
+@import "@investment/ui/product.css";
 @import 'katex/dist/katex.min.css';
 
-@custom-variant dark (&:is(.dark *));
+/* tyohnn:begin theme */
+/* Tailwind does not scan workspace packages by itself; the system folders hold CSS, not class names. */
+@source "../../../packages/ui/src";
+@source not "../../../packages/ui/src/systems";
+
+/* Font stacks on the next/font variables of the root layout (next/font registers its own family names). */
+:root {
+    --font-sans: var(--font-sans-pretendard), ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", var(--font-sans-pretendard), monospace;
+}
+/* tyohnn:end theme */
 
 /*
- * shadcn/typeset preset for the 교재 reading surface (`/book`).
- *
- * Latin glyphs come from Noto Sans, Hangul falls through to Noto Sans KR —
- * one family can't serve both, and Noto Sans KR's latin is noticeably worse
- * for the numbers this textbook is full of.
+ * 이 파일은 진입점이다. 3층 CSS 의 실체는 `@investment/ui/systems/<system>` 이 갖고, 위 `tyohnn:*` 블록은
+ * tyohnn CLI 가 다시 쓴다. 손으로 고치지 않고 `tyohnn use <system>` · `tyohnn theme <name>` 으로 바꾼다.
+ * 블록 밖은 우리 것이다. 아래에는 이 앱의 화면에만 있는 규칙을 둔다.
  */
-.typeset-notes {
-  --typeset-font-body: var(--font-noto-sans), var(--font-noto-sans-kr), sans-serif;
-  --typeset-font-heading: var(--font-noto-sans), var(--font-noto-sans-kr), sans-serif;
-  --typeset-font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --typeset-size: 15px;
-  --typeset-leading: 1.75;
-  --typeset-flow: 1.25em;
 
-  /*
-   * Korean line breaking. Hangul has no spaces requirement for breaking, so the
-   * default `break-word` splits mid-어절 ("투자 / 와 투기는") and the ragged edge
-   * reads as a typo. `keep-all` breaks on 어절 boundaries instead; typeset's own
-   * `overflow-wrap: break-word` still catches anything genuinely too long.
-   */
-  word-break: keep-all;
-}
-
-/* Theme — shadcn `radix-mira` / `mist` preset (pnpm dlx shadcn apply). */
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.148 0.004 228.8);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.148 0.004 228.8);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.148 0.004 228.8);
-  --muted: oklch(0.963 0.002 197.1);
-  --muted-foreground: oklch(0.56 0.021 213.5);
-  --border: oklch(0.925 0.005 214.3);
-  --input: oklch(0.925 0.005 214.3);
-  --ring: oklch(0.723 0.014 214.4);
-  --primary: oklch(0.52 0.105 223.128);
-  --primary-foreground: oklch(0.984 0.019 200.873);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --accent: oklch(0.963 0.002 197.1);
-  --accent-foreground: oklch(0.218 0.008 223.9);
-  --destructive: oklch(0.577 0.245 27.325);
-  --sidebar: oklch(0.987 0.002 197.1);
-  --sidebar-foreground: oklch(0.148 0.004 228.8);
-  --sidebar-primary: oklch(0.609 0.126 221.723);
-  --sidebar-primary-foreground: oklch(0.984 0.019 200.873);
-  --sidebar-accent: oklch(0.963 0.002 197.1);
-  --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
-  --sidebar-border: oklch(0.925 0.005 214.3);
-  --sidebar-ring: oklch(0.723 0.014 214.4);
-  --radius: 0.625rem;
-
-  /*
-   * Font stacks. Named apart from Tailwind's own `--font-sans`/`--font-mono`
-   * theme keys so the `@theme inline` block below can point at them without a
-   * self-referential `--font-sans: var(--font-sans)`.
-   */
-  --font-app-sans: var(--font-noto-sans), var(--font-noto-sans-kr), ui-sans-serif,
-    system-ui, sans-serif;
-  --font-app-mono: var(--font-geist-mono), ui-monospace, monospace;
-
-  /*
-   * Categorical chart palette. Deliberately NOT the preset's chart ramp:
-   * that ramp is monochrome (five tints of one slate hue), which is right for
-   * a sequential scale and unreadable for the multi-series financial charts
-   * this app is mostly made of. Hues are the ones already hand-picked in
-   * app/company/[stockCode]/_components/financial-chart.tsx, extended to five.
-   */
-  --chart-1: #6366f1; /* indigo */
-  --chart-2: #22c55e; /* emerald */
-  --chart-3: #f59e0b; /* amber */
-  --chart-4: #f43f5e; /* rose */
-  --chart-5: #0ea5e9; /* sky */
-
-  /*
-   * Gain/loss semantics for the investment dashboard (/company). Aliased to
-   * the chart palette instead of new hex values so a stat card's up/down
-   * arrow always matches the color a line in the chart above it uses —
-   * defined once here because a var() reference re-resolves --chart-2/-4
-   * against whichever scope (light or .dark) is actually active.
-   */
-  --positive: var(--chart-2);
-  --negative: var(--chart-4);
-
-  /* Dashboard card elevation — subtle by default, a touch more on hover. */
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-card-hover: 0 12px 24px -8px rgb(0 0 0 / 0.12), 0 2px 6px -2px rgb(0 0 0 / 0.06);
-  --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 18%, transparent);
-}
-
-.dark {
-  --background: oklch(0.148 0.004 228.8);
-  --foreground: oklch(0.987 0.002 197.1);
-  --card: oklch(0.218 0.008 223.9);
-  --card-foreground: oklch(0.987 0.002 197.1);
-  --popover: oklch(0.218 0.008 223.9);
-  --popover-foreground: oklch(0.987 0.002 197.1);
-  --muted: oklch(0.275 0.011 216.9);
-  --muted-foreground: oklch(0.723 0.014 214.4);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.56 0.021 213.5);
-  --primary: oklch(0.45 0.085 224.283);
-  --primary-foreground: oklch(0.984 0.019 200.873);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --accent: oklch(0.275 0.011 216.9);
-  --accent-foreground: oklch(0.987 0.002 197.1);
-  --destructive: oklch(0.704 0.191 22.216);
-  --sidebar: oklch(0.218 0.008 223.9);
-  --sidebar-foreground: oklch(0.987 0.002 197.1);
-  --sidebar-primary: oklch(0.715 0.143 215.221);
-  --sidebar-primary-foreground: oklch(0.302 0.056 229.695);
-  --sidebar-accent: oklch(0.275 0.011 216.9);
-  --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.56 0.021 213.5);
-
-  /* Lighter tints of the same hues — the light-mode values read too dark
-   * against the near-black dark background. */
-  --chart-1: #818cf8;
-  --chart-2: #4ade80;
-  --chart-3: #fbbf24;
-  --chart-4: #fb7185;
-  --chart-5: #38bdf8;
-
-  /* Near-black card surfaces need deeper, more visible shadows than light mode's. */
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-card-hover: 0 16px 32px -8px rgb(0 0 0 / 0.55), 0 4px 10px -4px rgb(0 0 0 / 0.4);
-  --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 45%, transparent),
-    0 0 28px -10px color-mix(in oklch, var(--sidebar-primary) 55%, transparent);
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-positive: var(--positive);
-  --color-negative: var(--negative);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-  --font-sans: var(--font-app-sans);
-  --font-heading: var(--font-app-sans);
-  --font-mono: var(--font-app-mono);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-    scrollbar-gutter: stable;
-  }
+/*
+ * 교재 본문(`/book`)의 조판 프리셋.
+ *
+ * 규칙과 글꼴 연결과 한글 줄바꿈(`keep-all`)은 시스템의 typeset 이 준다. 여기서는 교재가 고른 크기와
+ * 줄 간격만 건다(값은 product.css). 시스템 프리셋이 `@layer components` 안에 있고 이 규칙은 레이어 밖이라
+ * 이쪽이 이긴다.
+ */
+.typeset.typeset-notes {
+  --typeset-size: var(--typeset-notes-size);
+  --typeset-leading: var(--typeset-notes-leading);
+  --typeset-flow: var(--typeset-notes-flow);
 }
 
 /*
@@ -244,7 +90,7 @@
 /*
  * Book text measure, with an escape hatch.
  *
- * Prose is held to shadcn/typeset's recommended ~37em so a line stays readable,
+ * Prose is held to typeset's recommended ~37em so a line stays readable,
  * but the 교재's charts and wide tables need more room than a book column. A
  * full-bleed grid gives both: children default to the `measure` column, and
  * anything marked `.book-bleed` spans the page's full width instead.

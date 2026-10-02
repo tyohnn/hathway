@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { listCompanies } from '@/lib/platform/db';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@investment/ui/components/badge';
 import { MotionCard } from '@/lib/motion/motion-card';
 import { StaggerReveal } from '@/lib/motion/stagger-reveal';
 

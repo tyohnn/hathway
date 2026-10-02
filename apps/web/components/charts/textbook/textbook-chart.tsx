@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@investment/ui/components/card';
 import { cn } from '@/lib/cn';
 import { getTextbookChart } from './registry';
 // Registers every chapter module as a side effect. Imported after

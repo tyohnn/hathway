@@ -16,7 +16,7 @@ import {
 import { INNER_GRID, PLAIN_CARD_MIN_PX } from '@/lib/research/grid';
 import { flowInnerWidth } from '@/lib/research/flow-layout';
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 import { ResearchWidgetCard, WIDGET_MIME } from '@/components/research/research-widget-card';
 
 export function ResearchGroupPane({

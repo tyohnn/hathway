@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import type { AnnualSummary } from '@investment/schema';
 import { cn } from '@/lib/cn';
-import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
+import { Badge } from '@investment/ui/components/badge';
+import { Slider } from '@investment/ui/components/slider';
 import { computeNineCell, practicalPer, type ValuationResult } from '@/lib/valuation/nine-cell';
 import type { Quote } from '@/lib/platform/quote';
 
@@ -54,7 +54,7 @@ function AssumptionRow({
         min={min}
         max={max}
         step={step}
-        onValueChange={([v]) => onChange(v)}
+        onValueChange={(next) => onChange(typeof next === 'number' ? next : next[0])}
         aria-label={label}
       />
       {hint && <p className="text-[11px] leading-snug text-muted-foreground">{hint}</p>}

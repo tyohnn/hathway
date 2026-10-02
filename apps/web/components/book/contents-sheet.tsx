@@ -10,9 +10,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
+} from '@investment/ui/components/sheet';
+import { ScrollArea } from '@investment/ui/components/scroll-area';
+import { Button } from '@investment/ui/components/button';
 import { cn } from '@/lib/cn';
 import type { Manifest } from '@/lib/book/types';
 
@@ -36,11 +36,9 @@ export function ContentsSheet({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <ListBulletsIcon />
-          목차
-        </Button>
+      <SheetTrigger render={<Button variant="ghost" size="sm" className="gap-2" />}>
+        <ListBulletsIcon />
+        목차
       </SheetTrigger>
       <SheetContent side="left" className="w-[min(22rem,90vw)] p-0">
         <SheetHeader className="border-b">

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createResearchBoardAction } from '@/lib/research/actions';
 import type { ResearchBoard, ResearchBoardTheme } from '@/lib/research/types';
 import { getTheme, researchBoardHref } from '@/lib/nav';
-import { Button } from '@/components/ui/button';
+import { Button } from '@investment/ui/components/button';
 
 export function ResearchBoardList({
   theme,

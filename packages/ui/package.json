@@ -7,6 +7,7 @@
         "./components/*": "./src/components/*.tsx",
         "./hooks/*": "./src/hooks/*.ts",
         "./lib/*": "./src/lib/*.ts",
+        "./product.css": "./src/product.css",
         "./icons": "./src/icons/index.ts",
         "./icons/names": "./src/icons/names.ts",
         "./strings": "./src/strings/index.ts",

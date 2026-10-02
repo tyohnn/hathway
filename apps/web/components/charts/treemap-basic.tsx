@@ -7,7 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@investment/ui/components/chart"
 import { TreemapTile } from "./treemap-tile"
 
 export type TreemapLeaf = { name: string; size: number; fill?: string }

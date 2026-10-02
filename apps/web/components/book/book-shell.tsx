@@ -4,7 +4,7 @@ import { getManifest } from '@/lib/book/manifest';
 import { ContentsSheet } from '@/components/book/contents-sheet';
 import { ReadingProgress } from '@/components/book/reading-progress';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@investment/ui/components/separator';
 import { appName } from '@/lib/shared';
 
 /**

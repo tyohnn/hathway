@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { TRUST_LABELS, type AnalysisWidgetMeta, type TrustLevel } from '@/lib/analysis';
 import { isHiddenBookHref } from '@/lib/hidden-books';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@investment/ui/components/badge';
 import { MotionCard } from '@/lib/motion/motion-card';
 
 const TRUST_CLASS: Record<TrustLevel, string> = {
