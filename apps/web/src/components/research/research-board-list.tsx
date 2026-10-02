@@ -13,9 +13,12 @@ import { Button } from "@investment/ui/components/button";
 export function ResearchBoardList({
     theme,
     boards,
+    writable,
 }: {
     theme: ResearchBoardTheme;
     boards: ResearchBoard[];
+    /** 쓰기 관문(`boardWritesAllowed`)의 판정. 닫혀 있으면 만드는 단추를 세우지 않는다. */
+    writable: boolean;
 })
 {
     const router = useRouter();
@@ -41,11 +44,13 @@ export function ResearchBoardList({
             <PageHeader
                 title="리서치 보드"
                 description="주제마다 그룹을 만들고 차트와 뉴스를 모아요."
-                actions={(
-                    <Button type="button" size="sm" disabled={pending} onClick={() => void onCreate()}>
-                        {pending ? "만드는 중" : "새 보드"}
-                    </Button>
-                )}
+                actions={writable
+                    ? (
+                        <Button type="button" size="sm" disabled={pending} onClick={() => void onCreate()}>
+                            {pending ? "만드는 중" : "새 보드"}
+                        </Button>
+                    )
+                    : undefined}
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
 
@@ -61,7 +66,7 @@ export function ResearchBoardList({
                 empty={(
                     <EmptyState
                         title="아직 보드가 없어요"
-                        description="새 보드를 만들어 시작해 보세요."
+                        description={writable ? "새 보드를 만들어 시작해 보세요." : undefined}
                     />
                 )}
             />

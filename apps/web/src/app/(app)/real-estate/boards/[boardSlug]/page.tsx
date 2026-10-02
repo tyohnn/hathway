@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ResearchBoardEditor } from "@/components/research/research-board-editor";
 import { getResearchBoard } from "@/lib/platform/research-boards";
+import { boardWritesAllowed } from "@/lib/research/write-gate";
 
 export const dynamic = "force-dynamic";
 
@@ -21,5 +22,5 @@ export default async function ResearchBoardPage(
     const { boardSlug } = await props.params;
     const board = await getResearchBoard(boardSlug);
     if (!board || board.theme !== "real-estate") notFound();
-    return <ResearchBoardEditor initial={board} />;
+    return <ResearchBoardEditor initial={board} writable={boardWritesAllowed(process.env)} />;
 }

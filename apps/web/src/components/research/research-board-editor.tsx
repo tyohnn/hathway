@@ -20,7 +20,14 @@ import { ResearchBoardFlow } from "@/components/research/research-board-flow";
 
 type SaveState = "saved" | "saving" | "error";
 
-export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
+export function ResearchBoardEditor({
+    initial,
+    writable,
+}: {
+    initial: ResearchBoard;
+    /** 쓰기 관문(`boardWritesAllowed`)의 판정. 닫혀 있으면 저장과 삭제를 부르지 않는다. */
+    writable: boolean;
+})
 {
     const router = useRouter();
     const [board, setBoard] = useState(() => fitBoardGroupHeights(initial));
@@ -59,6 +66,7 @@ export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
         {
             setBoard(next);
             latest.current = next;
+            if (!writable) return;
             setSaveState("saving");
             if (timer.current) clearTimeout(timer.current);
             timer.current = setTimeout(() =>
@@ -66,7 +74,7 @@ export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
                 void persist(next);
             }, 400);
         },
-        [persist],
+        [persist, writable],
     );
 
     useEffect(() =>
@@ -114,14 +122,20 @@ export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
                     />
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs text-muted-foreground">
-                        {saveState === "saving" && "저장 중"}
-                        {saveState === "saved" && "저장됨"}
-                        {saveState === "error" && (error ?? "저장 실패")}
-                    </p>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setConfirmDelete(true)}>
-                        보드 삭제
-                    </Button>
+                    {writable ? (
+                        <>
+                            <p className="text-xs text-muted-foreground">
+                                {saveState === "saving" && "저장 중"}
+                                {saveState === "saved" && "저장됨"}
+                                {saveState === "error" && (error ?? "저장 실패")}
+                            </p>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => setConfirmDelete(true)}>
+                                보드 삭제
+                            </Button>
+                        </>
+                    ) : (
+                        <p className="text-xs text-muted-foreground">여기서 고친 내용은 저장하지 않아요.</p>
+                    )}
                 </div>
             </header>
             <div className="min-h-0 flex-1">
