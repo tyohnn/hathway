@@ -25,6 +25,7 @@ packages/ui/src/systems/graphite/
     typeset.css + typeset-preset.css          긴 글 조판. 3층과 별개 축입니다
     DESIGN.md                                 graphite 가 무엇을 왜 그렇게 정했나
 packages/ui/src/product.css                   우리 것. 시스템 축이 아닌 제품 토큰 (아래 참조)
+packages/blocks/src/<block>/                  블록 층. 프리미티브를 조합한 화면 형태
 apps/web/src/app/global.css                       진입점. 위 파일들을 순서대로 불러옵니다
 apps/web/src/app/layout.tsx                       글꼴과 <html> 클래스
 ```
@@ -61,7 +62,9 @@ CLI 는 자기가 쓴 파일의 해시를 `tyohnn.json` 에 적어 둡니다. �
 
 ## 화면을 그릴 때
 
-- **`@investment/ui/components/*` 만 씁니다.** 화면을 만들기 전에 `packages/ui/src/components/` 를 먼저 훑어보고 있는 것을 조합합니다.
+- **화면은 블록(`@investment/blocks/*`)으로 조립합니다.** 앱 셸 · 화면 머리 · 구획 제목 · 지표 카드 · 상태 배지 · 목록 · 빈 자리는
+  블록이 갖고, 규약은 `packages/blocks/CLAUDE.md` 에 있습니다. 블록은 데이터를 가져오지 않고 도메인 타입을 모릅니다.
+- **블록에 없는 것은 `@investment/ui/components/*` 를 조합합니다.** 화면을 만들기 전에 `packages/ui/src/components/` 를 먼저 훑어보고 있는 것을 조합합니다.
 - **Base UI 는 Radix 와 API 가 다릅니다**(`.claude/skills/shadcn/rules/base-vs-radix.md`). `asChild` 대신 **`render`**,
   버튼이 아닌 것을 `render` 로 넘길 때는 `nativeButton={false}`, `Select` 는 `items` prop 필수, Toast 는 `toast.add()` 입니다.
   `form` 컴포넌트는 없고 그 자리는 `field` 입니다.
@@ -117,9 +120,7 @@ node <tyohnn 체크아웃>/packages/cli/dist/index.js <명령> --ref main
 - **앱이 phosphor 를 직접 부릅니다.** UI 패키지는 의미 이름(`@investment/ui/icons`)으로 아이콘을 부르지만, 앱의 13개 파일은
   `@phosphor-icons/react` 를 직접 부릅니다. 지갑 · 저울 · 과녁처럼 의미 이름이 없는 도메인 아이콘이 많고, 서버 컴포넌트는
   `/dist/ssr` 진입점을 써야 해서 그대로 두었습니다. 같은 라이브러리라 그림은 같습니다. 아이콘 라이브러리를 갈 일이 생기면 이 자리가 남습니다.
-- **화면이 제목과 카드를 손으로 그립니다.** 제목은 `text-2xl font-bold` 같은 유틸리티로, 지표 카드는 제 테두리와 그림자로 섭니다.
-  그래서 시스템을 갈아도 제목 글꼴(`--font-heading`)과 카드 면이 따라오지 않습니다. 세리프 제목을 쓰는 시스템(vellum · sera)을
-  입으려면 이 자리부터 시스템에 이어야 합니다.
 - **화면의 글이 아직 규약 전입니다.** 기계 검사에 220곳쯤 걸리고, 그 가운데 160곳은 교재 차트의 설명문(`src/components/charts/textbook/data`)입니다.
-- **블록 층(`packages/blocks`)이 없습니다.** 스캐폴드는 앱 셸 · 목록 · 표를 블록으로 조립하지만 이 저장소는 `apps/web/src/components` 가 그 일을 합니다.
+- **블록으로 옮기지 않은 화면이 남아 있습니다.** 앱 셸 · 상태 배지 · 지표 카드 · 구획 제목 · 리서치 보드 목록은 블록이 그리지만,
+  종목 머리(`company-header`) · 위젯 카드(`widget-shell`) · 산업 지도의 카드와 격자 · 첫 화면은 아직 손으로 그립니다.
 - **sonner 는 없습니다.** tyohnn 은 Base UI Toast 만 갖습니다.

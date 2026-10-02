@@ -1,5 +1,8 @@
 # packages/blocks
 
+> 2026-10-02 에 스캐폴드(`tyohnn/scaffold`)에서 옮겨 왔습니다. 아래 글은 스캐폴드의 것 그대로이고 이 저장소에서 다른 점은 셋입니다.
+> 소비처는 `apps/web` 하나입니다. 아이콘은 hugeicons · lucide 가 아니라 phosphor 입니다(`src/icons/extra.tsx`). 입은 시스템은 loam 이 아니라 graphite 입니다.
+
 `@investment/ui` 프리미티브를 조합해서 만든 화면 형태(블록)를 모아 두는 패키지입니다. 2026-09-06 현재 블록은 19개이고 전부 Figma 에서 확정(`■`)된 것입니다. 목록은 아래 「블록 목록」에 있습니다. 2026-09-16 에 `app-shell` 이 스무째로 들어왔습니다. 앱 셸이고, Figma 가 아니라 resolv-ai 의 advisor 앱이 세운 「셸 규격」에서 왔습니다.
 
 ⚠ **소비처는 `apps/web` · `apps/agent` 둘입니다.** 둘 다 아래 규약 3 의 등록 두 곳(`globals.css` 의 `@source` · `next.config.ts` 의 `transpilePackages`)을 마쳤습니다. ⚠ 새 앱이 블록을 처음 쓸 때 등록을 빠뜨리면 오류 없이 CSS 만 빕니다. resolv-ai 의 admin 앱이 그렇게 블록 전용 유틸리티를 통째로 잃었습니다. 새 앱에서 가장 먼저 확인할 자리입니다.
@@ -24,7 +27,7 @@
 |---|---|
 | `@investment/ui` (컴포넌트, `cn`) | `apps/*` |
 | `@investment/shared` 의 순수 포매터 | 도메인 패키지(`packages/agents` · `packages/access`), 어댑터 패키지(`packages/adapters-*`) |
-| `lucide-react` | DB 클라이언트, `server-only` |
+| `@phosphor-icons/react`(`src/icons/extra.tsx` 에서만) | DB 클라이언트, `server-only` |
 | `@tanstack/react-table` 8.21, `@tanstack/react-virtual` 3.14 | `next/*` (블록은 Next 를 모릅니다) |
 | `@dnd-kit/core`·`sortable`·`utilities` | 도메인 타입 (`AgentDefinition`, `Skill` 등) |
 

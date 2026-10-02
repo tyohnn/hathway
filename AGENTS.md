@@ -19,8 +19,8 @@
 
 **디자인 시스템.** tyohnn 의 **graphite** 를 `packages/ui` 로 받아 입는다. 정본은 루트 `tyohnn.json` 과
 `docs/design-system/README.md` 다. `packages/ui/src` 의 CLI 소유 파일을 손으로 고치지 않고, `npx shadcn add` 를 돌리지 않는다.
-컴포넌트는 `@investment/ui/components/*` 에서 부르고(Base UI 라 `asChild` 가 아니라 `render` 다), 색은 원시 색이 아니라
-시맨틱 토큰으로 쓰며, 이 제품의 값은 `packages/ui/src/product.css` 에 둔다.
+화면은 `@investment/blocks/*` 의 블록으로 조립하고 없는 것만 `@investment/ui/components/*` 를 조합한다(Base UI 라 `asChild` 가 아니라 `render` 다). 색은 원시 색이 아니라
+시맨틱 토큰으로 쓰고, 이 제품의 값은 `packages/ui/src/product.css` 에 둔다.
 
 **스킬**(`.claude/skills/`). 스캐폴드와 같은 벌이고 출처와 해시는 루트 `skills-lock.json` 이 고정한다.
 
