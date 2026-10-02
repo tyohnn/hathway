@@ -42,6 +42,21 @@
        ⚠ 시스템(tyohnn)에서 고쳐지면 이 줄을 지운다. */
     --canvas: var(--background);
 
+    /* 점토(clay) 재질을 graphite 의 레퍼런스 세기로 올린다. 시스템은 2026-09-15 에 은은한 단계(C: 하이라이트 3%,
+       그늘과 주변 그림자 없음, 단색 면)로 낮췄는데, 이 제품은 컨트롤이 드물어 그 세기로는 입체감이 읽히지 않는다.
+       버튼 · 셀렉트 · 사이드바의 켜진 항목이 이 값을 읽는다(--shadow-control · --surface-control). */
+    --clay-highlight: rgb(255 255 255 / 0.06);
+    --clay-shade: rgb(0 0 0 / 0.45);
+    --clay-shade-soft: rgb(0 0 0 / 0.3);
+    --clay-contact: rgb(0 0 0 / 0.3);
+    --clay-contact-soft: rgb(0 0 0 / 0.2);
+    --clay-ambient: rgb(0 0 0 / 0.35);
+    --clay-ambient-soft: rgb(0 0 0 / 0.2);
+    --clay-surface-top: #212121;
+    --clay-surface-bottom: #181818;
+    --clay-primary-shade: rgb(0 0 0 / 0.25);
+    --clay-primary-ambient: color-mix(in oklab, var(--primary) 35%, transparent);
+
     /* 밝은 모드의 값은 검정에 가까운 바닥 위에서 너무 어둡게 읽혀서 같은 색상의 밝은 단을 쓴다. */
     --chart-1: #818cf8;
     --chart-2: #4ade80;
@@ -50,7 +65,8 @@
     --chart-5: #38bdf8;
 
     /* 검정에 가까운 카드 면은 밝은 모드보다 깊고 또렷한 그림자가 있어야 뜬 것이 보인다. */
-    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    /* 카드도 같은 재질로 살짝 빚는다. 위쪽 모서리에 하이라이트 한 줄, 아래에 접지 그림자. */
+    --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.35), 0 4px 12px -4px rgb(0 0 0 / 0.3);
     --shadow-card-hover: 0 16px 32px -8px rgb(0 0 0 / 0.55), 0 4px 10px -4px rgb(0 0 0 / 0.4);
     --shadow-glow-primary: 0 0 0 1px color-mix(in oklch, var(--primary) 45%, transparent),
         0 0 28px -10px color-mix(in oklch, var(--sidebar-primary) 55%, transparent);
