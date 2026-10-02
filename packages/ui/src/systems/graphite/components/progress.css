@@ -1,0 +1,41 @@
+/* ============================================================
+   3층 — progress 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ============================================================ */
+
+/* mira: bg-muted h-1 rounded-md — 모서리는 full 이 아니라 rounded-md 다.
+   Slider 의 막대와 같은 규칙이라 같은 --control-radius 를 읽는다.
+   ⚠ 막대 두께 4px 은 리터럴이다. 이 컴포넌트 한 곳에만 쓰이고, 어떤 축에도
+      걸리지 않는다 — 축에 걸치지 않는 값은 토큰으로 만들지 않는다는 규칙을 따른다. */
+.cn-progress,
+.cn-progress-track {
+    height: 4px;
+    background-color: var(--muted);
+    border-radius: var(--control-radius);
+}
+
+.cn-progress-indicator {
+    background-color: var(--primary);
+}
+
+/* mira: text-xs/relaxed font-medium */
+.cn-progress-label {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    font-weight: var(--ui-font-weight);
+}
+
+/* mira: text-muted-foreground ml-auto text-xs/relaxed tabular-nums */
+.cn-progress-value {
+    margin-inline-start: auto;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    font-variant-numeric: tabular-nums;
+    color: var(--muted-foreground);
+}

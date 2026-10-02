@@ -1,0 +1,173 @@
+/* ============================================================
+   3층 — field 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 세로 리듬(16 · 12 · 8 · 2px)은 리터럴이다. 2층에는 폼 세로 리듬 축이 없다 —
+      control 은 "라벨과 아이콘 사이", surface 는 "면 안의 구역 사이"라 성격이
+      다르고, 값이 같아도 함께 움직여야 할 이유가 없다. 축을 새로 만드는 것은
+      별건이라 여기서 결정하지 않는다.
+
+   ⚠ 선택 카드(라벨이 필드를 감싼 것)의 켜진 바탕은 --primary-soft 다. mira 의
+      has-data-checked:bg-primary/5 (dark: /10) 를 1층이 불투명 값으로 갖는다.
+      nova 에 있던 켜진 테두리(border-primary/30)와 글자색 변화는 mira 가 뺐다.
+      hover 는 --input-fill-hover(mira hover:bg-input/40)다.
+   ============================================================ */
+
+/* mira: gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3 */
+.cn-field-set {
+    gap: 16px;
+
+    &:has(> [data-slot="checkbox-group"]),
+    &:has(> [data-slot="radio-group"]) {
+        gap: 12px;
+    }
+}
+
+/* mira: mb-2 font-medium data-[variant=label]:text-xs/relaxed data-[variant=legend]:text-sm */
+.cn-field-legend {
+    margin-block-end: 8px;
+    font-weight: var(--ui-font-weight);
+
+    &[data-variant="label"] {
+        font-size: var(--ui-text-md);
+        line-height: var(--ui-line-height-md);
+        letter-spacing: var(--ui-label-letter-spacing);
+        text-transform: var(--ui-label-text-transform);
+    }
+
+    &[data-variant="legend"] {
+        font-size: var(--ui-text-lg);
+        line-height: var(--ui-line-height-lg);
+        letter-spacing: var(--ui-label-letter-spacing);
+        text-transform: var(--ui-label-text-transform);
+    }
+}
+
+/* mira: gap-4 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4 */
+.cn-field-group {
+    gap: 16px;
+
+    &[data-slot="checkbox-group"] {
+        gap: 12px;
+    }
+
+    & > [data-slot="field-group"] {
+        gap: 16px;
+    }
+}
+
+.cn-field {
+    gap: 8px;
+
+    &[data-invalid="true"] {
+        color: var(--destructive);
+    }
+}
+
+.cn-field-content {
+    gap: 2px;
+}
+
+/* 라벨이 필드를 통째로 감싸면(선택 카드) 테두리와 포커스 링이 붙는다.
+   링은 _control-family.css 와 같은 한 겹(ring-2 ring-ring/30)이다 — 카드끼리 간격이 있어
+   OTP 칸처럼 옆을 지울 걱정이 없다.
+   mira: has-data-checked:bg-primary/5 gap-2 leading-snug group-data-[disabled=true]/field:opacity-50
+         has-[>[data-slot=field]]:rounded-md …:border …:not-has-[:disabled,[data-disabled]]:hover:bg-input/40
+         …:has-[:focus-visible]:border-ring …:ring-2 *:data-[slot=field]:p-2
+   ⚠ 켜짐은 shadcn 의 data-checked 변형과 같은 두 형태를 본다 — Base UI 는 [data-checked]
+      불리언, Radix 계열은 [data-state=checked] 를 내보낸다. */
+.cn-field-label {
+    gap: 8px;
+    line-height: 1.375;
+
+    .group\/field[data-disabled="true"] & {
+        opacity: 0.5;
+    }
+
+    &:has([data-state="checked"], [data-checked]:not([data-checked="false"])) {
+        background-color: var(--primary-soft);
+    }
+
+    /* ⚠ 안쪽 여백 8px 은 리터럴이다. 카드 안의 여백이라 control 축(높이가 정본)에도
+       surface 축(면 여백 10·16·24)에도 걸치지 않는다. */
+    & > [data-slot="field"] {
+        padding: 8px;
+    }
+
+    &:has(> [data-slot="field"]) {
+        border: var(--control-border-width) solid var(--border);
+        border-radius: var(--control-radius);
+
+        &:not(:has(:disabled, [data-disabled])):hover {
+            background-color: var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent));
+        }
+
+        &:has(:focus-visible) {
+            border-color: var(--ring);
+            box-shadow: 0 0 0 var(--focus-ring-width) var(--ring-focus, color-mix(in oklab, var(--ring) 30%, transparent));
+        }
+    }
+}
+
+/* mira: has-data-selected:bg-primary/5 dark:has-data-selected:bg-primary/10 */
+.cn-field-label-aria {
+    &:has([data-selected="true"]) {
+        background-color: var(--primary-soft);
+    }
+}
+
+/* mira: gap-2 text-xs/relaxed font-medium group-data-[disabled=true]/field:opacity-50 */
+.cn-field-title {
+    gap: 8px;
+    font-size: var(--ui-text-md);
+    line-height: var(--ui-line-height-md);
+    letter-spacing: var(--ui-label-letter-spacing);
+    text-transform: var(--ui-label-text-transform);
+    font-weight: var(--ui-font-weight);
+
+    .group\/field[data-disabled="true"] & {
+        opacity: 0.5;
+    }
+}
+
+/* mira: text-muted-foreground text-left text-xs/relaxed [[data-variant=legend]+&]:-mt-1.5
+   ⚠ 행간은 컴포넌트의 leading-normal 유틸리티가 이겨 여기서 주지 않는다. */
+.cn-field-description {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    color: var(--muted-foreground);
+    text-align: left;
+
+    [data-variant="legend"] + & {
+        margin-block-start: -6px;
+    }
+}
+
+/* mira: -my-2 h-5 text-xs/relaxed group-data-[variant=outline]/field-group:-mb-2 */
+.cn-field-separator {
+    margin-block: -8px;
+    height: 20px;
+    font-size: var(--ui-text-md);
+    line-height: var(--ui-line-height-md);
+    letter-spacing: var(--ui-letter-spacing);
+
+    .group\/field-group[data-variant="outline"] & {
+        margin-block-end: -8px;
+    }
+}
+
+.cn-field-separator-content {
+    color: var(--muted-foreground);
+    padding-inline: 8px;
+}
+
+.cn-field-error {
+    font-size: var(--ui-text-md);
+    line-height: var(--ui-line-height-md);
+    letter-spacing: var(--ui-letter-spacing);
+    color: var(--destructive);
+}

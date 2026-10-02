@@ -1,0 +1,87 @@
+/* ============================================================
+   3층 — Checkbox 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+   Token slots: --checkbox-border, --shadow-recessed, --checked{,-foreground}. Foundation values give
+   the mira checkbox (--input border · --input-fill · primary when checked). Indeterminate stays unfilled
+   as in mira.
+
+   지시자 축을 읽는다. 라벨 옆에 붙는 표식이라 높이가 아니라 한 변이 정본이다.
+   Radio 와 같은 값을 읽고 모서리만 다르다 — 체크박스는 네모, 라디오는 원.
+
+   ⚠ 바탕은 채움(--input-fill)이다. mira 는 밝은 쪽에 바탕이 없고 어두운 쪽만
+      dark:bg-input/30 인데, 다크 값은 1층이 갖는 규칙이라 --input-fill 하나로
+      읽는다(밝은 쪽 값 input/20 은 흰 바탕과 거의 같다).
+   ⚠ 포커스 링·검증 실패·전환은 _control-family.css 가 갖는다. 전환은 그림자만
+      움직인다(mira transition-shadow). 켜진 상태에서 검증에 실패했을 때 테두리를
+      붉히지 않는 예외도 거기 있다.
+   ⚠ 컴포넌트가 갖고 있는 것: relative, shrink-0, outline-none,
+      disabled:opacity-50, 그리고 손가락이 닿는 범위를 넓히는 after 의사요소.
+      16px 상자를 그대로 누르게 두지 않으려는 장치이므로 지우지 말 것.
+   ============================================================ */
+
+.cn-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: var(--control-indicator-size);
+    height: var(--control-indicator-size);
+    border: var(--control-border-width) solid var(--checkbox-border, var(--input));
+    border-radius: var(--control-indicator-radius);
+    background-color: var(--checkbox-fill);
+    box-shadow: var(--shadow-recessed);
+
+    &[data-checked] {
+        background-color: var(--checked);
+        border-color: var(--checked);
+        color: var(--checked-foreground);
+        box-shadow: none;
+    }
+
+    /* Indeterminate — foundation slots repeat the unchecked look (mira); a system may fill it like checked. */
+    &[data-indeterminate] {
+        background-color: var(--checkbox-indeterminate-fill, var(--checkbox-fill));
+        border-color: var(--checkbox-indeterminate-border, var(--checkbox-border, var(--input)));
+        color: var(--checkbox-indeterminate-foreground);
+        box-shadow: var(--checkbox-indeterminate-shadow);
+    }
+
+    /* ⚠ 비활성은 data 속성으로 읽는다. Base UI 의 Checkbox 는 네이티브 요소가 아니라
+       `<span>` 을 그리고(nativeButton=false) `data-disabled` 만 붙인다. 그래서
+       컴포넌트가 가진 `disabled:opacity-50` 은 `:disabled` 를 보는 셈이라 한 번도
+       맞은 적이 없고, 비활성 체크박스가 켜진 것과 똑같이 진하게 그려졌다(2026-09-11,
+       디자인 싱크 채점에서 실측). */
+    &[data-disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* 감싼 Field 가 비활성이면 함께 흐려진다. mira: group-has-disabled/field:opacity-50 */
+    .group\/field:has(:disabled) & {
+        opacity: 0.5;
+    }
+
+    /* 라벨을 눌러 포커스가 들어온 경우에는 링을 그리지 않고 테두리도 평소 색으로 둔다.
+       라벨 자신이 이미 포커스 표시를 갖고 있어 두 겹이 된다.
+       mira: group-has-[:focus-visible]/field-label:ring-0 …:not-data-checked:border-input …:data-checked:border-primary */
+    .group\/field-label:has(:focus-visible) & {
+        box-shadow: none;
+        border-color: var(--checkbox-border, var(--input));
+
+        &[data-checked] {
+            border-color: var(--checked);
+        }
+
+        &[data-indeterminate] {
+            border-color: var(--checkbox-indeterminate-border, var(--checkbox-border, var(--input)));
+        }
+    }
+}
+
+.cn-checkbox-indicator {
+    & svg {
+        width: var(--control-indicator-icon-size);
+        height: var(--control-indicator-icon-size);
+    }
+}

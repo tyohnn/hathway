@@ -1,0 +1,63 @@
+/* ============================================================
+   3층 — button-group 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다.
+
+   ⚠ 바깥 모서리는 --control-radius(8px)다. mira 의 rounded-md 이고 안에 들어가는
+      Button 과 같은 값이라 묶음 끝 버튼만 더 둥글어 가장자리가 어긋나는 일이 없다.
+   ============================================================ */
+
+.cn-button-group {
+    /* 묶음 안에 묶음이 또 들어오면 그 사이를 띄운다. mira: has-[>[data-slot=button-group]]:gap-2
+       ⚠ 8px 은 리터럴이다. control-gap 축(4)은 라벨과 아이콘 사이 간격이라 다른 자리이고,
+          묶음 사이 간격에는 축이 없다. */
+    &:has(> [data-slot="button-group"]) {
+        gap: 8px;
+    }
+
+    &:has(select[aria-hidden="true"]:last-child) > [data-slot="select-trigger"]:last-of-type {
+        border-start-end-radius: var(--control-radius);
+        border-end-end-radius: var(--control-radius);
+    }
+}
+
+.cn-button-group-orientation-horizontal > [data-slot]:not(:has(~ [data-slot])) {
+    border-start-end-radius: var(--control-radius) !important;
+    border-end-end-radius: var(--control-radius) !important;
+}
+
+.cn-button-group-orientation-vertical > [data-slot]:not(:has(~ [data-slot])) {
+    border-end-start-radius: var(--control-radius) !important;
+    border-end-end-radius: var(--control-radius) !important;
+}
+
+/* 묶음 안에 끼는 글자 칸. 버튼과 같은 줄에 서므로 글자 크기를 맞춘다.
+   mira: bg-muted gap-2 rounded-md border px-2.5 text-xs/relaxed font-medium [&_svg]:size-4
+   ⚠ 좌우 패딩 10px 과 간격 8px 은 리터럴이다. 누르는 것이 아니라 읽는 칸이라
+      control 축(패딩 8 · 간격 4)을 읽지 않는다 — lg 의 패딩과 값이 같은 것은 우연이다. */
+.cn-button-group-text {
+    gap: 8px;
+    border: var(--control-border-width) solid var(--border);
+    border-radius: var(--control-radius);
+    padding-inline: 10px;
+    background-color: var(--muted);
+    font-size: var(--ui-text-md);
+    line-height: var(--ui-line-height-md);
+    letter-spacing: var(--ui-letter-spacing);
+    font-weight: var(--ui-font-weight);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+}
+
+/* ⚠ `.cn-separator` 와 함께 붙는다(ButtonGroupSeparator 는 Separator 다). 배럴이 알파벳
+   순서라 separator.css 가 뒤에 읽히므로, 같은 명시도로는 `.cn-separator` 의 --border 가
+   이긴다. 두 클래스를 함께 적어 (0,2,0) 으로 올린다 — mira: bg-input (2026-09-16 실측). */
+.cn-separator.cn-button-group-separator,
+.cn-button-group-separator {
+    background-color: var(--input);
+}

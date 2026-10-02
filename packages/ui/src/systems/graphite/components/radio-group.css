@@ -1,0 +1,74 @@
+/* ============================================================
+   3층 — Radio Group 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Checkbox 와 같은 지시자 축을 읽는다. 다른 것은 모서리와 켜졌을 때의 표시뿐이다.
+   체크박스는 네모에 체크 표시, 라디오는 원에 가운데 점.
+
+   ⚠ 바탕은 채움(--input-fill)이다. checkbox.css 와 같은 사유다.
+   ⚠ 포커스 링·검증 실패·전환은 _control-family.css 가 갖는다. mira 의 라디오만
+      ring-3 ring-ring/50 으로 남아 있는데(체크박스는 ring-2/30) 계열의 언어를 따른다.
+   ⚠ 컴포넌트가 갖고 있는 것: aspect-square, shrink-0, border, outline-none,
+      disabled:opacity-50, 손가락 범위를 넓히는 after 의사요소.
+   ============================================================ */
+
+/* mira: grid gap-3. ⚠ 12px 은 리터럴이다 — control-gap 축(4)은 라벨과 아이콘 사이
+   간격이라 다른 자리이고, 선택지 사이 세로 간격에는 축이 없다(Field 의
+   checkbox-group · radio-group 도 같은 12 를 쓴다). */
+.cn-radio-group {
+    display: grid;
+    gap: 12px;
+}
+
+.cn-radio-group-item {
+    display: flex;
+    width: var(--control-indicator-size);
+    height: var(--control-indicator-size);
+    border-color: var(--input);
+    border-radius: 9999px;
+    background-color: var(--input-fill);
+
+    &[data-checked] {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-foreground);
+    }
+
+    /* ⚠ checkbox.css 와 같은 이유로 비활성은 data 속성으로 읽는다. Radio 도
+       `<span>` 을 그려 컴포넌트의 `disabled:opacity-50` 이 닿지 않는다. */
+    &[data-disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* 라벨을 눌러 포커스가 들어온 경우 — checkbox.css 와 같다. */
+    .group\/field-label:has(:focus-visible) & {
+        box-shadow: none;
+        border-color: var(--input);
+
+        &[data-checked] {
+            border-color: var(--primary);
+        }
+    }
+}
+
+.cn-radio-group-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-indicator-size);
+    height: var(--control-indicator-size);
+}
+
+.cn-radio-group-indicator-icon {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+
+    width: var(--radio-indicator-dot-size, var(--control-indicator-dot-size));
+    height: var(--radio-indicator-dot-size, var(--control-indicator-dot-size));
+    border-radius: 9999px;
+    background-color: var(--primary-foreground);
+}

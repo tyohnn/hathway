@@ -1,0 +1,557 @@
+/* ============================================================
+   graphite — a complete, frozen design system snapshot.
+   Forked from foundation (1e327ac); every value this system tunes is replaced in place. Block comments
+   below still explain where the foundation (mira) structure came from; values on lines without a
+   trailing comment are this system's own. See ../DESIGN.md.
+   ============================================================ */
+
+/* ============================================================
+   tyohnn foundation — 2층: 스타일 토큰 (컴포넌트 프리셋)
+   ------------------------------------------------------------
+   토큰 3층 구조에서 이 파일이 담당하는 자리:
+
+     1층 테마    globals.css
+                 shadcn 시맨틱 토큰(색·반경 기준값·그림자·이징)을 정의한다.
+     2층 스타일  ← 이 파일
+                 컴포넌트가 실제로 쓰는 밀도·형태·모션 값을 정의한다. 이름이 곧 계약이다.
+     3층 규칙    style.css + components/*.css
+                 cn-* 클래스가 위 토큰을 조립한다. 값이 아닌 규칙을 담는다.
+
+   ⚠ Tailwind 유틸리티를 생성하지 않는다(@theme 이 아니라 :root 다).
+      3층은 유틸리티가 아니라 순수 CSS 선언으로 이 값을 읽는다.
+   ⚠ 토큰의 이름과 축은 원본 앱의 tokens.css 그대로다. 3층과 블록층이 그 이름으로
+      읽으므로 이름을 바꾸거나 빼면 화면이 조용히 빈다. `node tooling/scan-tokens`
+      가 미정의·사문·하위픽셀을 잡는다.
+
+   값의 출처는 **shadcn create 의 mira 프리셋**이다(2026-09-13, shadcn/ui 저장소
+   apps/v4/registry/styles/style-mira.css). mira 는 "Made for compact interfaces" 이고,
+   각 값 옆의 주석이 어느 유틸리티에서 왔는지 적는다. Tailwind 간격 단위는 4px 이다
+   (h-7 = 28px · px-2 = 8px · size-3.5 = 14px).
+
+   mira 가 값이 아니라 **규칙**으로 갖는 것은 3층(components/*.css)이 mira 의 규칙으로 옮겨 갖는다
+   (2026-09-13, 사용자 결정). 그 규칙이 읽을 값이 필요하면 여기에 축을 더한다 — --control-radius-xs ·
+   --control-press-offset · --surface-radius-lg 가 그렇게 생긴 것이다.
+   ============================================================ */
+
+:root {
+    /* --------------------------------------------------------
+       control — 인터랙티브 컨트롤 공용 축
+       버튼·인풋·셀렉트·토글이 같은 축을 공유한다.
+       컴포넌트별 예외는 3층에서 이 값을 재지정해 만든다.
+       -------------------------------------------------------- */
+
+    /* 밀도: 높이는 계산 결과가 아니라 토큰이다. 세로 패딩 대신 높이를 정본으로 두면
+       폰트 메트릭 차이에 흔들리지 않는다. mira 의 .cn-button-size-{xs,sm,default,lg}
+       가 h-5 · h-6 · h-7 · h-8 이고, 인풋(h-7)과 셀렉트(h-7 · sm h-6)도 같은 축이다. */
+    --control-height-xs: 20px;    /* h-5 */
+    --control-height-sm: 24px;    /* h-6 */
+    --control-height-md: 28px;    /* h-7 ← 기본. 인풋 · 셀렉트 · 토글도 같다 */
+    --control-height-lg: 32px;    /* h-8 */
+
+    /* 여러 줄 입력(Textarea)의 세로 패딩. 한 줄 컨트롤은 높이가 정본이라 세로 패딩이 없고,
+       Textarea 만 줄 수에 따라 자라므로 세로 패딩이 정본이다. mira: py-2 (인풋 그룹 안에서도 같다) */
+    --control-padding-y-multiline: 8px;
+
+    /* 좌우 패딩 — mira 는 xs~md 가 px-2 이고 lg 만 px-2.5 다 */
+    --control-padding-x-xs: 8px;
+    --control-padding-x-sm: 8px;
+    --control-padding-x-md: 8px;
+    --control-padding-x-lg: 10px;
+
+    /* 아이콘이 붙은 쪽의 좌우 패딩 — has-data-[icon=inline-start]:pl-1.5 (lg 는 pl-2) */
+    --control-padding-x-icon-xs: 6px;
+    --control-padding-x-icon-sm: 6px;
+    --control-padding-x-icon-md: 6px;
+    --control-padding-x-icon-lg: 8px;
+
+    /* 라벨과 아이콘 사이 간격 — 네 크기 모두 gap-1 */
+    --control-gap-xs: 4px;
+    --control-gap-sm: 4px;
+    --control-gap-md: 5px;
+    --control-gap-lg: 4px;
+
+    /* 타이포 — 행간을 px 로 고정한다. mira 는 xs 만 text-[0.625rem] 이고 나머지는
+       text-xs/relaxed(12px · 1.625 = 19.5px)다. 정수로 맞추려고 20 으로 둔다.
+       ⚠ sm · md · lg 의 글자가 같다. mira 는 컨트롤 크기를 높이와 여백으로만 가른다. */
+    --control-font-size-xs: 10px;
+    --control-font-size-sm: 12px;
+    --control-font-size-md: 12px;
+    --control-font-size-lg: 12px;
+
+    --control-line-height-xs: 16px;
+    --control-line-height-sm: 20px;
+    --control-line-height-md: 20px;
+    --control-line-height-lg: 20px;
+
+    /* 아이콘 크기 — [&_svg:not([class*='size-'])]:size-2.5 · 3 · 3.5 · 4 */
+    --control-icon-size-xs: 10px;
+    --control-icon-size-sm: 12px;
+    --control-icon-size-md: 14px;
+    --control-icon-size-lg: 16px;
+
+    /* 형태 */
+    /* mira 의 rounded-md = --radius-md = calc(10px − 2px) = 8px. xs 버튼 · xs 아이콘 버튼 · 인풋 그룹의
+       xs 버튼만 rounded-sm(6px)이라 축을 하나 더 둔다. */
+    --control-radius: 8px;
+    --control-radius-xs: 6px;
+    /* ⚠ 1px 미만으로 내리지 말 것. 하위픽셀 테두리는 축소 렌더링에서 한 변이 사라진다.
+       ⚠ 올릴 때는 2px 이 상한이다. --switch-thumb-inset 과 switch.css 의 계산이 음수가 된다. */
+    --control-border-width: 1px;
+
+    /* 글자 굵기·자간 — mira 는 font-medium(500)이다. 자간은 글꼴(Pretendard)의 것이라
+       mira 를 따르지 않는다. Pretendard 는 기본 자간이 넓어 UI 글자에서 -0.01em 을 준다. */
+    --control-font-weight: 500;
+    /* Weight of the quieter control variants (outline · secondary · ghost). mira: the same 500. */
+    --control-font-weight-regular: 400;
+    --control-letter-spacing: -0.01em;
+
+    /* 모션 축 — 세 단과 한 곡선. 시스템의 빠릿함이 여기서 갈린다. 11종 모두 같은 값으로 시작한다. */
+    --motion-fast: 100ms;    /* 작은 표면이 나타났다 사라지는 속도(툴팁 · 팝오버) */
+    --motion-base: 150ms;    /* 컨트롤의 색·테두리·그림자 전환 */
+    --motion-slow: 200ms;    /* 큰 패널이 밀려 들어오는 속도(sheet · drawer) */
+    --motion-ease: var(--ease-out);
+    /* 컨트롤이 읽는 이름은 그대로 둔다 — 3층 209곳이 이 둘만 읽는다. */
+    --control-duration: var(--motion-base);
+    --control-ease: var(--motion-ease);
+    /* 눌림 — mira 는 scale 이 아니라 active:translate-y-px 로 1px 내려앉는다. */
+    --control-press-offset: 1px;
+
+    /* Icon button box and glyph. mira sizes the md icon button from the control height axis. */
+    --control-icon-button-size-md: 29px;
+    --control-icon-button-icon-size-md: 15px;
+
+    /* md button with a leading icon. mira: the icon side is the narrow one (6) and the far side keeps
+       the md padding (8). */
+    --button-icon-start-padding-start-md: var(--control-padding-x-md);
+    --button-icon-start-padding-end-md: var(--control-padding-x-icon-md);
+
+    /* data-shape radii. `initial` = no shape: the button keeps its size radius (mira has no shapes). */
+    --button-round-radius: 50%;
+    --button-pill-radius: 9999px;
+
+    /* Control shadows and surfaces. Systems build them from the layer-1 --clay-* materials
+       (see systems/graphite/styles/tokens.css). mira controls are flat: no shadow, no gradient. */
+    --shadow-control: inset 0 1px 0 var(--clay-highlight, transparent), inset 0 -1px 0 var(--clay-shade, transparent), 0 1px 1px var(--clay-contact, transparent), 0 2px 6px -1px var(--clay-ambient, transparent);
+    --shadow-control-primary: inset 0 1px 0 var(--clay-primary-highlight, transparent), inset 0 -1px 0 var(--clay-primary-shade, transparent), 0 1px 1px var(--clay-contact, transparent), 0 2px 8px -1px var(--clay-primary-ambient, transparent);
+    --shadow-raised: inset 0 1px 0 var(--clay-highlight, transparent), inset 0 -1px 0 var(--clay-shade-soft, transparent), 0 1px 1px var(--clay-contact-soft, transparent), 0 1px 3px var(--clay-ambient-soft, transparent);
+    --shadow-control-pressed: inset 0 1px 1px var(--clay-shade, transparent), inset 0 -1px 0 var(--clay-highlight, transparent);
+    --shadow-recessed: inset 0 1px 1px var(--clay-contact, transparent);
+    --checkbox-indeterminate-shadow: none;
+    --surface-control: linear-gradient(to bottom, var(--clay-surface-top, transparent), var(--clay-surface-bottom, transparent));
+    --surface-primary: linear-gradient(to bottom, var(--clay-primary-top, transparent), var(--clay-primary-bottom, transparent));
+    --tag-shadow: none;
+
+    /* 지시자 — 체크박스·라디오. mira: size-4 · rounded-[4px] · 체크 [&>svg]:size-3.5 · 라디오 점 size-2 */
+    --control-indicator-size: 14px;
+    --control-indicator-radius: 4px;
+    --control-indicator-icon-size: 10px;
+    --control-indicator-dot-size: 8px;
+    /* 키캡의 모서리(foundation 슬롯). 이 시스템은 지시자와 같은 단이다. */
+    --kbd-radius: var(--control-indicator-radius);
+
+    /* 스위치 — 트랙만 토큰으로 두고 손잡이 크기와 이동 거리는 계산한다.
+       손잡이 = 트랙 높이 − 안쪽 여백 2배, 이동 거리 = 트랙 너비 − 트랙 높이.
+       mira: default w-[28px] h-[16.6px] 손잡이 size-3.5(14) · sm w-[24px] h-[14px] 손잡이 size-3(12).
+       16.6 은 하위픽셀이라 16 으로 두고 안쪽 여백 1 로 손잡이 14 를 만든다. */
+    --switch-track-width-md: 28px;
+    --switch-track-height-md: 16px;
+    --switch-track-width-sm: 24px;
+    --switch-track-height-sm: 14px;
+    --switch-thumb-inset: 1px;
+    /* 손잡이 크기(foundation 슬롯). 이 시스템은 궤도에서 안쪽 여백을 뺀 값이다. */
+    --switch-thumb-size-md: calc(var(--switch-track-height-md) - var(--switch-thumb-inset) * 2);
+    --switch-thumb-size-sm: calc(var(--switch-track-height-sm) - var(--switch-thumb-inset) * 2);
+
+    /* 포커스 링 — mira: focus-visible:ring-2 ring-ring/30. 테두리 바깥에 간격 없이 box-shadow 한 겹으로 그린다.
+       링의 색은 1층의 --ring-focus(30%) · --ring-focus-strong(50%) · --ring-invalid 가 갖는다.
+       ⚠ 종전의 --focus-ring-offset(테두리와 링 사이 바탕색 겹)은 mira 에 없는 규칙이라 2026-09-13 에 지웠다. */
+    --focus-ring-width: 2px;
+    /* 라디오와 토글만 한 단 굵다. mira: ring-3 · ring-[3px] */
+    --focus-ring-width-strong: 3px;
+}
+
+:root {
+    /* --------------------------------------------------------
+       surface — 떠 있는 면 공용 축
+       카드·팝오버·드롭다운 목록이 같은 축을 공유한다. 컨트롤은 높이가 정본이고
+       면은 안쪽 여백이 정본이다.
+       -------------------------------------------------------- */
+    /* mira: card · popover · dropdown · select · sheet 가 rounded-lg(10px), dialog 계열은 rounded-xl(14px). */
+    --surface-radius: 10px;
+    --surface-radius-sm: 8px;    /* tooltip 의 rounded-md */
+    --toast-radius: var(--surface-radius-sm);    /* toast: the tooltip's step (a small surface in a corner) */
+    /* 모달 면의 그림자(foundation 슬롯). 이 시스템은 다른 띄운 면과 같은 그림자를 얹는다. */
+    --dialog-shadow: var(--shadow-float);
+    /* 메뉴 하위 목록의 그림자(foundation 슬롯). */
+    --menu-sub-shadow: var(--shadow-float);
+    /* Sheet 의 그림자(foundation 슬롯). 이 시스템은 다른 띄운 면과 같은 단이다. */
+    --sheet-shadow: var(--shadow-float);
+    --surface-radius-lg: 14px;   /* dialog · alert-dialog · command · drawer · empty · navigation-menu 의 rounded-xl */
+    --surface-padding-md: 16px;  /* dialog p-4 · card --card-spacing --spacing(4) */
+    --surface-padding-sm: 10px;  /* popover p-2.5 */
+    --surface-padding-lg: 24px;  /* sheet header p-6 · empty p-6 */
+    --surface-panel-width: 384px; /* sheet 의 sm:max-w-sm */
+    --surface-gap: 4px;          /* dialog-header gap-1 · card-header gap-1 */
+    --surface-gap-lg: 16px;      /* dialog-content gap-4 · popover gap-4 */
+    --surface-icon-gap: 6px;     /* alert has-[>svg]:gap-x-1.5 · tooltip gap-1.5 */
+    --surface-border-width: 1px;
+
+    /* 모달 뒤에 까는 막. 색은 1층의 --overlay-backdrop 이 갖는다. mira: backdrop-blur-xs = 4px */
+    --overlay-backdrop-blur: 4px;
+
+    /* --------------------------------------------------------
+       menu — 목록 안의 항목
+       셀렉트·드롭다운·컨텍스트 메뉴·커맨드 팔레트가 공유한다.
+       -------------------------------------------------------- */
+    --menu-padding: 4px;              /* content p-1 */
+    --menu-min-width: 128px;          /* min-w-32 */
+    --menu-item-height: 28px;         /* item min-h-7 */
+    --menu-item-radius: 8px;          /* item rounded-md */
+    --menu-item-padding-x: 8px;       /* item px-2 */
+    --menu-item-padding-end: 32px;    /* checkbox-item pr-8 — 오른쪽 체크 표시 자리 */
+    --menu-item-gap: 8px;             /* item gap-2 */
+    /* graphite: 항목 높이는 --menu-item-height 하나가 정한다(세로 여백 없음). */
+    --menu-item-padding-y: 0px;
+    --menu-item-padding-y-check: 0px;
+    /* Group label. graphite's rows have no vertical padding, but the label band keeps mira's py-1.5. */
+    --menu-label-padding-y: 6px;
+    --command-item-padding-x: 8px;
+
+    /* 아이콘 없는 항목을 아이콘 있는 항목과 왼쪽으로 맞출 때 쓴다(data-inset). mira: pl-7.5 */
+    --menu-item-padding-inset: 30px;
+    /* 단축키는 자간을 넓혀 키캡이 서로 떨어져 읽히게 한다. mira: tracking-widest */
+    --menu-shortcut-letter-spacing: 0.1em;
+    /* 단축키의 행간(foundation 슬롯). 이 시스템은 ui 축의 xs 와 같다. */
+    --menu-shortcut-line-height: var(--ui-line-height-xs);
+    /* 목록이 길어질 때의 상한. mira command-list max-h-72 */
+    --menu-list-max-height: 288px;
+
+    /* --------------------------------------------------------
+       sidebar-item — 사이드바의 항목
+       menu 축과 갈라 둔 축이다. 사이드바 밖에서 이 축을 읽지 말 것.
+       mira: menu-button h-8 · p-2 · gap-2 · rounded-[calc(var(--radius-sm)+2px)] · [&>svg]:size-4
+       -------------------------------------------------------- */
+    --sidebar-item-height: 29px;
+    --sidebar-item-radius: 8px;       /* radius-sm(6) + 2 */
+    --sidebar-item-padding-x: 6px;
+    --sidebar-item-gap: 7px;
+    --sidebar-item-icon-size: 13px;
+    --sidebar-item-spacing: 0px;
+    /* mira 는 평소 400 이고 data-active 에서 font-medium 이다. 3층은 굵기 축을 하나로 두므로
+       활성 항목의 값(500)을 적는다. */
+    --sidebar-item-font-weight: 400;
+    /* Active item height. mira: the same row height. */
+    --sidebar-item-height-active: 31px;
+    --sidebar-item-font-size: 13px;
+    --sidebar-item-line-height: 19px;
+    /* Item border width and the weight of a non-active item. mira: no border, weight inherits
+       (`initial`); only the active item sets --sidebar-item-font-weight. */
+    --sidebar-item-border-width: var(--control-border-width);
+    --sidebar-item-font-weight-idle: var(--sidebar-item-font-weight);
+
+    /* Count badge. mira: sits in the action slot (h-5 min-w-5 px-1 · right-1 · radius 4 · text-xs). */
+    --sidebar-badge-height: 15px;
+    --sidebar-badge-padding-x: 5px;
+    --sidebar-badge-radius: 5px;
+    --sidebar-badge-inset-end: 8px;
+    --sidebar-badge-line-height: 13px;
+    --sidebar-badge-min-width: 0px;
+    --sidebar-badge-font-size: var(--ui-text-xs);
+
+    /* Group label. mira: the item row (h-8 · px-2) with the UI letter spacing. */
+    --sidebar-group-label-height: 21px;
+    --sidebar-group-label-padding-x: 0px;
+    --sidebar-group-label-letter-spacing: 0.08em;
+    --sidebar-group-label-font-size: var(--ui-text-xs);
+    --sidebar-group-label-line-height: var(--ui-line-height-xs);
+    /* `initial` = inherit (mira sets neither on the label). */
+    --sidebar-group-label-font-weight: var(--ui-font-weight);
+    --sidebar-group-label-text-transform: uppercase;
+    --sidebar-separator-margin-block: 8px;
+
+    /* 하위 항목. 하위 라벨의 왼쪽이 상위 라벨의 왼쪽(안쪽 여백 8 + 아이콘 16 + 간격 8 = 32)과
+       맞아야 한다. 아래 두 값을 더하면 그 32 가 나온다. 한쪽을 고치면 다른 쪽도 함께 고칠 것. */
+    --sidebar-sub-rail-offset: 13px;
+    --sidebar-sub-item-indent: 13px;
+    --sidebar-sub-item-height: 28px;  /* sub-button h-7 */
+
+    /* 항목 오른쪽 끝의 펼침 표시 · 자물쇠 자리. mira: menu-action w-5 · [&>svg]:size-4 */
+    --sidebar-item-action-size: 20px;
+    --sidebar-item-action-icon-size: 16px;
+
+    /* --------------------------------------------------------
+       ui-text — 컨트롤이 아닌 컴포넌트의 글자
+       mira 의 UI 글자는 셋뿐이다. 배지·키캡·단축키의 text-[0.625rem](10),
+       본문의 text-xs(12 · relaxed 는 20), 제목의 text-sm(14).
+       sm 과 md 는 크기가 같고 행간만 다르다(16 · 20).
+       -------------------------------------------------------- */
+    --ui-text-xs: 10px;
+    --ui-text-sm: 12px;
+    --ui-text-md: 12px;
+    --ui-text-lg: 14px;
+    --ui-line-height-xs: 14px;
+    --ui-line-height-sm: 16px;
+    --ui-line-height-md: 20px;
+    --ui-line-height-lg: 20px;
+    --ui-font-weight: 500;            /* mira 의 제목·라벨은 font-medium */
+    /* Weight of quiet UI text (tags · line tabs · table head). mira: the same 500. */
+    --ui-font-weight-regular: 400;
+
+    /* 자간 — 글꼴의 것이다. control 축과 같은 값. */
+    --ui-letter-spacing: -0.01em;
+
+    /* --------------------------------------------------------
+       heading — 화면과 구역의 제목
+       mira 에는 text-sm(14) 위의 제목 축이 없다. 컴팩트한 밀도에 맞춰 원본 앱 의
+       20 · 24 · 28 · 42 를 한 단씩 내렸다. ⚠ 넷 다 화면으로 검증된 적 없다.
+       처음 읽는 자리를 만들 때 눈으로 볼 것.
+       -------------------------------------------------------- */
+    --heading-font-size-sm: 16px;    /* 구역 제목 */
+    --heading-font-size-md: 18px;    /* 패널·시트 제목 */
+    --heading-font-size-lg: 20px;    /* 라우트 제목 · 지표 수치 */
+    --heading-font-size-xl: 30px;    /* 셸 없는 화면(로그인·권한 없음)의 제목 */
+    --heading-line-height-sm: 24px;
+    --heading-line-height-md: 28px;
+    --heading-line-height-lg: 28px;
+    --heading-line-height-xl: 36px;
+
+    /* 자간 — 제목은 글자가 커질수록 자간이 넓어 보여 본문보다 한 단계 좁힌다. */
+    --heading-letter-spacing: -0.02em;
+
+    /* --------------------------------------------------------
+       table — 표의 머리 높이와 셀 세로 여백
+       DataTable 블록의 밀도 축(default · compact)이 이 넷을 골라 읽는다.
+       mira: table-head h-10 · table-cell p-2. compact 는 한 단씩 줄인다.
+       -------------------------------------------------------- */
+    --table-head-height-default: 37px;
+    --table-head-height-compact: 32px;
+    --table-cell-padding-y-default: 8px;
+    --table-cell-padding-y-compact: 4px;
+
+    /* Row box and text. mira: rows size to content · cells px-2 · text-xs (12/16) · the head
+       inherits the table text. */
+    --table-row-height: 41px;
+    --table-cell-padding-x: 7px;
+    --table-checkbox-inset: 11px;
+    --table-font-size: 13px;
+    --table-line-height: 19px;
+    --table-head-font-size: 11px;
+    --table-head-line-height: 15px;
+    /* The head sets no tracking of its own; `initial` = inherit the table's. */
+    --table-head-letter-spacing: initial;
+    /* Right padding of a cell holding a checkbox. mira: pr-0. */
+    --table-checkbox-inset-end: var(--table-cell-padding-x);
+
+    /* --------------------------------------------------------
+       tag — tone badge (<Badge data-tone>)
+       mira has no tag; foundation tags keep the badge shape (rounded-full · px-2 · 10/14).
+       -------------------------------------------------------- */
+    --tag-radius: 9px;
+    --tag-padding-x: 9px;
+    --tag-line-height: 17px;
+    --tag-font-size: var(--ui-text-sm);
+
+    /* --------------------------------------------------------
+       tabs-line — underline tabs (TabsList variant="line")
+       mira: the same h-8 bar as the default tabs.
+       -------------------------------------------------------- */
+    --tabs-line-height: 44px;
+    /* Divider under the line bar and the trigger box inside it. mira: no divider, and the default
+       trigger box (px 6 · icon side 4 · 1px transparent border · control radius). */
+    --tabs-line-divider-width: var(--surface-border-width);
+    --tabs-line-trigger-padding-x: 0px;
+    --tabs-line-trigger-padding-x-icon: 0px;
+    --tabs-line-trigger-border-width: 0px;
+    --tabs-line-trigger-radius: 0px;
+
+    /* 표의 메타 열 — 체크박스·펼치기·손잡이·행 액션이 앉는 좁은 열.
+       액션 열만 넓은 것은 메뉴 버튼(아이콘 버튼 md 28)이 오른쪽 끝에 붙기 때문이다. */
+    --table-meta-column-width: 32px;
+    --table-actions-column-width: 40px;
+
+    /* --------------------------------------------------------
+       avatar — mira: size-6 · size-8 · size-10
+       Avatar 와 AvatarGroupCount 두 곳이 함께 읽는다.
+       -------------------------------------------------------- */
+    --avatar-size-sm: 20px;
+    /* Small initials type. mira gives the fallback no type of its own: `initial` = inherit. */
+    --avatar-font-size-sm: 9px;
+    /* md/lg initials set no type of their own: `initial` = inherit. */
+    --avatar-font-size: initial;
+    --avatar-line-height: initial;
+    --avatar-font-weight: 600;
+    --avatar-line-height-sm: 1;
+    --avatar-size-md: 32px;
+    --avatar-size-lg: 40px;
+
+    /* --------------------------------------------------------
+       typeset — 긴 글의 읽기 리듬
+       위의 ui-text 는 버튼 라벨·표 머리글처럼 짧은 글자를 맡는다.
+       문단이 여러 개 이어지는 글은 축이 다르므로 여기서 따로 정한다.
+       mira 는 이 축을 갖지 않으므로 원본 앱의 값(Pretendard 로 한국어 원고를
+       실렌더 비교해 고른 값)을 그대로 둔다.
+
+         doc   읽는 문서. 게시글 본문·약관·리포트.
+         tool  도구 화면. 채팅 답변·패널 안의 설명문.
+
+       ⚠ 파생 값(h4~h6 크기, 목록·표·코드 여백)은 여기에 적지 않는다. typeset.css 가 em 으로 계산한다.
+       -------------------------------------------------------- */
+
+    /* 읽는 문서 */
+    --typeset-doc-size: 18px;
+    --typeset-doc-leading: 1.8;
+    --typeset-doc-flow: 0.9em;
+    --typeset-doc-measure: 720px;
+    --typeset-doc-scale-h1: 1.9em;
+    --typeset-doc-scale-h2: 1.556em;
+    --typeset-doc-scale-h3: 1.222em;
+
+    /* 도구 화면 */
+    --typeset-tool-size: 16px;
+    --typeset-tool-leading: 1.75;
+    --typeset-tool-flow: 1em;
+    --typeset-tool-measure: 672px;
+    --typeset-tool-scale-h1: 1.8em;
+    --typeset-tool-scale-h2: 1.5em;
+    --typeset-tool-scale-h3: 1.2em;
+
+    /* 두 프리셋이 함께 쓰는 축. 제목 위 여백 배수(flow 에 곱한다)와 자간. */
+    --typeset-space-h1: 1.8;
+    --typeset-space-h2: 2.2;
+    --typeset-space-h3: 1.8;
+    --typeset-tracking: -0.01em;
+}
+
+/* ---- Backfilled from foundation: axis contract v4 slots. Tune in place. ---- */
+:root {
+    --badge-height: var(--control-height-xs);
+    --badge-padding-x: var(--control-padding-x-xs);
+    --badge-padding-x-icon: var(--control-padding-x-icon-xs);
+    --badge-padding-y: 2px;
+    --badge-gap: var(--control-gap-xs);
+    --badge-icon-size: var(--control-icon-size-xs);
+    --badge-border-width: var(--control-border-width);
+    --badge-radius: 9999px;
+    --badge-font-size: var(--ui-text-xs);
+    --badge-line-height: var(--ui-line-height-xs);
+    --badge-letter-spacing: var(--ui-letter-spacing);
+    --badge-font-weight: var(--ui-font-weight);
+    --badge-text-transform: initial;
+    --kbd-height: var(--control-height-xs);
+    --kbd-min-width: var(--kbd-height);
+    --kbd-padding-x: 4px;
+    --kbd-gap: var(--control-gap-xs);
+    --kbd-font-size: var(--ui-text-xs);
+    --kbd-line-height: var(--ui-line-height-xs);
+    --kbd-letter-spacing: var(--ui-letter-spacing);
+    --kbd-font-weight: var(--ui-font-weight);
+    --kbd-icon-size: var(--control-icon-size-sm);
+    --control-radius-sm: var(--control-radius);
+    --control-text-transform: initial;
+    --control-padding-x-grouped: var(--control-padding-x-md);
+    --control-icon-button-icon-size-sm: var(--control-icon-size-sm);
+    --control-padding-x-field: var(--control-padding-x-md);
+    --control-padding-y-field: 0px;   /* graphite: fields carry no vertical padding; their height is a min-height */
+    --control-font-size-field: var(--control-font-size-md);
+    --control-line-height-field: var(--control-line-height-md);
+    --control-letter-spacing-field: var(--control-letter-spacing);
+    --toggle-gap: var(--control-gap-md);
+    --toggle-group-joined-radius: var(--control-radius);
+    --switch-thumb-width-md: var(--switch-thumb-size-md);
+    --switch-thumb-width-sm: var(--switch-thumb-size-sm);
+    --switch-radius: 9999px;
+    --label-font-weight: var(--ui-font-weight);
+    --ui-label-text-transform: initial;
+    --ui-label-letter-spacing: var(--ui-letter-spacing);
+    --title-text-transform: initial;
+    --title-letter-spacing: var(--ui-letter-spacing);
+    --table-head-text-transform: initial;
+    --menu-separator-margin-inline: calc(var(--menu-padding) * -1);
+    --menu-separator-margin-block: var(--menu-padding);
+    --menu-label-text-transform: initial;
+    --menu-label-letter-spacing: var(--ui-letter-spacing);
+    --menu-item-text-transform: initial;
+    --menu-item-letter-spacing: var(--ui-letter-spacing);
+    --menu-item-font-weight: initial;
+    --menu-narrow-min-width: var(--menu-min-width);
+    --command-item-radius: var(--menu-item-radius);
+    --command-item-gap: var(--menu-item-gap);
+    --select-item-gap: var(--menu-item-gap);
+    --menubar-padding: var(--menu-padding);
+    --menubar-gap: normal;
+    --menubar-item-padding-inset: var(--menu-item-padding-inset);
+    --card-radius: var(--surface-radius);
+    --bubble-radius: var(--surface-radius);
+    --bubble-padding-x: var(--surface-padding-sm);
+    --bubble-padding-y: 6px;
+    --bubble-line-height: var(--ui-line-height-md);
+    --chart-tooltip-radius: var(--surface-radius);
+    --empty-radius: var(--surface-radius-lg);
+    --sheet-padding: var(--surface-padding-lg);
+    --accordion-border-width: var(--surface-border-width);
+    --tabs-list-height: var(--control-height-lg);
+    --tabs-list-padding: 3px;
+    --tabs-trigger-gap: 6px;
+    --tabs-trigger-padding-x: 6px;
+    --tabs-trigger-padding-y: 2px;
+    --tabs-trigger-active-shadow: none;
+    --item-gap: var(--menu-item-gap);
+    --item-media-icon-size: var(--control-icon-size-lg);
+    --slider-track-thickness: 4px;
+    --sidebar-surface-padding: var(--menu-item-padding-x);
+    --sidebar-surface-gap: var(--menu-item-gap);
+    --sidebar-input-height: var(--control-height-lg);
+    --sidebar-item-padding-y: var(--sidebar-item-padding-x);
+    --sidebar-separator-margin-inline: var(--sidebar-item-padding-x);
+    --sidebar-badge-font-weight: var(--ui-font-weight);
+    --sidebar-part-radius: var(--sidebar-item-radius);
+}
+
+:root {
+    /* ========================================================
+       Axis contract v5 — one slot, one meaning
+       --------------------------------------------------------
+       Stage 2 of v4 found slots that several elements read while a system gave
+       those elements different values. Each split below adds the name the
+       second reader needed; its default is an alias of the slot it came from,
+       so foundation renders exactly as it did under v4.
+       ======================================================== */
+
+    /* The grouped control padding, split per reader. --control-padding-x-grouped stays the shared
+       step; the inline addons, the block (top · bottom) addons and the joined toggle-group item each
+       read their own name. rhea · nova · lyra · vega keep the block addons at the md step while the
+       inline ones and the toggle item go to px-2; sera zeroes the addons and keeps the toggle's md. */
+    --input-group-addon-padding-x: var(--control-padding-x-grouped);
+    --input-group-addon-padding-x-block: var(--input-group-addon-padding-x);
+    --toggle-group-item-padding-x: var(--control-padding-x-grouped);
+    /* The input-group button's corner. mira: the sm control corner; luma · nova step the sm button
+       down but keep the grouped button at the control radius. */
+    --input-group-button-radius: var(--control-radius-sm);
+    /* A joined toggle group: the group's own corner (--toggle-group-joined-radius), its sm step,
+       and the corners of the joined items. rhea squares the group and rounds only the items;
+       nova steps the sm group down while the items keep the control radius. */
+    --toggle-group-joined-radius-sm: var(--toggle-group-joined-radius);
+    --toggle-group-item-radius: var(--toggle-group-joined-radius);
+    /* The select trigger's side padding, start and end apart (default size). mira: the field
+       padding on both sides. rhea gives the trigger px-3 where the inputs are px-2.5; vega's
+       trigger is `pl-2.5 pr-2`. */
+    --select-trigger-padding-start: var(--control-padding-x-field);
+    --select-trigger-padding-end: var(--select-trigger-padding-start);
+    /* The native select's vertical padding. mira: the field's py-0.5. sera gives it py-2 while the
+       input stays py-1; graphite's input has none while the native select keeps 2px. */
+    --native-select-padding-y: var(--control-padding-y-field);
+    /* The toned badge (`[data-tone]`, the tag) height. mira: the badge height. luma · sera · lyra
+       keep the tag at the xs control step while the plain badge shrinks to h-5 (or auto). */
+    --tag-height: var(--badge-height);
+    /* The accordion's rules between items. mira: the group's own border width. sera · nova · lyra
+       draw no frame around the group but keep the rule between items. */
+    --accordion-item-border-width: var(--accordion-border-width);
+    /* Card parts. The header and footer corners, and an edge image's corners. mira: the card's
+       corner. maia rounds the header and footer one step below the card (14 in an 18 card); nova
+       gives the image the popover corner while the card and its parts take the dialog one. */
+    --card-part-radius: var(--card-radius);
+    --card-image-radius: var(--card-radius);
+    /* The card's shadow, drawn after its ring. mira: none (the theme's --shadow-card is empty).
+       rhea adds shadow-sm, sera · vega · luma their own card shadow. */
+    --card-shadow: var(--shadow-card);
+}

@@ -1,0 +1,623 @@
+{
+    "version": 1,
+    "source": {
+        "commit": "2a6f9c35ba95a6fc53a241aebc0e8e2887f2e21d",
+        "kind": "github",
+        "ref": "main",
+        "repo": "tyohnn/ui"
+    },
+    "project": "monorepo",
+    "packageManager": "pnpm",
+    "ui": {
+        "path": "packages/ui",
+        "importBase": "@investment/ui",
+        "systems": [
+            "graphite"
+        ],
+        "icons": [
+            "phosphor"
+        ],
+        "locale": "ko"
+    },
+    "apps": {
+        "apps/web": {
+            "framework": "next",
+            "system": "graphite",
+            "icons": "phosphor",
+            "fonts": {
+                "sans": "pretendard",
+                "heading": "inherit",
+                "mono": "system",
+                "hangulFallback": "pretendard"
+            },
+            "mode": "dark",
+            "css": "apps/web/app/global.css"
+        }
+    },
+    "packages": {
+        "apps/web/package.json": [
+            "@investment/ui",
+            "pretendard"
+        ],
+        "packages/ui/package.json": [
+            "@base-ui/react",
+            "@phosphor-icons/react",
+            "@shadcn/react",
+            "@types/react",
+            "@types/react-dom",
+            "class-variance-authority",
+            "cmdk",
+            "cn",
+            "date-fns",
+            "embla-carousel-react",
+            "input-otp",
+            "react",
+            "react-day-picker",
+            "react-dom",
+            "react-resizable-panels",
+            "recharts",
+            "shadcn",
+            "tailwindcss",
+            "tw-animate-css",
+            "typescript"
+        ]
+    },
+    "files": {
+        "packages/ui/src/components/accordion.tsx": {
+            "from": "registry/ui/components/accordion.tsx",
+            "hash": "sha256-f08667770826c6c2"
+        },
+        "packages/ui/src/components/alert-dialog.tsx": {
+            "from": "registry/ui/components/alert-dialog.tsx",
+            "hash": "sha256-73dff5b0c3c0ecf8"
+        },
+        "packages/ui/src/components/alert.tsx": {
+            "from": "registry/ui/components/alert.tsx",
+            "hash": "sha256-639c846b57885d8a"
+        },
+        "packages/ui/src/components/aspect-ratio.tsx": {
+            "from": "registry/ui/components/aspect-ratio.tsx",
+            "hash": "sha256-6df19df6b983c450"
+        },
+        "packages/ui/src/components/attachment.tsx": {
+            "from": "registry/ui/components/attachment.tsx",
+            "hash": "sha256-9cb1871efe598e9c"
+        },
+        "packages/ui/src/components/avatar.tsx": {
+            "from": "registry/ui/components/avatar.tsx",
+            "hash": "sha256-a9b3c857517e6c55"
+        },
+        "packages/ui/src/components/badge.tsx": {
+            "from": "registry/ui/components/badge.tsx",
+            "hash": "sha256-cad65ac68df79093"
+        },
+        "packages/ui/src/components/breadcrumb.tsx": {
+            "from": "registry/ui/components/breadcrumb.tsx",
+            "hash": "sha256-e3b44874965cac44"
+        },
+        "packages/ui/src/components/bubble.tsx": {
+            "from": "registry/ui/components/bubble.tsx",
+            "hash": "sha256-7b997c07146c49b4"
+        },
+        "packages/ui/src/components/button-group.tsx": {
+            "from": "registry/ui/components/button-group.tsx",
+            "hash": "sha256-32c07acd39e0a0b8"
+        },
+        "packages/ui/src/components/button.tsx": {
+            "from": "registry/ui/components/button.tsx",
+            "hash": "sha256-74f982d7ad7a764e"
+        },
+        "packages/ui/src/components/calendar.tsx": {
+            "from": "registry/ui/components/calendar.tsx",
+            "hash": "sha256-b99efc5ab1c45378"
+        },
+        "packages/ui/src/components/card.tsx": {
+            "from": "registry/ui/components/card.tsx",
+            "hash": "sha256-0d525c03e086b004"
+        },
+        "packages/ui/src/components/carousel.tsx": {
+            "from": "registry/ui/components/carousel.tsx",
+            "hash": "sha256-b7481e5f5ef57e2d"
+        },
+        "packages/ui/src/components/chart.tsx": {
+            "from": "registry/ui/components/chart.tsx",
+            "hash": "sha256-ebf4e179c1c65721"
+        },
+        "packages/ui/src/components/checkbox.tsx": {
+            "from": "registry/ui/components/checkbox.tsx",
+            "hash": "sha256-ec2d848a9fe063c0"
+        },
+        "packages/ui/src/components/collapsible.tsx": {
+            "from": "registry/ui/components/collapsible.tsx",
+            "hash": "sha256-ead4349ff7b01d69"
+        },
+        "packages/ui/src/components/combobox.tsx": {
+            "from": "registry/ui/components/combobox.tsx",
+            "hash": "sha256-8fcb24f519c32075"
+        },
+        "packages/ui/src/components/command.tsx": {
+            "from": "registry/ui/components/command.tsx",
+            "hash": "sha256-95e4d122fb5e33d5"
+        },
+        "packages/ui/src/components/context-menu.tsx": {
+            "from": "registry/ui/components/context-menu.tsx",
+            "hash": "sha256-b794576bb16dfb08"
+        },
+        "packages/ui/src/components/dialog.tsx": {
+            "from": "registry/ui/components/dialog.tsx",
+            "hash": "sha256-aa89056682e31e77"
+        },
+        "packages/ui/src/components/direction.tsx": {
+            "from": "registry/ui/components/direction.tsx",
+            "hash": "sha256-661ff5b9c0dc26ed"
+        },
+        "packages/ui/src/components/drawer.tsx": {
+            "from": "registry/ui/components/drawer.tsx",
+            "hash": "sha256-7180299dff3cc165"
+        },
+        "packages/ui/src/components/dropdown-menu.tsx": {
+            "from": "registry/ui/components/dropdown-menu.tsx",
+            "hash": "sha256-8dbab2c28568b5a0"
+        },
+        "packages/ui/src/components/empty.tsx": {
+            "from": "registry/ui/components/empty.tsx",
+            "hash": "sha256-05c419160ac02269"
+        },
+        "packages/ui/src/components/field.tsx": {
+            "from": "registry/ui/components/field.tsx",
+            "hash": "sha256-562c2344ec850bbf"
+        },
+        "packages/ui/src/components/hover-card.tsx": {
+            "from": "registry/ui/components/hover-card.tsx",
+            "hash": "sha256-9c1412f06a968da1"
+        },
+        "packages/ui/src/components/input-group.tsx": {
+            "from": "registry/ui/components/input-group.tsx",
+            "hash": "sha256-66cc3e636d8d687e"
+        },
+        "packages/ui/src/components/input-otp.tsx": {
+            "from": "registry/ui/components/input-otp.tsx",
+            "hash": "sha256-8b027aeb7bb39098"
+        },
+        "packages/ui/src/components/input.tsx": {
+            "from": "registry/ui/components/input.tsx",
+            "hash": "sha256-00213ec177e4556e"
+        },
+        "packages/ui/src/components/item.tsx": {
+            "from": "registry/ui/components/item.tsx",
+            "hash": "sha256-2f2742d9d90403ba"
+        },
+        "packages/ui/src/components/kbd.tsx": {
+            "from": "registry/ui/components/kbd.tsx",
+            "hash": "sha256-f04fe8ce9c10023f"
+        },
+        "packages/ui/src/components/label.tsx": {
+            "from": "registry/ui/components/label.tsx",
+            "hash": "sha256-d11f6ddea1304473"
+        },
+        "packages/ui/src/components/marker.tsx": {
+            "from": "registry/ui/components/marker.tsx",
+            "hash": "sha256-f7daf3c6f9ae5eee"
+        },
+        "packages/ui/src/components/menubar.tsx": {
+            "from": "registry/ui/components/menubar.tsx",
+            "hash": "sha256-255b5dc851f37405"
+        },
+        "packages/ui/src/components/message-scroller.tsx": {
+            "from": "registry/ui/components/message-scroller.tsx",
+            "hash": "sha256-91586aa5efab53af"
+        },
+        "packages/ui/src/components/message.tsx": {
+            "from": "registry/ui/components/message.tsx",
+            "hash": "sha256-b57f3c9921ceb069"
+        },
+        "packages/ui/src/components/native-select.tsx": {
+            "from": "registry/ui/components/native-select.tsx",
+            "hash": "sha256-4c552e5c7e74475e"
+        },
+        "packages/ui/src/components/navigation-menu.tsx": {
+            "from": "registry/ui/components/navigation-menu.tsx",
+            "hash": "sha256-9dafc2d4b7171841"
+        },
+        "packages/ui/src/components/pagination.tsx": {
+            "from": "registry/ui/components/pagination.tsx",
+            "hash": "sha256-0aacf260f7b7bac1"
+        },
+        "packages/ui/src/components/popover.tsx": {
+            "from": "registry/ui/components/popover.tsx",
+            "hash": "sha256-935bab728b60fd86"
+        },
+        "packages/ui/src/components/progress.tsx": {
+            "from": "registry/ui/components/progress.tsx",
+            "hash": "sha256-00afc4c7f319f5f5"
+        },
+        "packages/ui/src/components/questionnaire.tsx": {
+            "from": "registry/ui/components/questionnaire.tsx",
+            "hash": "sha256-8d5dc51aef45a3a5"
+        },
+        "packages/ui/src/components/radio-group.tsx": {
+            "from": "registry/ui/components/radio-group.tsx",
+            "hash": "sha256-c27fecb49f924d32"
+        },
+        "packages/ui/src/components/resizable.tsx": {
+            "from": "registry/ui/components/resizable.tsx",
+            "hash": "sha256-7971b48619d5e322"
+        },
+        "packages/ui/src/components/scroll-area.tsx": {
+            "from": "registry/ui/components/scroll-area.tsx",
+            "hash": "sha256-214525d7c69e2fae"
+        },
+        "packages/ui/src/components/select.tsx": {
+            "from": "registry/ui/components/select.tsx",
+            "hash": "sha256-1cbf7f76475eb764"
+        },
+        "packages/ui/src/components/separator.tsx": {
+            "from": "registry/ui/components/separator.tsx",
+            "hash": "sha256-ee31a3c71de44146"
+        },
+        "packages/ui/src/components/sheet.tsx": {
+            "from": "registry/ui/components/sheet.tsx",
+            "hash": "sha256-6276a915741d8f38"
+        },
+        "packages/ui/src/components/sidebar.tsx": {
+            "from": "registry/ui/components/sidebar.tsx",
+            "hash": "sha256-b1ba9ac70f81f0a8"
+        },
+        "packages/ui/src/components/skeleton.tsx": {
+            "from": "registry/ui/components/skeleton.tsx",
+            "hash": "sha256-8fcbad84e494a754"
+        },
+        "packages/ui/src/components/slider.tsx": {
+            "from": "registry/ui/components/slider.tsx",
+            "hash": "sha256-0255828e9c447758"
+        },
+        "packages/ui/src/components/spinner.tsx": {
+            "from": "registry/ui/components/spinner.tsx",
+            "hash": "sha256-b214bece9a22373e"
+        },
+        "packages/ui/src/components/switch.tsx": {
+            "from": "registry/ui/components/switch.tsx",
+            "hash": "sha256-87aaf20b3209fabb"
+        },
+        "packages/ui/src/components/table.tsx": {
+            "from": "registry/ui/components/table.tsx",
+            "hash": "sha256-77d15e11fcf1fb2f"
+        },
+        "packages/ui/src/components/tabs.tsx": {
+            "from": "registry/ui/components/tabs.tsx",
+            "hash": "sha256-1eda25325a7aae91"
+        },
+        "packages/ui/src/components/textarea.tsx": {
+            "from": "registry/ui/components/textarea.tsx",
+            "hash": "sha256-8f527c89dec40a9b"
+        },
+        "packages/ui/src/components/toast.tsx": {
+            "from": "registry/ui/components/toast.tsx",
+            "hash": "sha256-b35120e92cfb64cd"
+        },
+        "packages/ui/src/components/toggle-group.tsx": {
+            "from": "registry/ui/components/toggle-group.tsx",
+            "hash": "sha256-900a6c9aa6cfed34"
+        },
+        "packages/ui/src/components/toggle.tsx": {
+            "from": "registry/ui/components/toggle.tsx",
+            "hash": "sha256-b53df3a8d6ad7ae3"
+        },
+        "packages/ui/src/components/tooltip.tsx": {
+            "from": "registry/ui/components/tooltip.tsx",
+            "hash": "sha256-dc5ec917d8276af9"
+        },
+        "packages/ui/src/hooks/use-mobile.ts": {
+            "from": "registry/ui/hooks/use-mobile.ts",
+            "hash": "sha256-ad0936f84f1df79d"
+        },
+        "packages/ui/src/icons/check.ts": {
+            "from": "generated:icons/check.ts",
+            "hash": "sha256-9fae1c11e5c5a748"
+        },
+        "packages/ui/src/icons/index.ts": {
+            "from": "generated:icons/index.ts",
+            "hash": "sha256-2cd33a116d54a1f0"
+        },
+        "packages/ui/src/icons/libraries/phosphor.tsx": {
+            "from": "registry/ui/icons/libraries/phosphor.tsx",
+            "hash": "sha256-46a98d40d0b92452"
+        },
+        "packages/ui/src/icons/names.ts": {
+            "from": "registry/ui/icons/names.ts",
+            "hash": "sha256-01e629dcc0983e45"
+        },
+        "packages/ui/src/lib/utils.ts": {
+            "from": "registry/ui/lib/utils.ts",
+            "hash": "sha256-14300d758170c270"
+        },
+        "packages/ui/src/strings/index.ts": {
+            "from": "generated:strings/index.ts",
+            "hash": "sha256-8b4454abe83a10f1"
+        },
+        "packages/ui/src/strings/locales/ko.ts": {
+            "from": "registry/ui/strings/locales/ko.ts",
+            "hash": "sha256-0160f3802e38b95a"
+        },
+        "packages/ui/src/strings/names.ts": {
+            "from": "registry/ui/strings/names.ts",
+            "hash": "sha256-4a267e240feb490d"
+        },
+        "packages/ui/src/systems/graphite/components/_control-family.css": {
+            "from": "registry/systems/graphite/styles/components/_control-family.css",
+            "hash": "sha256-183ef63e1cab231d"
+        },
+        "packages/ui/src/systems/graphite/components/_menu-family.css": {
+            "from": "registry/systems/graphite/styles/components/_menu-family.css",
+            "hash": "sha256-4a192a98c2d456d4"
+        },
+        "packages/ui/src/systems/graphite/components/_shared.css": {
+            "from": "registry/systems/graphite/styles/components/_shared.css",
+            "hash": "sha256-c20be0d56527cabb"
+        },
+        "packages/ui/src/systems/graphite/components/_surface-family.css": {
+            "from": "registry/systems/graphite/styles/components/_surface-family.css",
+            "hash": "sha256-fe6d1022c019d4e0"
+        },
+        "packages/ui/src/systems/graphite/components/accordion.css": {
+            "from": "registry/systems/graphite/styles/components/accordion.css",
+            "hash": "sha256-9a1faeb8bc8ba9f0"
+        },
+        "packages/ui/src/systems/graphite/components/alert-dialog.css": {
+            "from": "registry/systems/graphite/styles/components/alert-dialog.css",
+            "hash": "sha256-710c69ad95206bb0"
+        },
+        "packages/ui/src/systems/graphite/components/alert.css": {
+            "from": "registry/systems/graphite/styles/components/alert.css",
+            "hash": "sha256-acde8abf46352bd9"
+        },
+        "packages/ui/src/systems/graphite/components/attachment.css": {
+            "from": "registry/systems/graphite/styles/components/attachment.css",
+            "hash": "sha256-7dc3d24cf739d662"
+        },
+        "packages/ui/src/systems/graphite/components/avatar.css": {
+            "from": "registry/systems/graphite/styles/components/avatar.css",
+            "hash": "sha256-51a4f4db0de61660"
+        },
+        "packages/ui/src/systems/graphite/components/badge.css": {
+            "from": "registry/systems/graphite/styles/components/badge.css",
+            "hash": "sha256-d20ad4d7ce40ce54"
+        },
+        "packages/ui/src/systems/graphite/components/breadcrumb.css": {
+            "from": "registry/systems/graphite/styles/components/breadcrumb.css",
+            "hash": "sha256-220820ccbd6b9266"
+        },
+        "packages/ui/src/systems/graphite/components/bubble.css": {
+            "from": "registry/systems/graphite/styles/components/bubble.css",
+            "hash": "sha256-4999040ed3327499"
+        },
+        "packages/ui/src/systems/graphite/components/button-group.css": {
+            "from": "registry/systems/graphite/styles/components/button-group.css",
+            "hash": "sha256-459346f8a0073bd6"
+        },
+        "packages/ui/src/systems/graphite/components/button.css": {
+            "from": "registry/systems/graphite/styles/components/button.css",
+            "hash": "sha256-92a20e9f9033b4b1"
+        },
+        "packages/ui/src/systems/graphite/components/calendar.css": {
+            "from": "registry/systems/graphite/styles/components/calendar.css",
+            "hash": "sha256-369a05f104189302"
+        },
+        "packages/ui/src/systems/graphite/components/card.css": {
+            "from": "registry/systems/graphite/styles/components/card.css",
+            "hash": "sha256-2d78a25c85746470"
+        },
+        "packages/ui/src/systems/graphite/components/carousel.css": {
+            "from": "registry/systems/graphite/styles/components/carousel.css",
+            "hash": "sha256-6fcafec417b00cfe"
+        },
+        "packages/ui/src/systems/graphite/components/chart.css": {
+            "from": "registry/systems/graphite/styles/components/chart.css",
+            "hash": "sha256-75f67817b8b67381"
+        },
+        "packages/ui/src/systems/graphite/components/checkbox.css": {
+            "from": "registry/systems/graphite/styles/components/checkbox.css",
+            "hash": "sha256-aec25c5a49dfaf21"
+        },
+        "packages/ui/src/systems/graphite/components/combobox.css": {
+            "from": "registry/systems/graphite/styles/components/combobox.css",
+            "hash": "sha256-e57e56ff42729d82"
+        },
+        "packages/ui/src/systems/graphite/components/command.css": {
+            "from": "registry/systems/graphite/styles/components/command.css",
+            "hash": "sha256-879ad2ad470c969b"
+        },
+        "packages/ui/src/systems/graphite/components/context-menu.css": {
+            "from": "registry/systems/graphite/styles/components/context-menu.css",
+            "hash": "sha256-9c2e140b27f181cf"
+        },
+        "packages/ui/src/systems/graphite/components/dialog.css": {
+            "from": "registry/systems/graphite/styles/components/dialog.css",
+            "hash": "sha256-6290a6f43d337644"
+        },
+        "packages/ui/src/systems/graphite/components/drawer.css": {
+            "from": "registry/systems/graphite/styles/components/drawer.css",
+            "hash": "sha256-d6f5ca9bd5862cbd"
+        },
+        "packages/ui/src/systems/graphite/components/dropdown-menu.css": {
+            "from": "registry/systems/graphite/styles/components/dropdown-menu.css",
+            "hash": "sha256-3ed2e99e55680196"
+        },
+        "packages/ui/src/systems/graphite/components/empty.css": {
+            "from": "registry/systems/graphite/styles/components/empty.css",
+            "hash": "sha256-1e4cc0e5428abac2"
+        },
+        "packages/ui/src/systems/graphite/components/field.css": {
+            "from": "registry/systems/graphite/styles/components/field.css",
+            "hash": "sha256-22943d571c13e2de"
+        },
+        "packages/ui/src/systems/graphite/components/hover-card.css": {
+            "from": "registry/systems/graphite/styles/components/hover-card.css",
+            "hash": "sha256-c6ff22072d823456"
+        },
+        "packages/ui/src/systems/graphite/components/input-group.css": {
+            "from": "registry/systems/graphite/styles/components/input-group.css",
+            "hash": "sha256-271dbc55c5a14851"
+        },
+        "packages/ui/src/systems/graphite/components/input-otp.css": {
+            "from": "registry/systems/graphite/styles/components/input-otp.css",
+            "hash": "sha256-76fedea4f45084d6"
+        },
+        "packages/ui/src/systems/graphite/components/input.css": {
+            "from": "registry/systems/graphite/styles/components/input.css",
+            "hash": "sha256-cad89106e6a71fb1"
+        },
+        "packages/ui/src/systems/graphite/components/item.css": {
+            "from": "registry/systems/graphite/styles/components/item.css",
+            "hash": "sha256-6acca73b0eceff7e"
+        },
+        "packages/ui/src/systems/graphite/components/kbd.css": {
+            "from": "registry/systems/graphite/styles/components/kbd.css",
+            "hash": "sha256-5d7a2a7d70f5ea9b"
+        },
+        "packages/ui/src/systems/graphite/components/label.css": {
+            "from": "registry/systems/graphite/styles/components/label.css",
+            "hash": "sha256-393294913e77375d"
+        },
+        "packages/ui/src/systems/graphite/components/marker.css": {
+            "from": "registry/systems/graphite/styles/components/marker.css",
+            "hash": "sha256-8d4b8eed9235adc6"
+        },
+        "packages/ui/src/systems/graphite/components/menubar.css": {
+            "from": "registry/systems/graphite/styles/components/menubar.css",
+            "hash": "sha256-12af7facce535f7b"
+        },
+        "packages/ui/src/systems/graphite/components/message-scroller.css": {
+            "from": "registry/systems/graphite/styles/components/message-scroller.css",
+            "hash": "sha256-814373c53aa161c2"
+        },
+        "packages/ui/src/systems/graphite/components/message.css": {
+            "from": "registry/systems/graphite/styles/components/message.css",
+            "hash": "sha256-193e5b0e1662c299"
+        },
+        "packages/ui/src/systems/graphite/components/native-select.css": {
+            "from": "registry/systems/graphite/styles/components/native-select.css",
+            "hash": "sha256-91965cc9b94283e3"
+        },
+        "packages/ui/src/systems/graphite/components/navigation-menu.css": {
+            "from": "registry/systems/graphite/styles/components/navigation-menu.css",
+            "hash": "sha256-a809cd17bc8c8cd2"
+        },
+        "packages/ui/src/systems/graphite/components/pagination.css": {
+            "from": "registry/systems/graphite/styles/components/pagination.css",
+            "hash": "sha256-73d18bc9dd7183ba"
+        },
+        "packages/ui/src/systems/graphite/components/popover.css": {
+            "from": "registry/systems/graphite/styles/components/popover.css",
+            "hash": "sha256-6232755ae99ef7b8"
+        },
+        "packages/ui/src/systems/graphite/components/progress.css": {
+            "from": "registry/systems/graphite/styles/components/progress.css",
+            "hash": "sha256-5237346fe9e56da0"
+        },
+        "packages/ui/src/systems/graphite/components/questionnaire.css": {
+            "from": "registry/systems/graphite/styles/components/questionnaire.css",
+            "hash": "sha256-d4df23724f23ca7c"
+        },
+        "packages/ui/src/systems/graphite/components/radio-group.css": {
+            "from": "registry/systems/graphite/styles/components/radio-group.css",
+            "hash": "sha256-e47b3847abc9db5d"
+        },
+        "packages/ui/src/systems/graphite/components/resizable.css": {
+            "from": "registry/systems/graphite/styles/components/resizable.css",
+            "hash": "sha256-02ae0c3641ad7e4c"
+        },
+        "packages/ui/src/systems/graphite/components/scroll-area.css": {
+            "from": "registry/systems/graphite/styles/components/scroll-area.css",
+            "hash": "sha256-b5ec2e417af21b42"
+        },
+        "packages/ui/src/systems/graphite/components/select.css": {
+            "from": "registry/systems/graphite/styles/components/select.css",
+            "hash": "sha256-feaca5bc059ca38a"
+        },
+        "packages/ui/src/systems/graphite/components/separator.css": {
+            "from": "registry/systems/graphite/styles/components/separator.css",
+            "hash": "sha256-5adccbac707d3d69"
+        },
+        "packages/ui/src/systems/graphite/components/sheet.css": {
+            "from": "registry/systems/graphite/styles/components/sheet.css",
+            "hash": "sha256-2d4c4e2280386719"
+        },
+        "packages/ui/src/systems/graphite/components/sidebar.css": {
+            "from": "registry/systems/graphite/styles/components/sidebar.css",
+            "hash": "sha256-09dacad2c57c71b6"
+        },
+        "packages/ui/src/systems/graphite/components/skeleton.css": {
+            "from": "registry/systems/graphite/styles/components/skeleton.css",
+            "hash": "sha256-7912b07aec063cb5"
+        },
+        "packages/ui/src/systems/graphite/components/slider.css": {
+            "from": "registry/systems/graphite/styles/components/slider.css",
+            "hash": "sha256-829cd9879a614b53"
+        },
+        "packages/ui/src/systems/graphite/components/switch.css": {
+            "from": "registry/systems/graphite/styles/components/switch.css",
+            "hash": "sha256-2b5776722a0776a6"
+        },
+        "packages/ui/src/systems/graphite/components/table.css": {
+            "from": "registry/systems/graphite/styles/components/table.css",
+            "hash": "sha256-d06ef580791d3da8"
+        },
+        "packages/ui/src/systems/graphite/components/tabs.css": {
+            "from": "registry/systems/graphite/styles/components/tabs.css",
+            "hash": "sha256-cbff8a9ccde50a81"
+        },
+        "packages/ui/src/systems/graphite/components/textarea.css": {
+            "from": "registry/systems/graphite/styles/components/textarea.css",
+            "hash": "sha256-bde3864729f3512b"
+        },
+        "packages/ui/src/systems/graphite/components/toast.css": {
+            "from": "registry/systems/graphite/styles/components/toast.css",
+            "hash": "sha256-32e080a3de80b81d"
+        },
+        "packages/ui/src/systems/graphite/components/toggle-group.css": {
+            "from": "registry/systems/graphite/styles/components/toggle-group.css",
+            "hash": "sha256-28da493da8497a88"
+        },
+        "packages/ui/src/systems/graphite/components/toggle.css": {
+            "from": "registry/systems/graphite/styles/components/toggle.css",
+            "hash": "sha256-a71ca1baeaaf0e6e"
+        },
+        "packages/ui/src/systems/graphite/components/tooltip.css": {
+            "from": "registry/systems/graphite/styles/components/tooltip.css",
+            "hash": "sha256-e0857aaba4dd1b16"
+        },
+        "packages/ui/src/systems/graphite/DESIGN.md": {
+            "from": "registry/systems/graphite/DESIGN.md",
+            "hash": "sha256-7a002403b2551366"
+        },
+        "packages/ui/src/systems/graphite/globals.css": {
+            "from": "registry/systems/graphite/styles/globals.css",
+            "hash": "sha256-45da65e6236b82d7"
+        },
+        "packages/ui/src/systems/graphite/style.css": {
+            "from": "registry/systems/graphite/styles/style.css",
+            "hash": "sha256-7d31f1fb38434827"
+        },
+        "packages/ui/src/systems/graphite/system.json": {
+            "from": "registry/systems/graphite/system.json",
+            "hash": "sha256-43c8d06be1965474"
+        },
+        "packages/ui/src/systems/graphite/theme.css": {
+            "from": "registry/systems/graphite/styles/theme.css",
+            "hash": "sha256-45971fd558cd55af"
+        },
+        "packages/ui/src/systems/graphite/tokens.css": {
+            "from": "registry/systems/graphite/styles/tokens.css",
+            "hash": "sha256-ea41e120130e1e79"
+        },
+        "packages/ui/src/systems/graphite/typeset-preset.css": {
+            "from": "registry/systems/graphite/styles/typeset-preset.css",
+            "hash": "sha256-18b147b98189ead8"
+        },
+        "packages/ui/src/systems/graphite/typeset.css": {
+            "from": "registry/systems/graphite/styles/typeset.css",
+            "hash": "sha256-e0d7ceaf20105858"
+        }
+    }
+}

@@ -1,0 +1,130 @@
+/* ============================================================
+   3층 — Toggle 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Button 과 같은 밀도 규칙을 쓴다. 높이가 정본이고 세로 패딩을 두지 않으며,
+   아이콘이 붙은 쪽 패딩을 한 단계 좁힌다.
+
+   ⚠ 사이즈 이름이 곧 높이다. mira: default h-7(28) · sm h-6(24) · lg h-8(32) 로
+      Button 의 같은 이름과 같다. 툴바에 Button 과 Toggle 을 나란히 두어도 어긋나지
+      않는다. 편의로 한 단계씩 내리지 말 것 — 작게 쓰려면 size="sm" 을 준다.
+   ⚠ sm 의 글자는 한 단 아래(xs · 10px)를 읽는다. mira: text-[0.625rem].
+   ⚠ 아이콘은 default 가 size-4(16), sm 만 size-3(12)다. Button 의 default(14)와
+      다르지만 mira 의 규칙이다.
+   ⚠ 눌린 상태는 --muted 다(mira aria-pressed:bg-muted · data-[state=on]:bg-muted).
+      글자색은 바탕(foreground)을 그대로 물려받고 hover 에서도 foreground 다 — 종전의
+      --muted-foreground 기본색은 nova 에도 mira 에도 없는 규칙이었다.
+
+   ⚠ 포커스 링만 여기 있다. 컴포넌트 cva 에 focus-visible:ring-[3px] 가 박혀
+      있어 유틸리티 레이어가 _control-family.css 의 box-shadow 를 덮기 때문이다.
+      두께(3px)는 그 유틸리티를 그대로 쓰고 색만 채운다 — mira 도 같다.
+      mira: focus-visible:border-ring focus-visible:ring-ring/50
+            aria-invalid:border-destructive aria-invalid:ring-destructive/20 (다크 /40)
+      검증 실패의 링은 다른 컨트롤과 달리 포커스 때만 그린다. 두께가 focus-visible 에만 걸려 있어서다.
+
+   ⚠ 컴포넌트가 갖고 있는 것: inline-flex, items-center, justify-center,
+      whitespace-nowrap, outline-none, hover:bg-muted, disabled:opacity-50.
+      hover 배경이 컴포넌트 소유라 여기서는 글자색만 바꾼다.
+   ============================================================ */
+
+.cn-toggle {
+    border-radius: var(--control-radius);
+    border: var(--control-border-width) solid transparent;
+    background-clip: padding-box;
+
+    font-weight: var(--control-font-weight);
+    letter-spacing: var(--control-letter-spacing);
+    text-transform: var(--control-text-transform);
+
+    --tw-ring-color: var(--ring-focus-strong, color-mix(in oklab, var(--ring) 50%, transparent));
+
+    &:focus-visible {
+        border-color: var(--ring);
+    }
+
+    &[aria-invalid="true"] {
+        --tw-ring-color: var(--ring-invalid);
+        border-color: var(--destructive);
+    }
+
+    &:hover {
+        color: var(--foreground);
+    }
+
+    &[aria-pressed="true"],
+    &[data-pressed],
+    &[data-state="on"] {
+        background-color: var(--muted);
+    }
+}
+
+/* --------------------------------------------------------
+   variant
+   -------------------------------------------------------- */
+
+.cn-toggle-variant-default {
+    background-color: transparent;
+}
+
+/* mira: border-input hover:bg-muted border bg-transparent */
+.cn-toggle-variant-outline {
+    background-color: transparent;
+    border-color: var(--input);
+}
+
+/* --------------------------------------------------------
+   size — Button 과 같은 표를 읽는다.
+   min-width 를 높이와 같게 두어 아이콘 하나짜리 토글이 납작해지지 않게 한다.
+   -------------------------------------------------------- */
+
+.cn-toggle-size-sm {
+    min-height: var(--control-height-sm);
+    min-width: var(--control-height-sm);
+    padding-inline: var(--control-padding-x-sm);
+    gap: var(--control-gap-sm);
+    font-size: var(--control-font-size-xs);
+    line-height: var(--control-line-height-xs);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-sm);
+        height: var(--control-icon-size-sm);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-sm); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-sm); }
+}
+
+.cn-toggle-size-default {
+    min-height: var(--control-height-md);
+    min-width: var(--control-height-md);
+    padding-inline: var(--control-padding-x-md);
+    gap: var(--toggle-gap);
+    font-size: var(--control-font-size-md);
+    line-height: var(--control-line-height-md);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-md); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-md); }
+}
+
+.cn-toggle-size-lg {
+    min-height: var(--control-height-lg);
+    min-width: var(--control-height-lg);
+    padding-inline: var(--control-padding-x-lg);
+    gap: var(--control-gap-lg);
+    font-size: var(--control-font-size-lg);
+    line-height: var(--control-line-height-lg);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    &:has([data-icon="inline-start"]) { padding-inline-start: var(--control-padding-x-icon-lg); }
+    &:has([data-icon="inline-end"])   { padding-inline-end: var(--control-padding-x-icon-lg); }
+}

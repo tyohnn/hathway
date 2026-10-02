@@ -1,0 +1,118 @@
+/* ============================================================
+   3층 — Card 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Card 는 컨트롤이 아니라 면이다. 높이가 아니라 안쪽 여백이 정본이고,
+   그래서 control 축이 아니라 surface 축을 읽는다.
+
+   mira: rounded-lg · ring-1 ring-foreground/10 · 그림자 없음 · text-xs/relaxed ·
+         --card-spacing 은 spacing(4)(sm 은 spacing(3)) · 헤더 gap-1 · 제목 text-sm font-medium ·
+         설명 text-xs/relaxed · 푸터는 좌우 여백만 갖고 호출부가 `border-t` 를 붙였을 때만
+         그 선 위로 여백을 더한다. nova 의 muted 띠(bg-muted/50 · border-t)와 푸터가 있을 때
+         카드 아래 여백을 없애던 규칙(has-data-[slot=card-footer]:pb-0)은 없다.
+
+   --card-spacing 은 지역 변수다. Card 가 자기 사이즈에 맞는 값을 여기에 담고,
+   헤더·본문·푸터가 그것을 읽는다. 이 한 단계를 거치는 덕분에 data-size 분기를
+   부분마다 반복하지 않아도 된다.
+
+   ⚠ 컴포넌트가 갖고 있는 것: flex, flex-col, grid, 정렬 유틸리티.
+   ============================================================ */
+
+.cn-card {
+    --card-spacing: var(--surface-padding-md);
+
+    background-color: var(--card);
+    color: var(--card-foreground);
+    /* 모서리는 카드 자신의 축이다 — v4 슬롯 --card-radius(foundation 은 --surface-radius 의 별칭).
+       머리·바닥은 v5 의 --card-part-radius, 가장자리 이미지는 --card-image-radius(둘 다 그 별칭)다. */
+    border-radius: var(--card-radius);
+    overflow: hidden;
+
+    gap: var(--card-spacing);
+    padding-block: var(--card-spacing);
+
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+
+    /* 테두리 대신 안쪽 링이라 바깥 크기가 늘지 않는다. mira 의 카드는 이 링 하나뿐이고
+       그림자가 없다(ring-1 ring-foreground/10).
+       ⚠ 1층의 --shadow-card 는 이제 읽는 곳이 없다. 값이 이미 「없음」(0 0 #0000)이라
+          화면은 같다. 카드에 그림자를 되살리려면 여기 box-shadow 에 그 이름을 다시 잇고
+          globals.css 의 값을 함께 볼 것 — 한쪽만 고치면 드리프트가 재발한다.
+       링의 색은 v4 슬롯 --card-ring 이다(1층, foundation 은 --ring-subtle 의 별칭).
+       링 뒤의 그림자는 v5 슬롯 --card-shadow 다(foundation 은 비어 있는 --shadow-card 의 별칭). */
+    /* 링과 그림자는 Tailwind 의 합성 변수에 나눠 담는다(upstream: ring-1 → --tw-ring-shadow).
+       그래서 호출부의 `shadow-none` · `shadow-md` 는 --tw-shadow 만 바꾸고 링은 남는다.
+       리터럴 box-shadow 한 줄이면 유틸리티가 통째로 덮어 링까지 지운다. */
+    --tw-ring-shadow: 0 0 0 var(--surface-border-width) var(--card-ring, var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent)));
+    --tw-shadow: var(--card-shadow);
+    box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow), var(--tw-shadow);
+
+    /* ⚠ sm 의 12px 은 리터럴이다. mira 의 --spacing(3)인데 surface 축의 sm 여백은
+       10px(popover p-2.5)이라 걸치지 않는다. 카드 한 곳에만 쓰는 값이라 토큰을 만들지 않았다. */
+    &[data-size="sm"] {
+        --card-spacing: 12px;
+    }
+
+    /* 맨 위가 이미지면 위 여백을 없애 가장자리까지 채운다. */
+    &:has(> img:first-child) {
+        padding-top: 0;
+    }
+
+    & > img:first-child {
+        border-start-start-radius: var(--card-image-radius);
+        border-start-end-radius: var(--card-image-radius);
+    }
+
+    & > img:last-child {
+        border-end-start-radius: var(--card-image-radius);
+        border-end-end-radius: var(--card-image-radius);
+    }
+}
+
+.cn-card-header {
+    gap: var(--surface-gap);
+    padding-inline: var(--card-spacing);
+    border-start-start-radius: var(--card-part-radius);
+    border-start-end-radius: var(--card-part-radius);
+
+    &:is(.border-b) {
+        padding-bottom: var(--card-spacing);
+    }
+}
+
+/* 제목은 크기와 무관하게 text-sm font-medium 이다. nova 의 sm 카드 제목 축소는 없다. */
+/* 자간과 대소문자는 면 제목 축(v4 슬롯 --title-letter-spacing · --title-text-transform)이다.
+   foundation 은 각각 --ui-letter-spacing 의 별칭과 `initial`(= 물려받음)이라 화면은 같다. */
+.cn-card-title {
+    font-size: var(--ui-text-lg);
+    letter-spacing: var(--title-letter-spacing);
+    line-height: var(--ui-line-height-lg);
+    font-weight: var(--ui-font-weight);
+    text-transform: var(--title-text-transform);
+}
+
+.cn-card-description {
+    color: var(--muted-foreground);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+.cn-card-content {
+    padding-inline: var(--card-spacing);
+}
+
+/* 푸터는 띠를 두르지 않는다. 좌우 여백만 갖고, 호출부가 `border-t` 를 붙였을 때만
+   그 선 위로 여백을 더한다 — 위쪽 선의 색은 그 유틸리티(--border)가 정한다. */
+.cn-card-footer {
+    padding-inline: var(--card-spacing);
+    border-end-start-radius: var(--card-part-radius);
+    border-end-end-radius: var(--card-part-radius);
+
+    &:is(.border-t) {
+        padding-top: var(--card-spacing);
+    }
+}

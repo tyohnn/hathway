@@ -1,0 +1,22 @@
+/* ============================================================
+   3층 — scroll-area 규칙
+   ------------------------------------------------------------
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 이 컴포넌트는 3층이 쥘 수 있는 것이 거의 없다. 손잡이 색(bg-border)과
+      뷰포트의 포커스 링(ring-[3px] · ring-ring/50)이 컴포넌트 유틸리티에
+      박혀 있어, base 레이어인 이 파일이 같은 속성을 다시 적어도 이기지
+      못한다. 그래서 뷰포트 링만 계열의 --focus-ring-* 과 다른 채로 남는다 —
+      스크롤 영역 자체에 포커스가 가는 경우가 드물어 감수한다.
+   ============================================================ */
+
+/* ⚠ 10px 은 리터럴이다. 스크롤바 굵기는 어떤 축에도 걸리지 않고,
+   control 축의 가장 작은 단계(28px)와도 성격이 다르다. */
+.cn-scroll-area-scrollbar {
+    @apply data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent;
+}
+
+.cn-scroll-area-thumb {
+    @apply rounded-full;
+}

@@ -1,0 +1,82 @@
+/* ============================================================
+   3층 — Switch 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   트랙 크기만 토큰으로 두고 손잡이 크기와 이동 거리는 계산한다.
+     손잡이 = 트랙 높이 − 안쪽 여백 × 2
+     이동 거리 = 트랙 너비 − 트랙 높이
+   셋을 따로 적으면 트랙을 바꿀 때 손잡이가 트랙 밖으로 나가거나 덜 간다.
+
+   mira 의 값으로 검산한 것:
+     default  트랙 w-[28px] h-[16.6px] → 2층은 28×16(하위픽셀을 버림) · 손잡이 size-3.5(14)
+              = 16 − 1×2 ✓ · 이동 translate-x-[calc(100%−2px)] = 14 − 2 = 12 = 28 − 16 ✓
+     sm       트랙 w-[24px] h-[14px] · 손잡이 size-3(12) = 14 − 1×2 ✓ · 이동 12 − 2 = 10 = 24 − 14 ✓
+
+   안쪽 여백은 테두리와 패딩으로 나누어 만든다. 테두리를 없애지 않는 이유는
+   검증 실패 때 붉은 선을 그릴 자리가 필요해서다(규칙은 _control-family.css).
+   box-sizing 이 border-box 라 두 값의 합이 곧 시각적 여백이 된다.
+
+   트랙과 손잡이의 색은 어두운 쪽에서만 달라진다. 3층은 다크를 가르지 않으므로 1층 토큰이 갖는다.
+     트랙     mira: data-unchecked:bg-input dark:data-unchecked:bg-input/80        → --switch-track-off
+     손잡이   mira: bg-background dark:data-unchecked:bg-foreground
+                    dark:data-checked:bg-primary-foreground                         → --switch-thumb-off · -on
+   ⚠ 컴포넌트가 갖고 있는 것: inline-flex, items-center, relative,
+      transition-all, data-disabled:opacity-50, 손가락 범위를 넓히는 after.
+   ============================================================ */
+
+.cn-switch {
+    flex-shrink: 0;
+    width: var(--switch-track-width-md);
+    height: var(--switch-track-height-md);
+    padding: calc(var(--switch-thumb-inset) - var(--control-border-width));
+
+    /* 테두리 색과 모서리는 axis contract v4 의 슬롯이 갖는다. foundation 값은 각각
+       transparent · 9999px 이라 종전 리터럴과 같다 — 두께는 여백 계산에 쓰이므로 그대로다. */
+    border: var(--control-border-width) solid var(--switch-track-border-off, transparent);
+    border-radius: var(--switch-radius);
+    background-color: var(--switch-track-off);
+
+    &[data-checked] {
+        background-color: var(--primary);
+        border-color: var(--switch-track-border-on, transparent);
+    }
+
+    &[data-size="sm"] {
+        width: var(--switch-track-width-sm);
+        height: var(--switch-track-height-sm);
+    }
+
+    /* 라벨을 눌러 포커스가 들어온 경우에는 링을 그리지 않고 테두리도 투명으로 둔다.
+       라벨 자신이 이미 포커스 표시를 갖고 있어 두 겹이 된다.
+       mira: group-has-[:focus-visible]/field-label:ring-0 …:border-transparent */
+    .group\/field-label:has(:focus-visible) & {
+        box-shadow: none;
+        border-color: transparent;
+    }
+}
+
+.cn-switch-thumb {
+    /* 너비만 제 슬롯을 갖는다(axis contract v4) — foundation 값은 --switch-thumb-size-md 의
+       별칭이라 지금도 정사각이다. ⚠ 이동 거리는 트랙에서 계산하므로(머리말) 손잡이 너비를
+       바꿔도 산식은 그대로지만, 너비를 트랙 높이보다 크게 주면 끝에서 삐져나온다. */
+    width: var(--switch-thumb-width-md);
+    height: var(--switch-thumb-size-md);
+    border-radius: var(--switch-radius);
+    background-color: var(--switch-thumb-off);
+    translate: 0;
+
+    &[data-checked] {
+        background-color: var(--switch-thumb-on, var(--background));
+        translate: calc(var(--switch-track-width-md) - var(--switch-track-height-md));
+    }
+
+    .cn-switch[data-size="sm"] & {
+        width: var(--switch-thumb-width-sm);
+        height: var(--switch-thumb-size-sm);
+
+        &[data-checked] {
+            translate: calc(var(--switch-track-width-sm) - var(--switch-track-height-sm));
+        }
+    }
+}

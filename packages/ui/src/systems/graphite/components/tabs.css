@@ -1,0 +1,110 @@
+/* ============================================================
+   3층 — tabs 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+   Axis slots for the line variant: --tabs-line-height and --ui-font-weight-regular (foundation: mira values).
+
+   mira: 탭 묶음 gap-2 · 막대 rounded-lg p-[3px], 가로일 때 h-8 ·
+         트리거 rounded-md border px-1.5 py-0.5 gap-1.5 text-xs font-medium, 아이콘 size-3.5,
+         세로 탭이면 py-[5px] · 내용 text-xs/relaxed.
+         활성 트리거의 그림자(nova 의 data-active:shadow-sm)는 없다.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ⚠ 컴포넌트가 갖고 있는 것: inline-flex · 정렬 · 트리거 높이(calc(100% - 1px)) ·
+      활성 색(bg-background) · 포커스 링 · transition-all. 그 자리는 손대지 않는다.
+   ============================================================ */
+
+/* ⚠ 8px 은 리터럴이다. 막대와 내용 사이의 간격이라 control 축의 gap(라벨과 아이콘
+   사이 4px)과 뜻이 다르고, 2층에 이 축이 없다. */
+.cn-tabs {
+    gap: 8px;
+}
+
+/* 막대는 트리거(컨트롤)를 담는 띠라 control 축의 lg 높이를 읽는다 — mira 의 h-8 은
+   lg 버튼과 같은 32px 이다. 모서리는 트리거(rounded-md)보다 한 단 큰 rounded-lg 라
+   surface 축을 읽는다. ⚠ 3px 은 리터럴이었다 — 어느 축에도 없는 안쪽 여백이고 이 한 곳뿐이라
+   v4 슬롯 --tabs-list-padding 에 담았다. 높이도 --tabs-list-height(--control-height-lg 의 별칭)다. */
+.cn-tabs-list {
+    border-radius: var(--surface-radius);
+    padding: var(--tabs-list-padding);
+
+    &:where(.group\/tabs[data-orientation="horizontal"] *) {
+        height: var(--tabs-list-height);
+    }
+
+    &[data-variant="line"] {
+        border-radius: 0;
+        border-bottom: var(--tabs-line-divider-width) solid var(--border);
+
+        &:where(.group\/tabs[data-orientation="horizontal"] *) {
+            height: var(--tabs-line-height);
+        }
+    }
+}
+
+/* ⚠ 좌우 6px · 상하 2px · 간격 6px 은 리터럴이었다. 트리거의 높이는 막대에서 오므로
+   (컴포넌트의 calc(100% - 1px)) control 축의 패딩 단계에 걸리지 않고, 6px 간격은 control 축의
+   gap(4)에 없다 — 그래서 v4 슬롯 --tabs-trigger-gap · --tabs-trigger-padding-x ·
+   --tabs-trigger-padding-y 로 올렸다(값은 그대로).
+   ⚠ 세로 탭의 상하 5px 과 아이콘 쪽 4px 은 리터럴로 남긴다. 세로 탭은 가로 탭의 축을 덮어쓰는
+      다른 자리이고, 4px 은 아이콘 인셋이라 위 세 축과 같은 축이 아니다. */
+.cn-tabs-trigger {
+    gap: var(--tabs-trigger-gap);
+    border: var(--control-border-width) solid transparent;
+    border-radius: var(--control-radius);
+    padding-inline: var(--tabs-trigger-padding-x);
+    padding-block: var(--tabs-trigger-padding-y);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    font-weight: var(--ui-font-weight);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    &:where(.group\/tabs[data-orientation="vertical"] *) {
+        padding-block: 5px;
+    }
+
+    /* 아이콘이 붙은 쪽은 4px 만 남긴다. mira: has-data-[icon=inline-start]:pl-1 */
+    &:has([data-icon="inline-start"]) {
+        padding-inline-start: 4px;
+    }
+
+    &:has([data-icon="inline-end"]) {
+        padding-inline-end: 4px;
+    }
+}
+
+/* 선택된 트리거 — mira 의 선택 탭은 평평하다(nova 의 data-active:shadow-sm 은 없다).
+   v4 슬롯 --tabs-trigger-active-shadow 가 그 자리를 갖는다(foundation: none = 화면 변화 없음).
+   ⚠ 기본 변형에만 준다. 밑줄 탭은 자기 축(--tabs-line-trigger-*)이 따로 있다.
+   ⚠ 선택 색(data-active:bg-background)은 컴포넌트의 유틸리티가 갖는다 — 그 자리는 손대지 않았다. */
+.cn-tabs-list:not([data-variant="line"]) .cn-tabs-trigger[data-active] {
+    box-shadow: var(--tabs-trigger-active-shadow);
+}
+
+.cn-tabs-content {
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}
+
+/* 밑줄 탭의 트리거 — box and weight slots (foundation values repeat the default trigger). */
+.cn-tabs-list[data-variant="line"] .cn-tabs-trigger {
+    padding-inline: var(--tabs-line-trigger-padding-x);
+    border-width: var(--tabs-line-trigger-border-width);
+    border-radius: var(--tabs-line-trigger-radius);
+    font-weight: var(--ui-font-weight-regular);
+
+    &:has([data-icon="inline-start"]) {
+        padding-inline-start: var(--tabs-line-trigger-padding-x-icon);
+    }
+
+    &:has([data-icon="inline-end"]) {
+        padding-inline-end: var(--tabs-line-trigger-padding-x-icon);
+    }
+}

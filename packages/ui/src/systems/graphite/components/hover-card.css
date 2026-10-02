@@ -1,0 +1,23 @@
+/* ============================================================
+   3층 — Hover Card 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Popover 와 같은 면이라 색·모서리·여백·그림자는 _surface-family.css 가 갖는다.
+   다른 점은 폭을 컴포넌트가 아니라 여기서 정한다는 것뿐이다.
+   Popover 는 TSX 에 w-72 가 있고 Hover Card 는 없다.
+
+   ⚠ 폭 288px 은 리터럴이다. mira 의 w-72 이고 Popover 의 폭과 같은 값이지만 그쪽은
+      TSX 에 있어 토큰이 없다. command-list 의 max-h-72 도 288 이지만 축이 다르다.
+   ⚠ 업스트림에 있던 *-aria 규칙은 옮기지 않았다(Base UI 베이스라 미렌더).
+   ============================================================ */
+
+.cn-hover-card-content {
+    width: 288px;
+
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 duration-100;
+}
+
+.cn-hover-card-content-logical {
+    @apply data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2;
+}

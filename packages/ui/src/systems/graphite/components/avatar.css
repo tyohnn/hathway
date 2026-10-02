@@ -1,0 +1,119 @@
+/* ============================================================
+   3층 — avatar 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+   Tone slots (data-tone) read --avatar-tone-*; foundation values alias the plain fallback colours.
+
+   mira: size-8(sm 6 · lg 10) rounded-full · fallback bg-muted muted-foreground(글자 크기 없음) ·
+         badge bg-primary ring-background · 묶음 개수 size-8 text-xs/relaxed, 아이콘 size-4(sm 3 · lg 5).
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+   ============================================================ */
+
+/* 크기는 `avatar` 축이다 — Avatar 와 AvatarGroupCount 가 같은 값을 읽어야
+   묶음 안에서 개수 뱃지가 아바타와 나란히 선다. */
+.cn-avatar {
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
+    border-radius: 9999px;
+
+    &::after {
+        border-radius: 9999px;
+    }
+
+    &[data-size="sm"] {
+        width: var(--avatar-size-sm);
+        height: var(--avatar-size-sm);
+    }
+
+    &[data-size="lg"] {
+        width: var(--avatar-size-lg);
+        height: var(--avatar-size-lg);
+    }
+}
+
+/* 글자 크기는 컴포넌트가 아니라 여기서 준다. mira 의 AvatarFallback 은 `text-sm`
+   (sm 아바타는 `text-xs`)을 유틸리티로 갖는데 registry/ui 는 그 유틸리티를 빼 두었다
+   (유틸리티가 3층 규칙을 이기기 때문 — tooling/preset/README.md). 값은 ui 축의 lg · sm 과 같다. */
+.cn-avatar-fallback {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    border-radius: 9999px;
+    /* md · lg 의 이니셜 타입은 아바타 자신의 축이다 — v4 슬롯 --avatar-font-size ·
+       --avatar-line-height(foundation 은 --ui-text-lg · --ui-line-height-lg 의 별칭). mira: text-sm
+       sm 쌍은 기존 --avatar-font-size-sm · --avatar-line-height-sm 그대로다. */
+    font-size: var(--avatar-font-size);
+    line-height: var(--avatar-line-height);
+}
+
+.cn-avatar-image {
+    border-radius: 9999px;
+}
+
+.cn-avatar-badge {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    @apply ring-background;
+}
+
+.cn-avatar-group-count {
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
+    border-radius: 9999px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+
+    & > svg {
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+    }
+
+    /* ⚠ 아이콘 크기는 아바타 크기에서 계산되지 않는다. 12·16·20 은 아이콘
+       스텝이라 아바타 24·32·40 과 비율이 맞지 않는다 — 따로 적는 것이 맞다.
+       lg 의 20px 은 리터럴이다. control 축의 아이콘은 16 이 상한이다. */
+    .group\/avatar-group:has([data-size="sm"]) & {
+        width: var(--avatar-size-sm);
+        height: var(--avatar-size-sm);
+
+        & > svg {
+            width: var(--control-icon-size-sm);
+            height: var(--control-icon-size-sm);
+        }
+    }
+
+    .group\/avatar-group:has([data-size="lg"]) & {
+        width: var(--avatar-size-lg);
+        height: var(--avatar-size-lg);
+
+        & > svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+/* sm 이니셜의 글자 — foundation slots are `initial`, so the fallback inherits the surrounding type (mira). */
+.cn-avatar[data-size="sm"] .cn-avatar-fallback {
+    font-size: var(--avatar-font-size-sm);
+    font-weight: var(--avatar-font-weight);
+    line-height: var(--avatar-line-height-sm);
+}
+
+/* 이니셜 바탕 색조 — <AvatarFallback data-tone="navy"> …
+   AvatarFallback 이 나머지 props 를 넘기므로 붙는다. 값은 1층의 --avatar-tone-* 슬롯이 갖는다. */
+.cn-avatar-fallback[data-tone] {
+    color: var(--avatar-tone-foreground);
+}
+
+.cn-avatar-fallback[data-tone="slate"] { background-color: var(--avatar-tone-slate); }
+.cn-avatar-fallback[data-tone="teal"] { background-color: var(--avatar-tone-teal); }
+.cn-avatar-fallback[data-tone="plum"] { background-color: var(--avatar-tone-plum); }
+.cn-avatar-fallback[data-tone="olive"] { background-color: var(--avatar-tone-olive); }
+.cn-avatar-fallback[data-tone="rust"] { background-color: var(--avatar-tone-rust); }
+.cn-avatar-fallback[data-tone="navy"] { background-color: var(--avatar-tone-navy); }
+.cn-avatar-fallback[data-tone="moss"] { background-color: var(--avatar-tone-moss); }
+.cn-avatar-fallback[data-tone="mauve"] { background-color: var(--avatar-tone-mauve); }

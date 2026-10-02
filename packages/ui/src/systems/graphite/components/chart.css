@@ -1,0 +1,40 @@
+/* ============================================================
+   3층 — chart 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다. 바꾸면 `shadcn add` 로 받은
+      컴포넌트가 스타일 없이 렌더된다.
+
+   ⚠ 차트 툴팁은 recharts 가 그리므로 _surface-family.css 의 선택자 목록에
+      들어가지 않는다. mira 는 border-border/50 · bg-background · shadow-xl 인데,
+      화면에서는 Popover 와 나란히 뜨는 같은 물건이라 테두리·바탕·그림자만은 면 축
+      (--ring-subtle · --popover · --shadow-float)을 읽는다 — 그대로 두면 자기 혼자
+      다른 테두리·그림자를 갖는다. 테두리는 box-shadow 링이 아니라 실제 border 로
+      남긴다. recharts 가 바깥 크기를 재서 자리를 잡으므로 링으로 바꾸면 2px 어긋난다.
+   ============================================================ */
+
+/* 차트 안 글자의 기준 크기다. recharts 가 그리는 축 눈금·범례가 전부 이 값을 물려받는다.
+   업스트림 TSX 의 text-xs(12/16)를 3층으로 옮긴 자리라 ui-text 의 sm 을 읽는다. */
+.cn-chart {
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+}
+
+/* mira: gap-1.5 rounded-lg px-2.5 py-1.5 text-xs/relaxed.
+   ⚠ 세로 6px 과 간격 6px 은 리터럴이다. surface 축의 여백은 10·16·24 이고 gap 은 4·16 이라
+      걸치지 않는다. 좌우 10px 만 surface 축의 sm(popover p-2.5)과 같은 단이다. */
+.cn-chart-tooltip {
+    border: var(--surface-border-width) solid var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent));
+    border-radius: var(--chart-tooltip-radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-float);
+    padding-inline: var(--surface-padding-sm);
+    padding-block: 6px;
+    gap: 6px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+}

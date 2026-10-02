@@ -1,0 +1,70 @@
+/* ============================================================
+   3층 — accordion 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   mira: 묶음 border rounded-md overflow-hidden · 항목 not-last:border-b, 열리면 bg-muted/50 ·
+         트리거 p-2 gap-6 text-xs/relaxed font-medium, 아이콘 size-4 muted ml-auto ·
+         내용 px-2 text-xs/relaxed, 안쪽 pb-4. 트리거의 모서리(nova 의 rounded-lg)는 없다.
+
+   ⚠ 클래스 이름은 업스트림과 같은 계약이다.
+
+   ⚠ 포커스 링은 손대지 않았다. mira 는 트리거에 링을 주지 않지만(outline-none 만 남는다)
+      키보드로 여는 것에 표시가 없으면 안 되므로 업스트림 그대로의 ring-3 + ring/50 을
+      둔다. 컨트롤 아홉은 _control-family 의 --focus-ring-* 한 겹인데 아코디언 트리거는
+      그 목록에 없다. 다음에 손댈 때 계열로 넣을지 판단할 것.
+   ============================================================ */
+
+/* 묶음은 테두리를 두른 하나의 면이다. 모서리는 surface 축의 작은 단(rounded-md = 8)을 읽는다.
+   선 두께는 아코디언 자신의 축이다 — v4 슬롯 --accordion-border-width(--surface-border-width 의 별칭).
+   항목 사이 선은 v5 의 --accordion-item-border-width(묶음 선 두께의 별칭)다. */
+.cn-accordion {
+    overflow: hidden;
+    border: var(--accordion-border-width) solid var(--border);
+    border-radius: var(--surface-radius-sm);
+}
+
+.cn-accordion-item {
+    &:not(:last-child) {
+        border-bottom: var(--accordion-item-border-width) solid var(--border);
+    }
+
+    /* 열린 항목은 바탕이 한 단 옅게 깔린다. mira: data-open:bg-muted/50 */
+    &[data-open] {
+        background-color: var(--muted-soft, color-mix(in oklab, var(--muted) 50%, transparent));
+    }
+}
+
+/* ⚠ 안쪽 여백 8px 과 간격 24px 은 리터럴이다. 트리거는 높이가 정본이 아니라 내용이
+   높이를 정하므로 control 축의 단계에 걸리지 않고, 24px 은 surface 축의 lg 여백과
+   값만 같은 gap 이다. */
+.cn-accordion-trigger {
+    padding: 8px;
+    gap: 24px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    font-weight: var(--ui-font-weight);
+    @apply focus-visible:ring-ring/50 focus-visible:border-ring focus-visible:after:border-ring text-left hover:underline focus-visible:ring-3;
+
+    & [data-slot="accordion-trigger-icon"] {
+        margin-inline-start: auto;
+        width: var(--control-icon-size-lg);
+        height: var(--control-icon-size-lg);
+        color: var(--muted-foreground);
+    }
+}
+
+.cn-accordion-content {
+    padding-inline: 8px;
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--ui-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    @apply data-open:animate-accordion-down data-closed:animate-accordion-up;
+}
+
+/* 안쪽 아래 여백은 surface 축의 md(16)와 같은 단이다 — 묶음이 면이므로 그 축을 읽는다. */
+.cn-accordion-content-inner {
+    padding-top: 0;
+    padding-bottom: var(--surface-padding-md);
+}

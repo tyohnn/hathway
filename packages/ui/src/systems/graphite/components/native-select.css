@@ -1,0 +1,91 @@
+/* ============================================================
+   3층 — Native Select 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   브라우저 기본 <select> 다. Select 트리거와 같은 줄에 서고 같은 일을 하므로
+   같은 단계를 읽는다 — default 28 · sm 24. 이름이 같으면 높이도 같아야 한다.
+
+   화살표는 <select> 안에 넣을 수 없어 절대 위치로 얹는다. 그래서 끝쪽 패딩을
+   Select 트리거처럼 토큰 하나로 줄 수 없고, 아이콘이 앉을 자리를 계산해서
+   비워 둔다.
+     끝쪽 패딩 = 아이콘 쪽 패딩 + 아이콘 크기 + 라벨과 아이콘 사이 간격
+   default 는 6 + 14 + 4 = 24 로 mira 의 pr-6 과 같다. sm 은 6 + 12 + 4 = 22 인데
+   mira 는 sm 에도 pr-6(24)을 그대로 두어 2px 차이가 난다 — 아이콘 자리를 계산하는
+   규칙을 지키고 값의 차이만 여기 적어 둔다.
+
+   ⚠ sm 의 글자는 한 단 아래(xs · 10px)를 읽는다. mira: data-[size=sm]:text-[0.625rem].
+      Toggle 의 sm 과 같은 규칙이다.
+   ⚠ 바탕은 채움(--input-fill)이다. mira: bg-input/20 dark:bg-input/30.
+      hover 는 mira 의 dark:hover:bg-input/50 이고 --select-hover 가 갖는다(select.css 와 같다).
+   ⚠ 포커스 링·검증 실패·전환은 _control-family.css 가 갖는다.
+   ⚠ 컴포넌트가 갖고 있는 것: 감싸개의 relative·w-fit, select 의 outline-none,
+      아이콘의 absolute·pointer-events-none.
+   ============================================================ */
+
+.cn-native-select {
+    /* mira: py-0.5. 종전 2px 리터럴이 v4 의 --control-padding-y-field 로 올라갔고, v5 부터는
+       제 슬롯 --native-select-padding-y(그 별칭)를 읽는다. */
+    padding-block: var(--native-select-padding-y);
+    width: 100%;
+    min-width: 0;
+    appearance: none;
+    user-select: none;
+
+    border: var(--control-border-width) solid var(--input-border, var(--input));
+    border-bottom-color: var(--input-border-bottom, var(--input-border, var(--input)));
+    border-radius: var(--control-radius);
+    background-color: var(--input-fill);
+    color: var(--foreground);
+    letter-spacing: var(--control-letter-spacing-field);
+
+    &[data-size="default"] {
+        height: var(--control-height-md);
+        padding-inline-start: var(--control-padding-x-field);
+        padding-inline-end: calc(
+            var(--control-padding-x-icon-md)
+            + var(--control-icon-size-md)
+            + var(--control-gap-md)
+        );
+        font-size: var(--control-font-size-field);
+        line-height: var(--control-line-height-field);
+    }
+
+    &[data-size="sm"] {
+        height: var(--control-height-sm);
+        padding-inline-start: var(--control-padding-x-sm);
+        padding-inline-end: calc(
+            var(--control-padding-x-icon-sm)
+            + var(--control-icon-size-sm)
+            + var(--control-gap-sm)
+        );
+        font-size: var(--control-font-size-xs);
+        line-height: var(--control-line-height-xs);
+    }
+
+    &:hover {
+        background-color: var(--select-hover);
+    }
+}
+
+/* mira: text-muted-foreground top-1/2 right-1.5 size-3.5 -translate-y-1/2
+         group-data-[size=sm]/native-select:size-3 …:-translate-y-[calc(--spacing(1.25))] */
+.cn-native-select-icon {
+    color: var(--muted-foreground);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+
+    [data-slot="native-select-wrapper"][data-size="default"] & {
+        inset-inline-end: var(--control-padding-x-icon-md);
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+
+    /* ⚠ sm 의 −5px 은 리터럴이다. 12px 아이콘의 절반(6)이 아니라 mira 가 둔 광학 보정값이다. */
+    [data-slot="native-select-wrapper"][data-size="sm"] & {
+        inset-inline-end: var(--control-padding-x-icon-sm);
+        width: var(--control-icon-size-sm);
+        height: var(--control-icon-size-sm);
+        translate: 0 -5px;
+    }
+}

@@ -1,0 +1,282 @@
+/* ============================================================
+   3층 — 메뉴 계열 공용 규칙
+   ------------------------------------------------------------
+   2026-09-13 mira 규칙으로 옮김.
+
+   Dropdown Menu · Context Menu · Menubar · Command · Combobox 는 같은
+   물건이다. 떠 있는 목록에 항목이 줄지어 있고, 항목은 눌리면 무언가를
+   실행한다. 그래서 규칙을 컴포넌트마다 적지 않고 여기 한 곳에 모은다.
+
+   mira 가 다섯에 공통으로 주는 것
+     · 면      bg-popover · min-w-32 · rounded-lg · p-1 · shadow-md · ring-1 ring-foreground/10
+               하위 목록(sub-content)도 같다 — nova 의 shadow-lg 를 버렸다.
+     · 항목    min-h-7 · gap-2 · rounded-md · px-2 · text-xs/relaxed · svg size-3.5 ·
+               data-inset:pl-7.5 · 체크·라디오는 pr-8
+     · 강조    focus:bg-accent focus:text-accent-foreground (Command 만 data-selected:bg-muted)
+     · 라벨    text-muted-foreground · px-2 py-1.5 · text-xs. **font-medium 이 없다.**
+     · 구분선  bg-border/50 · -mx-1 my-1 h-px
+     · 단축키  ml-auto · text-[0.625rem] · tracking-widest
+
+   ⚠ Combobox 는 면 안에 검색칸과 목록이 따로 들어 있어 여백을 안쪽 목록
+      (cn-combobox-list)이 갖는다. 그래서 아래에서 「면」과 「여백」 규칙이
+      갈라져 있다.
+
+   ⚠ 이 파일이 있는 이유가 드리프트다. 업스트림(base-nova)에서는 네 컴포넌트가
+      따로 적혀 있었고 라벨 글자·하위 목록 테두리·단축키 정렬·최소 너비가 서로
+      어긋나 있었다. mira 는 그 넷을 이미 같은 값으로 갖고 있어 여기와 맞는다.
+      Menubar 의 체크·라디오 표시가 왼쪽에 앉는 것만 의도된 차이라 menubar.css 에 남긴다.
+
+   ⚠ 컴포넌트별 파일에는 애니메이션과 그 컴포넌트에만 있는 것만 남긴다.
+      값을 컴포넌트별 파일에 다시 적으면 드리프트가 되살아난다.
+   ============================================================ */
+
+/* --------------------------------------------------------
+   목록 면 — surface 축
+   mira: bg-popover text-popover-foreground min-w-32 rounded-lg p-1 shadow-md ring-1 ring-foreground/10
+   -------------------------------------------------------- */
+
+.cn-dropdown-menu-content,
+.cn-dropdown-menu-sub-content,
+.cn-context-menu-content,
+.cn-menubar-content,
+.cn-menubar-sub-content,
+.cn-command,
+.cn-combobox-content,
+.cn-combobox-content-aria {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    border-radius: var(--surface-radius);
+    min-width: var(--menu-min-width);
+    box-shadow:
+        0 0 0 var(--surface-border-width) var(--menu-ring, var(--ring-subtle, color-mix(in oklab, var(--foreground) 10%, transparent))),
+        var(--shadow-float);
+}
+
+/* 면이 곧 목록인 것들만 면에 여백을 준다. Combobox 는 면 안에 검색칸이
+   함께 들어 있어 여백을 안쪽 목록이 갖는다(combobox.css). */
+.cn-dropdown-menu-content,
+.cn-dropdown-menu-sub-content,
+.cn-context-menu-content,
+.cn-menubar-content,
+.cn-menubar-sub-content,
+.cn-command {
+    padding: var(--menu-padding);
+}
+
+/* ⚠ 하위 목록의 그림자를 한 겹 올리지 않는다. nova 는 sub-content 에 shadow-lg 를
+   줬지만 mira 는 부모 목록과 같은 shadow-md 다. 위 면 규칙이 그대로 하위 목록에도
+   먹으므로 따로 적을 것이 없다. */
+
+/* --------------------------------------------------------
+   항목 — menu 축
+   mira: min-h-7 gap-2 rounded-md px-2 text-xs/relaxed [&_svg:not([class*='size-'])]:size-3.5
+   ⚠ 세로 여백(py-1 · 체크·라디오 py-1.5)은 옮기지 않았다. 높이는 세로 패딩이 아니라
+      --menu-item-height 가 정하고 세로 가운데는 컴포넌트의 items-center 가 맡는다.
+   -------------------------------------------------------- */
+
+.cn-dropdown-menu-item,
+.cn-dropdown-menu-checkbox-item,
+.cn-dropdown-menu-radio-item,
+.cn-dropdown-menu-sub-trigger,
+.cn-context-menu-item,
+.cn-context-menu-checkbox-item,
+.cn-context-menu-radio-item,
+.cn-context-menu-sub-trigger,
+.cn-menubar-item,
+.cn-menubar-checkbox-item,
+.cn-menubar-radio-item,
+.cn-menubar-sub-trigger,
+.cn-command-item,
+.cn-combobox-item {
+    position: relative;
+    min-height: var(--menu-item-height);
+    border-radius: var(--menu-item-radius);
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: var(--menu-item-padding-y);
+    gap: var(--menu-item-gap);
+    font-size: var(--ui-text-md);
+    letter-spacing: var(--menu-item-letter-spacing);
+    line-height: var(--ui-line-height-md);
+    text-transform: var(--menu-item-text-transform);
+    font-weight: var(--menu-item-font-weight);
+
+    & svg:not([class*="size-"]) {
+        width: var(--control-icon-size-md);
+        height: var(--control-icon-size-md);
+    }
+}
+
+/* ⚠ Menubar 와 Command 의 항목은 컴포넌트가 레이아웃을 주지 않는다.
+   Dropdown·Context 의 항목은 TSX 에 `relative flex items-center …` 가 있는데
+   이 둘에는 없고 업스트림 CSS 가 대신 주고 있었다. 그 자리를 여기서 잇는다.
+   빠뜨리면 gap 과 ml-auto 가 먹지 않아 단축키가 오른쪽으로 밀리지 않는다. */
+.cn-menubar-item,
+.cn-command-item {
+    display: flex;
+    align-items: center;
+    cursor: default;
+    user-select: none;
+    outline: none;
+}
+
+/* 강조 — 키보드 이동과 마우스 올림.
+   mira: 메뉴 넷은 focus:bg-accent focus:text-accent-foreground,
+   Command 만 data-selected:bg-muted data-selected:text-foreground (cmdk 의 방식).
+   mira/neutral 에서 accent 와 muted 는 같은 값이라 화면은 같고, 이름만 mira 를 따른다. */
+.cn-dropdown-menu-item:focus,
+.cn-dropdown-menu-checkbox-item:focus,
+.cn-dropdown-menu-radio-item:focus,
+.cn-dropdown-menu-sub-trigger:focus,
+.cn-dropdown-menu-sub-trigger[data-open],
+.cn-context-menu-item:focus,
+.cn-context-menu-checkbox-item:focus,
+.cn-context-menu-radio-item:focus,
+.cn-context-menu-sub-trigger:focus,
+.cn-context-menu-sub-trigger[data-open],
+.cn-menubar-item:focus,
+.cn-menubar-checkbox-item:focus,
+.cn-menubar-radio-item:focus,
+.cn-menubar-sub-trigger:focus,
+.cn-menubar-sub-trigger[data-open],
+.cn-combobox-item[data-highlighted] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+}
+
+.cn-command-item[data-selected] {
+    background-color: var(--muted);
+    color: var(--foreground);
+}
+
+/* 파괴적 항목 — 삭제처럼 되돌릴 수 없는 것.
+   mira: data-[variant=destructive]:text-destructive · focus:bg-destructive/10 */
+.cn-dropdown-menu-item[data-variant="destructive"],
+.cn-context-menu-item[data-variant="destructive"],
+.cn-menubar-item[data-variant="destructive"] {
+    color: var(--destructive);
+
+    & svg {
+        color: var(--destructive);
+    }
+
+    &:focus {
+        background-color: var(--destructive-soft);
+        color: var(--destructive);
+    }
+}
+
+/* 비활성 */
+.cn-dropdown-menu-item[data-disabled],
+.cn-context-menu-item[data-disabled],
+.cn-menubar-item[data-disabled],
+.cn-menubar-radio-item[data-disabled],
+.cn-command-item[data-disabled] {
+    opacity: 0.5;
+}
+
+/* 아이콘이 없는 항목을 아이콘 있는 항목과 왼쪽으로 맞춘다. mira: data-inset:pl-7.5 */
+.cn-dropdown-menu-item[data-inset],
+.cn-dropdown-menu-checkbox-item[data-inset],
+.cn-dropdown-menu-radio-item[data-inset],
+.cn-dropdown-menu-sub-trigger[data-inset],
+.cn-dropdown-menu-label[data-inset],
+.cn-context-menu-item[data-inset],
+.cn-context-menu-checkbox-item[data-inset],
+.cn-context-menu-radio-item[data-inset],
+.cn-context-menu-sub-trigger[data-inset],
+.cn-context-menu-label[data-inset],
+.cn-menubar-item[data-inset],
+.cn-menubar-sub-trigger[data-inset],
+.cn-menubar-label[data-inset] {
+    padding-inline-start: var(--menu-item-padding-inset);
+}
+
+/* 오른쪽에 체크 표시가 앉는 항목은 그만큼 끝쪽을 비운다. mira: pr-8 */
+.cn-dropdown-menu-checkbox-item,
+.cn-dropdown-menu-radio-item,
+.cn-context-menu-checkbox-item,
+.cn-context-menu-radio-item,
+.cn-combobox-item {
+    padding-block: var(--menu-item-padding-y-check);
+    padding-inline-end: var(--menu-item-padding-end);
+}
+
+/* mira: absolute right-2 flex items-center justify-center. 크기는 안의 svg 가
+   항목 규칙(size-3.5)으로 받으므로 상자도 그 한 단으로 둔다. */
+.cn-dropdown-menu-item-indicator,
+.cn-context-menu-item-indicator,
+.cn-combobox-item-indicator {
+    position: absolute;
+    inset-inline-end: var(--menu-item-padding-x);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-icon-size-md);
+    height: var(--control-icon-size-md);
+}
+
+/* --------------------------------------------------------
+   라벨 · 구분선 · 단축키
+   -------------------------------------------------------- */
+
+/* mira: text-muted-foreground px-2 py-1.5 text-xs — 굵기를 주지 않는다.
+   ⚠ 세로 6px 은 리터럴이다. 2층에 6px 여백 단계가 없다(--menu-padding 은 4).
+      Command 의 그룹 제목만 mira 가 font-medium 을 더 주며 command.css 가 갖는다. */
+.cn-dropdown-menu-label,
+.cn-context-menu-label,
+.cn-menubar-label,
+.cn-command-group [cmdk-group-heading],
+.cn-combobox-label {
+    color: var(--muted-foreground);
+    padding-inline: var(--menu-item-padding-x);
+    padding-block: var(--menu-label-padding-y);
+    font-size: var(--ui-text-sm);
+    letter-spacing: var(--menu-label-letter-spacing);
+    line-height: var(--ui-line-height-sm);
+    text-transform: var(--menu-label-text-transform);
+}
+
+/* mira: bg-border/50 -mx-1 my-1 h-px */
+.cn-dropdown-menu-separator,
+.cn-context-menu-separator,
+.cn-menubar-separator,
+.cn-command-separator,
+.cn-combobox-separator {
+    background-color: var(--border-subtle, color-mix(in oklab, var(--border) 50%, transparent));
+    height: var(--surface-border-width);
+    margin-inline: var(--menu-separator-margin-inline);
+    margin-block: var(--menu-separator-margin-block);
+}
+
+/* mira: ml-auto text-[0.625rem] tracking-widest */
+.cn-dropdown-menu-shortcut,
+.cn-context-menu-shortcut,
+.cn-menubar-shortcut,
+.cn-command-shortcut {
+    margin-inline-start: auto;
+    color: var(--muted-foreground);
+    font-size: var(--ui-text-xs);
+    line-height: var(--menu-shortcut-line-height);
+    /* ⚠ 단축키만 --ui-letter-spacing 을 읽지 않는다. 키캡이 서로 붙어 읽히지
+       않도록 자간을 넓히는 자리라 방향이 반대다. */
+    letter-spacing: var(--menu-shortcut-letter-spacing);
+}
+
+/* 강조된 항목 안에서는 단축키도 같은 글자색을 따라간다.
+   mira: group-focus/…-item:text-accent-foreground · Command 는 text-foreground */
+.cn-dropdown-menu-item:focus .cn-dropdown-menu-shortcut,
+.cn-context-menu-item:focus .cn-context-menu-shortcut,
+.cn-menubar-item:focus .cn-menubar-shortcut {
+    color: var(--accent-foreground);
+}
+
+.cn-command-item[data-selected] .cn-command-shortcut {
+    color: var(--foreground);
+}
+
+/* 팔레트 항목의 좌우 여백 축(foundation 슬롯). 이 시스템은 보통 항목과 같은 값이다. */
+.cn-command-item {
+    padding-inline: var(--command-item-padding-x);
+    border-radius: var(--command-item-radius);
+    gap: var(--command-item-gap);
+}
