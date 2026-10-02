@@ -12,10 +12,16 @@
 2. **테스트 이름을 먼저 짓고 확인받는다.** `it(...)` 목록을 사용자에게 보인다. 코드가 무엇을 하는지의 정본은 테스트 이름이다.
    무엇을 왜 만드는지(PRD · 스토리 · 계획 · ADR)의 정본은 종전대로 Notion 이다(아래 Oh My Docs).
 3. **빨간 것을 먼저 세운다**(`.claude/skills/tdd/SKILL.md`).
-4. **판정과 계산은 순수 함수에 둔다**(`packages/schema` · `apps/web/src/lib/<영역>`).
+4. **판정과 계산은 순수 함수에 둔다.** 도메인 패키지(`packages/access` · `packages/research`)의 순수 규칙이 먼저 서고,
+   포트와 어댑터는 다른 커밋이다. 표기와 분류는 `packages/schema`, 화면의 계산은 `apps/web/src/lib/<영역>` 이다.
 5. **커밋은 책임 하나다.** 도구, 의존성, 패키지 골격, 순수 규칙, 데이터 접근, 앱 배선, 인프라, 문서의 순서로 나눈다.
    문서는 코드와 같은 커밋에 넣지 않는다.
 6. **고친 뒤에 돌린다.** `pnpm types:check` · `pnpm test` 를 지나고, 화면을 고쳤으면 그 화면을 실제로 연다.
+
+**읽기는 공개, 쓰기는 관문 뒤.** 로그인하지 않아도 모든 화면을 읽는다. 쓰는 서버 액션은 전부 `appAction`(`apps/web/src/lib/action.ts`)을
+지나고, 관문이 입력을 파싱하고 세션에서 행위자를 확정한 뒤에만 핸들러를 부른다. `"use server"` 파일에는 관문을 지난 액션만
+두고 조립은 `src/usecases/` 에 둔다. 리서치 보드는 테넌트의 것이고 그 구성원만 고치고 지운다. 로컬 로그인과 앱 롤을 세우는 법은
+`platform/README.md` 「로그인과 앱 롤」에 있다.
 
 **디자인 시스템.** tyohnn 의 **graphite** 를 `packages/ui` 로 받아 입는다. 정본은 루트 `tyohnn.json` 과
 `docs/design-system/README.md` 다. `packages/ui/src` 의 CLI 소유 파일을 손으로 고치지 않고, `npx shadcn add` 를 돌리지 않는다.
@@ -37,9 +43,10 @@
 
 ```
 pnpm types:check        # 타입 오류 0
-pnpm test               # vitest + 토큰 스캔
+pnpm test               # vitest + 토큰 스캔 + 불변식 인용. 로컬 스택과 로그인 시드가 있어야 통째로 초록이다
 pnpm check:tokens       # 읽는데 정의가 없는 디자인 토큰
 pnpm check:comments     # 주석의 한국어(적용 범위는 스크립트의 SCOPE)
+pnpm check:invariants   # 불변식 카탈로그와 인용의 대조
 ```
 
 **코드 스타일.** Allman brace · 4칸 들여쓰기 · 큰따옴표 · 세미콜론이다. 여는 중괄호는 다음 줄에 둔다. 새 주석과 커밋 메시지는

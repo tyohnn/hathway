@@ -32,6 +32,47 @@ gunzip -c supabase/seed-filing-sections.sql.gz | \
 이미 떠 있는 스택에 최신 시드를 다시 앉히려면 `supabase db reset`(마이그레이션 재적용 +
 `seed.sql` 자동 재로드 — **로컬 DB의 기존 데이터를 지운다**) 후 위 `gunzip` 한 줄만 다시 실행.
 
+## 로그인과 앱 롤 (리서치 보드를 만들고 고치려면)
+
+읽는 화면은 위 절차만으로 선다. 리서치 보드의 쓰기와 로그인은 `org` 스키마와 앱 전용 롤 `web_app` 을 딛는다
+(마이그레이션 `20261002*`). 적재 덤프(`seed.sql`)와 따로, 로그인 시드를 한 번 넣는다.
+
+```bash
+cd platform && supabase start        # 마이그레이션이 org 스키마와 web_app 롤을 세운다
+docker exec -i supabase_db_platform psql -v ON_ERROR_STOP=1 \
+  postgresql://postgres:postgres@127.0.0.1:5432/postgres < supabase/seeds/org.sql
+cp ../apps/web/.env.example ../apps/web/.env.local
+```
+
+- 시드는 테넌트 셋(운영팀 1 · 고객사 A 2 · 고객사 B 3)과 계정과 로컬 로그인을 심고, `web_app` 에 LOGIN · BYPASSRLS · 비밀번호를
+  준다. 여러 번 넣어도 된다. 로컬 계정의 비밀번호는 모두 `hathway-local` 이다.
+
+  | 계정 | 누구 | 보드 |
+  |---|---|---|
+  | `ops@example.test` | 운영팀 소유주 | 운영팀의 보드를 고치고 지운다. 이미 있던 보드는 운영팀의 것이다 |
+  | `kim@example.test` · `lee@example.test` | 고객사 A 구성원 · 소유주 | 고객사 A 의 보드만 |
+  | `park@example.test` | 고객사 B 소유주 | 고객사 B 의 보드만 |
+  | `gone@example.test` · `outsider@example.test` | 나간 사람 · 명부에 없는 사람 | 로그인은 되지만 고치지 못한다 |
+
+- ⚠ **이미 떠 있는 스택에는 마이그레이션부터 올린다**: `supabase migration up --local`. 그 스택을 다른 작업과 같이 쓰고 있으면
+  먼저 알린다. 보드 표에 `tenant_id` 가 NOT NULL 로 서므로 옛 코드의 보드 쓰기가 그때부터 막힌다.
+- ⚠ **로컬 계정 칸은 개발 서버에서만 선다.** 배포의 로그인은 구글이다.
+- ⚠ 다른 저장소의 앱과 같은 브라우저에서 `localhost` 로 함께 열면 세션 쿠키(`sb-127-auth-token`)가 서로 덮어쓴다.
+  로컬 Supabase 는 어느 스택이든 쿠키 이름이 같다. 로그인이 자꾸 풀리면 `http://hathway.localhost:3000` 으로 연다.
+
+**원격에 올릴 때** 마이그레이션만으로는 web 이 붙지 못한다. 소유자가 한 번 넣는다.
+
+```sql
+alter role web_app login password '<비밀번호>' bypassrls;
+```
+
+그리고 배포 환경변수에 `WEB_DATABASE_URL`(풀러의 6543 포트)과 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 를 넣고, 대시보드에서
+「Confirm email」을 켜고, 구글 로그인의 Redirect URL 에 `https://<호스트>/auth/callback` 을 더하고, 들어올 사람의 계정과
+멤버십을 `org.account` · `org.membership` 에 넣는다(팀을 관리하는 화면은 아직 없다). 값의 모양은 `apps/web/.env.example` 에 있다.
+
+⚠ **순서가 있다.** 마이그레이션이 새 코드보다 먼저 나가면 배포된 옛 코드의 보드 쓰기가 막힌다(읽기는 된다). 새 코드가
+환경변수보다 먼저 나가면 보드 목록이 비고 쓰기가 닫힌다. 롤과 환경변수 → 마이그레이션 → 코드의 차례로 낸다.
+
 ## 처음부터 DART 재수집 (덤프 없이, 또는 새 종목 추가 시)
 
 ```bash
