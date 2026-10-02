@@ -22,9 +22,9 @@ export const Layout = Schema.Struct({
     y: Schema.Finite,
     w: Schema.Finite,
     h: Schema.Finite,
-    minW: Schema.optionalKey(Schema.Finite),
-    minH: Schema.optionalKey(Schema.Finite),
-    maxH: Schema.optionalKey(Schema.Finite),
+    minW: Schema.optional(Schema.Finite),
+    minH: Schema.optional(Schema.Finite),
+    maxH: Schema.optional(Schema.Finite),
 });
 
 export type Layout = typeof Layout.Type;
@@ -34,16 +34,16 @@ export const Widget = Schema.Struct({
     kind: WidgetKind,
     title: Schema.String,
     layout: Layout,
-    body: Schema.optionalKey(Schema.String),
-    source: Schema.optionalKey(Schema.String),
-    href: Schema.optionalKey(Schema.String),
-    hrefLabel: Schema.optionalKey(Schema.String),
-    items: Schema.optionalKey(Schema.Array(Schema.Struct({
+    body: Schema.optional(Schema.String),
+    source: Schema.optional(Schema.String),
+    href: Schema.optional(Schema.String),
+    hrefLabel: Schema.optional(Schema.String),
+    items: Schema.optional(Schema.Array(Schema.Struct({
         title: Schema.String,
-        href: Schema.optionalKey(Schema.String),
-        note: Schema.optionalKey(Schema.String),
+        href: Schema.optional(Schema.String),
+        note: Schema.optional(Schema.String),
     }))),
-    metric: Schema.optionalKey(Schema.Struct({ value: Schema.String, caption: Schema.String })),
+    metric: Schema.optional(Schema.Struct({ value: Schema.String, caption: Schema.String })),
 });
 
 export type Widget = typeof Widget.Type;
@@ -74,8 +74,8 @@ export const Board = Schema.Struct({
     theme: BoardTheme,
     title: Schema.String,
     tagline: Schema.String,
-    relatedStockCode: Schema.optionalKey(Schema.String),
-    relatedIndustrySlug: Schema.optionalKey(Schema.String),
+    relatedStockCode: Schema.optional(Schema.String),
+    relatedIndustrySlug: Schema.optional(Schema.String),
     groups: Schema.Array(Group),
     /** 고칠 때마다 하나씩 는다. 저장이 열었을 때의 판을 들고 와 대조한다(INV-RESEARCH-03) */
     version: Schema.Number,

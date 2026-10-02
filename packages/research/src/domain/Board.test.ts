@@ -29,6 +29,13 @@ describe("보드 문서의 모양", () =>
         expect(Exit.isSuccess(decode({ groups: [group()] }))).toBe(true);
     });
 
+    it("값이 없는 칸이 undefined 로 실려 와도 받는다. 화면의 격자가 그렇게 보낸다", () =>
+    {
+        const layout = { i: "g1", x: 0, y: 0, w: 6, h: 10, minW: 4, minH: undefined, maxH: undefined };
+
+        expect(Exit.isSuccess(decode({ groups: [group({ layout, widgets: [widget({ body: undefined })] })] }))).toBe(true);
+    });
+
     it("INV-RESEARCH-05 모양이 맞지 않는 문서는 저장하지 않는다. 칸의 갈래가 정해진 것이어야 한다", () =>
     {
         expect(Exit.isFailure(decode({ groups: [group({ widgets: [widget({ kind: "script" })] })] }))).toBe(true);
