@@ -13,6 +13,12 @@ import {
 } from "@investment/ui/components/breadcrumb";
 import { StockAnalysisCrumbs } from "@/components/stock-analysis-crumbs";
 
+/** 테마 밖에 서는 화면. 테마의 이름을 적으면 틀린 위치가 된다 */
+const SETTINGS: Readonly<Record<string, string>> = {
+    "/settings/team": "팀",
+    "/settings/account": "내 계정",
+};
+
 /**
  * 상단 띠의 현재 위치. 셸(`AppShell`)의 `title` 자리에 선다.
  *
@@ -22,9 +28,23 @@ import { StockAnalysisCrumbs } from "@/components/stock-analysis-crumbs";
 export function AppCrumbs()
 {
     const pathname = usePathname();
+    const settings = SETTINGS[pathname];
     const { theme, section, stockCode } = parseAppPath(pathname);
     const themeMeta = getTheme(theme);
     const sectionMeta = section ? getThemeSection(section) : null;
+
+    if (settings !== undefined)
+    {
+        return (
+            <Breadcrumb aria-label="현재 위치" className="min-w-0 flex-1">
+                <BreadcrumbList className="flex-nowrap overflow-x-auto">
+                    <BreadcrumbItem>설정</BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem><BreadcrumbPage>{settings}</BreadcrumbPage></BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+        );
+    }
 
     return (
         <Breadcrumb aria-label="현재 위치" className="min-w-0 flex-1">
