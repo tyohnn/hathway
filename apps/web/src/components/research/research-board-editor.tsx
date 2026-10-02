@@ -185,7 +185,6 @@ export function ResearchBoardEditor({
                         </Button>
                     </div>
                 )}
-                {!editable && <p className="text-xs text-muted-foreground">여기서 고친 내용은 저장하지 않아요.</p>}
                 {access === "sign-in" && (
                     <Button
                         variant="outline"
@@ -198,7 +197,7 @@ export function ResearchBoardEditor({
                 )}
             </header>
             <div className="min-h-0 flex-1">
-                <ResearchBoardFlow board={board} onChange={onChange} />
+                <ResearchBoardFlow board={board} onChange={onChange} readOnly={!editable} />
             </div>
             <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
                 <DialogContent>

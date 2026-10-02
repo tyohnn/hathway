@@ -33,6 +33,7 @@ type FlowContextValue = {
     innerMode: ResearchInnerMode;
     interactive: boolean;
     focusedId: string | null;
+    readOnly: boolean;
 };
 
 const FlowContext = createContext<FlowContextValue | null>(null);
@@ -46,7 +47,7 @@ function useFlowBoard(): FlowContextValue
 
 function GroupSlideNode({ id }: { id: string })
 {
-    const { board, onChange, innerMode, interactive, focusedId } = useFlowBoard();
+    const { board, onChange, innerMode, interactive, focusedId, readOnly } = useFlowBoard();
     const group = board.groups.find((item) => item.id === id);
     if (!group) return null;
     return (
@@ -57,6 +58,7 @@ function GroupSlideNode({ id }: { id: string })
             innerMode={innerMode}
             interactive={interactive}
             focused={focusedId === id}
+            readOnly={readOnly}
         />
     );
 }
@@ -112,7 +114,8 @@ function SlideshowBar({
     onFocus: (next: Focus) => void;
     innerMode: ResearchInnerMode;
     onInnerMode: (mode: ResearchInnerMode) => void;
-    onAddGroup: () => void;
+    /** 없으면 그룹을 더하는 단추를 세우지 않는다 */
+    onAddGroup: (() => void) | undefined;
 })
 {
     const index =
@@ -199,10 +202,12 @@ function SlideshowBar({
                         일반
                     </Button>
                 </div>
-                <Button type="button" variant="outline" size="xs" onClick={onAddGroup}>
-                    <PlusIcon className="size-3.5" />
-                    그룹
-                </Button>
+                {onAddGroup && (
+                    <Button type="button" variant="outline" size="xs" onClick={onAddGroup}>
+                        <PlusIcon className="size-3.5" />
+                        그룹
+                    </Button>
+                )}
             </div>
         </Panel>
     );
@@ -215,6 +220,7 @@ function FlowInner({
     focus,
     onFocus,
     onInnerMode,
+    readOnly,
 }: {
     board: ResearchBoard;
     onChange: (next: ResearchBoard) => void;
@@ -222,11 +228,13 @@ function FlowInner({
     focus: Focus;
     onFocus: (next: Focus) => void;
     onInnerMode: (mode: ResearchInnerMode) => void;
+    readOnly: boolean;
 })
 {
     const boxes = useMemo(() => packFlowGroups(board.groups, innerMode), [board.groups, innerMode]);
     const focusedId = focus.kind === "group" ? focus.id : null;
-    const interactive = focus.kind === "group" && innerMode === "rgl";
+    // 고칠 수 없는 사람의 화면에서는 칸을 끌거나 크기를 바꾸지 못한다. 슬라이드를 넘기고 배치 모드를 바꾸는 것은 된다
+    const interactive = !readOnly && focus.kind === "group" && innerMode === "rgl";
 
     const nodes = useMemo<Node[]>(
         () =>
@@ -244,8 +252,8 @@ function FlowInner({
     );
 
     const context = useMemo<FlowContextValue>(
-        () => ({ board, onChange, innerMode, interactive, focusedId }),
-        [board, focusedId, innerMode, interactive, onChange],
+        () => ({ board, onChange, innerMode, interactive, focusedId, readOnly }),
+        [board, focusedId, innerMode, interactive, onChange, readOnly],
     );
 
     useEffect(() =>
@@ -319,7 +327,7 @@ function FlowInner({
                     onFocus={onFocus}
                     innerMode={innerMode}
                     onInnerMode={onInnerMode}
-                    onAddGroup={handleAddGroup}
+                    onAddGroup={readOnly ? undefined : handleAddGroup}
                 />
             </ReactFlow>
         </FlowContext.Provider>
@@ -329,9 +337,12 @@ function FlowInner({
 export function ResearchBoardFlow({
     board,
     onChange,
+    readOnly,
 }: {
     board: ResearchBoard;
     onChange: (next: ResearchBoard) => void;
+    /** 고칠 수 없는 사람의 화면. 보드를 바꾸는 단추와 끌기를 세우지 않는다. 쓰기를 막는 것은 서버의 관문이다 */
+    readOnly: boolean;
 })
 {
     const [innerMode, setInnerMode] = useState<ResearchInnerMode>("rgl");
@@ -357,6 +368,7 @@ export function ResearchBoardFlow({
                     focus={focus}
                     onFocus={setFocus}
                     onInnerMode={setInnerMode}
+                    readOnly={readOnly}
                 />
             </ReactFlowProvider>
         </div>

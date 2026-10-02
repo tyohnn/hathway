@@ -25,12 +25,15 @@ export function ResearchWidgetCard({
     widget,
     onChange,
     showGridHandle,
+    readOnly,
 }: {
     board: ResearchBoard;
     groupId: string;
     widget: ResearchWidget;
     onChange: (next: ResearchBoard) => void;
     showGridHandle: boolean;
+    /** 고칠 수 없는 사람의 화면. 옮기고 지우는 단추를 세우지 않고 글은 읽기만 한다 */
+    readOnly: boolean;
 })
 {
     const otherGroups = board.groups.filter((group) => group.id !== groupId);
@@ -47,32 +50,35 @@ export function ResearchWidgetCard({
                         <DotsSixVerticalIcon className="size-4" />
                     </button>
                 )}
-                <button
-                    type="button"
-                    draggable
-                    className="mt-0.5 cursor-grab text-[10px] text-muted-foreground hover:text-foreground"
-                    aria-label="다른 그룹으로 끌기"
-                    title="다른 그룹으로 끌기"
-                    onDragStart={(event) =>
-                    {
-                        event.dataTransfer.setData(WIDGET_MIME, widget.id);
-                        event.dataTransfer.effectAllowed = "move";
-                    }}
-                >
-                    ⇄
-                </button>
+                {!readOnly && (
+                    <button
+                        type="button"
+                        draggable
+                        className="mt-0.5 cursor-grab text-[10px] text-muted-foreground hover:text-foreground"
+                        aria-label="다른 그룹으로 끌기"
+                        title="다른 그룹으로 끌기"
+                        onDragStart={(event) =>
+                        {
+                            event.dataTransfer.setData(WIDGET_MIME, widget.id);
+                            event.dataTransfer.effectAllowed = "move";
+                        }}
+                    >
+                        ⇄
+                    </button>
+                )}
                 <div className="min-w-0 flex-1">
                     <input
                         className="w-full truncate bg-transparent text-sm font-semibold outline-none"
                         value={widget.title}
                         aria-label="위젯 제목"
+                        readOnly={readOnly}
                         onChange={(event) => onChange(renameWidget(board, widget.id, { title: event.target.value }))}
                     />
                     {widget.source && (
                         <p className="truncate text-[11px] text-muted-foreground">{widget.source}</p>
                     )}
                 </div>
-                {otherGroups.length > 0 && (
+                {!readOnly && otherGroups.length > 0 && (
                     <Popover>
                         <PopoverTrigger render={<Button type="button" variant="ghost" size="xs" />}>그룹</PopoverTrigger>
                         <PopoverContent className="w-56 p-0" align="end">
@@ -95,15 +101,17 @@ export function ResearchWidgetCard({
                         </PopoverContent>
                     </Popover>
                 )}
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label="위젯 삭제"
-                    onClick={() => onChange(removeWidget(board, widget.id))}
-                >
-                    <TrashIcon className="size-3.5" />
-                </Button>
+                {!readOnly && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label="위젯 삭제"
+                        onClick={() => onChange(removeWidget(board, widget.id))}
+                    >
+                        <TrashIcon className="size-3.5" />
+                    </Button>
+                )}
                 <StatusBadge tone={KIND_TONE[widget.kind]} label={kindLabel(widget.kind)} className="shrink-0" />
             </header>
             <div className="min-h-0 flex-1 overflow-auto px-2.5 py-2 text-sm">
@@ -119,7 +127,8 @@ export function ResearchWidgetCard({
                     <textarea
                         className="min-h-16 w-full resize-none bg-transparent text-xs leading-relaxed text-muted-foreground outline-none"
                         value={widget.body ?? ""}
-                        placeholder="메모"
+                        placeholder={readOnly ? undefined : "메모"}
+                        readOnly={readOnly}
                         onChange={(event) => onChange(renameWidget(board, widget.id, { body: event.target.value }))}
                     />
                 ) : (

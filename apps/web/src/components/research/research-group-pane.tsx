@@ -26,6 +26,7 @@ export function ResearchGroupPane({
     innerMode,
     interactive,
     focused,
+    readOnly,
 }: {
     board: ResearchBoard;
     group: ResearchGroup;
@@ -33,6 +34,8 @@ export function ResearchGroupPane({
     innerMode: ResearchInnerMode;
     interactive: boolean;
     focused: boolean;
+    /** 고칠 수 없는 사람의 화면. 더하고 지우고 옮기는 것을 세우지 않는다 */
+    readOnly: boolean;
 })
 {
     const [dropActive, setDropActive] = useState(false);
@@ -58,6 +61,7 @@ export function ResearchGroupPane({
             )}
             onDragOver={(event) =>
             {
+                if (readOnly) return;
                 if (!event.dataTransfer.types.includes(WIDGET_MIME)) return;
                 event.preventDefault();
                 event.dataTransfer.dropEffect = "move";
@@ -68,7 +72,7 @@ export function ResearchGroupPane({
             {
                 const widgetId = event.dataTransfer.getData(WIDGET_MIME);
                 setDropActive(false);
-                if (!widgetId) return;
+                if (readOnly || !widgetId) return;
                 event.preventDefault();
                 onChange(moveWidget(board, widgetId, group.id));
             }}
@@ -79,36 +83,42 @@ export function ResearchGroupPane({
                         className="w-full truncate bg-transparent text-sm font-semibold tracking-tight outline-none"
                         value={group.title}
                         aria-label="그룹 제목"
+                        readOnly={readOnly}
                         onChange={(event) => onChange(renameGroup(board, group.id, { title: event.target.value }))}
                     />
                     <input
                         className="mt-0.5 w-full truncate bg-transparent text-[11px] text-muted-foreground outline-none"
                         value={group.summary}
                         aria-label="그룹 설명"
-                        placeholder="그룹 설명"
+                        placeholder={readOnly ? undefined : "그룹 설명"}
+                        readOnly={readOnly}
                         onChange={(event) =>
                             onChange(renameGroup(board, group.id, { summary: event.target.value }))
                         }
                     />
                 </div>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label="노트 추가"
-                    onClick={() => onChange(addNoteWidget(board, group.id))}
-                >
-                    <PlusIcon className="size-3.5" />
-                </Button>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label="그룹 삭제"
-                    onClick={() => onChange(removeGroup(board, group.id))}
-                >
-                    <TrashIcon className="size-3.5" />
-                </Button>
+                {!readOnly && (
+                    <>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label="노트 추가"
+                            onClick={() => onChange(addNoteWidget(board, group.id))}
+                        >
+                            <PlusIcon className="size-3.5" />
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label="그룹 삭제"
+                            onClick={() => onChange(removeGroup(board, group.id))}
+                        >
+                            <TrashIcon className="size-3.5" />
+                        </Button>
+                    </>
+                )}
             </header>
             <div className="research-nested nodrag nopan nowheel overflow-visible px-2 py-2">
                 {innerMode === "rgl" ? (
@@ -134,6 +144,7 @@ export function ResearchGroupPane({
                                         widget={widget}
                                         onChange={onChange}
                                         showGridHandle={interactive}
+                                        readOnly={readOnly}
                                     />
                                 </div>
                             ))}
@@ -152,6 +163,7 @@ export function ResearchGroupPane({
                                     widget={widget}
                                     onChange={onChange}
                                     showGridHandle={false}
+                                    readOnly={readOnly}
                                 />
                             </div>
                         ))}
