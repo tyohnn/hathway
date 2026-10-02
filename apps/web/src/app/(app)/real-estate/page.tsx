@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function RealEstateHomePage()
 {
     return (
-        <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-2xl">
             <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">테마</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight">부동산</h1>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

@@ -11,9 +11,9 @@ export function StockPageShell({
 })
 {
     return (
-        <div>
+        <div className="flex flex-col gap-6">
             <CompanyHeader company={company} />
-            <div className="p-3">{children}</div>
+            <div>{children}</div>
         </div>
     );
 }

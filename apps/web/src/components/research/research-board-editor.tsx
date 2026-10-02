@@ -1,5 +1,6 @@
 "use client";
 
+import { SidebarTrigger } from "@investment/ui/components/sidebar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteResearchBoardAction, saveResearchBoardAction } from "@/lib/research/actions";
@@ -92,8 +93,10 @@ export function ResearchBoardEditor({ initial }: { initial: ResearchBoard })
     }
 
     return (
-        <div className="flex h-[calc(100dvh-2.75rem)] min-h-[32rem] flex-col">
+        <div className="flex h-full min-h-0 flex-col">
             <header className="flex shrink-0 flex-wrap items-start justify-between gap-3 px-4 pt-5 sm:px-6">
+                {/* 이 화면은 셸의 띠 없이 선다(`layout="full"`). 접은 사이드바를 다시 펴는 단추를 본문이 갖는다 */}
+                <SidebarTrigger className="-ml-1 mt-1 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                     <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">리서치 보드</p>
                     <input

@@ -1,5 +1,7 @@
+import { SectionPlaceholder } from "@investment/blocks/section-placeholder";
 import { getTheme, getThemeSection, type ThemeId, type ThemeSectionId } from "@/lib/nav";
 
+/** 아직 화면이 붙지 않은 섹션. 무엇이 이 자리에 서는지를 블록(`SectionPlaceholder`)으로 적는다 */
 export function ThemeSectionPlaceholder({
     theme,
     section,
@@ -14,12 +16,9 @@ export function ThemeSectionPlaceholder({
     const sectionMeta = getThemeSection(section);
 
     return (
-        <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-            <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">{themeMeta.label}</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">{sectionMeta.label}</h1>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {note ?? `${themeMeta.label} 테마의 ${sectionMeta.label} 화면은 아직 비어 있습니다.`}
-            </p>
-        </div>
+        <SectionPlaceholder
+            title={sectionMeta.label}
+            body={note ?? `${themeMeta.label}의 ${sectionMeta.label} 화면은 아직 없어요.`}
+        />
     );
 }

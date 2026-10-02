@@ -3,10 +3,8 @@ import { getManifest } from "@/lib/book/manifest";
 import { INDUSTRIES } from "@/lib/industry";
 import { listCompanyIndex } from "@/lib/platform/db";
 import type { ChapterIndex, CompanyIndex, IndustryIndex } from "@/lib/platform/company-index";
-import { AppSidebar } from "@/components/app-sidebar";
-import { AppTopbar } from "@/components/app-topbar";
+import { Shell } from "@/components/app-shell";
 import { SymbolCommandProvider } from "@/components/symbol-command";
-import { SidebarInset, SidebarProvider } from "@investment/ui/components/sidebar";
 
 export const revalidate = 0;
 
@@ -61,13 +59,7 @@ export default async function AppLayout({ children }: { children: ReactNode })
 
     return (
         <SymbolCommandProvider companies={companies} industries={industryIndex()} chapters={chapters}>
-            <SidebarProvider>
-                <AppSidebar />
-                <SidebarInset>
-                    <AppTopbar />
-                    <div className="flex-1">{children}</div>
-                </SidebarInset>
-            </SidebarProvider>
+            <Shell>{children}</Shell>
         </SymbolCommandProvider>
     );
 }

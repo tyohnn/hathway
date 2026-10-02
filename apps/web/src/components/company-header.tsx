@@ -26,7 +26,7 @@ export function CompanyHeader({ company }: { company: Company })
     const sector = classifySector(company.sector_code, company.stock_code)?.industryName ?? "업종 미상";
 
     return (
-        <div className="relative overflow-hidden border-b border-border bg-card px-4 py-3">
+        <div className="relative overflow-hidden rounded-xl border border-border bg-card px-4 py-3">
             <div className="relative min-w-0">
                 <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                     <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{company.name}</h1>

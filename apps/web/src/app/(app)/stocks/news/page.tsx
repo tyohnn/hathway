@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 export default function StocksNewsPage()
 {
     return (
-        <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-3xl">
             <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">주식</p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight">전체 뉴스</h1>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
