@@ -20,7 +20,8 @@
 
 **읽기는 공개, 쓰기는 관문 뒤.** 로그인하지 않아도 모든 화면을 읽는다. 쓰는 서버 액션은 전부 `appAction`(`apps/web/src/lib/action.ts`)을
 지나고, 관문이 입력을 파싱하고 세션에서 행위자를 확정한 뒤에만 핸들러를 부른다. `"use server"` 파일에는 관문을 지난 액션만
-두고 조립은 `src/usecases/` 에 둔다. 리서치 보드는 테넌트의 것이고 그 구성원만 고치고 지운다. 로컬 로그인과 앱 롤을 세우는 법은
+두고 조립은 `src/usecases/` 에 둔다. 리서치 보드는 테넌트의 것이고 그 구성원만 고치고 지운다. 설정(`/settings/team` · `/settings/account`)만
+로그인한 사람의 화면이고 그 조회는 `appRead`(`apps/web/src/lib/read.ts`)를 지난다. 로컬 로그인과 앱 롤을 세우는 법은
 `platform/README.md` 「로그인과 앱 롤」에 있다.
 
 **디자인 시스템.** tyohnn 의 **graphite** 를 `packages/ui` 로 받아 입는다. 정본은 루트 `tyohnn.json` 과

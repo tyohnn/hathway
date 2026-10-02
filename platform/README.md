@@ -68,13 +68,15 @@ alter role web_app login password '<비밀번호>' bypassrls;
 ```
 
 그리고 배포 환경변수에 `WEB_DATABASE_URL`(풀러의 6543 포트)과 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 를 넣고, 대시보드에서
-「Confirm email」을 켜고, 구글 로그인의 Redirect URL 에 `https://<호스트>/auth/callback` 을 더하고, 들어올 사람의 계정과
-멤버십을 `org.account` · `org.membership` 에 넣는다(팀을 관리하는 화면은 아직 없다). 값의 모양은 `apps/web/.env.example` 에 있다.
+「Confirm email」을 켜고, 구글 로그인의 Redirect URL 에 `https://<호스트>/auth/callback` 을 더한다. **첫 소유자 한 사람**의 계정과
+멤버십은 `org.account` · `org.membership` 에 직접 넣는다. 그 뒤의 사람은 소유자가 설정의 팀 화면(`/settings/team`)에서 초대한다.
+초대 메일은 가지 않는다. 초대한 주소의 구글 계정이 처음 로그인할 때 이어진다. 값의 모양은 `apps/web/.env.example` 에 있다.
 
 ⚠ **순서가 있다.** 마이그레이션이 새 코드보다 먼저 나가면 배포된 옛 코드의 보드 쓰기가 막힌다(읽기는 된다). 새 코드가
 환경변수보다 먼저 나가면 **종목 화면이 500 이 되고** 보드 목록이 비고 쓰기가 닫힌다. `WEB_DATABASE_URL` 이 없을 때
 로컬 주소로 떨어지지 않게 했기 때문이다. 롤과 환경변수 → 마이그레이션 → 코드의 차례로 낸다.
 
+팀 화면이 쓰는 칸은 `20261002000400` 이 컬럼 단위로 연다(`org.account` 의 `email` · `name`, `org.membership` 의 `role` · `active`).
 `web_app` 이 읽는 표는 `20261002000300` 이 적는다(`companies` · `fin_periods` · `filings` · `filing_correction_chains` ·
 `events` · `ownership_txns` · `trackings`). 앱이 새 표를 읽으면 그 마이그레이션처럼 GRANT 를 더한다. 공시 본문 조각은
 표가 아니라 저장소(`platform-raw/docs/<회사>/<접수번호>.sections.json.gz`)에 있어 service role 키로 읽는다.
