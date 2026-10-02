@@ -5,7 +5,7 @@
 
 기준 URL: `https://wcomp.fnguide.com/CompanyInfo/<Page>?c_id=AA&menu_type=01&cmp_cd=005930`
 
-우리 앱 메뉴 대응은 `apps/web/lib/company/catalog.ts` (`Snapshot` … `금감원공시`).
+우리 앱 메뉴 대응은 `apps/web/src/lib/company/catalog.ts` (`Snapshot` … `금감원공시`).
 
 ---
 

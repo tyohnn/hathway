@@ -25,8 +25,8 @@ packages/ui/src/systems/graphite/
     typeset.css + typeset-preset.css          긴 글 조판. 3층과 별개 축입니다
     DESIGN.md                                 graphite 가 무엇을 왜 그렇게 정했나
 packages/ui/src/product.css                   우리 것. 시스템 축이 아닌 제품 토큰 (아래 참조)
-apps/web/app/global.css                       진입점. 위 파일들을 순서대로 불러옵니다
-apps/web/app/layout.tsx                       글꼴과 <html> 클래스
+apps/web/src/app/global.css                       진입점. 위 파일들을 순서대로 불러옵니다
+apps/web/src/app/layout.tsx                       글꼴과 <html> 클래스
 ```
 
 세 층의 경계는 한 문장입니다. **값은 토큰이 갖고, 규칙은 CSS 가 갖고, 구조는 컴포넌트가 갖습니다.**
@@ -85,7 +85,7 @@ tyohnn doctor                            # 배선 점검
 시스템과 색은 **별도 축입니다.** 시스템이 제 색을 입고 있는 동안에는 시스템 폴더의 `theme.css` 를 읽고,
 다른 색을 입는 순간 CLI 가 진입 CSS 옆에 `tyohnn-theme.css` 를 써서 그것을 대신 읽습니다.
 
-graphite 는 어두운 판이 기본이라 `components/providers.tsx` 가 `defaultTheme="dark"` 로 엽니다. 밝은 시스템으로
+graphite 는 어두운 판이 기본이라 `src/components/providers.tsx` 가 `defaultTheme="dark"` 로 엽니다. 밝은 시스템으로
 갈 때는 그 줄도 함께 봅니다.
 
 **시스템 자체를 고칠 일이면 tyohnn 저장소에서 고치고 다시 받습니다.** 여기서 고치지 않습니다.
@@ -108,7 +108,7 @@ node <tyohnn 체크아웃>/packages/cli/dist/index.js <명령> --ref main
 | 토큰 스캔 | `pnpm check:tokens` | 읽는데 정의가 없는 토큰. 폴백이 없으면 실패입니다. `pnpm test` 가 함께 돌립니다 |
 | 배선 점검 | `tyohnn doctor` | 시스템이 둘 섞였거나, import 순서가 어긋났거나, 글꼴 · 아이콘 배선이 끊긴 것 |
 | 원본 대조 | `tyohnn diff` | 우리 사본과 시스템 원본이 갈라진 자리 |
-| 화면의 글 | `node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/app apps/web/components` | 합쇼체 · 과도한 경어 · 수동형 · 개발의 말 · 「취소」 버튼 |
+| 화면의 글 | `node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/src/app apps/web/src/components` | 합쇼체 · 과도한 경어 · 수동형 · 개발의 말 · 「취소」 버튼 |
 
 토큰 스캔은 `tyohnn.json` 을 읽어 지금 입은 시스템의 폴더를 보므로 시스템을 갈아도 따라갑니다.
 
@@ -120,6 +120,6 @@ node <tyohnn 체크아웃>/packages/cli/dist/index.js <명령> --ref main
 - **화면이 제목과 카드를 손으로 그립니다.** 제목은 `text-2xl font-bold` 같은 유틸리티로, 지표 카드는 제 테두리와 그림자로 섭니다.
   그래서 시스템을 갈아도 제목 글꼴(`--font-heading`)과 카드 면이 따라오지 않습니다. 세리프 제목을 쓰는 시스템(vellum · sera)을
   입으려면 이 자리부터 시스템에 이어야 합니다.
-- **화면의 글이 아직 규약 전입니다.** 기계 검사에 220곳쯤 걸리고, 그 가운데 160곳은 교재 차트의 설명문(`components/charts/textbook/data`)입니다.
-- **블록 층(`packages/blocks`)이 없습니다.** 스캐폴드는 앱 셸 · 목록 · 표를 블록으로 조립하지만 이 저장소는 `apps/web/components` 가 그 일을 합니다.
+- **화면의 글이 아직 규약 전입니다.** 기계 검사에 220곳쯤 걸리고, 그 가운데 160곳은 교재 차트의 설명문(`src/components/charts/textbook/data`)입니다.
+- **블록 층(`packages/blocks`)이 없습니다.** 스캐폴드는 앱 셸 · 목록 · 표를 블록으로 조립하지만 이 저장소는 `apps/web/src/components` 가 그 일을 합니다.
 - **sonner 는 없습니다.** tyohnn 은 Base UI Toast 만 갖습니다.

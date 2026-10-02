@@ -24,10 +24,10 @@ model: inherit
 
 ## 범위를 정한다
 
-- 부른 쪽이 파일 · 폴더 · 라우트를 주었으면 그것을 본다. 라우트면 `apps/web/app/` 에서 그 페이지와 그 페이지가 부르는
+- 부른 쪽이 파일 · 폴더 · 라우트를 주었으면 그것을 본다. 라우트면 `apps/web/src/app/` 에서 그 페이지와 그 페이지가 부르는
   컴포넌트까지 따라간다.
 - "이번 변경"이나 범위가 없으면 `git diff --name-only $(git merge-base HEAD main 2>/dev/null || echo HEAD)` 와
-  `git status --porcelain` 으로 바뀐 `.tsx` · `.ts` 를 모은다. `apps/web/app` · `apps/web/components` 밖과 테스트는 뺀다.
+  `git status --porcelain` 으로 바뀐 `.tsx` · `.ts` 를 모은다. `apps/web/src/app` · `apps/web/src/components` 밖과 테스트는 뺀다.
 - 화면이 블록(`@<스코프>/blocks/*`)의 기본 문구를 쓰면 그 블록의 `labels.ts` 도 범위에 넣는다. 사람에게는 같은 화면의 글이다.
 - 오류 문구가 유스케이스나 도메인 패키지에서 온다면(예: `usecases/*.ts` 의 메시지 표) 그 파일도 넣는다.
 - 모델이 읽는 글(도구 설명 · 시스템 프롬프트 · MCP 프로토콜)은 범위에서 뺀다. 도구의 **답**은 모델이 사람에게
@@ -55,14 +55,14 @@ model: inherit
 화면마다 표 하나. 고칠 것이 없는 화면은 한 줄로 「고칠 것 없음」만 적는다.
 
 ```
-### /notes · apps/web/app/(app)/notes/page.tsx
+### /notes · apps/web/src/app/(app)/notes/page.tsx
 
 | 위치 | 지금 | 제안 | 까닭 |
 |---|---|---|---|
 | page.tsx:21 | 같은 조직의 사람과 나누는 짧은 글입니다. … | (지움) | 기능 소개. 제목과 폼이 이미 말한다 |
 | _components/NoteList.tsx:45 | 아직 쪽지가 없습니다 | 아직 쪽지가 없어요 | 해요체 |
 
-테스트: apps/web/lib/notes.test.ts:39 가 「아직 쪽지가 없습니다」를 찾는다
+테스트: apps/web/src/lib/notes.test.ts:39 가 「아직 쪽지가 없습니다」를 찾는다
 ```
 
 마지막에 세 줄로 모은다.

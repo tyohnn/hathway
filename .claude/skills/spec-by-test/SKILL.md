@@ -31,7 +31,7 @@ it("1000행이 넘는 조회는 끝까지 넘겨 읽는다. PostgREST 는 1000�
 | 중간 | 화면 흐름, 목록의 정렬 | 이름만 먼저 짓는다 |
 | 비싸다 | 재무 수치의 계산과 표기, 적정가 · 9칸의 계산, 스키마와 적재 함수, 원격 DB 에 쓰는 일 | 전부 밟는다 |
 
-비싼 쪽은 대개 `packages/schema` · `apps/web/lib/valuation` · `apps/web/lib/platform` · `platform/supabase/migrations` 에
+비싼 쪽은 대개 `packages/schema` · `apps/web/src/lib/valuation` · `apps/web/src/lib/platform` · `platform/supabase/migrations` 에
 닿는다. 그 넷을 건드리면 비싼 쪽이라고 보아도 된다. 틀린 숫자가 화면에 서면 읽는 사람이 그대로 믿기 때문이다.
 
 ## 절차

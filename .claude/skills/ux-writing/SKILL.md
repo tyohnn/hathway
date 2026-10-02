@@ -166,7 +166,7 @@ description: 화면에 들어가는 한국어 글을 쓰거나 고치기 전에 
 - [ ] 버튼은 동사이고, 누르면 무슨 일이 일어나는지 버튼만 보고 안다
 - [ ] 다이얼로그의 물러서는 버튼은 「닫기」다
 - [ ] 소리 내어 읽어 어색한 곳이 없다
-- [ ] 기계 검사를 돌렸다: `node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/app apps/web/components`
+- [ ] 기계 검사를 돌렸다: `node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/src/app apps/web/src/components`
 - [ ] `ux-writing-reviewer` 에게 범위만 넘겨 검토받고, 받은 표를 반영했다(e2e 의 단언도 함께)
 
 ⚠ **기계 검사는 글자로 드러나는 것만 잡는다.** 「이 글이 필요한가」는 사람이 판단한다. 검사가 조용하다고 화면이

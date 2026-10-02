@@ -185,7 +185,7 @@ done
     (strict는 전 상장사에서 반드시 깨진다). **검증은 쓰기가 아니라 읽기 경계**에서 — ingest는
     원본 보존, UI가 해석. `FinancialConcept` enum이 UI의 닫힌 축(account_id는 열린 집합).
   - 포매터: `formatWon`(원→조/억), `formatFactDate`(정밀도별 원표기 복원) 등. DB는 원 단위 원본.
-- **`apps/web/lib/platform/db.ts`** — `getCompanyPageData(stockCode)` 하나로 페이지 데이터 병렬 fetch.
+- **`apps/web/src/lib/platform/db.ts`** — `getCompanyPageData(stockCode)` 하나로 페이지 데이터 병렬 fetch.
 - **`/company/[stockCode]`** — 헤더·재무차트(recharts 이중축)·핵심지표·사실시계열·공시타임라인·
   정정체인·주요사항 이벤트. Server Component + 차트만 client.
 

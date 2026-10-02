@@ -5,7 +5,7 @@
 
 UI 는 `packages/ui` 가 갖는 tyohnn 디자인 시스템(`graphite`, shadcn + Base UI)입니다. 정본은
 `docs/design-system/README.md` 입니다. 본문 조판은 그 시스템의 typeset 이 맡습니다. `.typeset` 컨테이너 안의
-마크다운 결과물을 전부 조판하고, `.typeset-notes` 프리셋(`app/global.css`, 값은 `packages/ui/src/product.css`)이
+마크다운 결과물을 전부 조판하고, `.typeset-notes` 프리셋(`src/app/global.css`, 값은 `packages/ui/src/product.css`)이
 이 책의 크기와 행간을 정합니다.
 
 ## 개발
@@ -49,7 +49,7 @@ pnpm dev
 
 ## 렌더 파이프라인
 
-`lib/book/render.ts`가 remark/rehype로 장 본문을 컴파일합니다
+`src/lib/book/render.ts`가 remark/rehype로 장 본문을 컴파일합니다
 (gfm · math(`$$…$$`만) · katex · slug, 넓은 표는 `.typeset-scroll`로 감쌈).
 본문 안 `@@TEXTBOOK_CHART:<id>@@` 자리표시자는 `<TextbookChart />`로 치환되며,
 차트는 `.book-bleed`로 본문 폭(37em)을 넘어 펼쳐집니다.
