@@ -1,0 +1,28 @@
+{
+    "name": "@investment/access",
+    "version": "0.0.1",
+    "private": true,
+    "//": "접근 축 — 테넌트와 계정과 멤버십으로 「이 사람이 이 앱을 쓸 수 있는가」를 판정한다. 도메인 패키지가 아니라 그 아래에 있다: legal 도 delivery 도 이 패키지의 Actor 를 받으므로, 어느 한 도메인 안에 두면 나머지가 그 도메인을 import 하게 된다(D-2026-09-14-30). 런타임 의존은 effect 뿐이다.",
+    "exports": {
+        "./invariants": "./src/invariants.ts",
+        "./domain/*": "./src/domain/*.ts",
+        "./access/*": "./src/access/*.ts",
+        "./ports/*": "./src/ports/*.ts",
+        "./testing/*": "./src/testing/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@investment/shared": "workspace:*",
+        "effect": "4.0.0-rc.112"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "typescript": "^5",
+        "vitest": "^4.1.11",
+        "@types/node": "^22"
+    }
+}
