@@ -1,10 +1,11 @@
 import { Effect, Schema } from "effect";
 
 import type { Actor } from "@investment/access/domain/Actor";
-import { BoardTheme, Group, type Board } from "@investment/research/domain/Board";
+import { BoardSlug, BoardTheme, Group, type Board } from "@investment/research/domain/Board";
 import { BoardStore } from "@investment/research/ports/BoardStore";
-import { draftBoard, titleVerdict } from "@investment/research/rules/draft";
+import { draftBoard } from "@investment/research/rules/draft";
 import { editVerdict, removeVerdict } from "@investment/research/rules/edit";
+import { limitVerdict } from "@investment/research/rules/limits";
 
 /**
  * 리서치 보드 화면과 액션의 조립. 서버 액션의 ③~⑤를 이 파일이 잇는다.
@@ -17,7 +18,7 @@ import { editVerdict, removeVerdict } from "@investment/research/rules/edit";
  */
 
 /** 액션이 화면에 돌려주는 결과. 오류 객체 대신 어휘로 답해 화면이 그 자리에 글을 세운다 */
-export type BoardFailure = "not-found" | "stale" | "title" | "sign-in";
+export type BoardFailure = "not-found" | "stale" | "limit" | "sign-in" | "invalid" | "failed";
 
 export type BoardActionResult =
     | { readonly ok: true; readonly board: Board }
@@ -39,7 +40,7 @@ export type CreateBoardInput = typeof CreateBoardInput.Type;
  * (INV-RESEARCH-05).
  */
 export const SaveBoardInput = Schema.Struct({
-    slug: Schema.NonEmptyString,
+    slug: BoardSlug,
     /** 화면이 이 보드를 열었을 때의 판 */
     version: Schema.Number,
     title: Schema.String,
@@ -50,7 +51,7 @@ export const SaveBoardInput = Schema.Struct({
 export type SaveBoardInput = typeof SaveBoardInput.Type;
 
 export const RemoveBoardInput = Schema.Struct({
-    slug: Schema.NonEmptyString,
+    slug: BoardSlug,
 });
 
 export type RemoveBoardInput = typeof RemoveBoardInput.Type;
@@ -58,8 +59,6 @@ export type RemoveBoardInput = typeof RemoveBoardInput.Type;
 const MESSAGES = {
     "not-found": "보드를 찾을 수 없어요.",
     stale: "그사이 다른 사람이 이 보드를 고쳤어요. 새로고침한 뒤 다시 고쳐 주세요.",
-    title: "제목을 적어 주세요.",
-    titleTooLong: (limit: number) => `제목은 ${limit}자까지 적을 수 있어요.`,
 } as const;
 
 /** 그 테마의 보드 전부. 최근에 고친 것이 먼저다 */
@@ -81,14 +80,9 @@ export const createBoard = (
         // ④ 도메인 규칙
         const verdict = draftBoard(actor, input, newId);
 
-        if (verdict._tag === "BlankTitle")
+        if (verdict._tag === "Rejected")
         {
-            return { ok: false, reason: "title", message: MESSAGES.title } as const;
-        }
-
-        if (verdict._tag === "TitleTooLong")
-        {
-            return { ok: false, reason: "title", message: MESSAGES.titleTooLong(verdict.limit) } as const;
+            return { ok: false, reason: "limit", message: verdict.message } as const;
         }
 
         // ⑤ 저장
@@ -118,16 +112,13 @@ export const saveBoard = (
             return { ok: false, reason: "stale", message: MESSAGES.stale, current: verdict.current } as const;
         }
 
-        // ④ 도메인 규칙
-        const title = titleVerdict(input.title);
+        // ④ 도메인 규칙. 쓴 사람이 고칠 수 있는 한도는 무엇을 넘었는지 알려 준다
+        const change = { title: input.title, tagline: input.tagline, groups: input.groups };
+        const limit = limitVerdict(change);
 
-        if (title._tag !== "Ok")
+        if (limit._tag === "Over")
         {
-            return {
-                ok: false,
-                reason: "title",
-                message: title._tag === "Blank" ? MESSAGES.title : MESSAGES.titleTooLong(title.limit),
-            } as const;
+            return { ok: false, reason: "limit", message: limit.message } as const;
         }
 
         // ⑤ 저장. 문장이 테넌트와 판을 한 번 더 건다
@@ -135,7 +126,7 @@ export const saveBoard = (
             slug: input.slug,
             tenantId: actor.tenantId,
             expectedVersion: input.version,
-            change: { title: title.title, tagline: input.tagline, groups: input.groups },
+            change,
         });
 
         return outcome._tag === "saved"

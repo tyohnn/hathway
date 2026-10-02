@@ -15,43 +15,58 @@ export const WidgetKind = Schema.Literals(["chart", "news", "note", "metric", "l
 
 export type WidgetKind = typeof WidgetKind.Type;
 
+/**
+ * 꼴의 한도. 화면에서는 나올 수 없는 값이라 넘으면 무엇이 틀렸는지 알려 주지 않고 통째로 거절한다.
+ * 쓴 사람이 고칠 수 있는 한도(제목 · 본문의 길이, 그룹 · 칸의 수, 링크의 모양)는 여기가 아니라 `rules/limits.ts` 가
+ * 갖고 무엇을 넘었는지 알려 준다.
+ */
+const Id = Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(64));
+
+/** 경로와 지우는 조건에 그대로 들어간다. 소문자 · 숫자 · 하이픈 64자까지 */
+export const BoardSlug = Schema.String.check(Schema.isPattern(/^[a-z0-9][a-z0-9-]{0,63}$/));
+
+/** 격자의 좌표와 크기. 1e308 같은 값은 캔버스를 깨뜨린다 */
+const Grid = Schema.Int.check(Schema.isBetween({ minimum: 0, maximum: 10000 }));
+
+const text = (limit: number) => Schema.String.check(Schema.isMaxLength(limit));
+
 /** 격자 위의 자리. 그룹과 칸이 같은 모양을 쓴다 */
 export const Layout = Schema.Struct({
-    i: Schema.String,
-    x: Schema.Finite,
-    y: Schema.Finite,
-    w: Schema.Finite,
-    h: Schema.Finite,
-    minW: Schema.optional(Schema.Finite),
-    minH: Schema.optional(Schema.Finite),
-    maxH: Schema.optional(Schema.Finite),
+    i: Id,
+    x: Grid,
+    y: Grid,
+    w: Grid,
+    h: Grid,
+    minW: Schema.optional(Grid),
+    minH: Schema.optional(Grid),
+    maxH: Schema.optional(Grid),
 });
 
 export type Layout = typeof Layout.Type;
 
 export const Widget = Schema.Struct({
-    id: Schema.String,
+    id: Id,
     kind: WidgetKind,
     title: Schema.String,
     layout: Layout,
     body: Schema.optional(Schema.String),
-    source: Schema.optional(Schema.String),
-    href: Schema.optional(Schema.String),
-    hrefLabel: Schema.optional(Schema.String),
+    source: Schema.optional(text(300)),
+    href: Schema.optional(text(2048)),
+    hrefLabel: Schema.optional(text(120)),
     items: Schema.optional(Schema.Array(Schema.Struct({
-        title: Schema.String,
-        href: Schema.optional(Schema.String),
-        note: Schema.optional(Schema.String),
-    }))),
-    metric: Schema.optional(Schema.Struct({ value: Schema.String, caption: Schema.String })),
+        title: text(300),
+        href: Schema.optional(text(2048)),
+        note: Schema.optional(text(1000)),
+    })).check(Schema.isMaxLength(50))),
+    metric: Schema.optional(Schema.Struct({ value: text(120), caption: text(300) })),
 });
 
 export type Widget = typeof Widget.Type;
 
 export const Group = Schema.Struct({
-    id: Schema.String,
+    id: Id,
     title: Schema.String,
-    summary: Schema.String,
+    summary: text(1000),
     layout: Layout,
     widgets: Schema.Array(Widget),
 });
@@ -66,7 +81,7 @@ export const BoardDocument = Schema.Struct({
 export type BoardDocument = typeof BoardDocument.Type;
 
 export const Board = Schema.Struct({
-    slug: Schema.NonEmptyString,
+    slug: BoardSlug,
     /** 이 보드를 가진 테넌트. 고치고 지우는 판정이 이것을 본다(INV-RESEARCH-02) */
     tenantId: Schema.NonEmptyString,
     /** 만든 사람. 규칙을 들이기 전에 만든 보드에는 없다 */
@@ -74,8 +89,8 @@ export const Board = Schema.Struct({
     theme: BoardTheme,
     title: Schema.String,
     tagline: Schema.String,
-    relatedStockCode: Schema.optional(Schema.String),
-    relatedIndustrySlug: Schema.optional(Schema.String),
+    relatedStockCode: Schema.optional(text(20)),
+    relatedIndustrySlug: Schema.optional(text(100)),
     groups: Schema.Array(Group),
     /** 고칠 때마다 하나씩 는다. 저장이 열었을 때의 판을 들고 와 대조한다(INV-RESEARCH-03) */
     version: Schema.Number,

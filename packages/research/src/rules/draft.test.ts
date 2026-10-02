@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { customerActor } from "@investment/access/testing/actor";
 
-import { draftBoard, titleVerdict } from "./draft.ts";
+import { draftBoard } from "./draft.ts";
 
 describe("새 보드", () =>
 {
@@ -30,20 +30,11 @@ describe("새 보드", () =>
         });
     });
 
-    it("제목의 앞뒤 공백을 걷어 적는다", () =>
+    it("제목이 121자면 만들지 않는다", () =>
     {
-        expect(titleVerdict("  양극재  ")).toEqual({ _tag: "Ok", title: "양극재" });
-    });
-
-    it("공백만 적은 제목은 거절한다. 목록에서 가리킬 이름이 없다", () =>
-    {
-        expect(titleVerdict("   ")).toEqual({ _tag: "Blank" });
-        expect(draftBoard(customerActor("3"), { theme: "stocks", title: " " }, () => "id")).toEqual({ _tag: "BlankTitle" });
-    });
-
-    it("제목의 한도는 글자 수로 센다. 한글이 바이트로 세어져 먼저 잘리지 않는다", () =>
-    {
-        expect(titleVerdict("가".repeat(80))._tag).toBe("Ok");
-        expect(titleVerdict("가".repeat(81))).toEqual({ _tag: "TooLong", limit: 80 });
+        expect(draftBoard(customerActor("3"), { theme: "stocks", title: "가".repeat(120) }, () => "id")._tag).toBe("Drafted");
+        expect(draftBoard(customerActor("3"), { theme: "stocks", title: "가".repeat(121) }, () => "id")).toEqual({
+            _tag: "Rejected", message: "제목은 120자까지 쓸 수 있어요.",
+        });
     });
 });

@@ -6,6 +6,8 @@ import type { Board } from "@investment/research/domain/Board";
 import { BoardStore } from "@investment/research/ports/BoardStore";
 import { boardStoreMemory } from "@investment/research/testing/boardStoreMemory";
 
+import { RESEARCH_BOARDS } from "@/lib/research/catalog";
+
 import { createBoard, listBoards, openBoard, removeBoard, saveBoard, SaveBoardInput } from "./research";
 
 const seeded: Board = {
@@ -37,6 +39,7 @@ describe("리서치 보드의 조립", () =>
     it("INV-RESEARCH-04 만든 보드는 행위자의 테넌트에 서고 판 1 로 돌아온다", async () =>
     {
         const result = await run(createBoard(customerActor("3"), { theme: "stocks" }, () => "new-id"));
+
 
         expect(result).toMatchObject({ ok: true, board: { slug: "new-id", tenantId: "2", createdBy: "3", version: 1 } });
     });
@@ -71,15 +74,53 @@ describe("리서치 보드의 조립", () =>
         expect(result).toMatchObject({ ok: false, reason: "stale", current: 4 });
     });
 
-    it("공백만 적은 제목으로는 저장하지 않는다", async () =>
+    it("제목은 비어 있어도 저장한다. 지우고 다시 쓰는 사이에 자동 저장이 돈다", async () =>
+    {
+        const result = await run(saveBoard(customerActor("3"), { slug: "board-1", version: 1, title: "", tagline: "", groups: [] }));
+
+        expect(result).toMatchObject({ ok: true, board: { title: "", version: 2 } });
+    });
+
+    it("INV-RESEARCH-05 한도를 넘으면 쓰지 않고 무엇을 넘었는지 알려 준다", async () =>
     {
         const [result, title] = await run(Effect.all([
-            saveBoard(customerActor("3"), { slug: "board-1", version: 1, title: "   ", tagline: "", groups: [] }),
+            saveBoard(customerActor("3"), { slug: "board-1", version: 1, title: "가".repeat(121), tagline: "", groups: [] }),
             titleOf,
         ], { concurrency: 1 }));
 
-        expect(result).toMatchObject({ ok: false, reason: "title" });
+        expect(result).toMatchObject({ ok: false, reason: "limit", message: "제목은 120자까지 쓸 수 있어요." });
         expect(title).toBe("양극재");
+    });
+
+    it("시드 보드는 그대로 통과한다. 지금 저장된 보드가 저장되지 않으면 고칠 수 없다", async () =>
+    {
+        const stored = RESEARCH_BOARDS[0];
+        const decoded = Schema.decodeUnknownExit(SaveBoardInput)({
+            slug: stored.slug, version: 1, title: stored.title, tagline: stored.tagline, groups: stored.groups,
+        });
+
+        expect(Exit.isSuccess(decoded)).toBe(true);
+
+        const result = await run(
+            saveBoard(customerActor("3"), Exit.isSuccess(decoded) ? decoded.value : (undefined as never)),
+            [{ ...seeded, slug: stored.slug }],
+        );
+
+        expect(result).toMatchObject({ ok: true });
+    });
+
+    it("새로 만든 빈 보드는 그대로 통과한다. 만들자마자 저장이 거절되면 안 된다", async () =>
+    {
+        const created = await run(createBoard(customerActor("3"), { theme: "stocks" }, (prefix) => `${prefix}-new`));
+
+        expect(created.ok).toBe(true);
+
+        const board = created.ok ? created.board : (undefined as never);
+        const decoded = Schema.decodeUnknownExit(SaveBoardInput)({
+            slug: board.slug, version: board.version, title: board.title, tagline: board.tagline, groups: board.groups,
+        });
+
+        expect(Exit.isSuccess(decoded)).toBe(true);
     });
 
     it("INV-RESEARCH-02 구성원이 지우면 보드가 사라진다", async () =>

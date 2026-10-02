@@ -139,7 +139,7 @@ export function ResearchBoardEditor({
 
     async function onDelete()
     {
-        const result = await removeBoardAction({ slug: board.slug }, board.theme);
+        const result = await removeBoardAction({ slug: board.slug });
         if (!result.ok)
         {
             setError(result.message);
@@ -185,6 +185,7 @@ export function ResearchBoardEditor({
                         </Button>
                     </div>
                 )}
+                {!editable && <p className="text-xs text-muted-foreground">여기서 고친 내용은 저장하지 않아요.</p>}
                 {access === "sign-in" && (
                     <Button
                         variant="outline"

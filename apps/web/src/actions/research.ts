@@ -7,7 +7,7 @@ import type { BoardTheme } from "@investment/research/domain/Board";
 
 import { appAction } from "@/lib/action";
 import { boardStoreLayer } from "@/lib/boardsRuntime";
-import { isGateRefusal } from "@/lib/gateRefusal";
+import { REFUSAL_MESSAGES, refusalOf } from "@/lib/gateRefusal";
 import { researchBoardHref, researchBoardsHref } from "@/lib/nav";
 import {
     createBoard,
@@ -25,10 +25,9 @@ import {
  * (`usecases/research.ts`)이 ③ 행 단위 판정부터 잇는다.
  *
  * ⚠ **이 파일의 export 는 전부 공개 엔드포인트다.** 관문을 지나지 않은 함수를 여기서 내보내지 않는다.
- * ⚠ **로그인하지 않은 요청은 핸들러에 닿지 않는다.** 화면이 그 거절을 글로 보일 수 있게, 관문이 끊은 요청을
- *    여기서 어휘(`sign-in`)로 바꿔 돌려준다. 거절 자체는 관문이 이미 했고 이 바꿈이 문을 열지는 않는다.
+ * ⚠ **로그인하지 않은 요청과 꼴이 틀린 입력은 핸들러에 닿지 않는다.** 화면이 그 거절을 글로 보일 수 있게, 끊긴 요청을
+ *    여기서 어휘(`sign-in` · `invalid` · `failed`)로 바꿔 돌려준다(`lib/gateRefusal.ts`).
  */
-const SIGN_IN = { ok: false, reason: "sign-in", message: "로그인한 뒤에 할 수 있어요." } as const;
 
 const withBoards = <A, E>(program: Effect.Effect<A, E, import("@investment/research/ports/BoardStore").BoardStore>) =>
     Effect.flatMap(boardStoreLayer, (layer) => program.pipe(Effect.provide(layer)));
@@ -60,6 +59,22 @@ const RemoveInput = RemoveBoardInput;
 
 const remove = appAction({ input: RemoveInput }, ({ input, actor }) => withBoards(removeBoard(actor, input)));
 
+/**
+ * 관문이나 저장에서 끊긴 요청을 화면이 읽을 어휘로 바꾼다. 원문은 기록에만 남긴다.
+ * ⚠ 이 바꿈이 문을 열지는 않는다. 끊는 일은 관문과 저장소가 이미 했다.
+ */
+const refused = (label: string, cause: unknown) =>
+{
+    const reason = refusalOf(cause);
+
+    if (reason === "failed")
+    {
+        Effect.runFork(Effect.logError(`보드 ${label} 실패`, { module: "boards", cause: String(cause) }));
+    }
+
+    return { ok: false, reason, message: REFUSAL_MESSAGES[reason] } as const;
+};
+
 export async function createBoardAction(raw: unknown): Promise<BoardActionResult>
 {
     try
@@ -68,8 +83,7 @@ export async function createBoardAction(raw: unknown): Promise<BoardActionResult
     }
     catch (cause)
     {
-        if (isGateRefusal(cause)) return SIGN_IN;
-        throw cause;
+        return refused("만들기", cause);
     }
 }
 
@@ -81,12 +95,11 @@ export async function saveBoardAction(raw: unknown): Promise<BoardActionResult>
     }
     catch (cause)
     {
-        if (isGateRefusal(cause)) return SIGN_IN;
-        throw cause;
+        return refused("저장", cause);
     }
 }
 
-export async function removeBoardAction(raw: unknown, theme: BoardTheme): Promise<RemoveBoardResult>
+export async function removeBoardAction(raw: unknown): Promise<RemoveBoardResult>
 {
     try
     {
@@ -94,14 +107,15 @@ export async function removeBoardAction(raw: unknown, theme: BoardTheme): Promis
 
         if (result.ok)
         {
-            revalidatePath(researchBoardsHref(theme));
+            // 어느 테마의 보드였는지를 화면에서 받지 않는다. 그 값이 그대로 경로가 되기 때문이다. 목록 둘을 다 무효로 한다
+            revalidatePath(researchBoardsHref("stocks"));
+            revalidatePath(researchBoardsHref("real-estate"));
         }
 
         return result;
     }
     catch (cause)
     {
-        if (isGateRefusal(cause)) return SIGN_IN;
-        throw cause;
+        return refused("지우기", cause);
     }
 }

@@ -45,8 +45,10 @@ export const INVARIANTS: readonly Invariant[] = [
     },
     {
         id: "INV-RESEARCH-05",
-        statement: "보드의 문서는 정해진 모양일 때만 저장한다.",
-        rationale: "본문이 jsonb 칸 하나라 데이터베이스가 그 안을 막지 못한다. 모양이 틀린 문서는 화면을 통째로 깨뜨린다.",
+        statement: "보드의 문서는 정해진 모양과 한도 안에 있을 때만 저장한다. 링크는 http(s) 와 / 로 시작하는 것만 받는다.",
+        rationale:
+            "본문이 jsonb 칸 하나라 데이터베이스가 그 안을 막지 못한다. 모양이 틀린 문서는 화면을 통째로 깨뜨리고, "
+            + "한도가 없으면 보드 하나가 문서 칸을 끝없이 키우며, 화면은 링크를 그대로 href 에 넣는다.",
         kind: "데이터",
         enforcedAt: "입력 검증",
         status: "enforced",
