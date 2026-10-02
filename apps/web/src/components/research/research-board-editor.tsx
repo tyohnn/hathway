@@ -176,12 +176,12 @@ export function ResearchBoardEditor({
                 {editable && (
                     <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xs text-muted-foreground" aria-live="polite">
-                            {saveState === "saving" && "저장 중"}
+                            {saveState === "saving" && "저장하는 중"}
                             {saveState === "saved" && "저장됨"}
                             {saveState === "error" && (error ?? "저장하지 못했어요")}
                         </p>
                         <Button type="button" variant="ghost" size="sm" onClick={() => setConfirmDelete(true)}>
-                            보드 삭제
+                            보드 삭제하기
                         </Button>
                     </div>
                 )}
@@ -203,14 +203,14 @@ export function ResearchBoardEditor({
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>이 보드를 삭제할까요?</DialogTitle>
-                        <DialogDescription>그룹과 칸도 함께 지워져요. 되돌릴 수 없어요.</DialogDescription>
+                        <DialogDescription>그룹과 카드도 함께 삭제돼요. 삭제한 보드는 되살릴 수 없어요.</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setConfirmDelete(false)}>
                             닫기
                         </Button>
                         <Button type="button" variant="destructive" onClick={() => void onDelete()}>
-                            삭제
+                            삭제하기
                         </Button>
                     </DialogFooter>
                 </DialogContent>

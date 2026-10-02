@@ -19,7 +19,7 @@ export function TrackingTimeline({ trackings }: { trackings: TrackingFact[] })
 
     return (
         <section>
-            <SectionHeader level={2} title="사실 시계열" />
+            <SectionHeader level={2} title="주요 사실" />
             <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {[...byTopic.entries()].map(([topic, facts]) => (
                     <div key={topic} className="rounded-xl border border-border bg-card p-4">

@@ -27,7 +27,7 @@ export function SectionsList({
         <section>
             <SectionHeader level={2} title="사업보고서 주석·사업의 내용" />
             <p className="mt-1 text-xs text-muted-foreground">
-                ★주석 · ☆사업의 내용 — 수치 인용 전 원문 대조 원칙 (표 서식 일부 손실 가능)
+                ★ 주석 · ☆ 사업의 내용
             </p>
             <div className="mt-3 space-y-3">
                 {[...byFiling.entries()].map(([rceptNo, items]) => (

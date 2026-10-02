@@ -100,9 +100,10 @@ export function NineCellMatrix({
                 nail,
             });
         }
-        catch (e)
+        catch
         {
-            return { error: e instanceof Error ? e.message : "계산 실패" };
+            // 계산이 던진 오류의 원문은 코드의 말이라 화면에 싣지 않는다
+            return { error: "적정주가를 계산하지 못했어요. 가정 값을 바꿔 주세요." };
         }
     }, [quote, defaults.baseRevenue, opm, growths, pers, nail]);
 
@@ -156,7 +157,7 @@ export function NineCellMatrix({
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-md border-separate border-spacing-1 text-sm">
                             <caption className="caption-bottom pt-3 text-left text-xs text-muted-foreground">
-                                칸을 누르면 낙점이 바뀝니다. 초록 = 상승여력 200% 이상(교재 매수 기준).
+                                칸을 누르면 그 칸의 가정으로 다시 계산해요. 초록색 칸은 상승여력이 200% 이상이에요.
                             </caption>
                             <thead>
                                 <tr>
@@ -230,8 +231,8 @@ export function NineCellMatrix({
                     <div>
                         <h3 className="text-sm font-semibold">가정</h3>
                         <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                            기본값은 공시 실적에서 뽑은 출발점입니다. 산업 분석(5단계)의 시장·점유율
-                            판단으로 교체하세요.
+                            기본값은 공시 실적으로 계산했어요. 산업 분석(5단계)에서 판단한 값으로 바꿔
+                            보세요.
                         </p>
                     </div>
 
@@ -310,10 +311,10 @@ export function NineCellMatrix({
             </div>
 
             <p className="text-[11px] leading-relaxed text-muted-foreground">
-                이 계산은 교재 방법론(10장 3년 후 적정주가 5단계) 연습이며 투자 권유가 아닙니다.
-                모든 값은 위 가정에 따른 추정이고, 가정이 바뀌면 낙점 칸도 바뀝니다.{" "}
+                교재 10장의 방법을 연습하는 계산이에요. 투자 권유가 아니에요. 모든 값은 위 가정으로
+                추정했어요.{" "}
                 {quote.manual ? (
-                    <>시세는 수동 입력값입니다.</>
+                    <>시세는 직접 입력한 값이에요.</>
                 ) : (
                     <>
                         시세 기준일 {quote.date || "—"} · 출처{" "}

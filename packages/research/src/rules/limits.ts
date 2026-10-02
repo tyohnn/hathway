@@ -28,9 +28,9 @@ const over = (message: string): LimitVerdict => ({ _tag: "Over", message });
 const MESSAGES = {
     title: `제목은 ${BOARD_LIMITS.title}자까지 쓸 수 있어요.`,
     tagline: `설명은 ${BOARD_LIMITS.tagline}자까지 쓸 수 있어요.`,
-    body: `본문은 ${BOARD_LIMITS.body.toLocaleString("ko-KR")}자까지 쓸 수 있어요.`,
+    body: `노트는 ${BOARD_LIMITS.body.toLocaleString("ko-KR")}자까지 쓸 수 있어요.`,
     groups: `그룹은 ${BOARD_LIMITS.groups}개까지 만들 수 있어요.`,
-    widgets: `한 그룹에는 칸을 ${BOARD_LIMITS.widgets}개까지 둘 수 있어요.`,
+    widgets: `한 그룹에는 카드를 ${BOARD_LIMITS.widgets}개까지 둘 수 있어요.`,
     href: "링크는 https:// 나 / 로 시작해야 해요.",
 } as const;
 

@@ -78,7 +78,7 @@ export async function ValuationBoard({
     {
         return (
             <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                매출 실적이 없어 5단계를 시작할 수 없습니다. ①단계의 기준연도 매출이 필요합니다.
+                매출 실적이 공시되면 적정주가를 계산할 수 있어요.
             </p>
         );
     }
@@ -88,23 +88,18 @@ export async function ValuationBoard({
     {
         return (
             <div className="rounded-xl border border-dashed border-border p-6 text-sm sm:p-8">
-                <h2 className="font-semibold">시세를 불러오지 못했습니다</h2>
-                <p className="mt-1.5 leading-relaxed text-muted-foreground">
-                    ⑤단계 적정주가는 <span className="font-mono">적정시총 ÷ 현재시총 × 현재주가</span>{" "}
-                    라서 시세 없이는 상승여력을 낼 수 없습니다. 시세는 공시 데이터가 아니라 외부
-                    비공식 경로로 받는데, 그쪽이 응답하지 않았습니다.
-                </p>
+                <h2 className="font-semibold">시세를 불러오지 못했어요</h2>
                 <p className="mt-3 text-xs text-muted-foreground">
-                    잠시 후 새로고침하거나{" "}
+                    잠시 뒤 새로고침해 주세요. 시세는{" "}
                     <a
                         href={quoteSourceUrl(stockCode)}
                         target="_blank"
                         rel="noreferrer"
                         className="text-primary underline-offset-2 hover:underline"
                     >
-                        다음금융에서 직접 확인
+                        다음금융
                     </a>
-                    하세요. 나머지 단계는 정상 동작합니다.
+                    에서도 볼 수 있어요.
                 </p>
             </div>
         );

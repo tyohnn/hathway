@@ -26,7 +26,7 @@ const itemOf = (company: CompanyIndex): ListItem => ({
 });
 
 /**
- * 첫 화면. 종목을 찾는 칸과 최근 본 종목과 적재된 종목이 선다. 제목과 구획과 목록은 블록이 그린다.
+ * 첫 화면. 종목을 찾는 칸과 최근 본 종목과 전체 종목이 선다. 제목과 구획과 목록은 블록이 그린다.
  *
  * ⚠ 검색 칸은 블록이 아니라 종목 검색 창(`SymbolCommand`)을 여는 단추다. 입력을 받는 칸처럼 보이지만 누르면 창이 열린다.
  */
@@ -46,10 +46,7 @@ export function HomeLanding()
 
     return (
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
-            <PageHeader
-                title="종목을 검색해 분석을 시작해요"
-                description="이름이나 종목코드로 찾아요. 종목과 분석 페이지는 본문 위 선택기에서 바꿔요."
-            />
+            <PageHeader title="종목 검색" />
 
             <SymbolCommandTrigger
                 type="button"
@@ -68,12 +65,12 @@ export function HomeLanding()
             )}
 
             <section className="flex flex-col gap-2">
-                <SectionHeader level={2} title="적재된 종목" {...(companies.length > 0 ? { count: companies.length } : {})} />
+                <SectionHeader level={2} title="전체 종목" {...(companies.length > 0 ? { count: companies.length } : {})} />
                 {companies.length === 0
                     ? (
                         <EmptyState
                             title="종목 목록을 불러오지 못했어요"
-                            description="잠시 뒤 다시 열어 주세요. 계속되면 서버의 DB 접속 설정을 확인해 주세요."
+                            description="잠시 뒤 새로고침해 주세요."
                         />
                     )
                     : (

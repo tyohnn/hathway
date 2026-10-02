@@ -25,8 +25,7 @@ export function AgentCta({ board }: { board: AnalysisBoardMeta })
                 </p>
             )}
             <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-muted-foreground">
-                이 단계는 공시 숫자만으로는 판정할 수 없어 정성 분석이 필요합니다. 아래 위젯은
-                무엇을 채워야 하는지를 보여주는 골격입니다.
+                공시 숫자만으로는 판단할 수 없는 단계예요. 아래 항목을 따로 조사해 판단해 주세요.
             </p>
         </section>
     );

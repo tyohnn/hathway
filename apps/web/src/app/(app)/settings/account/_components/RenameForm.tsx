@@ -43,7 +43,7 @@ export function RenameForm({ account }: { readonly account: { readonly email: st
                 <Field>
                     <FieldLabel htmlFor="account-email">이메일</FieldLabel>
                     <Input id="account-email" value={account?.email ?? ""} disabled={waiting} readOnly />
-                    <FieldDescription>로그인한 계정의 주소예요. 여기서는 바꿀 수 없어요.</FieldDescription>
+                    <FieldDescription>로그인한 계정의 주소예요.</FieldDescription>
                 </Field>
             </FieldGroup>
             {saved ? <p role="status" className="text-muted-foreground text-sm">저장했어요.</p> : null}

@@ -50,11 +50,10 @@ export function ResearchBoardList({
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
             <PageHeader
                 title="리서치 보드"
-                description="주제마다 그룹을 만들고 차트와 뉴스를 모아요."
                 actions={signedIn
                     ? (
                         <Button type="button" size="sm" disabled={pending} onClick={() => void onCreate()}>
-                            {pending ? "만드는 중" : "새 보드"}
+                            {pending ? "만드는 중" : "보드 만들기"}
                         </Button>
                     )
                     : (
@@ -82,7 +81,7 @@ export function ResearchBoardList({
                 empty={(
                     <EmptyState
                         title="아직 보드가 없어요"
-                        description={signedIn ? "새 보드를 만들어 시작해 보세요." : "로그인하면 보드를 만들 수 있어요."}
+                        description={signedIn ? undefined : "로그인하면 보드를 만들 수 있어요."}
                     />
                 )}
             />

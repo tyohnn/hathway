@@ -21,10 +21,10 @@ export default async function StockAnalysisListPage()
 
     return (
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-            <PageHeader title="종목 분석" description="DART 공시와 사실 시계열을 적재한 종목이에요. 카드를 누르면 그 종목의 Snapshot 을 열어요." />
+            <PageHeader title="종목 분석" />
 
             {companies.length === 0 ? (
-                <EmptyState title="적재한 종목이 아직 없어요" />
+                <EmptyState title="아직 종목이 없어요" />
             ) : (
                 <StaggerReveal className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {companies

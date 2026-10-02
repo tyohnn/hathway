@@ -10,7 +10,6 @@ import { cn } from "@/lib/cn";
 import { Button } from "@investment/ui/components/button";
 import {
     Command,
-    CommandEmpty,
     CommandGroup,
     CommandItem,
     CommandList,
@@ -45,7 +44,7 @@ export function ResearchWidgetCard({
                     <button
                         type="button"
                         className="research-widget-drag mt-0.5 cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing"
-                        aria-label="위젯 위치 이동"
+                        aria-label="카드 옮기기"
                     >
                         <DotsSixVerticalIcon className="size-4" />
                     </button>
@@ -55,8 +54,8 @@ export function ResearchWidgetCard({
                         type="button"
                         draggable
                         className="mt-0.5 cursor-grab text-[10px] text-muted-foreground hover:text-foreground"
-                        aria-label="다른 그룹으로 끌기"
-                        title="다른 그룹으로 끌기"
+                        aria-label="끌어서 다른 그룹으로 옮기기"
+                        title="끌어서 다른 그룹으로 옮기기"
                         onDragStart={(event) =>
                         {
                             event.dataTransfer.setData(WIDGET_MIME, widget.id);
@@ -70,7 +69,7 @@ export function ResearchWidgetCard({
                     <input
                         className="w-full truncate bg-transparent text-sm font-semibold outline-none"
                         value={widget.title}
-                        aria-label="위젯 제목"
+                        aria-label="카드 제목"
                         readOnly={readOnly}
                         onChange={(event) => onChange(renameWidget(board, widget.id, { title: event.target.value }))}
                     />
@@ -80,12 +79,11 @@ export function ResearchWidgetCard({
                 </div>
                 {!readOnly && otherGroups.length > 0 && (
                     <Popover>
-                        <PopoverTrigger render={<Button type="button" variant="ghost" size="xs" />}>그룹</PopoverTrigger>
+                        <PopoverTrigger render={<Button type="button" variant="ghost" size="xs" />}>그룹 옮기기</PopoverTrigger>
                         <PopoverContent className="w-56 p-0" align="end">
                             <Command>
                                 <CommandList>
-                                    <CommandEmpty>다른 그룹 없음</CommandEmpty>
-                                    <CommandGroup heading="이 칸을 옮길 그룹">
+                                    <CommandGroup heading="옮길 그룹">
                                         {otherGroups.map((group) => (
                                             <CommandItem
                                                 key={group.id}
@@ -106,7 +104,7 @@ export function ResearchWidgetCard({
                         type="button"
                         variant="ghost"
                         size="icon-xs"
-                        aria-label="위젯 삭제"
+                        aria-label="카드 삭제하기"
                         onClick={() => onChange(removeWidget(board, widget.id))}
                     >
                         <TrashIcon className="size-3.5" />
@@ -127,7 +125,7 @@ export function ResearchWidgetCard({
                     <textarea
                         className="min-h-16 w-full resize-none bg-transparent text-xs leading-relaxed text-muted-foreground outline-none"
                         value={widget.body ?? ""}
-                        placeholder={readOnly ? undefined : "메모"}
+                        placeholder={readOnly ? undefined : "노트 내용"}
                         readOnly={readOnly}
                         onChange={(event) => onChange(renameWidget(board, widget.id, { body: event.target.value }))}
                     />
@@ -155,6 +153,7 @@ export function ResearchWidgetCard({
                 {widget.href && (
                     <Link
                         href={widget.href}
+                        aria-label={widget.hrefLabel ? undefined : `${widget.title} 열기`}
                         className="mt-2 inline-flex text-xs font-medium text-primary underline-offset-2 hover:underline"
                     >
                         {widget.hrefLabel ?? "열기"}

@@ -1,7 +1,6 @@
 import { PageHeader } from "@investment/blocks/page-header";
 import { SectionHeader } from "@investment/blocks/section-header";
-import { Badge } from "@investment/ui/components/badge";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@investment/ui/components/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@investment/ui/components/card";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ksicDivision } from "@investment/schema";
@@ -19,7 +18,7 @@ import { VerdictBadge } from "./_components/verdict";
 
 export const metadata: Metadata = {
     title: "산업 지도",
-    description: "KSIC 중분류로 덮은 전 상장사 위에, 분석이 진행된 산업을 겹쳐 놓은 지도",
+    description: "상장사 전체를 업종별로 나누고 분석한 산업을 표시한 지도",
 };
 
 // 빌드 환경에는 DB 자격증명이 없으므로 프리렌더가 불가능하다 — revalidate 를 두면
@@ -64,16 +63,13 @@ export default async function IndustryMapPage()
 
     return (
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-10">
-            <PageHeader
-                title="산업 지도"
-                description={`무엇을 분석할지 고르는 화면이에요. 아래 격자는 KSIC 중분류로 접은 전 상장사 ${totalListed.toLocaleString()}개사이고, 그 위에 밸류체인까지 정의한 산업을 겹쳐 놓았어요. 색이 없는 칸은 아직 들여다보지 않은 곳이에요.`}
-            />
+            <PageHeader title="산업 지도" />
 
             <section className="flex flex-col gap-4">
                 <SectionHeader
                     level={2}
                     title="분석한 산업"
-                    description={`경계와 밸류체인 단계를 손으로 확정한 산업이에요. 소속 ${coveredCompanies}개사 / 상장 ${totalListed.toLocaleString()}개사.`}
+                    description={`상장 ${totalListed.toLocaleString()}개사 가운데 ${coveredCompanies}개사를 분석했어요.`}
                 />
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     {industryMembers.map(({ industry, companies }) => (
@@ -85,8 +81,8 @@ export default async function IndustryMapPage()
             <section className="flex flex-col gap-6">
                 <SectionHeader
                     level={2}
-                    title="KSIC 중분류 격자"
-                    description="한 칸이 밸류체인 하나라는 뜻은 아니에요. 행정 분류라서 이차전지 28개사만 해도 일곱 칸에 흩어져 있고, 한 칸에는 그 산업과 무관한 회사가 훨씬 많아요. 칸의 배지는 그 칸에 그 산업 종목이 몇 개 있는지를 뜻해요."
+                    title="업종별 상장사"
+                    description="표준산업분류로 나눈 칸이라 한 산업의 회사가 여러 칸에 흩어져 있어요. 색이 있는 칸에는 분석한 산업의 회사 수를 함께 적었어요."
                 />
                 <SectorGrid divisions={divisions} coverage={coverage} />
             </section>
@@ -111,11 +107,10 @@ function IndustryCard({ industry, listed }: { industry: Industry; listed: number
                 <CardHeader>
                     <CardTitle role="heading" aria-level={3} className="group-hover:text-primary">{industry.name}</CardTitle>
                     <CardDescription>{industry.tagline}</CardDescription>
-                    <CardAction><Badge variant="secondary">채 {industry.sieveStage}단계</Badge></CardAction>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
             <p className="text-xs text-muted-foreground">
-                {SIEVE_LABELS[industry.sieveStage]}까지 진행 · 기준일 {industry.asOf}
+                {SIEVE_LABELS[industry.sieveStage]}까지 분석 · {industry.asOf} 기준
             </p>
 
             <dl className="grid grid-cols-3 gap-3 text-sm">
@@ -126,8 +121,8 @@ function IndustryCard({ industry, listed }: { industry: Industry; listed: number
                     </dd>
                 </div>
                 <div>
-                    <dt className="text-xs text-muted-foreground">체인 단계</dt>
-                    <dd className="font-medium tabular-nums">{industry.stages.length}</dd>
+                    <dt className="text-xs text-muted-foreground">밸류체인 단계</dt>
+                    <dd className="font-medium tabular-nums">{industry.stages.length}개</dd>
                 </div>
                 <div>
                     <dt className="text-xs text-muted-foreground">후보 풀 접두</dt>

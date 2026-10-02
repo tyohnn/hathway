@@ -148,7 +148,7 @@ function SlideshowBar({
                     type="button"
                     variant="ghost"
                     size="icon-xs"
-                    aria-label="이전 슬라이드"
+                    aria-label="이전 그룹"
                     onClick={() => go(-1)}
                 >
                     <CaretLeftIcon className="size-3.5" />
@@ -178,7 +178,7 @@ function SlideshowBar({
                     type="button"
                     variant="ghost"
                     size="icon-xs"
-                    aria-label="다음 슬라이드"
+                    aria-label="다음 그룹"
                     onClick={() => go(1)}
                 >
                     <CaretRightIcon className="size-3.5" />
@@ -191,7 +191,7 @@ function SlideshowBar({
                         variant={innerMode === "rgl" ? "secondary" : "ghost"}
                         onClick={() => onInnerMode("rgl")}
                     >
-                        RGL
+                        격자
                     </Button>
                     <Button
                         type="button"
@@ -199,13 +199,13 @@ function SlideshowBar({
                         variant={innerMode === "plain" ? "secondary" : "ghost"}
                         onClick={() => onInnerMode("plain")}
                     >
-                        일반
+                        목록
                     </Button>
                 </div>
                 {onAddGroup && (
                     <Button type="button" variant="outline" size="xs" onClick={onAddGroup}>
                         <PlusIcon className="size-3.5" />
-                        그룹
+                        그룹 추가
                     </Button>
                 )}
             </div>

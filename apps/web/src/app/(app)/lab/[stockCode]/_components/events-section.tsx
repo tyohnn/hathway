@@ -20,7 +20,7 @@ export function EventsSection({ events }: { events: DartEvent[] })
 
     return (
         <section>
-            <SectionHeader level={2} title="주요사항 이벤트" />
+            <SectionHeader level={2} title="주요사항 보고" />
             <div className="mt-3 space-y-6">
                 {[...byType.entries()].map(([eventType, list]) => (
                     <div key={eventType}>
@@ -42,12 +42,12 @@ export function EventsSection({ events }: { events: DartEvent[] })
                                             <span>{formatKoDate(e.rcept_dt)}</span>
                                             {e.rcept_no && (
                                                 <a href={dartUrl(e.rcept_no)} target="_blank" rel="noreferrer" className="hover:underline">
-                                                    DART 원문 ↗
+                                                    DART 원문 열기
                                                 </a>
                                             )}
                                         </div>
                                         {entries.length === 0 ? (
-                                            <p className="mt-2 text-xs text-muted-foreground">세부 항목 없음</p>
+                                            <p className="mt-2 text-xs text-muted-foreground">세부 내용이 없어요</p>
                                         ) : (
                                             <dl className="mt-2 grid grid-cols-1 gap-x-4 gap-y-1.5 text-sm sm:grid-cols-2">
                                                 {entries.map(([key, value]) =>
@@ -55,7 +55,7 @@ export function EventsSection({ events }: { events: DartEvent[] })
                                                     const spec = fieldSpec("event", eventType, key);
                                                     return (
                                                         <div key={key} className="min-w-0">
-                                                            <dt className="truncate text-xs text-muted-foreground" title={key}>
+                                                            <dt className="truncate text-xs text-muted-foreground">
                                                                 {spec.label}
                                                             </dt>
                                                             <dd className="truncate font-medium" title={String(value)}>

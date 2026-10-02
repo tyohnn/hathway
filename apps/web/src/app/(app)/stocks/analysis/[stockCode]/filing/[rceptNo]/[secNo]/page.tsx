@@ -35,7 +35,7 @@ export default async function FilingSectionPage(
                 href={analysisHref(stockCode, "primary")}
                 className="text-sm text-muted-foreground hover:text-foreground"
             >
-                ← {stockCode} 1차 자료로
+                ← 1차 자료로 돌아가기
             </Link>
 
             <div className="rounded-xl border border-border bg-card p-5">
@@ -59,8 +59,8 @@ export default async function FilingSectionPage(
                     DART 원문 열기 →
                 </a>
                 <p className="mt-3 rounded-lg bg-warning-soft px-3 py-2 text-xs text-warning">
-                    자동 변환 결과이며 표 서식이 원문과 다를 수 있다. 수치를 인용하기 전에 위 원문 링크와
-                    대조한다.
+                    자동으로 변환한 글이라 표가 원문과 다를 수 있어요. 숫자를 인용하기 전에 DART 원문과
+                    대조해 주세요.
                 </p>
             </div>
 

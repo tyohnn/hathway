@@ -24,6 +24,6 @@ export const refusalOf = (cause: unknown): Refusal =>
 
 export const REFUSAL_MESSAGES: Record<Refusal, string> = {
     "sign-in": "로그인한 뒤에 할 수 있어요.",
-    invalid: "요청을 처리하지 못했어요. 새로 고친 뒤 다시 해 주세요.",
+    invalid: "문제가 생겼어요. 새로고침한 뒤 다시 해 주세요.",
     failed: "지금은 처리하지 못했어요. 잠시 뒤 다시 해 주세요.",
 };

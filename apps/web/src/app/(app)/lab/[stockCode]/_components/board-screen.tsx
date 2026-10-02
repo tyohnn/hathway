@@ -61,8 +61,7 @@ export async function BoardScreen({
                         <section>
                             <SectionHeader level={2} title="재무 추이" />
                             <p className="mt-1 text-xs text-muted-foreground">
-                                연도별 매출·영업이익(막대, 좌축) · 영업이익률(선, 우축) —{" "}
-                                {annual[0].bsns_year}~{annual[annual.length - 1].bsns_year}
+                                {annual[0].bsns_year}~{annual[annual.length - 1].bsns_year}년
                             </p>
                             <div className="mt-3 rounded-xl border border-border bg-card p-4">
                                 <FinancialChart data={annual} />

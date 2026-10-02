@@ -73,7 +73,7 @@ export function SectorGrid({
                                             />
                                         </div>
                                         <p className="mt-1.5 text-[10px] text-muted-foreground">
-                                            KOSPI {cell.kospi} · KOSDAQ {cell.kosdaq}
+                                            코스피 {cell.kospi} · 코스닥 {cell.kosdaq}
                                         </p>
                                         {covered && (
                                             <ul className="mt-2 space-y-0.5">

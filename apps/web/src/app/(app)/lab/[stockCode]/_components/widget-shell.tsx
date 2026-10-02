@@ -71,7 +71,7 @@ export function WidgetShell({
 
             {visibleTextbooks.length > 0 && (
                 <CardFooter className="flex-wrap gap-x-3 gap-y-1 text-xs">
-                    <span className="text-muted-foreground">방법론</span>
+                    <span className="text-muted-foreground">교재</span>
                     {visibleTextbooks.map((t) => (
                         <Link
                             key={t.href}

@@ -79,7 +79,7 @@ describe("보드가 넘지 못하는 한도 (INV-RESEARCH-05)", () =>
     it("한 그룹의 칸이 51개면 받지 않는다", () =>
     {
         expect(limitVerdict(change({ groups: [group({ widgets: Array.from({ length: 51 }, () => widget()) })] }))).toEqual({
-            _tag: "Over", message: "한 그룹에는 칸을 50개까지 둘 수 있어요.",
+            _tag: "Over", message: "한 그룹에는 카드를 50개까지 둘 수 있어요.",
         });
     });
 
@@ -91,7 +91,7 @@ describe("보드가 넘지 못하는 한도 (INV-RESEARCH-05)", () =>
     it("노트 본문이 20001자면 받지 않는다", () =>
     {
         expect(limitVerdict(change({ groups: [group({ widgets: [widget({ body: "가".repeat(20001) })] })] }))).toEqual({
-            _tag: "Over", message: "본문은 20,000자까지 쓸 수 있어요.",
+            _tag: "Over", message: "노트는 20,000자까지 쓸 수 있어요.",
         });
     });
 

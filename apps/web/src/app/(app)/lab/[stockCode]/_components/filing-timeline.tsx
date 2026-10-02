@@ -9,8 +9,7 @@ export function FilingTimeline({ filings }: { filings: Filing[] })
 
     return (
         <section>
-            <SectionHeader level={2} title="공시 타임라인" />
-            <p className="mt-1 text-xs text-muted-foreground">최근 {filings.length}건</p>
+            <SectionHeader level={2} title="최근 공시" count={filings.length} />
             <div className="mt-3 overflow-x-auto rounded-xl border border-border">
                 <table className="w-full min-w-[560px] text-sm">
                     <thead className="bg-muted/50 text-xs text-muted-foreground">

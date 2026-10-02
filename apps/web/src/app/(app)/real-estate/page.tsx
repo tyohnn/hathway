@@ -10,10 +10,9 @@ export default function RealEstateHomePage()
 {
     return (
         <div className="mx-auto w-full max-w-2xl">
-            <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">테마</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight">부동산</h1>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                주식과 같은 섹션 뼈대만 열어 두었습니다. 종목·매크로·뉴스·보드 데이터는 아직 없습니다.
+                지금은 리서치 보드를 쓸 수 있어요.
             </p>
             <ul className="mt-8 divide-y divide-border rounded-xl border border-border bg-card">
                 {THEME_SECTIONS.map((section) => (

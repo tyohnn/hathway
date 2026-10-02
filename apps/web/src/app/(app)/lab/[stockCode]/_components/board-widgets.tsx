@@ -46,11 +46,9 @@ function revenueCagr(annual: AnnualSummary[]): number | null
 function TrackingBoundWidget({
     widgetId,
     data,
-    emptyHint,
 }: {
     widgetId: WidgetId;
     data: BoardData;
-    emptyHint?: string;
 })
 {
     const meta = WIDGETS[widgetId];
@@ -61,7 +59,7 @@ function TrackingBoundWidget({
         ? `${latest.fact}${latest.value_text ? ` (${latest.value_text})` : ""}`
         : meta.claim;
     const evidence = latest
-        ? `${latest.source} · ${facts.length}건 시계열`
+        ? `${latest.source} · 관련 사실 ${facts.length}건`
         : undefined;
 
     return (
@@ -70,25 +68,16 @@ function TrackingBoundWidget({
             claim={empty ? meta.claim : claim}
             evidence={evidence}
             empty={empty}
-            emptyHint={emptyHint ?? "해당 주제 트래킹 사실 없음"}
         >
             <TrackingFactList facts={facts} />
         </WidgetShell>
     );
 }
 
-function PlaceholderWidget({
-    widgetId,
-    emptyHint,
-}: {
-    widgetId: WidgetId;
-    emptyHint?: string;
-})
+function PlaceholderWidget({ widgetId }: { widgetId: WidgetId })
 {
     const meta = WIDGETS[widgetId];
-    return (
-        <WidgetShell meta={meta} empty emptyHint={emptyHint ?? "데이터 없음 / 수집 필요"} />
-    );
+    return <WidgetShell meta={meta} empty />;
 }
 
 function MarketShareFrameWidget({ data }: { data: BoardData })
@@ -99,7 +88,7 @@ function MarketShareFrameWidget({ data }: { data: BoardData })
     const empty = !latest?.revenue;
     const claim = empty
         ? meta.claim
-        : `최근 매출 ${formatWon(latest.revenue)}원${cagr != null ? ` · ${latest.bsns_year - (data.annual[0]?.bsns_year ?? latest.bsns_year)}년 CAGR ${formatPercent(cagr)}` : ""} — 시장×점유율 가정은 별도 입력`;
+        : `최근 매출 ${formatWon(latest.revenue)}원${cagr != null ? ` · ${latest.bsns_year - (data.annual[0]?.bsns_year ?? latest.bsns_year)}년 CAGR ${formatPercent(cagr)}` : ""}`;
     const evidence = latest
         ? `공시 연간 요약 ${data.annual[0]?.bsns_year}–${latest.bsns_year}`
         : undefined;
@@ -116,9 +105,6 @@ function MarketShareFrameWidget({ data }: { data: BoardData })
                         <dt className="text-xs text-muted-foreground">매출 CAGR</dt>
                         <dd className="font-medium tabular-nums">{formatPercent(cagr)}</dd>
                     </div>
-                    <div className="col-span-2 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
-                        시장규모·점유율 가정 입력 UI는 후속. 현재는 실적 골격만 표시.
-                    </div>
                 </dl>
             )}
         </WidgetShell>
@@ -134,8 +120,8 @@ function CfInvestingWidget({ data }: { data: BoardData })
     const revByYear = new Map(data.annual.map((a) => [a.bsns_year, a.revenue]));
     const claim = empty
         ? meta.claim
-        : `${latest.bsns_year}년 투자CF ${formatWon(latest.amount)}원`;
-    const evidence = empty ? undefined : `fin_periods · cf_investing · ${rows.length}개년`;
+        : `${latest.bsns_year}년 투자활동 현금흐름 ${formatWon(latest.amount)}원`;
+    const evidence = empty ? undefined : `공시 현금흐름표 · ${rows.length}개년`;
 
     return (
         <WidgetShell meta={meta} claim={claim} evidence={evidence} empty={empty}>
@@ -171,7 +157,7 @@ function KeyFourMetricsWidget({ data }: { data: BoardData })
     const latest = empty ? null : data.annual[data.annual.length - 1];
     const cagr = revenueCagr(data.annual);
     const claim = latest
-        ? `${latest.bsns_year}년 기준 매출성장·OPM·ROE·부채`
+        ? `${latest.bsns_year}년 매출 성장 · 영업이익률 · ROE · 부채비율`
         : meta.claim;
     const evidence = latest
         ? `연간 요약 ${data.annual[0].bsns_year}–${latest.bsns_year}`
@@ -200,7 +186,7 @@ function KeyFourMetricsWidget({ data }: { data: BoardData })
                         <li key={r.bsns_year} className="flex justify-between gap-2">
                             <span>{r.bsns_year}</span>
                             <span className="tabular-nums">
-                                매출 {formatWon(r.revenue)} · OPM {formatPercent(r.opm_pct)}
+                                매출 {formatWon(r.revenue)} · 영업이익률 {formatPercent(r.opm_pct)}
                             </span>
                         </li>
                     ))}
@@ -222,11 +208,11 @@ function MarginThreeLayersWidget({ data }: { data: BoardData })
     if (latest && prev && latest.opm_pct != null && prev.opm_pct != null)
     {
         const delta = latest.opm_pct - prev.opm_pct;
-        claim = `OPM ${formatPercent(prev.opm_pct)} → ${formatPercent(latest.opm_pct)} (${delta >= 0 ? "+" : ""}${formatPercent(delta)}) — 3층 분해는 트래킹·가동률 보강 필요`;
+        claim = `영업이익률 ${formatPercent(prev.opm_pct)} → ${formatPercent(latest.opm_pct)} (${delta >= 0 ? "+" : ""}${formatPercent(delta)})`;
     }
     else if (latest)
     {
-        claim = `최근 OPM ${formatPercent(latest.opm_pct)} — 가동률·원자재·가격결정권 층위는 추가 수집`;
+        claim = `최근 영업이익률 ${formatPercent(latest.opm_pct)}`;
     }
 
     return (
@@ -235,7 +221,7 @@ function MarginThreeLayersWidget({ data }: { data: BoardData })
             claim={claim}
             evidence={
                 latest
-                    ? `공시 OPM · 이익률-구조 트래킹 ${facts.length}건`
+                    ? `공시 영업이익률 · 관련 사실 ${facts.length}건`
                     : undefined
             }
             empty={empty}
@@ -271,21 +257,20 @@ function ResourceAllocationWidget({ data }: { data: BoardData })
             : null;
 
     const claim = hasCapex
-        ? `투자CF가 매출의 ${pct != null ? formatPercent(pct) : "—"} — 매출원가·판관·인건 비중은 수집 후 합산`
+        ? `투자활동 현금흐름이 매출의 ${pct != null ? formatPercent(pct) : "—"}`
         : meta.claim;
 
     return (
         <WidgetShell
             meta={meta}
             claim={claim}
-            evidence={hasCapex ? `투자CF ${rows.length}개년 · 트래킹 ${facts.length}건` : undefined}
+            evidence={hasCapex ? `투자활동 현금흐름 ${rows.length}개년 · 관련 사실 ${facts.length}건` : undefined}
             empty={empty}
-            emptyHint="매출원가·판관·인건·CAPEX 매출 대비 비중 수집 필요"
         >
             {hasCapex && (
                 <div className="mb-3">
                     <p className="mb-1.5 text-xs font-medium text-muted-foreground">
-                        CAPEX 대리(투자활동CF) / 매출
+                        매출 대비 투자활동 현금흐름
                     </p>
                     <ul className="space-y-1 text-sm">
                         {rows.slice(-5).map((r) =>
@@ -313,9 +298,6 @@ function ResourceAllocationWidget({ data }: { data: BoardData })
                 </div>
             )}
             {facts.length > 0 && <TrackingFactList facts={facts} limit={4} />}
-            <p className="mt-2 text-[11px] text-muted-foreground">
-                판관·인건·R&D 계정은 후속 ingest. 지금은 투자 집행으로 자원 배분 방향을 본다.
-            </p>
         </WidgetShell>
     );
 }
@@ -333,12 +315,8 @@ function OrgPeopleDecisionWidget({ data }: { data: BoardData })
             claim={latest ? latest.fact : meta.claim}
             evidence={latest ? `${latest.source} · ${facts.length}건` : undefined}
             empty={empty}
-            emptyHint="인원·근속·인건비/매출 및 조직 변경 사실 수집 필요"
         >
             <TrackingFactList facts={facts} />
-            <p className="mt-2 text-[11px] text-muted-foreground">
-                사업보고서 인력 주석·인건비 계정 연동은 후속.
-            </p>
         </WidgetShell>
     );
 }
@@ -385,8 +363,8 @@ function EventsBoundWidget({
     const evidence = empty
         ? undefined
         : [
-            facts.length > 0 && `트래킹 ${facts.length}건`,
-            events.length > 0 && `이벤트 ${events.length}건`,
+            facts.length > 0 && `관련 사실 ${facts.length}건`,
+            events.length > 0 && `주요사항 ${events.length}건`,
             filings.length > 0 && `공시 ${filings.length}건`,
         ]
             .filter(Boolean)
@@ -467,7 +445,7 @@ function MajorShareholderWidget({ data }: { data: BoardData })
             return `${who} ${ratio != null ? `${ratio}%` : "비율 미상"} 보유${delta}`;
         })()
         : filings.length > 0
-            ? `지분 공시 ${filings.length}건 — 상세 파싱은 미적재`
+            ? `지분 공시 ${filings.length}건`
             : meta.claim;
 
     return (
@@ -478,11 +456,11 @@ function MajorShareholderWidget({ data }: { data: BoardData })
                 empty
                     ? undefined
                     : txns.length > 0
-                        ? `ownership_txns ${txns.length}건`
-                        : `공시 목록 ${filings.length}건 (원장 미적재)`
+                        ? `지분 변동 ${txns.length}건`
+                        : `공시 ${filings.length}건`
             }
             empty={empty}
-            emptyHint="지분 변동 원장·공시 모두 없음"
+            emptyHint="지분 변동 공시가 없어요"
         >
             {txns.length > 0 ? (
                 <ul className="space-y-2 text-sm">
@@ -527,8 +505,7 @@ function MajorShareholderWidget({ data }: { data: BoardData })
                         ))}
                     </ul>
                     <p className="mt-2 text-[11px] text-muted-foreground">
-                        공시는 있으나 지분 원장(ownership_txns)이 이 종목엔 아직 적재되지 않았습니다 —
-                        보유 비율·증감은 원문에서 확인하세요.
+                        보유 비율과 증감은 공시 원문에서 확인해 주세요.
                     </p>
                 </>
             )}
@@ -548,13 +525,7 @@ export function renderBoardWidget(widgetId: WidgetId, data: BoardData)
         case "segment-mix":
             return <TrackingBoundWidget key={widgetId} data={data} widgetId={widgetId} />;
         case "news-yt-facts":
-            return (
-                <PlaceholderWidget
-                    key={widgetId}
-                    widgetId={widgetId}
-                    emptyHint="뉴스·유튜브 팩트 파이프라인 후속"
-                />
-            );
+            return <PlaceholderWidget key={widgetId} widgetId={widgetId} />;
         case "cf-investing-notes":
             return <CfInvestingWidget key={widgetId} data={data} />;
         case "key-four-metrics":
@@ -574,7 +545,7 @@ export function renderBoardWidget(widgetId: WidgetId, data: BoardData)
                     widgetId={widgetId}
                     data={data}
                     eventTypeIncludes={["유상증자", "전환사채", "신주인수권", "BW", "CB"]}
-                    emptyHint="자금조달·희석 관련 공시/트래킹 없음"
+                    emptyHint="자금조달 공시가 없어요"
                 />
             );
         case "treasury-return":
@@ -586,7 +557,7 @@ export function renderBoardWidget(widgetId: WidgetId, data: BoardData)
                     // 자기주식은 event_type 에 있지만 배당은 없다 — 배당은 report_nm 으로만 잡힌다.
                     eventTypeIncludes={["자기주식", "자사주"]}
                     reportNameIncludes={["배당"]}
-                    emptyHint="자사주·환원 관련 공시/트래킹 없음"
+                    emptyHint="자사주 · 배당 공시가 없어요"
                 />
             );
         case "ma-org":
@@ -596,37 +567,18 @@ export function renderBoardWidget(widgetId: WidgetId, data: BoardData)
                     widgetId={widgetId}
                     data={data}
                     eventTypeIncludes={["합병", "양수", "양도", "영업양수", "분할"]}
-                    emptyHint="M&A·조직 관련 공시/트래킹 없음"
+                    emptyHint="합병 · 분할 공시가 없어요"
                 />
             );
         case "management-talent":
-            return (
-                <TrackingBoundWidget
-                    key={widgetId}
-                    data={data}
-                    widgetId={widgetId}
-                    emptyHint="경영진·핵심인재 트래킹 없음"
-                />
-            );
+            return <TrackingBoundWidget key={widgetId} data={data} widgetId={widgetId} />;
         case "people-profile":
-            return (
-                <PlaceholderWidget
-                    key={widgetId}
-                    widgetId={widgetId}
-                    emptyHint="링크드인 등 2차 프로필 수집 후속"
-                />
-            );
+            return <PlaceholderWidget key={widgetId} widgetId={widgetId} />;
         case "value-chain-map":
         case "scorecard":
         case "phase-three-qs":
         case "bullwhip-cycle":
-            return (
-                <PlaceholderWidget
-                    key={widgetId}
-                    widgetId={widgetId}
-                    emptyHint="산업 분석 데이터·지도는 후속. 교재 링크를 참고하세요."
-                />
-            );
+            return <PlaceholderWidget key={widgetId} widgetId={widgetId} />;
         default:
             return <PlaceholderWidget key={widgetId} widgetId={widgetId} />;
     }

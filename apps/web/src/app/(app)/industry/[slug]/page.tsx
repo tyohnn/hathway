@@ -83,7 +83,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                 description={industry.tagline}
                 actions={(
                     <>
-                        <Badge variant="secondary">채 {industry.sieveStage}단계 · {SIEVE_LABELS[industry.sieveStage]}</Badge>
+                        <Badge variant="secondary">분석 {industry.sieveStage}단계 · {SIEVE_LABELS[industry.sieveStage]}</Badge>
                         <span className="text-xs text-muted-foreground">기준일 {industry.asOf}</span>
                     </>
                 )}
@@ -98,9 +98,8 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
             </div>
             {unlisted.length > 0 && (
                 <p className="mt-2 text-[11px] text-muted-foreground">
-                    판정 {judged}건 = 상장 종목 {companies.length}개사 + 종목 페이지가 없는{" "}
-                    {unlisted.length}건({unlisted.map((m) => m.name).join(", ")}). 우선주는 DART 법인이
-                    아니라 종목 페이지를 갖지 못한다.
+                    판정 {judged}건 가운데 {unlisted.length}건({unlisted.map((m) => m.name).join(", ")})은
+                    종목 화면이 없어요.
                 </p>
             )}
 
@@ -108,7 +107,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                 <SectionHeader
                     level={2}
                     title="밸류체인 지도"
-                    description={`매출과 이익률은 DB 에서 읽은 ${DISPLAY_YEAR}년 연간 값이에요. 연결이 먼저이고 연결이 없는 회사만 별도예요. 판정과 체인 위치는 ${industry.asOf} 에 손으로 확정했어요.`}
+                    description={`매출과 이익률은 ${DISPLAY_YEAR}년 연결 기준이에요. 연결 재무제표가 없는 회사는 「별도」로 표시했어요.`}
                 />
                 <div className="mt-5">
                     <ValueChain stages={industry.stages} facts={facts} year={DISPLAY_YEAR} />
@@ -117,7 +116,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
 
             {industry.phase && (
                 <section className="mt-12">
-                    <SectionHeader level={2} title="산업 국면 3문" />
+                    <SectionHeader level={2} title="산업 국면 질문 3가지" />
                     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
                         {industry.phase.map((p) => (
                             <Card key={p.question} size="sm">
@@ -137,10 +136,9 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
             <section className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle role="heading" aria-level={2}>KSIC 로는 한 덩어리가 아니에요</CardTitle>
+                        <CardTitle role="heading" aria-level={2}>업종 분포</CardTitle>
                         <CardDescription>
-                            소속 {companies.length}개사가 중분류 {divisions.size}개에 흩어져 있어요. 산업의 경계를
-                            업종코드로 잡을 수 없다는 것을 이 표가 보여요.
+                            {companies.length}개사가 업종 {divisions.size}개에 흩어져 있어요.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -165,7 +163,7 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                             넓게 던진 그물이라 무관한 회사가 많이 걸려요.
                         </p>
                         {missing.length > 0 && (
-                            <p className="text-warning">DB 에서 찾지 못한 종목코드: {missing.join(", ")}</p>
+                            <p className="text-warning">정보를 찾지 못한 종목: {missing.join(", ")}</p>
                         )}
                     </CardFooter>
                 </Card>
@@ -173,9 +171,6 @@ export default async function IndustryDetailPage(props: PageProps<"/industry/[sl
                 <Card>
                     <CardHeader>
                         <CardTitle role="heading" aria-level={2}>출처</CardTitle>
-                        <CardDescription>
-                            판정의 근거 문서예요. 이 저장소의 <code>리서치/</code> 는 웹에 올리지 않아서 경로만 적어요.
-                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                     <ul className="flex flex-col gap-2">

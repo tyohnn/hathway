@@ -19,9 +19,9 @@ export function CorrectionChains({ corrections }: { corrections: CorrectionChain
 
     return (
         <section>
-            <SectionHeader level={2} title="기재정정 체인" />
+            <SectionHeader level={2} title="정정 공시" />
             <p className="mt-1 text-xs text-muted-foreground">
-                정정본 → 원본 연결. 시차가 클수록 최초 공시의 신뢰도가 낮았다는 신호입니다.
+                정정이 늦을수록 처음 공시를 믿기 어려웠다는 뜻이에요.
             </p>
             <ul className="mt-3 space-y-2">
                 {corrections.map((c) => (

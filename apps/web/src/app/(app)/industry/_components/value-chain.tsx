@@ -7,9 +7,9 @@ import { VerdictBadge } from "./verdict";
 export type MemberFacts = Map<string, { fsDiv: string | null; rows: MemberFinancials[] }>;
 
 const AXIS_LABEL = {
-    material: "물질 축 — 광물에서 완성차까지 흐른다",
-    equipment: "장비 축 — 그 흐름을 가능하게 한다",
-    holding: "지주·기타 — 체인 위에 얹힌 지배구조",
+    material: "물질 흐름",
+    equipment: "장비",
+    holding: "지주 · 기타",
 } as const;
 
 const PRICING_LABEL = {
@@ -159,19 +159,19 @@ function MemberRow({
             {row && (
                 <p className="mt-1 flex flex-wrap gap-x-2 text-[10px] tabular-nums text-muted-foreground">
                     <span>
-                        {year} 매출 {formatEok(row.revenue)}
+                        {year}년 매출 {formatEok(row.revenue)}
                     </span>
                     <span>이익률 {row.opm_pct === null ? "—" : `${row.opm_pct.toFixed(1)}%`}</span>
                     {row.fs_div === "OFS" && <span className="text-warning">별도</span>}
                 </p>
             )}
             {member.stockCode && !row && (
-                <p className="mt-1 text-[10px] text-muted-foreground">{year} 재무 미보유</p>
+                <p className="mt-1 text-[10px] text-muted-foreground">{year}년 실적 없음</p>
             )}
 
             {member.conglomerate && (
                 <p className="mt-1 text-[10px] leading-snug text-warning">
-                    그룹 전체 수치다 — 이 산업 부문만 분리되지 않는다
+                    그룹 전체 실적이에요
                 </p>
             )}
             {member.verdictNote && (

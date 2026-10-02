@@ -10,12 +10,7 @@ export default function MacroLandingPage()
 {
     return (
         <div className="mx-auto w-full max-w-3xl">
-            <p className="text-xs font-medium tracking-[0.08em] text-muted-foreground">주식</p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight">거시경제 분석</h1>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                종목보다 한 층 위에서 산업과 국면을 봅니다. 금리·환율 피드는 아직 없고, 산업 지도부터
-                열려 있습니다.
-            </p>
 
             <ul className="mt-8 space-y-3">
                 <li>
@@ -25,7 +20,7 @@ export default function MacroLandingPage()
                     >
                         <h2 className="font-semibold">산업 지도</h2>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            KSIC 격자 위에 분석이 진행된 밸류체인을 겹칩니다.
+                            업종별 상장사와 분석한 산업
                         </p>
                     </Link>
                 </li>

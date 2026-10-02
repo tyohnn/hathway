@@ -396,7 +396,7 @@ function SymbolCommandDialog()
                         ))}
                     </div>
                     <CommandList className="max-h-[min(28rem,55vh)]">
-                        <CommandEmpty>검색 결과 없음</CommandEmpty>
+                        <CommandEmpty>검색 결과가 없어요</CommandEmpty>
                         {chip !== "recent" && recentCompanies.length > 0 && query.trim() === "" && (
                             <CommandGroup heading="최근">
                                 {recentCompanies.map((company) => (

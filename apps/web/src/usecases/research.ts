@@ -57,7 +57,7 @@ export const RemoveBoardInput = Schema.Struct({
 export type RemoveBoardInput = typeof RemoveBoardInput.Type;
 
 const MESSAGES = {
-    "not-found": "보드를 찾을 수 없어요.",
+    "not-found": "보드를 찾을 수 없어요. 다른 사람이 삭제했을 수 있어요.",
     stale: "그사이 다른 사람이 이 보드를 고쳤어요. 새로고침한 뒤 다시 고쳐 주세요.",
 } as const;
 

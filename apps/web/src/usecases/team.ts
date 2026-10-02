@@ -82,8 +82,8 @@ const ROLE_MESSAGES: Readonly<Record<TeamRefusal, string>> = {
 
 const REMOVAL_MESSAGES: Readonly<Record<TeamRefusal, string>> = {
     not_allowed: "소유자와 관리자만 팀에서 뺄 수 있어요.",
-    owner: "소유자는 팀에서 뺄 수 없어요.",
-    owner_only: "관리자는 소유자만 팀에서 뺄 수 있어요.",
+    owner: "소유자를 팀에서 뺄 수는 없어요.",
+    owner_only: "관리자를 팀에서 빼는 일은 소유자만 할 수 있어요.",
     self: "나를 팀에서 뺄 수는 없어요.",
 };
 
