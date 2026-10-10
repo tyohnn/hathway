@@ -8,7 +8,7 @@
   "min_roe": 12.0,
   "min_rev_eok": 300.0
  },
- "source": "원격 Supabase, 커넥터 SQL 로 backtest.screen 과 같은 규칙을 친 결과(2026-10-10). 12개사×7년 표본에서 Python screen 과 일치 확인.",
+ "source": "원격 Supabase, 커넥터 SQL(2026-10-10). 재무를 쓸 수 있게 되는 날 = 사업보고서 원본 최초 접수일. 정정본 숫자를 미리 보므로 비교용이다. 12개사×7년 표본에서 Python screen 과 일치 확인.",
  "rebalances": [
   {
    "date": "2020-04-01",
@@ -2094,5 +2094,6 @@
     }
    ]
   }
- ]
+ ],
+ "dates": "first"
 }
