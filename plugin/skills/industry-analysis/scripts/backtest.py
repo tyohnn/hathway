@@ -14,9 +14,9 @@ JSON 하나로 받아 두고, 시세는 DB 에 없으므로 CSV 로 받는다.
 파일 형식은 README 대신 아래 load_* 함수의 docstring 이 정본이다. 표준 라이브러리만 쓴다.
 
 알고 쓰는 한계:
-- `fin_periods` 는 정정공시가 반영된 **지금의 값**이다. 당시 투자자가 본 최초 공시 값과
-  다를 수 있다. 접수일은 최초 공시일을 쓰므로 시점은 지키지만 값은 사후 정정을 머금는다.
-- 결산월이 12월이 아닌 회사도 bsns_year 로만 줄 세운다.
+- `fin_periods` 는 정정공시가 반영된 **지금의 값**이다. 기본값은 그 숫자가 공개된 날(정정본 접수일)부터
+  쓴다. 정정 전 원본의 숫자는 DB 에 없어서, 원본이 나온 뒤 정정 전까지의 판단은 재현하지 못하고 미룬다.
+- 상장폐지 · 비상장 회사는 DB 에 재무가 없다. 망한 회사가 채에 들어오지 못해 결과가 좋게 나온다.
 - 지수는 가격지수다. 배당을 넣지 않은 종목 수정종가와 짝을 맞춘다.
 """
 import argparse
@@ -256,29 +256,48 @@ def rule_from_args(a):
 # ───────────────────────────── 명령
 
 def cmd_snapshot(a):
-    """원격 DB 에서 재무 스냅샷을 받는다. 접속은 screen.py 와 같다(환경변수 → apps/web/.env.local)."""
+    """원격 DB 에서 재무 스냅샷을 받는다. 접속은 screen.py 와 같다(환경변수 → apps/web/.env.local).
+
+    --dates available(기본): `fin_periods.available_dt` — 저장된 숫자 그대로가 공개된 날. DART 는 정정된
+      최신본을 주므로 숫자가 원본보다 몇 주 뒤 정정공시에서 왔을 수 있다. 이 날짜를 써야 미래를 보지 않는다.
+      이 컬럼은 「재무 수치에 공시일 붙이기」 작업이 더한다. 없으면 PostgREST 가 400 을 낸다.
+    --dates first: 사업보고서 원본의 최초 접수일. 정정이 숫자를 안 바꿨다고 가정할 때만 쓴다.
+    """
     import screen as sc
     url, key = sc.credentials()
     companies = sc.get("companies", {"select": "corp_code,stock_code,name,market,sector_code",
                                      "order": "corp_code"}, url, key)
-    fin_rows = sc.get("fin_periods", {
-        "select": "corp_code,bsns_year,fs_div,revenue,operating_income,roe_pct",
-        "period_type": "eq.A", "order": "corp_code,bsns_year,fs_div",
-    }, url, key)
-    filings = sc.get("filings", {
-        "select": "corp_code,report_nm,rcept_dt",
-        "report_nm": "like.사업보고서 (*", "order": "rcept_no",
-    }, url, key)
+    cols = "corp_code,bsns_year,fs_div,revenue,operating_income,roe_pct"
+    if a.dates == "available":
+        cols += ",available_dt"
+    fin_rows = sc.get("fin_periods", {"select": cols, "period_type": "eq.A",
+                                      "order": "corp_code,bsns_year,fs_div"}, url, key)
     filed = {}
-    for f in filings:
-        y = report_year(f["report_nm"])
-        if y is None:
-            continue
-        ys = filed.setdefault(f["corp_code"], {})
-        y = str(y)
-        if y not in ys or f["rcept_dt"] < ys[y]:
-            ys[y] = f["rcept_dt"]  # 최초 접수일. 정정공시([기재정정])는 접두가 달라 여기 걸리지 않는다
-    json.dump({"companies": companies, "fin": fin_rows, "filed": filed}, sys.stdout, ensure_ascii=False)
+    if a.dates == "available":
+        for r in fin_rows:
+            d = r.pop("available_dt", None)
+            if not d:
+                continue
+            ys = filed.setdefault(r["corp_code"], {})
+            y = str(r["bsns_year"])
+            if y not in ys or d > ys[y]:
+                ys[y] = d  # 연결과 별도가 다른 공시에서 왔으면 늦은 쪽
+    else:
+        print("[backtest] 원본 접수일을 쓴다. 정정공시로 바뀐 숫자를 미리 볼 수 있다.", file=sys.stderr)
+        filings = sc.get("filings", {
+            "select": "corp_code,report_nm,rcept_dt",
+            "report_nm": "like.사업보고서 (*", "order": "rcept_no",
+        }, url, key)
+        for f in filings:
+            y = report_year(f["report_nm"])
+            if y is None:
+                continue
+            ys = filed.setdefault(f["corp_code"], {})
+            y = str(y)
+            if y not in ys or f["rcept_dt"] < ys[y]:
+                ys[y] = f["rcept_dt"]
+    json.dump({"companies": companies, "fin": fin_rows, "filed": filed, "dates": a.dates},
+              sys.stdout, ensure_ascii=False)
 
 
 def cmd_picks(a):
@@ -340,6 +359,8 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("snapshot", help="원격 DB 에서 재무 스냅샷 JSON 을 받는다 (stdout)")
+    s.add_argument("--dates", choices=["available", "first"], default="available",
+                   help="재무를 쓸 수 있게 되는 날. available=저장된 숫자가 공개된 날(정정본), first=원본 접수일")
     s.set_defaults(func=cmd_snapshot)
 
     p = sub.add_parser("picks", help="리밸런스 날마다 채를 친다 (JSON 을 stdout 으로)")
