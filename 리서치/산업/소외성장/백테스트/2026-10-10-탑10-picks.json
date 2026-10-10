@@ -1,0 +1,2098 @@
+{
+ "rule": {
+  "name": "탑10",
+  "prefixes": [],
+  "span": 4,
+  "min_cagr": 0.1,
+  "min_opm": 8.0,
+  "min_roe": 12.0,
+  "min_rev_eok": 300.0
+ },
+ "source": "원격 Supabase, 커넥터 SQL 로 backtest.screen 과 같은 규칙을 친 결과(2026-10-10). 12개사×7년 표본에서 Python screen 과 일치 확인.",
+ "rebalances": [
+  {
+   "date": "2020-04-01",
+   "picks": [
+    {
+     "stock_code": "001820"
+    },
+    {
+     "stock_code": "003220"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "007700"
+    },
+    {
+     "stock_code": "014680"
+    },
+    {
+     "stock_code": "016590"
+    },
+    {
+     "stock_code": "023590"
+    },
+    {
+     "stock_code": "023770"
+    },
+    {
+     "stock_code": "032190"
+    },
+    {
+     "stock_code": "032500"
+    },
+    {
+     "stock_code": "033290"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036200"
+    },
+    {
+     "stock_code": "036570"
+    },
+    {
+     "stock_code": "036670"
+    },
+    {
+     "stock_code": "036810"
+    },
+    {
+     "stock_code": "036830"
+    },
+    {
+     "stock_code": "036890"
+    },
+    {
+     "stock_code": "038540"
+    },
+    {
+     "stock_code": "039440"
+    },
+    {
+     "stock_code": "039840"
+    },
+    {
+     "stock_code": "041830"
+    },
+    {
+     "stock_code": "044340"
+    },
+    {
+     "stock_code": "045520"
+    },
+    {
+     "stock_code": "046310"
+    },
+    {
+     "stock_code": "047770"
+    },
+    {
+     "stock_code": "053610"
+    },
+    {
+     "stock_code": "053690"
+    },
+    {
+     "stock_code": "054670"
+    },
+    {
+     "stock_code": "056190"
+    },
+    {
+     "stock_code": "056360"
+    },
+    {
+     "stock_code": "058470"
+    },
+    {
+     "stock_code": "059090"
+    },
+    {
+     "stock_code": "064760"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "067280"
+    },
+    {
+     "stock_code": "068930"
+    },
+    {
+     "stock_code": "073490"
+    },
+    {
+     "stock_code": "079940"
+    },
+    {
+     "stock_code": "081660"
+    },
+    {
+     "stock_code": "082920"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "083930"
+    },
+    {
+     "stock_code": "086390"
+    },
+    {
+     "stock_code": "086450"
+    },
+    {
+     "stock_code": "089890"
+    },
+    {
+     "stock_code": "090460"
+    },
+    {
+     "stock_code": "090850"
+    },
+    {
+     "stock_code": "091700"
+    },
+    {
+     "stock_code": "092130"
+    },
+    {
+     "stock_code": "093320"
+    },
+    {
+     "stock_code": "096530"
+    },
+    {
+     "stock_code": "097520"
+    },
+    {
+     "stock_code": "098460"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "102710"
+    },
+    {
+     "stock_code": "104460"
+    },
+    {
+     "stock_code": "115500"
+    },
+    {
+     "stock_code": "130580"
+    },
+    {
+     "stock_code": "131030"
+    },
+    {
+     "stock_code": "131970"
+    },
+    {
+     "stock_code": "138080"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "151860"
+    },
+    {
+     "stock_code": "192440"
+    },
+    {
+     "stock_code": "200130"
+    },
+    {
+     "stock_code": "206640"
+    },
+    {
+     "stock_code": "210980"
+    }
+   ]
+  },
+  {
+   "date": "2021-04-01",
+   "picks": [
+    {
+     "stock_code": "001630"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "006040"
+    },
+    {
+     "stock_code": "007540"
+    },
+    {
+     "stock_code": "007700"
+    },
+    {
+     "stock_code": "008490"
+    },
+    {
+     "stock_code": "010240"
+    },
+    {
+     "stock_code": "017890"
+    },
+    {
+     "stock_code": "017960"
+    },
+    {
+     "stock_code": "021080"
+    },
+    {
+     "stock_code": "023590"
+    },
+    {
+     "stock_code": "023770"
+    },
+    {
+     "stock_code": "024720"
+    },
+    {
+     "stock_code": "032190"
+    },
+    {
+     "stock_code": "033290"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036200"
+    },
+    {
+     "stock_code": "036570"
+    },
+    {
+     "stock_code": "036670"
+    },
+    {
+     "stock_code": "036810"
+    },
+    {
+     "stock_code": "037070"
+    },
+    {
+     "stock_code": "042700"
+    },
+    {
+     "stock_code": "044340"
+    },
+    {
+     "stock_code": "045520"
+    },
+    {
+     "stock_code": "046940"
+    },
+    {
+     "stock_code": "048530"
+    },
+    {
+     "stock_code": "058110"
+    },
+    {
+     "stock_code": "058470"
+    },
+    {
+     "stock_code": "064550"
+    },
+    {
+     "stock_code": "064760"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "067900"
+    },
+    {
+     "stock_code": "068270"
+    },
+    {
+     "stock_code": "072990"
+    },
+    {
+     "stock_code": "073490"
+    },
+    {
+     "stock_code": "079940"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "083550"
+    },
+    {
+     "stock_code": "084110"
+    },
+    {
+     "stock_code": "086450"
+    },
+    {
+     "stock_code": "089030"
+    },
+    {
+     "stock_code": "089890"
+    },
+    {
+     "stock_code": "090850"
+    },
+    {
+     "stock_code": "092730"
+    },
+    {
+     "stock_code": "092870"
+    },
+    {
+     "stock_code": "093320"
+    },
+    {
+     "stock_code": "095660"
+    },
+    {
+     "stock_code": "096530"
+    },
+    {
+     "stock_code": "099190"
+    },
+    {
+     "stock_code": "099320"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "104460"
+    },
+    {
+     "stock_code": "108320"
+    },
+    {
+     "stock_code": "130580"
+    },
+    {
+     "stock_code": "131290"
+    },
+    {
+     "stock_code": "131970"
+    },
+    {
+     "stock_code": "134790"
+    },
+    {
+     "stock_code": "137400"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "144960"
+    },
+    {
+     "stock_code": "160980"
+    },
+    {
+     "stock_code": "161890"
+    },
+    {
+     "stock_code": "178920"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "192440"
+    },
+    {
+     "stock_code": "195870"
+    },
+    {
+     "stock_code": "200130"
+    },
+    {
+     "stock_code": "200670"
+    },
+    {
+     "stock_code": "201490"
+    },
+    {
+     "stock_code": "206640"
+    },
+    {
+     "stock_code": "210980"
+    },
+    {
+     "stock_code": "213420"
+    },
+    {
+     "stock_code": "214180"
+    },
+    {
+     "stock_code": "214450"
+    },
+    {
+     "stock_code": "239610"
+    },
+    {
+     "stock_code": "240810"
+    },
+    {
+     "stock_code": "241820"
+    },
+    {
+     "stock_code": "243070"
+    },
+    {
+     "stock_code": "248170"
+    }
+   ]
+  },
+  {
+   "date": "2022-04-01",
+   "picks": [
+    {
+     "stock_code": "000990"
+    },
+    {
+     "stock_code": "001390"
+    },
+    {
+     "stock_code": "002220"
+    },
+    {
+     "stock_code": "003780"
+    },
+    {
+     "stock_code": "004000"
+    },
+    {
+     "stock_code": "004590"
+    },
+    {
+     "stock_code": "005090"
+    },
+    {
+     "stock_code": "005290"
+    },
+    {
+     "stock_code": "005810"
+    },
+    {
+     "stock_code": "007690"
+    },
+    {
+     "stock_code": "008260"
+    },
+    {
+     "stock_code": "008490"
+    },
+    {
+     "stock_code": "009160"
+    },
+    {
+     "stock_code": "010240"
+    },
+    {
+     "stock_code": "011070"
+    },
+    {
+     "stock_code": "011200"
+    },
+    {
+     "stock_code": "011780"
+    },
+    {
+     "stock_code": "014680"
+    },
+    {
+     "stock_code": "017480"
+    },
+    {
+     "stock_code": "018290"
+    },
+    {
+     "stock_code": "021080"
+    },
+    {
+     "stock_code": "023590"
+    },
+    {
+     "stock_code": "023600"
+    },
+    {
+     "stock_code": "028670"
+    },
+    {
+     "stock_code": "032190"
+    },
+    {
+     "stock_code": "033290"
+    },
+    {
+     "stock_code": "033500"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036670"
+    },
+    {
+     "stock_code": "036710"
+    },
+    {
+     "stock_code": "037070"
+    },
+    {
+     "stock_code": "037270"
+    },
+    {
+     "stock_code": "038070"
+    },
+    {
+     "stock_code": "039840"
+    },
+    {
+     "stock_code": "039860"
+    },
+    {
+     "stock_code": "041510"
+    },
+    {
+     "stock_code": "041830"
+    },
+    {
+     "stock_code": "042700"
+    },
+    {
+     "stock_code": "043150"
+    },
+    {
+     "stock_code": "044450"
+    },
+    {
+     "stock_code": "046390"
+    },
+    {
+     "stock_code": "047770"
+    },
+    {
+     "stock_code": "048470"
+    },
+    {
+     "stock_code": "049070"
+    },
+    {
+     "stock_code": "051910"
+    },
+    {
+     "stock_code": "052400"
+    },
+    {
+     "stock_code": "058110"
+    },
+    {
+     "stock_code": "058430"
+    },
+    {
+     "stock_code": "058470"
+    },
+    {
+     "stock_code": "064290"
+    },
+    {
+     "stock_code": "064550"
+    },
+    {
+     "stock_code": "064760"
+    },
+    {
+     "stock_code": "064820"
+    },
+    {
+     "stock_code": "065710"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "067280"
+    },
+    {
+     "stock_code": "067310"
+    },
+    {
+     "stock_code": "067900"
+    },
+    {
+     "stock_code": "068270"
+    },
+    {
+     "stock_code": "068930"
+    },
+    {
+     "stock_code": "069080"
+    },
+    {
+     "stock_code": "072990"
+    },
+    {
+     "stock_code": "073490"
+    },
+    {
+     "stock_code": "074600"
+    },
+    {
+     "stock_code": "078350"
+    },
+    {
+     "stock_code": "078600"
+    },
+    {
+     "stock_code": "079940"
+    },
+    {
+     "stock_code": "081660"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "084010"
+    },
+    {
+     "stock_code": "084370"
+    },
+    {
+     "stock_code": "088390"
+    },
+    {
+     "stock_code": "089890"
+    },
+    {
+     "stock_code": "091120"
+    },
+    {
+     "stock_code": "091580"
+    },
+    {
+     "stock_code": "092730"
+    },
+    {
+     "stock_code": "093320"
+    },
+    {
+     "stock_code": "093520"
+    },
+    {
+     "stock_code": "095660"
+    },
+    {
+     "stock_code": "096530"
+    },
+    {
+     "stock_code": "098120"
+    },
+    {
+     "stock_code": "100120"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "102120"
+    },
+    {
+     "stock_code": "104830"
+    },
+    {
+     "stock_code": "106240"
+    },
+    {
+     "stock_code": "108320"
+    },
+    {
+     "stock_code": "112040"
+    },
+    {
+     "stock_code": "121440"
+    },
+    {
+     "stock_code": "126700"
+    },
+    {
+     "stock_code": "128660"
+    },
+    {
+     "stock_code": "130580"
+    },
+    {
+     "stock_code": "131220"
+    },
+    {
+     "stock_code": "131290"
+    },
+    {
+     "stock_code": "131370"
+    },
+    {
+     "stock_code": "131970"
+    },
+    {
+     "stock_code": "137400"
+    },
+    {
+     "stock_code": "137950"
+    },
+    {
+     "stock_code": "140070"
+    },
+    {
+     "stock_code": "145720"
+    },
+    {
+     "stock_code": "160980"
+    },
+    {
+     "stock_code": "166090"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "192080"
+    },
+    {
+     "stock_code": "194700"
+    },
+    {
+     "stock_code": "195870"
+    },
+    {
+     "stock_code": "201490"
+    },
+    {
+     "stock_code": "203650"
+    },
+    {
+     "stock_code": "206640"
+    },
+    {
+     "stock_code": "208140"
+    },
+    {
+     "stock_code": "210980"
+    },
+    {
+     "stock_code": "214150"
+    },
+    {
+     "stock_code": "214450"
+    },
+    {
+     "stock_code": "215000"
+    },
+    {
+     "stock_code": "215200"
+    },
+    {
+     "stock_code": "222800"
+    },
+    {
+     "stock_code": "232140"
+    },
+    {
+     "stock_code": "236200"
+    },
+    {
+     "stock_code": "240810"
+    },
+    {
+     "stock_code": "241790"
+    },
+    {
+     "stock_code": "263860"
+    },
+    {
+     "stock_code": "264450"
+    },
+    {
+     "stock_code": "272290"
+    },
+    {
+     "stock_code": "284740"
+    }
+   ]
+  },
+  {
+   "date": "2023-04-01",
+   "picks": [
+    {
+     "stock_code": "000270"
+    },
+    {
+     "stock_code": "000990"
+    },
+    {
+     "stock_code": "001550"
+    },
+    {
+     "stock_code": "001770"
+    },
+    {
+     "stock_code": "002900"
+    },
+    {
+     "stock_code": "003030"
+    },
+    {
+     "stock_code": "003220"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "004430"
+    },
+    {
+     "stock_code": "005010"
+    },
+    {
+     "stock_code": "005290"
+    },
+    {
+     "stock_code": "007340"
+    },
+    {
+     "stock_code": "007370"
+    },
+    {
+     "stock_code": "007700"
+    },
+    {
+     "stock_code": "008260"
+    },
+    {
+     "stock_code": "009160"
+    },
+    {
+     "stock_code": "009970"
+    },
+    {
+     "stock_code": "010060"
+    },
+    {
+     "stock_code": "010950"
+    },
+    {
+     "stock_code": "011200"
+    },
+    {
+     "stock_code": "014570"
+    },
+    {
+     "stock_code": "014680"
+    },
+    {
+     "stock_code": "014830"
+    },
+    {
+     "stock_code": "016380"
+    },
+    {
+     "stock_code": "018290"
+    },
+    {
+     "stock_code": "021080"
+    },
+    {
+     "stock_code": "023150"
+    },
+    {
+     "stock_code": "028670"
+    },
+    {
+     "stock_code": "029460"
+    },
+    {
+     "stock_code": "033100"
+    },
+    {
+     "stock_code": "033290"
+    },
+    {
+     "stock_code": "035150"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036570"
+    },
+    {
+     "stock_code": "036670"
+    },
+    {
+     "stock_code": "036710"
+    },
+    {
+     "stock_code": "036890"
+    },
+    {
+     "stock_code": "036930"
+    },
+    {
+     "stock_code": "039030"
+    },
+    {
+     "stock_code": "039440"
+    },
+    {
+     "stock_code": "041830"
+    },
+    {
+     "stock_code": "042510"
+    },
+    {
+     "stock_code": "042700"
+    },
+    {
+     "stock_code": "043150"
+    },
+    {
+     "stock_code": "044450"
+    },
+    {
+     "stock_code": "046390"
+    },
+    {
+     "stock_code": "049070"
+    },
+    {
+     "stock_code": "049800"
+    },
+    {
+     "stock_code": "050120"
+    },
+    {
+     "stock_code": "052400"
+    },
+    {
+     "stock_code": "053690"
+    },
+    {
+     "stock_code": "054670"
+    },
+    {
+     "stock_code": "058470"
+    },
+    {
+     "stock_code": "058630"
+    },
+    {
+     "stock_code": "064290"
+    },
+    {
+     "stock_code": "064760"
+    },
+    {
+     "stock_code": "065710"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "067280"
+    },
+    {
+     "stock_code": "067900"
+    },
+    {
+     "stock_code": "068270"
+    },
+    {
+     "stock_code": "068930"
+    },
+    {
+     "stock_code": "068940"
+    },
+    {
+     "stock_code": "071280"
+    },
+    {
+     "stock_code": "074600"
+    },
+    {
+     "stock_code": "078350"
+    },
+    {
+     "stock_code": "078930"
+    },
+    {
+     "stock_code": "079940"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "084010"
+    },
+    {
+     "stock_code": "086670"
+    },
+    {
+     "stock_code": "090850"
+    },
+    {
+     "stock_code": "091580"
+    },
+    {
+     "stock_code": "093320"
+    },
+    {
+     "stock_code": "093370"
+    },
+    {
+     "stock_code": "093520"
+    },
+    {
+     "stock_code": "095340"
+    },
+    {
+     "stock_code": "096530"
+    },
+    {
+     "stock_code": "098120"
+    },
+    {
+     "stock_code": "100120"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "104830"
+    },
+    {
+     "stock_code": "108320"
+    },
+    {
+     "stock_code": "111110"
+    },
+    {
+     "stock_code": "111710"
+    },
+    {
+     "stock_code": "111770"
+    },
+    {
+     "stock_code": "118990"
+    },
+    {
+     "stock_code": "121440"
+    },
+    {
+     "stock_code": "122310"
+    },
+    {
+     "stock_code": "130580"
+    },
+    {
+     "stock_code": "131220"
+    },
+    {
+     "stock_code": "131290"
+    },
+    {
+     "stock_code": "131970"
+    },
+    {
+     "stock_code": "134380"
+    },
+    {
+     "stock_code": "137400"
+    },
+    {
+     "stock_code": "137950"
+    },
+    {
+     "stock_code": "140070"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "145720"
+    },
+    {
+     "stock_code": "147830"
+    },
+    {
+     "stock_code": "155660"
+    },
+    {
+     "stock_code": "166090"
+    },
+    {
+     "stock_code": "170790"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "189980"
+    },
+    {
+     "stock_code": "194370"
+    },
+    {
+     "stock_code": "195870"
+    },
+    {
+     "stock_code": "206640"
+    },
+    {
+     "stock_code": "208140"
+    },
+    {
+     "stock_code": "214150"
+    },
+    {
+     "stock_code": "215000"
+    },
+    {
+     "stock_code": "215200"
+    },
+    {
+     "stock_code": "216050"
+    },
+    {
+     "stock_code": "222800"
+    },
+    {
+     "stock_code": "230240"
+    },
+    {
+     "stock_code": "241560"
+    },
+    {
+     "stock_code": "241790"
+    },
+    {
+     "stock_code": "250000"
+    },
+    {
+     "stock_code": "263690"
+    },
+    {
+     "stock_code": "263770"
+    },
+    {
+     "stock_code": "263860"
+    },
+    {
+     "stock_code": "271560"
+    },
+    {
+     "stock_code": "272290"
+    },
+    {
+     "stock_code": "284740"
+    },
+    {
+     "stock_code": "285490"
+    },
+    {
+     "stock_code": "298050"
+    },
+    {
+     "stock_code": "306200"
+    }
+   ]
+  },
+  {
+   "date": "2024-04-01",
+   "picks": [
+    {
+     "stock_code": "000270"
+    },
+    {
+     "stock_code": "002840"
+    },
+    {
+     "stock_code": "002960"
+    },
+    {
+     "stock_code": "003030"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "003280"
+    },
+    {
+     "stock_code": "005180"
+    },
+    {
+     "stock_code": "005290"
+    },
+    {
+     "stock_code": "005380"
+    },
+    {
+     "stock_code": "007340"
+    },
+    {
+     "stock_code": "007370"
+    },
+    {
+     "stock_code": "007700"
+    },
+    {
+     "stock_code": "008260"
+    },
+    {
+     "stock_code": "008930"
+    },
+    {
+     "stock_code": "009450"
+    },
+    {
+     "stock_code": "009970"
+    },
+    {
+     "stock_code": "013310"
+    },
+    {
+     "stock_code": "018290"
+    },
+    {
+     "stock_code": "025980"
+    },
+    {
+     "stock_code": "028050"
+    },
+    {
+     "stock_code": "031980"
+    },
+    {
+     "stock_code": "033100"
+    },
+    {
+     "stock_code": "035610"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "037270"
+    },
+    {
+     "stock_code": "038010"
+    },
+    {
+     "stock_code": "042940"
+    },
+    {
+     "stock_code": "043260"
+    },
+    {
+     "stock_code": "052400"
+    },
+    {
+     "stock_code": "053270"
+    },
+    {
+     "stock_code": "058470"
+    },
+    {
+     "stock_code": "058630"
+    },
+    {
+     "stock_code": "060560"
+    },
+    {
+     "stock_code": "060720"
+    },
+    {
+     "stock_code": "066620"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "069260"
+    },
+    {
+     "stock_code": "073010"
+    },
+    {
+     "stock_code": "079550"
+    },
+    {
+     "stock_code": "083310"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "086670"
+    },
+    {
+     "stock_code": "089850"
+    },
+    {
+     "stock_code": "091580"
+    },
+    {
+     "stock_code": "091810"
+    },
+    {
+     "stock_code": "093320"
+    },
+    {
+     "stock_code": "093520"
+    },
+    {
+     "stock_code": "094170"
+    },
+    {
+     "stock_code": "094970"
+    },
+    {
+     "stock_code": "098120"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "108230"
+    },
+    {
+     "stock_code": "111770"
+    },
+    {
+     "stock_code": "118990"
+    },
+    {
+     "stock_code": "122310"
+    },
+    {
+     "stock_code": "122870"
+    },
+    {
+     "stock_code": "123040"
+    },
+    {
+     "stock_code": "125210"
+    },
+    {
+     "stock_code": "126700"
+    },
+    {
+     "stock_code": "131970"
+    },
+    {
+     "stock_code": "134380"
+    },
+    {
+     "stock_code": "137400"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "145720"
+    },
+    {
+     "stock_code": "158430"
+    },
+    {
+     "stock_code": "170790"
+    },
+    {
+     "stock_code": "182360"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "185750"
+    },
+    {
+     "stock_code": "194370"
+    },
+    {
+     "stock_code": "195870"
+    },
+    {
+     "stock_code": "203650"
+    },
+    {
+     "stock_code": "206640"
+    },
+    {
+     "stock_code": "208140"
+    },
+    {
+     "stock_code": "214150"
+    },
+    {
+     "stock_code": "214430"
+    },
+    {
+     "stock_code": "214450"
+    },
+    {
+     "stock_code": "215000"
+    },
+    {
+     "stock_code": "215200"
+    },
+    {
+     "stock_code": "234300"
+    },
+    {
+     "stock_code": "243070"
+    },
+    {
+     "stock_code": "263770"
+    },
+    {
+     "stock_code": "263860"
+    },
+    {
+     "stock_code": "263920"
+    },
+    {
+     "stock_code": "267260"
+    },
+    {
+     "stock_code": "278470"
+    },
+    {
+     "stock_code": "285490"
+    },
+    {
+     "stock_code": "290270"
+    },
+    {
+     "stock_code": "290650"
+    },
+    {
+     "stock_code": "302430"
+    },
+    {
+     "stock_code": "306200"
+    },
+    {
+     "stock_code": "319660"
+    }
+   ]
+  },
+  {
+   "date": "2025-04-01",
+   "picks": [
+    {
+     "stock_code": "000270"
+    },
+    {
+     "stock_code": "000660"
+    },
+    {
+     "stock_code": "002840"
+    },
+    {
+     "stock_code": "002960"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "003280"
+    },
+    {
+     "stock_code": "003350"
+    },
+    {
+     "stock_code": "003490"
+    },
+    {
+     "stock_code": "003570"
+    },
+    {
+     "stock_code": "005180"
+    },
+    {
+     "stock_code": "005290"
+    },
+    {
+     "stock_code": "007340"
+    },
+    {
+     "stock_code": "007370"
+    },
+    {
+     "stock_code": "007660"
+    },
+    {
+     "stock_code": "009450"
+    },
+    {
+     "stock_code": "009900"
+    },
+    {
+     "stock_code": "010120"
+    },
+    {
+     "stock_code": "011200"
+    },
+    {
+     "stock_code": "012450"
+    },
+    {
+     "stock_code": "018290"
+    },
+    {
+     "stock_code": "023590"
+    },
+    {
+     "stock_code": "025540"
+    },
+    {
+     "stock_code": "028050"
+    },
+    {
+     "stock_code": "031980"
+    },
+    {
+     "stock_code": "032190"
+    },
+    {
+     "stock_code": "033100"
+    },
+    {
+     "stock_code": "033500"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036670"
+    },
+    {
+     "stock_code": "036930"
+    },
+    {
+     "stock_code": "039130"
+    },
+    {
+     "stock_code": "041960"
+    },
+    {
+     "stock_code": "042700"
+    },
+    {
+     "stock_code": "050890"
+    },
+    {
+     "stock_code": "051360"
+    },
+    {
+     "stock_code": "052400"
+    },
+    {
+     "stock_code": "058630"
+    },
+    {
+     "stock_code": "058970"
+    },
+    {
+     "stock_code": "059090"
+    },
+    {
+     "stock_code": "059210"
+    },
+    {
+     "stock_code": "064350"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "069510"
+    },
+    {
+     "stock_code": "073010"
+    },
+    {
+     "stock_code": "073240"
+    },
+    {
+     "stock_code": "082920"
+    },
+    {
+     "stock_code": "083450"
+    },
+    {
+     "stock_code": "084370"
+    },
+    {
+     "stock_code": "086710"
+    },
+    {
+     "stock_code": "086980"
+    },
+    {
+     "stock_code": "090850"
+    },
+    {
+     "stock_code": "093520"
+    },
+    {
+     "stock_code": "094170"
+    },
+    {
+     "stock_code": "098120"
+    },
+    {
+     "stock_code": "099410"
+    },
+    {
+     "stock_code": "099440"
+    },
+    {
+     "stock_code": "101160"
+    },
+    {
+     "stock_code": "101490"
+    },
+    {
+     "stock_code": "108320"
+    },
+    {
+     "stock_code": "110990"
+    },
+    {
+     "stock_code": "115440"
+    },
+    {
+     "stock_code": "123860"
+    },
+    {
+     "stock_code": "126700"
+    },
+    {
+     "stock_code": "128540"
+    },
+    {
+     "stock_code": "134380"
+    },
+    {
+     "stock_code": "137400"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "145020"
+    },
+    {
+     "stock_code": "145720"
+    },
+    {
+     "stock_code": "158430"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "192820"
+    },
+    {
+     "stock_code": "194370"
+    },
+    {
+     "stock_code": "196170"
+    },
+    {
+     "stock_code": "214150"
+    },
+    {
+     "stock_code": "214430"
+    },
+    {
+     "stock_code": "214450"
+    },
+    {
+     "stock_code": "236200"
+    },
+    {
+     "stock_code": "241710"
+    },
+    {
+     "stock_code": "253590"
+    },
+    {
+     "stock_code": "263860"
+    },
+    {
+     "stock_code": "265560"
+    },
+    {
+     "stock_code": "267260"
+    },
+    {
+     "stock_code": "272450"
+    },
+    {
+     "stock_code": "278470"
+    },
+    {
+     "stock_code": "281740"
+    },
+    {
+     "stock_code": "310200"
+    },
+    {
+     "stock_code": "319660"
+    },
+    {
+     "stock_code": "326030"
+    },
+    {
+     "stock_code": "332370"
+    },
+    {
+     "stock_code": "333620"
+    },
+    {
+     "stock_code": "337930"
+    },
+    {
+     "stock_code": "339950"
+    },
+    {
+     "stock_code": "340570"
+    },
+    {
+     "stock_code": "348210"
+    }
+   ]
+  },
+  {
+   "date": "2026-04-01",
+   "picks": [
+    {
+     "stock_code": "000660"
+    },
+    {
+     "stock_code": "002800"
+    },
+    {
+     "stock_code": "003230"
+    },
+    {
+     "stock_code": "003350"
+    },
+    {
+     "stock_code": "005690"
+    },
+    {
+     "stock_code": "006910"
+    },
+    {
+     "stock_code": "007340"
+    },
+    {
+     "stock_code": "007660"
+    },
+    {
+     "stock_code": "009540"
+    },
+    {
+     "stock_code": "010120"
+    },
+    {
+     "stock_code": "010140"
+    },
+    {
+     "stock_code": "012450"
+    },
+    {
+     "stock_code": "014940"
+    },
+    {
+     "stock_code": "015760"
+    },
+    {
+     "stock_code": "017510"
+    },
+    {
+     "stock_code": "017960"
+    },
+    {
+     "stock_code": "018290"
+    },
+    {
+     "stock_code": "020710"
+    },
+    {
+     "stock_code": "023590"
+    },
+    {
+     "stock_code": "025880"
+    },
+    {
+     "stock_code": "031980"
+    },
+    {
+     "stock_code": "032190"
+    },
+    {
+     "stock_code": "033100"
+    },
+    {
+     "stock_code": "033250"
+    },
+    {
+     "stock_code": "033500"
+    },
+    {
+     "stock_code": "035900"
+    },
+    {
+     "stock_code": "036620"
+    },
+    {
+     "stock_code": "037270"
+    },
+    {
+     "stock_code": "039130"
+    },
+    {
+     "stock_code": "039200"
+    },
+    {
+     "stock_code": "039830"
+    },
+    {
+     "stock_code": "041510"
+    },
+    {
+     "stock_code": "042660"
+    },
+    {
+     "stock_code": "042700"
+    },
+    {
+     "stock_code": "046940"
+    },
+    {
+     "stock_code": "051360"
+    },
+    {
+     "stock_code": "052400"
+    },
+    {
+     "stock_code": "054950"
+    },
+    {
+     "stock_code": "058970"
+    },
+    {
+     "stock_code": "064350"
+    },
+    {
+     "stock_code": "065710"
+    },
+    {
+     "stock_code": "067160"
+    },
+    {
+     "stock_code": "071320"
+    },
+    {
+     "stock_code": "071970"
+    },
+    {
+     "stock_code": "073240"
+    },
+    {
+     "stock_code": "075580"
+    },
+    {
+     "stock_code": "077970"
+    },
+    {
+     "stock_code": "080010"
+    },
+    {
+     "stock_code": "080220"
+    },
+    {
+     "stock_code": "080580"
+    },
+    {
+     "stock_code": "082740"
+    },
+    {
+     "stock_code": "082920"
+    },
+    {
+     "stock_code": "083650"
+    },
+    {
+     "stock_code": "083930"
+    },
+    {
+     "stock_code": "088130"
+    },
+    {
+     "stock_code": "092460"
+    },
+    {
+     "stock_code": "092730"
+    },
+    {
+     "stock_code": "093520"
+    },
+    {
+     "stock_code": "098120"
+    },
+    {
+     "stock_code": "099410"
+    },
+    {
+     "stock_code": "100840"
+    },
+    {
+     "stock_code": "101490"
+    },
+    {
+     "stock_code": "123330"
+    },
+    {
+     "stock_code": "140860"
+    },
+    {
+     "stock_code": "145020"
+    },
+    {
+     "stock_code": "171090"
+    },
+    {
+     "stock_code": "183300"
+    },
+    {
+     "stock_code": "184230"
+    },
+    {
+     "stock_code": "192820"
+    },
+    {
+     "stock_code": "196170"
+    },
+    {
+     "stock_code": "204620"
+    },
+    {
+     "stock_code": "207940"
+    },
+    {
+     "stock_code": "211050"
+    },
+    {
+     "stock_code": "214150"
+    },
+    {
+     "stock_code": "214430"
+    },
+    {
+     "stock_code": "214450"
+    },
+    {
+     "stock_code": "217950"
+    },
+    {
+     "stock_code": "234080"
+    },
+    {
+     "stock_code": "241710"
+    },
+    {
+     "stock_code": "259630"
+    },
+    {
+     "stock_code": "260970"
+    },
+    {
+     "stock_code": "263860"
+    },
+    {
+     "stock_code": "265560"
+    },
+    {
+     "stock_code": "267250"
+    },
+    {
+     "stock_code": "267260"
+    },
+    {
+     "stock_code": "272110"
+    },
+    {
+     "stock_code": "278470"
+    },
+    {
+     "stock_code": "298040"
+    },
+    {
+     "stock_code": "300080"
+    },
+    {
+     "stock_code": "307280"
+    },
+    {
+     "stock_code": "326030"
+    },
+    {
+     "stock_code": "327260"
+    },
+    {
+     "stock_code": "329180"
+    },
+    {
+     "stock_code": "332370"
+    },
+    {
+     "stock_code": "339950"
+    },
+    {
+     "stock_code": "340570"
+    },
+    {
+     "stock_code": "353810"
+    },
+    {
+     "stock_code": "383220"
+    }
+   ]
+  }
+ ]
+}
