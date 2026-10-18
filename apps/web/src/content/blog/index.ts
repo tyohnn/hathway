@@ -21,7 +21,7 @@ export const POSTS = [
 export type PostSlug = (typeof POSTS)[number]["slug"];
 
 /** 화면에 쓰는 브랜드 이름. 표지와 쓴 사람이 이 값을 읽는다 */
-export const BRAND = "Hathway";
+export const BRAND = "Hathway 기업분석";
 
 /** 글에 쓴 사람을 적지 않았을 때 서는 이름 */
 export const BLOG_AUTHOR = `${BRAND} 팀`;

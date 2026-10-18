@@ -61,7 +61,7 @@ export default async function ReleasePage({ params }: { readonly params: Promise
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem className="hidden md:block">
-                                <BreadcrumbLink render={<Link href={paths.landing()} />}>Hathway</BreadcrumbLink>
+                                <BreadcrumbLink render={<Link href={paths.landing()} />}>Hathway 기업분석</BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className="hidden md:block" />
                             <BreadcrumbItem className="hidden md:block">

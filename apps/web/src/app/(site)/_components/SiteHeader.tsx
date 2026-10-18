@@ -26,7 +26,7 @@ export function SiteHeader()
 {
     return (
         <header className="border-border flex h-14 items-center gap-6 border-b px-6">
-            <Link href={paths.landing()} className="font-semibold">Hathway</Link>
+            <Link href={paths.landing()} className="font-semibold">Hathway 기업분석</Link>
             <nav aria-label="사이트" className="text-muted-foreground flex items-center gap-4 text-sm">
                 {NAV.map((item) => (
                     <Link key={item.href} href={item.href} className="hover:text-foreground">{item.label}</Link>

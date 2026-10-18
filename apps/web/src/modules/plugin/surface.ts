@@ -192,7 +192,7 @@ const TOOLS: ReadonlyArray<McpToolDefinition> = [
     },
     {
         name: "open_home",
-        title: "Hathway",
+        title: "Hathway 기업분석",
         description: "Open the Hathway home: the user's research boards and a few companies to start from. The sidebar opens it with no arguments.",
         inputSchema: EMPTY_INPUT,
         annotations: READ_ONLY,
@@ -297,7 +297,7 @@ const RESOURCE_TITLES: ReadonlyArray<readonly [string, string, string]> = [
     [UI_VALUATION, "valuation", "적정가 계산"],
     [UI_FILINGS, "filings", "최근 공시"],
     [UI_SCREEN, "screen", "종목 스크리너"],
-    [UI_HOME, "home", "Hathway"],
+    [UI_HOME, "home", "Hathway 기업분석"],
     [UI_BOARDS, "boards", "리서치 보드"],
 ];
 

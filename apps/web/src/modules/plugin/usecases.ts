@@ -341,7 +341,7 @@ const openHome = (call: SurfaceCall): Outcome =>
         const featured = yield* Effect.all(FEATURED_STOCK_CODES.map((stockCode) => companyWithPeriods(stockCode, ["A", "TTM"])));
         const view = homeView(true, boards, featured.flatMap((each) => (each === null ? [] : [each])));
 
-        return done(`Hathway 홈을 열었어요. 보드 ${view.boards.length}개. 종목 이름을 말하면 요약 카드부터 보여 줄 수 있어요.`, view);
+        return done(`Hathway 기업분석 홈을 열었어요. 보드 ${view.boards.length}개. 종목 이름을 말하면 요약 카드부터 보여 줄 수 있어요.`, view);
     });
 
 const openBoardsPanel = (call: SurfaceCall): Outcome =>

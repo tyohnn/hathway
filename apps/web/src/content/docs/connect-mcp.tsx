@@ -25,7 +25,7 @@ export default function ConnectMcp()
 
             <H2>Claude Code</H2>
             <Steps>
-                <Step title="Hathway 추가하기">
+                <Step title="Hathway 기업분석 추가하기">
                     <p>터미널에서 아래 명령을 실행해요.</p>
                     <CodeBlock code={`claude mcp add --transport http hathway ${endpoint}`} />
                 </Step>

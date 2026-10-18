@@ -110,4 +110,4 @@ export const paletteFor = (billable: boolean): ReadonlyArray<PaletteEntry> => [
         .map((entry) => ({ label: entry.label, href: entry.href, icon: entry.icon })),
 ];
 
-export const LABELS = { fallbackTitle: "Hathway" };
+export const LABELS = { fallbackTitle: "Hathway 기업분석" };

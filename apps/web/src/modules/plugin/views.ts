@@ -284,7 +284,7 @@ export const valuationView = (
         currentPrice,
         currentPriceSource: currentPrice === null ? null : sources.currentPrice,
         assumptions,
-        source: `매출 · 이익률 · 배수는 대화에서 세운 가정 · 발행주식수와 주가는 DB 밖(${sources.shares ?? "출처 없음"}) · 계산은 Hathway`,
+        source: `매출 · 이익률 · 배수는 대화에서 세운 가정 · 발행주식수와 주가는 DB 밖(${sources.shares ?? "출처 없음"}) · 계산은 Hathway 기업분석`,
     } as const;
 
     if (outcome._tag === "Refused")
