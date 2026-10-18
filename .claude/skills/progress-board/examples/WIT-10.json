@@ -1,0 +1,39 @@
+{
+    "issue": "WIT-10",
+    "title": "딜과 계약 필드",
+    "pr": 301,
+    "updated": "2026-10-14T06:06:56Z",
+    "needs": "PR #301 리뷰",
+    "stages": {
+        "issue": "done",
+        "spec": "done",
+        "redGreen": "done",
+        "local": "done",
+        "review": "done",
+        "pr": "done",
+        "merge": "todo"
+    },
+    "checks": [
+        {
+            "name": "typecheck",
+            "state": "pass"
+        },
+        {
+            "name": "test",
+            "state": "pass"
+        },
+        {
+            "name": "build",
+            "state": "pass"
+        },
+        {
+            "name": "CI",
+            "state": "skipped",
+            "detail": "GitHub Actions 결제가 막혀 러너가 뜨지 않음"
+        },
+        {
+            "name": "규약 점검",
+            "state": "todo"
+        }
+    ]
+}

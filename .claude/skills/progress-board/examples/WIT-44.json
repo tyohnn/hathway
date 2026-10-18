@@ -1,0 +1,40 @@
+{
+    "issue": "WIT-44",
+    "title": "자문 작업공간 화면",
+    "pr": 299,
+    "updated": "2026-10-14T06:10:00Z",
+    "needs": "PR #299 리뷰",
+    "stages": {
+        "issue": "done",
+        "spec": "done",
+        "redGreen": "done",
+        "local": "done",
+        "review": "done",
+        "pr": "done",
+        "merge": "todo"
+    },
+    "checks": [
+        {
+            "name": "advisor 단위",
+            "state": "pass",
+            "passed": 482,
+            "total": 482
+        },
+        {
+            "name": "advisor e2e",
+            "state": "pass",
+            "passed": 13,
+            "total": 13
+        },
+        {
+            "name": "CI",
+            "state": "skipped",
+            "detail": "GitHub Actions 결제가 막혀 러너가 뜨지 않음"
+        },
+        {
+            "name": "규약 점검",
+            "state": "pass",
+            "detail": "보안 · 코드 규약 점검 지적 없음"
+        }
+    ]
+}
