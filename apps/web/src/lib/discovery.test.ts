@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BlogPost, DocPage, Release } from "@/content/types";
 
-import { blogPostingLd, jsonLdScript, llmsText, sitemapEntries, type SiteIndex } from "./discovery";
+import { blogPostingLd, jsonLdScript, llmsText, siteLd, sitemapEntries, type SiteIndex } from "./discovery";
 
 const SITE = "https://example.test";
 
@@ -22,6 +22,7 @@ const release: Release = { version: "0.1.0", title: "첫 공개", date: "2026-09
 const index: SiteIndex = {
     name: "Hathway",
     description: "쪽지로 팀의 일을 나눠요.",
+    pages: [{ path: "/stocks", title: "주식", note: "종목을 찾아요." }, { path: "/stocks/news", title: "뉴스" }],
     posts: [post("old", "2026-09-01"), post("new", "2026-09-20")],
     docs: [doc],
     releases: [release],
@@ -30,12 +31,13 @@ const index: SiteIndex = {
 
 describe("sitemapEntries", () =>
 {
-    it("첫 화면 · 블로그 · 글 · 문서 · 새 소식 · 약관의 주소를 모두 싣는다", () =>
+    it("공개 화면 · 블로그 · 글 · 문서 · 새 소식 · 약관의 주소를 모두 싣는다. 다른 주소로 넘기는 뿌리는 싣지 않는다", () =>
     {
         const urls = sitemapEntries(SITE, index).map((entry) => entry.url);
 
         expect(urls).toEqual([
-            `${SITE}/`,
+            `${SITE}/stocks`,
+            `${SITE}/stocks/news`,
             `${SITE}/blog`,
             `${SITE}/blog/new`,
             `${SITE}/blog/old`,
@@ -78,6 +80,22 @@ describe("llmsText", () =>
         expect(text).toContain(`- [시작하기](${SITE}/docs/getting-started): 처음 쓰는 법이에요.`);
     });
 
+    it("공개 화면과 MCP 엔드포인트를 절대 주소로 싣는다", () =>
+    {
+        const text = llmsText(SITE, index);
+
+        expect(text).toContain(`- [주식](${SITE}/stocks): 종목을 찾아요.`);
+        expect(text).toContain(`- [뉴스](${SITE}/stocks/news)\n`);
+        expect(text).toContain(`${SITE}/api/mcp`);
+    });
+
+    it("고지가 있으면 설명 바로 아래에 싣는다", () =>
+    {
+        const text = llmsText(SITE, { ...index, notice: "투자 자문이 아니에요." });
+
+        expect(text.startsWith("# Hathway\n\n> 쪽지로 팀의 일을 나눠요.\n\n투자 자문이 아니에요.\n")).toBe(true);
+    });
+
     it("요약이 없는 글은 링크만 싣는다", () =>
     {
         const text = llmsText(SITE, { ...index, posts: [post("bare", "2026-09-02", { summary: undefined })] });
@@ -111,6 +129,24 @@ describe("blogPostingLd", () =>
         const ld = blogPostingLd(SITE, index.name, post("new", "2026-09-20"), "Hathway 팀");
 
         expect(ld.author).toEqual({ "@type": "Organization", name: "Hathway 팀" });
+    });
+});
+
+describe("siteLd", () =>
+{
+    it("운영 주체의 Organization 과 서비스의 WebApplication 을 싣는다", () =>
+    {
+        const [organization, application] = siteLd(SITE, "Hathway", "설명", { name: "팍스휴마나", email: "a@example.test" });
+
+        expect(organization).toMatchObject({ "@type": "Organization", name: "팍스휴마나", url: `${SITE}/`, email: "a@example.test" });
+        expect(application).toMatchObject({
+            "@type": "WebApplication",
+            name: "Hathway",
+            description: "설명",
+            url: `${SITE}/`,
+            applicationCategory: "FinanceApplication",
+            publisher: { "@type": "Organization", name: "팍스휴마나" },
+        });
     });
 });
 

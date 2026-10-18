@@ -11,7 +11,7 @@ export default function ConnectMcp()
 
     return (
         <>
-            <Callout tone="lock" title="Claude도 내가 볼 수 있는 쪽지만 봐요" />
+            <Callout tone="lock" title="Claude도 내 계정의 권한으로만 보드와 쪽지를 고쳐요" />
 
             <H2>Claude 앱</H2>
             <Steps>

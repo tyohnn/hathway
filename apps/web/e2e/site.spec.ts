@@ -56,7 +56,7 @@ test.describe("공개 화면", () =>
 
         const llms = await request.get("/llms.txt");
         expect(llms.status()).toBe(200);
-        expect(await llms.text()).toMatch(/^# Hathway\n/);
+        expect(await llms.text()).toMatch(/^# Hathway 기업분석\n/);
     });
 
     test("블로그 글은 검색에 열려 있고 BlogPosting 구조화 데이터를 싣는다", async ({ page }) =>

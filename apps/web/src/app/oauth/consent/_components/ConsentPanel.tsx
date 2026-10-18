@@ -9,6 +9,7 @@ import { StatusBadge } from "@hathway/blocks/status-badge";
 
 import { approveConsent, denyConsent } from "@/actions/consent";
 import { BRAND } from "@/app/_components/AuthShell";
+import { LegalNote } from "@/app/_components/LegalNote";
 import { clientBrandOf, consentPermissions, type ClientBrand, type ConsentPermissions, type PermissionKind } from "@/lib/consent";
 import { consentTools, readConsent } from "@/usecases/consent";
 
@@ -183,6 +184,9 @@ export function ConsentView({ request }: { readonly request: ConsentRequest | nu
                         <Button type="submit" className="w-full" disabled={request === null}>연결하기</Button>
                     </form>
                 </div>
+
+                {/* 「연결하기」를 누르는 일이 곧 약관에 동의하는 일이라 단추 바로 아래에 둔다(로그인 화면과 같은 글) */}
+                <LegalNote action="연결하면" />
 
                 {/* 돌아갈 주소는 Supabase 가 등록된 값으로 정하고, 닫기를 눌러도 같은 곳으로 간다. 엉뚱한 곳인지 눈으로 볼 수 있게 보인다 */}
                 <p className="text-muted-foreground border-border mt-6 border-t pt-5 text-center text-xs leading-5">
