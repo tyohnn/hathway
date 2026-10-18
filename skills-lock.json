@@ -13,6 +13,12 @@
       "skillPath": "skills/ai-elements/SKILL.md",
       "computedHash": "c5faf42a5aa6bf02f7310dfcf0b6c45d956c98afa520cb16ec048df7ee263af5"
     },
+    "ai-seo": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/ai-seo/SKILL.md",
+      "computedHash": "a7d18710bf6adc45383eec711cda54b6ceeba9ce02454ef3e52f081e1eb2ce49"
+    },
     "deploy-to-vercel": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
@@ -78,6 +84,18 @@
       "sourceType": "github",
       "skillPath": "skills/review-animations/SKILL.md",
       "computedHash": "b9f669af5ae280c19a592a94611520335a81de25c88f225bf60ae4b2d66c8c7c"
+    },
+    "schema": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/schema/SKILL.md",
+      "computedHash": "6809d198493d08931ea1c35ab40d2fca27c6ae63a07a4bc183b75df51243a374"
+    },
+    "seo": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "01a735ac18ceb15536ac40b11a5712b3ab8f78ebe94748b3ebc3afc7f58a6f2f"
     },
     "shadcn": {
       "source": "shadcn/ui",

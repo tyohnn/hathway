@@ -1,0 +1,13 @@
+{
+    "source": "/home/user/scaffold",
+    "sourceCommit": "bc866ec",
+    "name": "hathway",
+    "title": "Hathway",
+    "appPort": 4400,
+    "dbPort": 5436,
+    "modules": [
+        "plugin",
+        "posthog"
+    ],
+    "brief": "기업 투자 분석. 교재의 방법론과 DART 공시 · 재무 데이터로 종목을 분석하고, ChatGPT 플러그인에서 그 분석을 대화로 돌린다"
+}
