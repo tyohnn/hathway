@@ -1,67 +1,25 @@
 # AGENTS.md
 
-## 코드 작업 규약 (`apps/web` · `packages/*`)
+## 코드 작업 규약 (`apps/*` · `packages/*` · `supabase/`)
 
-2026-10-02 에 스캐폴드(`tyohnn/scaffold`)의 규약과 스킬을 이 저장소에 맞춰 옮겼다. 자세한 규약은 가리키는 곳에 있고
-여기에 옮겨 적지 않는다. 교재 · 리서치 · 파이프라인 작업은 아래 절들이 그대로 정본이다.
+정본은 루트 `CLAUDE.md` 와 `docs/개발-방법론.md` 다. 2026-10-18 에 코드를 스캐폴드(`tyohnn/scaffold`) 위로 옮겼다
+(npm workspaces + Turborepo, Next 16.3, effect v4 포트와 어댑터, tyohnn graphite). 여기에는 코드 밖의 도구가 알아야 할 것만 둔다.
 
-**작업 순서.** 코드를 쓰기 전에 아래를 지난다. 정본은 `docs/개발-방법론.md` 다.
-
-1. **되돌리기 비용부터 본다.** 화면 배치와 문안은 바로 만든다. 재무 수치의 계산과 표기, 적정가 계산, 스키마와 적재 함수,
-   원격 DB 에 쓰는 일은 아래를 전부 지난다(`.claude/skills/spec-by-test/SKILL.md`).
-2. **테스트 이름을 먼저 짓고 확인받는다.** `it(...)` 목록을 사용자에게 보인다. 코드가 무엇을 하는지의 정본은 테스트 이름이다.
-   무엇을 왜 만드는지(PRD · 스토리 · 계획 · ADR)의 정본은 종전대로 Notion 이다(아래 Oh My Docs).
-3. **빨간 것을 먼저 세운다**(`.claude/skills/tdd/SKILL.md`).
-4. **판정과 계산은 순수 함수에 둔다.** 도메인 패키지(`packages/access` · `packages/research` · `packages/market`)의 순수 규칙이 먼저 서고,
-   포트와 어댑터는 다른 커밋이다. 표기와 분류는 `packages/schema`, 화면의 계산은 `apps/web/src/lib/<영역>` 이다.
-5. **커밋은 책임 하나다.** 도구, 의존성, 패키지 골격, 순수 규칙, 데이터 접근, 앱 배선, 인프라, 문서의 순서로 나눈다.
-   문서는 코드와 같은 커밋에 넣지 않는다.
-6. **고친 뒤에 돌린다.** `pnpm types:check` · `pnpm test` 를 지나고, 화면을 고쳤으면 그 화면을 실제로 연다.
-
-**읽기는 공개, 쓰기는 관문 뒤.** 로그인하지 않아도 모든 화면을 읽는다. 쓰는 서버 액션은 전부 `appAction`(`apps/web/src/lib/action.ts`)을
-지나고, 관문이 입력을 파싱하고 세션에서 행위자를 확정한 뒤에만 핸들러를 부른다. `"use server"` 파일에는 관문을 지난 액션만
-두고 조립은 `src/usecases/` 에 둔다. 리서치 보드는 테넌트의 것이고 그 구성원만 고치고 지운다. 설정(`/settings/team` · `/settings/account`)만
-로그인한 사람의 화면이고 그 조회는 `appRead`(`apps/web/src/lib/read.ts`)를 지난다. 로컬 로그인과 앱 롤을 세우는 법은
-`platform/README.md` 「로그인과 앱 롤」에 있다.
-
-**디자인 시스템.** tyohnn 의 **graphite** 를 `packages/ui` 로 받아 입는다. 정본은 루트 `tyohnn.json` 과
-`docs/design-system/README.md` 다. `packages/ui/src` 의 CLI 소유 파일을 손으로 고치지 않고, `npx shadcn add` 를 돌리지 않는다.
-화면은 `@investment/blocks/*` 의 블록으로 조립하고 없는 것만 `@investment/ui/components/*` 를 조합한다(Base UI 라 `asChild` 가 아니라 `render` 다). 색은 원시 색이 아니라
-시맨틱 토큰으로 쓰고, 이 제품의 값은 `packages/ui/src/product.css` 에 둔다.
-
-**스킬**(`.claude/skills/`). 스캐폴드와 같은 벌이고 출처와 해시는 루트 `skills-lock.json` 이 고정한다.
-
-- 기능을 만들기 전에는 `spec-by-test`, 그다음 `tdd`.
-- 화면의 글(단추 · 라벨 · 설명 · 빈 화면 · 오류)을 쓸 때는 `ux-writing`. 끝나면
-  `node .claude/skills/ux-writing/scripts/scan-copy.mjs apps/web/src/app apps/web/src/components` 를 돌리고, 서브에이전트
-  `ux-writing-reviewer`(`.claude/agents/`)에게 **볼 범위만** 넘겨 검토받는다.
-- 한국어 산문(문서 · PR · 주석)은 `fluent-korean`. 교재의 문장은 종전대로 `korean-bestseller-prose` · `humanize-korean` 이다.
-- 코드 작업에서 자주 쓰는 것: `next-best-practices`, `shadcn`, `supabase`, `supabase-postgres-best-practices`,
-  `vercel-react-best-practices`, `vercel-composition-patterns`, `webapp-testing`, `ai-sdk`.
-- PR 을 내기 전에는 내장 스킬 `security-review` 를 돌린다.
-
-**명령.**
-
-```
-pnpm types:check        # 타입 오류 0
-pnpm test               # vitest + 토큰 스캔 + 불변식 인용. 로컬 스택과 로그인 시드가 있어야 통째로 초록이다
-pnpm check:tokens       # 읽는데 정의가 없는 디자인 토큰
-pnpm check:comments     # 주석의 한국어(적용 범위는 스크립트의 SCOPE)
-pnpm check:invariants   # 불변식 카탈로그와 인용의 대조
-```
-
-**코드 스타일.** Allman brace · 4칸 들여쓰기 · 큰따옴표 · 세미콜론이다. 여는 중괄호는 다음 줄에 둔다. 새 주석과 커밋 메시지는
-한국어로 쓴다. 커밋 제목은 `feat(web): …` 꼴이고 교재와 리서치의 커밋은 종전대로다. `any` 를 쓰지 않는다.
+- **명령은 npm 이다.** `npm install` · `npx turbo typecheck` · `npx turbo test` · `npx turbo build` · `npm run pr:check`. pnpm 은 걷었다.
+- **읽기는 공개, 쓰기는 관문 뒤.** 시장 화면(`/stocks` · `/real-estate`)은 로그인 없이 읽고, 쓰는 서버 액션은 전부 `appAction` 을 지난다.
+- **마이그레이션의 정본은 루트 `supabase/migrations/`** 다(옛 `platform/supabase/` 에서 옮겼다). 손으로 쓰고, 원격 DB 에 쓰는 일은
+  되돌리기 비싼 쪽이라 사람의 확인을 받는다.
+- 무엇을 왜 만드는지(PRD · 스토리 · 계획 · ADR)의 정본은 종전대로 Notion 이다(아래 Oh My Docs).
 
 ## Cursor Cloud specific instructions
 
 ### What this repo is
 This is primarily (1) a Bash **YouTube → transcription pipeline** and
 (2) an authored **Korean Markdown knowledge base** (`교재/`, `강의/`).
-There is also a pnpm monorepo front-end under `apps/web` (Next.js 16 + the tyohnn design
-system in `packages/ui`) that serves `교재/` as a book — run from repo root with
-`pnpm install` / `pnpm dev`. Shared packages go in `packages/*`. The knowledge-base Markdown remains the core
-deliverable; the site is a viewer over it.
+There is also an npm + Turborepo monorepo (`apps/web` · `apps/agent` · `packages/*`, built on
+`tyohnn/scaffold`) — a public market-analysis site over DART data and, next, a ChatGPT plugin.
+Its conventions live in `CLAUDE.md`. The textbook reader was dropped from the web on 2026-10-18;
+`교재/` itself stays here as the methodology source.
 
 ### Runtime Secrets → `.env.local` (세션 시작)
 
@@ -79,45 +37,20 @@ bash /workspace/scripts/sync-runtime-env.sh
 값은 채팅·툴 결과에 `[REDACTED]` 로 가려지고, 스크립트도 값을 출력하지 않는다.
 
 ### Web app + platform (apps/web + Supabase) — the runnable application
-`pnpm install` (root) then `pnpm dev` serves the site at http://localhost:3000 (Next.js 16
-+ Turbopack). `predev` runs `scripts/sync-content.mjs` which regenerates the gitignored
-`apps/web/content/book/` from `교재/` — plain CommonMark plus a `manifest.json` holding the
-권·부·장 structure. Node 22 + pnpm 10.x are used; the update script runs `pnpm install`.
+`npm install` (root), then `npx supabase start` and `npx turbo dev --filter=@hathway/web` serves
+http://localhost:4400. Node 22 + npm. Local values: `cp apps/web/.env.example apps/web/.env.development.local`.
 
-- **`/book/**` works standalone** — the app's own reader over `교재/`, no backend needed.
-  Fumadocs was removed (2026-08); the shelf is `/book`, a 권 is `/book/book1`, a 장 is
-  `/book/book1/C3`, 자료 is `/book/reference/<slug>`. Old `/docs/**` URLs 301 to `/book/**`.
-  Body copy is styled by the design system's **typeset** (`packages/ui/src/systems/<system>/typeset*.css`
-  + the `.typeset-notes` preset in `src/app/global.css`) — never hand-style rendered Markdown; wrap
-  it in `.typeset .typeset-notes` and let the stylesheet do it. Markdown is compiled by
-  `apps/web/src/lib/book/render.ts` (remark/rehype), not MDX, so **JSX in 교재 Markdown does
-  not work**; the one live component is the `@@TEXTBOOK_CHART:<id>@@` placeholder that
-  `scripts/sync-content.mjs` writes for `<!-- MEDIA:chart -->` markers.
-- **`/stocks/analysis/**` (and `/company/**`, which 301s there) needs the local
-  Supabase stack and `WEB_DATABASE_URL`.** The reads no longer go through PostgREST:
-  `apps/web/src/lib/platform/db.ts` is a thin entry over `src/usecases/market.ts`, which reads
-  through the `@investment/market` ports with `pg` as the app role `web_app`
-  (`docs/개발-방법론.md` 「조회의 길」). **There is no local fallback** — without
-  `WEB_DATABASE_URL` every market read fails, `/stocks/analysis` 500s, the layout swallows
-  the error, and the stock search shows only static 산업/교재 entries.
-  `cp apps/web/.env.example apps/web/.env.local` gives the local values; the role's login is
-  set by `platform/supabase/seeds/org.sql` (`platform/README.md` 「로그인과 앱 롤」).
-  Nothing in `public` is anon-readable (migration `20260802000005`), and `web_app` reads only
-  the tables it was granted (`20261002000300`). The service role key is used for one thing:
-  filing section bodies in Storage (`NEXT_PUBLIC_SUPABASE_URL` or `SUPABASE_REST_URL`, plus
-  `SUPABASE_SERVICE_KEY`; these still fall back to the local demo values).
-  **Vercel production** needs `WEB_DATABASE_URL` (pooler, port 6543) in addition to that pair.
-  App chrome is theme → section. Sidebar top switches `주식` (`/stocks`) and
-  `부동산` (`/real-estate`). Under each theme: 종목 분석 `/analysis`, 거시경제
-  `/macro`, 전체 뉴스 `/news`, 리서치 보드 `/boards`.
-  `/stocks/analysis/<stockCode>` is the FnGuide 기업정보 landing (Snapshot).
-  Submenus and the 8-step workbench share the next segment:
-  `/stocks/analysis/<stockCode>/{profile,financials,...,verdict,industry,...}`.
-  종목 선택과 기업정보/분석 순서 전환은 content body toolbar (breadcrumb +
-  combobox) 에 있다. Seeded stock codes: `259960` (크래프톤), `247540`
-  (에코프로비엠). 산업 지도는 `/stocks/macro/industries`. 옛
-  `/company/**` · `/lab/**` · `/industry/**` 는 301 한다.
-- `pnpm types:check` (root) = the lint/build proxy (`next typegen && tsc --noEmit`).
+- **`/stocks/analysis/**` (and `/company/**`, which 301s there) needs the local Supabase stack and
+  `WEB_DATABASE_URL`.** Reads go through the `@hathway/market` ports with `pg` as the app role `web_app`
+  (`docs/개발-방법론.md` 「조회의 길」). **There is no local fallback.** The service role key is used for one
+  thing: filing section bodies in Storage (`SUPABASE_SERVICE_KEY`). **Vercel production** needs
+  `WEB_DATABASE_URL` (pooler, port 6543) in addition.
+- App chrome is theme → section. Sidebar top switches `주식` (`/stocks`) and `부동산` (`/real-estate`).
+  Under each theme: 종목 분석 `/analysis`, 거시경제 `/macro`, 전체 뉴스 `/news`, 리서치 보드 `/boards`.
+  `/stocks/analysis/<stockCode>` is the FnGuide 기업정보 landing (Snapshot); submenus and the 8-step
+  workbench share the next segment. Seeded stock codes: `259960` (크래프톤), `247540` (에코프로비엠).
+  산업 지도는 `/stocks/macro/industries`. 옛 `/company/**` · `/lab/**` · `/industry/**` 는 301 한다.
+- `npx turbo typecheck` = the lint/build proxy (`next typegen && tsc --noEmit` per app).
 
 ### UI 확인
 레이아웃·카피 수정은 코드와 타입체크만 한다. computer use / 화면 녹화는
@@ -126,16 +59,14 @@ bash /workspace/scripts/sync-runtime-env.sh
 
 **Running the Supabase stack (for `/stocks/analysis`)** — see `platform/README.md` for the full
 data workflow; the non-obvious cloud gotchas are:
-- Requires Docker + the `supabase` CLI (installed to `$HOME/.local/share/supabase`, must be
-  on `PATH`). On a fresh Cloud VM these may be absent — install Docker per the Cloud Agent
-  Docker workaround, and with **Docker 29** set `/etc/docker/daemon.json` to
-  `{"storage-driver":"fuse-overlayfs","features":{"containerd-snapshotter":false}}` or
-  `supabase start` containers fail to build.
-- Start: `export PATH="$HOME/.local/share/supabase:$PATH"; cd platform && supabase start`
-  (applies migrations + auto-loads `seed.sql`: 2 companies, 1426 filings, etc.).
-- **`filing_sections` (3,052 rows) is a separate compressed seed** and must be loaded once
-  by hand. The host has no `psql`; pipe it through the db container instead:
-  `gunzip -c supabase/seed-filing-sections.sql.gz | docker exec -i supabase_db_platform psql postgresql://postgres:postgres@127.0.0.1:5432/postgres`
+- Requires Docker. The CLI runs through `npx supabase`. With **Docker 29** set `/etc/docker/daemon.json` to
+  `{"storage-driver":"fuse-overlayfs","features":{"containerd-snapshotter":false}}` or `supabase start`
+  containers fail to build.
+- Start from the repo root: `npx supabase start -x realtime,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor,postgres-meta`
+  (ports 5436x; applies migrations, then `seed.sql` (accounts) and `seeds/*.sql`: 2 companies, 1426 filings, and `fin_periods`).
+- **`filing_sections` (3,052 rows) is a separate compressed seed** and must be loaded once by hand.
+  The host has no `psql`; pipe it through the db container instead:
+  `gunzip -c supabase/seed-filing-sections.sql.gz | docker exec -i supabase_db_hathway psql postgresql://postgres:postgres@127.0.0.1:5432/postgres`
 
 ### Dependencies (pre-installed in the VM snapshot)
 The pipeline shells out to these CLI tools (no code-level packages exist):
@@ -172,15 +103,15 @@ The pipeline shells out to these CLI tools (no code-level packages exist):
 - Most of `.claude/skills/*` are committed copies (from the scaffold, pinned by `skills-lock.json`).
   A few (`chartcn`, `humanize-korean`, `oh-my-doc`, `safe-sql-execution`, `yt-dlp`) are still symlinks
   into the gitignored `.agents/` dir and are expected to be broken in a fresh checkout.
-- The `investment-analyst` plugin (기업·산업 분석 스킬 팩) lives in `plugin/` — a self-contained
+- The `investment-analyst` plugin (기업·산업 분석 스킬 팩) lives in `plugins/investment-analyst/` — a self-contained
   plugin bundled for all three tools' own native plugin systems: `.claude-plugin/`,
   `.cursor-plugin/`, `.codex-plugin/` each hold a manifest pointing at the shared `skills/`
   folder (no per-tool file copies, no dependency on `교재/`). No `commands/` — Claude Code
   autotriggers skills by description, Cursor invokes them directly (`/company-analysis`, `/industry-map`), and
   Codex's plugin manifest doesn't support commands anyway. Its reports go to `리서치/`. See
-  `plugin/README.md` for each tool's native install steps. Platform-wide plan lives in `로드맵.md`.
+  `plugins/investment-analyst/README.md` for each tool's native install steps. Platform-wide plan lives in `로드맵.md`.
 - **산업지도** (원리→수요→중간재 공급→병목→전이, 교재 없이 주석·재무·뉴스)는
-  `plugin/skills/industry-map/SKILL.md`. 채점·적정가는 그 스킬 밖이다.
+  `plugins/investment-analyst/skills/industry-map/SKILL.md`. 채점·적정가는 그 스킬 밖이다.
 - `*.sh.superseded` files are deprecated and not part of the active pipeline.
 
 ## 기업 분석 연습 — 감독/서브에이전트 프로토콜

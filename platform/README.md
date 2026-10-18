@@ -6,8 +6,8 @@
 ## 구성
 
 ```
+supabase/                # 로컬 스택 설정 + migrations/ (2026-10-18 저장소 뿌리로 옮겼다)
 platform/
-├── supabase/            # 로컬 스택 설정 + migrations/ (스키마 버전 관리)
 ├── ingest/ingest.py     # OpenDART → Postgres 적재 (stdlib, PostgREST 사용)
 └── data/raw/            # API 원본 JSON (gitignore — 재적재·디버깅용)
 ```
@@ -18,15 +18,14 @@ DART 재수집(종목당 3~5분) 없이, 커밋된 덤프로 지금 상태를 �
 
 ```bash
 export PATH="$HOME/.local/share/supabase:$PATH"
-cd platform
-supabase start    # 로컬 스택 (REST :54321, DB :54322, Studio :54323)
-                   # → 마이그레이션 적용 + supabase/seed.sql 자동 로드 (companies·filings·
+npx supabase start   # 저장소 뿌리에서. 로컬 스택 (REST :54361, DB :54362)
+                   # → 마이그레이션 적용 + supabase/seed.sql(계정) · seeds/05-market.sql 자동 로드 (companies·filings·
                    #   financial_facts·report_items·events·registrations·ownership_txns·
                    #   trackings·filing_docs 메타 — 3.7MB)
 
 # filing_sections(사업보고서 원문·주석, 3,052행)는 크기 때문에 별도 압축 파일 — 수동 1회
 gunzip -c supabase/seed-filing-sections.sql.gz | \
-  psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+  docker exec -i supabase_db_hathway psql postgresql://postgres:postgres@127.0.0.1:5432/postgres
 ```
 
 이미 떠 있는 스택에 최신 시드를 다시 앉히려면 `supabase db reset`(마이그레이션 재적용 +
@@ -34,18 +33,16 @@ gunzip -c supabase/seed-filing-sections.sql.gz | \
 
 ## 로그인과 앱 롤 (종목 화면을 읽고 리서치 보드를 고치려면)
 
-교재(`/book/**`)는 이 절 없이도 선다. 종목 · 재무 · 공시 화면의 조회와 리서치 보드의 쓰기와 로그인은 앱 전용 롤
+종목 · 재무 · 공시 화면의 조회와 리서치 보드의 쓰기와 로그인은 앱 전용 롤
 `web_app` 을 딛는다(마이그레이션 `20261002*`). web 은 PostgREST 를 지나지 않고 그 롤로 `pg` 에 직접 붙는다.
-롤의 로그인과 비밀번호는 마이그레이션이 만들지 않아서, 적재 덤프(`seed.sql`)와 따로 로그인 시드를 한 번 넣는다.
+롤의 로그인과 비밀번호는 마이그레이션이 만들지 않고 로컬은 `supabase/seed.sql` 이 준다. `supabase start` 가 함께 넣는다.
 
 ```bash
-cd platform && supabase start        # 마이그레이션이 org 스키마와 web_app 롤을 세운다
-docker exec -i supabase_db_platform psql -v ON_ERROR_STOP=1 \
-  postgresql://postgres:postgres@127.0.0.1:5432/postgres < supabase/seeds/org.sql
-cp ../apps/web/.env.example ../apps/web/.env.local
+npx supabase start                   # 저장소 뿌리에서. 마이그레이션과 계정 시드를 함께 올린다
+cp apps/web/.env.example apps/web/.env.development.local
 ```
 
-- 시드는 테넌트 셋(운영팀 1 · 고객사 A 2 · 고객사 B 3)과 계정과 로컬 로그인을 심고, `web_app` 에 LOGIN · BYPASSRLS · 비밀번호를
+- 시드는 테넌트 넷(운영팀 1 · 고객사 A 2 · 고객사 B 3 · 고객사 C 4)과 계정과 로컬 로그인을 심고, `web_app` 에 LOGIN · BYPASSRLS · 비밀번호를
   준다. 여러 번 넣어도 된다. 로컬 계정의 비밀번호는 모두 `hathway-local` 이다.
 
   | 계정 | 누구 | 보드 |
@@ -59,7 +56,7 @@ cp ../apps/web/.env.example ../apps/web/.env.local
   먼저 알린다. 보드 표에 `tenant_id` 가 NOT NULL 로 서므로 옛 코드의 보드 쓰기가 그때부터 막힌다.
 - ⚠ **로컬 계정 칸은 개발 서버에서만 선다.** 배포의 로그인은 구글이다.
 - ⚠ 다른 저장소의 앱과 같은 브라우저에서 `localhost` 로 함께 열면 세션 쿠키(`sb-127-auth-token`)가 서로 덮어쓴다.
-  로컬 Supabase 는 어느 스택이든 쿠키 이름이 같다. 로그인이 자꾸 풀리면 `http://hathway.localhost:3000` 으로 연다.
+  로컬 Supabase 는 어느 스택이든 쿠키 이름이 같다. 로그인이 자꾸 풀리면 `http://hathway.localhost:4400` 으로 연다.
 
 **원격에 올릴 때** 마이그레이션만으로는 web 이 붙지 못한다. 소유자가 한 번 넣는다.
 
@@ -86,7 +83,6 @@ alter role web_app login password '<비밀번호>' bypassrls;
 ```bash
 # 전제: Docker 실행, supabase CLI (~/.local/share/supabase — PATH 필요), DART_API_KEY(.env.local)
 export PATH="$HOME/.local/share/supabase:$PATH"
-cd platform
 supabase start
 supabase migration up
 
@@ -98,10 +94,9 @@ python3 ingest/ingest.py 크래프톤 --only fin  # 일부 단계만
 ## 덤프 갱신 (데이터 추가·변경 후 커밋 전)
 
 ```bash
-cd platform
-rm -f supabase/seed.sql
+rm -f supabase/seeds/05-market.sql
 supabase db dump --local --data-only --schema public \
-  -x public.account_concepts -x public.filing_sections -f supabase/seed.sql
+  -x public.account_concepts -x public.filing_sections -f supabase/seeds/05-market.sql
 supabase db dump --local --data-only --schema public \
   -x public.companies -x public.filings -x public.financial_facts \
   -x public.report_items -x public.events -x public.registrations \
@@ -114,7 +109,7 @@ gzip -9 -c /tmp/sections-only.sql > supabase/seed-filing-sections.sql.gz
 `account_concepts`는 마이그레이션 0002에서 이미 INSERT로 시드되므로 데이터 덤프에서 항상
 제외한다(포함하면 PK 충돌). `filing_sections`만 분리하는 이유는 크기다 — 전체 51MB 중
 51MB가 이 테이블 하나(원문 텍스트, 섹션당 최대 26만 자)이고 나머지 9개 테이블 전부 합쳐도
-3MB 남짓이다. **`--use-copy`는 `supabase/seed.sql`(자동 로드분)에는 쓰지 않는다** — CLI의
+3MB 남짓이다. **`--use-copy`는 `supabase/seeds/05-market.sql`(자동 로드분)에는 쓰지 않는다** — CLI의
 시드 로더가 COPY 블록을 파싱 못 해 깨진다(직접 겪은 실패: `db reset` 도중 seed 적용
 실패 → 스키마만 재생성된 빈 DB로 남음). COPY는 `psql -f`로 수동 복원하는
 `seed-filing-sections.sql.gz` 쪽에서만 안전하다.
@@ -132,7 +127,6 @@ gzip -9 -c /tmp/sections-only.sql > supabase/seed-filing-sections.sql.gz
 스키마가 아니라 `/rpc` 표면이 생기지 않는다 — 그래서 ingest가 스스로 부를 수 없다).
 
 ```bash
-cd platform
 # 증분 — 이번에 적재한 종목만 (권장)
 supabase db query --linked "select * from internal.fin_periods_refresh(array['00126380'])"
 
