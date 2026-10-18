@@ -60,9 +60,26 @@ export function Bars({ labels, series, height = 96, className, legend = true, ax
 
     return (
         <figure className={cn("flex flex-col gap-1.5", className)} aria-label={series.map((each) => each.label).join(" · ")}>
+            {/* 그림을 읽지 못하는 사람에게는 같은 값을 계열마다 한 줄로 읽어 준다. 막대와 글자는 이 줄과 겹치므로 감춘다 */}
+            {loading
+                ? null
+                : (
+                    <ul className="sr-only">
+                        {series.map((each) => (
+                            <li key={each.key}>
+                                {`${each.label}: ${labels.map((label, index) =>
+                                {
+                                    const value = each.values[index] ?? null;
+
+                                    return `${label} ${each.unit === "pct" ? formatPct(value) : formatCompact(value)}`;
+                                }).join(", ")}`}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             {legend && !loading
                 ? (
-                    <figcaption className="flex gap-3 text-[11px] text-muted-foreground">
+                    <figcaption aria-hidden className="flex gap-3 text-[11px] text-muted-foreground">
                         {series.map((each) => (
                             <span key={each.key} className="inline-flex items-center gap-1">
                                 <span aria-hidden className={cn("size-2 rounded-[2px]", each.swatch)} />
@@ -72,7 +89,7 @@ export function Bars({ labels, series, height = 96, className, legend = true, ax
                     </figcaption>
                 )
                 : null}
-            <div className="relative grid" style={{ ...columns, height }} role="presentation">
+            <div aria-hidden className="relative grid" style={{ ...columns, height }}>
                 <span aria-hidden className="absolute inset-x-0 h-px bg-border" style={{ top: loading ? height - 1 : zero }} />
                 {loading
                     ? Array.from({ length: count }, (_, index) => (
@@ -125,7 +142,7 @@ export function Bars({ labels, series, height = 96, className, legend = true, ax
             </div>
             {axis
                 ? (
-                    <div className="grid text-center text-[11px] text-muted-foreground tabular-nums" style={columns}>
+                    <div aria-hidden className="grid text-center text-[11px] text-muted-foreground tabular-nums" style={columns}>
                         {loading
                             ? Array.from({ length: count }, (_, index) => <span key={index}><Pending className="w-8" /></span>)
                             : labels.map((label, index) => <span key={label} className={cn("truncate", index === last && "font-medium text-foreground")}>{label}</span>)}

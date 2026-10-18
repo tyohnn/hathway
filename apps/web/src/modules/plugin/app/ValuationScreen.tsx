@@ -39,7 +39,7 @@ function Headline({ view, size }: { readonly view: ValuationView | null; readonl
                 <span className={`${big} font-semibold tracking-tight tabular-nums`}>{view === null ? <Pending className="w-28" /> : formatPrice(view.fairPrice)}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-                <span className="text-[11px] text-muted-foreground">{COPY.valuation.buy} <span className="text-foreground-subtle">({COPY.valuation.buyHint})</span></span>
+                <span className="text-[11px] text-muted-foreground">{COPY.valuation.buy} <span>({COPY.valuation.buyHint})</span></span>
                 <span className={`${big} font-semibold tracking-tight tabular-nums`}>{view === null ? <Pending className="w-24" /> : formatPrice(shownBuy(view.buyPrice))}</span>
             </div>
             {current === null

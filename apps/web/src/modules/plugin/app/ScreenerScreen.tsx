@@ -237,12 +237,18 @@ function WideRow({ row, state, onAction, selectable, selected, onSelect }: {
                             aria-label={`${row.company.name} ${COPY.actions.select}`}
                             data-action="select-row"
                             onClick={() => onSelect(row.company.stockCode)}
-                            className={cn(
-                                "grid size-4 place-items-center rounded-[4px] border transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-                                selected ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background",
-                            )}
+                            className="-m-1 grid size-6 place-items-center rounded-md"
                         >
-                            {selected ? <Check aria-hidden className="size-3" /> : null}
+                            {/* 누르는 자리는 24px, 보이는 칸은 16px 이다. 테두리는 바탕과 3:1 을 넘는 글자 색으로 긋는다 */}
+                            <span
+                                aria-hidden
+                                className={cn(
+                                    "grid size-4 place-items-center rounded-[4px] border transition-colors",
+                                    selected ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground bg-background",
+                                )}
+                            >
+                                {selected ? <Check className="size-3" /> : null}
+                            </span>
                         </button>
                     </td>
                 )
@@ -262,7 +268,7 @@ function WideRow({ row, state, onAction, selectable, selected, onSelect }: {
                                 name="analyze"
                                 size="xs"
                                 variant="secondary"
-                                className="opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
+                                className="min-h-6 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100"
                                 onAction={onAction}
                                 aria-label={`${row.company.name} ${COPY.actions.analyze}`}
                                 action={{ kind: "send", text: COPY.prompts.analyze(row.company.name) }}

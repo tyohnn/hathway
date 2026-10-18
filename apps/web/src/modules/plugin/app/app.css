@@ -35,7 +35,7 @@
 :root {
     --font-sans: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
     --font-heading: var(--font-sans);
-    --up: oklch(0.577 0.215 27.3);
+    --up: oklch(0.55 0.215 27.3);
     --down: oklch(0.546 0.215 262.9);
 }
 
@@ -47,6 +47,26 @@
 @theme inline {
     --color-up: var(--up);
     --color-down: var(--down);
+}
+
+/*
+ * 초점 고리. 디자인 시스템의 고리는 --ring 의 30% 라 바탕과의 대비가 3:1 에 못 미친다(WCAG 1.4.11).
+ * 화면 안에서는 글자 색(--foreground)으로 바깥에 한 줄을 더 그려 키보드로 어디에 있는지 늘 보이게 한다.
+ */
+:where(button, a[href], [role="checkbox"], [tabindex]):focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+}
+
+/* 움직임을 줄여 달라고 한 사람에게는 깜빡이는 막대와 옅어지고 짙어지는 전환을 멈춘다(WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* 대화 속에 뜰 때 호스트의 바탕이 비치게 한다. 판은 카드가 갖는다. 넓은 자리는 graphite 의 바탕을 깐다 */
