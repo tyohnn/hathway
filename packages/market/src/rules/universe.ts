@@ -36,7 +36,7 @@ export const findCompanies = (
         return [];
     }
 
-    const exact = index.filter((row) => row.stock_code === needle);
+    const exact = index.filter((row) => row.stock_code.toLowerCase() === needle);
 
     if (exact.length > 0)
     {

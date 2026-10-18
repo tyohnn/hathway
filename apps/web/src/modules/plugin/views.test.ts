@@ -42,6 +42,14 @@ describe("종목 카드", () =>
         assert.include(view.source, "2025 TTM");
     });
 
+    it("사업보고서가 아직 없는 해의 TTM 은 한 해 전 TTM 과 열두 달 간격이 아니라 견주지 않는다", () =>
+    {
+        const view = companyView(KRAFTON, [...KRAFTON_ROWS, period(KRAFTON.corp_code, 2026, "TTM", { revenue: 1.6e12, opm_pct: 42, roe_pct: 21 })]);
+
+        assert.strictEqual(view.headline[0]?.value, 1.6e12);
+        assert.deepStrictEqual(view.headline.map((metric) => metric.change), [null, null, null]);
+    });
+
     it("추이는 최근 다섯 해의 연간 매출과 영업이익이다", () =>
     {
         const view = companyView(KRAFTON, KRAFTON_ROWS);

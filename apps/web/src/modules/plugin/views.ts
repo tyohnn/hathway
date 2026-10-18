@@ -156,7 +156,7 @@ export const QUARTER_SPAN = 8;
 
 /**
  * 종목 요약. 먼저 보여 줄 셋은 최근 네 분기 합(TTM)이고, TTM 이 없으면 가장 최근 연간이다.
- * 바뀐 값은 한 해 전 같은 기준과 견준다.
+ * 바뀐 값은 한 해 전 같은 기준과 견준다. 열두 달 간격이 아닌 TTM 끼리는 견주지 않는다.
  */
 export const companyView = (company: Company, rows: ReadonlyArray<FinPeriodRow>): CompanyView =>
 {
@@ -165,7 +165,13 @@ export const companyView = (company: Company, rows: ReadonlyArray<FinPeriodRow>)
     const useTtm = ttm.length > 0;
     const series = useTtm ? ttm : annual;
     const current = series.at(-1);
-    const previous = series.find((row) => row.bsns_year === (current?.bsns_year ?? 0) - 1);
+    // TTM 은 해마다 그 해의 마지막 분기에서 끝난다. 사업보고서가 아직 없는 해의 TTM 은 Q4 가 아닌 분기에서 끝나므로
+    // 한 해 전 TTM(Q4 에서 끝남)과 열두 달 간격이 아니다. 두 해 모두 연간이 있을 때만 견준다
+    const closed = (year: number): boolean => !useTtm || annual.some((row) => row.bsns_year === year);
+    const previousYear = (current?.bsns_year ?? 0) - 1;
+    const previous = current !== undefined && closed(current.bsns_year) && closed(previousYear)
+        ? series.find((row) => row.bsns_year === previousYear)
+        : undefined;
     const span = annual.slice(-ANNUAL_SPAN);
     const point = (column: string) => (row: FinPeriodRow): PeriodPoint => ({ label: String(row.bsns_year), value: valueOf(row, column) });
 
@@ -254,6 +260,8 @@ export const peersView = (
 const REFUSALS: Readonly<Record<ValuationRefusal, string>> = {
     "use-psr": "기본 시나리오의 순이익이 0 이하라 PER 로는 계산하지 않아요. PSR 로 다시 계산해 주세요.",
     "no-shares": "발행주식수가 없어 계산하지 못했어요. DART 의 발행주식수를 넣어 주세요.",
+    "no-revenue": "기본 시나리오의 매출이 0 이하라 PSR 로도 계산하지 않아요. 3년 뒤 매출을 다시 세워 주세요.",
+    "bad-multiple": "배수가 0 이하라 계산하지 않아요. PER 이나 PSR 을 0보다 크게 넣어 주세요.",
 };
 
 const multipleName = (method: ValuationInput["method"]): string => (method === "per" ? "PER" : "PSR");

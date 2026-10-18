@@ -132,7 +132,7 @@ const TOOLS: ReadonlyArray<McpToolDefinition> = [
                 targetYear: { type: "integer", minimum: 2000, maximum: 2100, description: "Fiscal year the scenarios describe, usually three years ahead." },
                 method: { type: "string", enum: ["per", "psr"], description: "per by default. Use psr when base-case net income is zero or negative." },
                 revenue: { ...SCENARIOS, description: "Target-year revenue in KRW (won), bear/base/bull." },
-                netMarginPct: { ...SCENARIOS, description: "Target-year net margin in percent, bear/base/bull. Ignored for psr." },
+                netMarginPct: { ...SCENARIOS, description: "Target-year net margin in percent, bear/base/bull. Required for per, ignored for psr." },
                 multiple: {
                     type: "object",
                     properties: { low: { type: "number" }, mid: { type: "number" }, high: { type: "number" } },
@@ -145,7 +145,7 @@ const TOOLS: ReadonlyArray<McpToolDefinition> = [
                 currentPrice: { type: "number", description: "Today's share price in KRW, if you looked it up." },
                 currentPriceSource: { type: "string", maxLength: 200, description: "Where currentPrice came from, with the date." },
             },
-            required: ["stockCode", "targetYear", "revenue", "netMarginPct", "multiple", "sharesOutstanding"],
+            required: ["stockCode", "targetYear", "revenue", "multiple", "sharesOutstanding"],
             additionalProperties: false,
         },
         annotations: READ_ONLY,

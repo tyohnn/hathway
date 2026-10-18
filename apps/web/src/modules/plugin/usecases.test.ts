@@ -208,6 +208,17 @@ describe("적정가", () =>
             assert.isNull(view.fairPrice);
             assert.include(view.refusal ?? "", "PSR");
         })));
+
+    it.effect("PSR 은 순이익률 없이 계산하고, PER 은 순이익률이 없으면 계산하지 않는다", () =>
+        run(Effect.gen(function*()
+        {
+            const { netMarginPct: _dropped, ...withoutMargin } = VALUE_ARGS;
+            const psr = yield* ask(kim, "value_company", { ...withoutMargin, method: "psr", multiple: { low: 1, mid: 2, high: 3 } });
+
+            assert.isFalse(isError(psr));
+            assert.isNumber(structured<{ fairPrice: number | null }>(psr).fairPrice);
+            assert.isTrue(isError(yield* ask(kim, "value_company", withoutMargin)));
+        })));
 });
 
 describe("보드", () =>

@@ -41,7 +41,7 @@ export interface ValuationCell
 }
 
 /** 계산을 거절한 까닭. 사람에게 보일 글은 부르는 쪽이 고른다 */
-export type ValuationRefusal = "use-psr" | "no-shares";
+export type ValuationRefusal = "use-psr" | "no-shares" | "no-revenue" | "bad-multiple";
 
 export type ValuationOutcome =
     | {
@@ -75,6 +75,19 @@ export const valuate = (input: ValuationInput): ValuationOutcome =>
     if (!Number.isFinite(input.sharesOutstanding) || input.sharesOutstanding <= 0)
     {
         return { _tag: "Refused", reason: "no-shares" };
+    }
+
+    const multiples = MULTIPLE_CASES.map((key) => input.multiple[key]);
+
+    // 0 이하의 배수는 0원이나 음수 주가를 내므로 계산하지 않는다
+    if (multiples.some((value) => !Number.isFinite(value) || value <= 0))
+    {
+        return { _tag: "Refused", reason: "bad-multiple" };
+    }
+
+    if (input.method === "psr" && input.revenue.base <= 0)
+    {
+        return { _tag: "Refused", reason: "no-revenue" };
     }
 
     const net = (key: RevenueCase): number => input.revenue[key] * input.netMarginPct[key] / 100;

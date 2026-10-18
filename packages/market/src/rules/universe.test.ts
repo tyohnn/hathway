@@ -26,6 +26,13 @@ describe("종목 찾기", () =>
         expect(findCompanies(INDEX, "259960", 10).map((hit) => hit.name)).toEqual(["크래프톤"]);
     });
 
+    it("영문이 섞인 종목코드는 대소문자를 가리지 않는다", () =>
+    {
+        const index = [...INDEX, row("0088M0", "새상장", "5821")];
+
+        expect(findCompanies(index, "0088m0", 10).map((hit) => hit.name)).toEqual(["새상장"]);
+    });
+
     it("이름은 띄어쓰기와 대소문자를 가리지 않고, 이름이 그 말로 시작하는 것이 먼저다", () =>
     {
         expect(findCompanies(INDEX, " 에코 프로 ", 10).map((hit) => hit.name)).toEqual(["에코프로", "에코프로비엠"]);

@@ -93,7 +93,7 @@ const ValueArgs = Schema.Struct({
     targetYear: Schema.Int,
     method: Schema.optional(Schema.Literals(["per", "psr"])),
     revenue: Scenarios,
-    netMarginPct: Scenarios,
+    netMarginPct: Schema.optional(Scenarios),
     multiple: Schema.Struct({ low: Schema.Finite, mid: Schema.Finite, high: Schema.Finite }),
     sharesOutstanding: Schema.Finite,
     sharesSource: Schema.optional(SourceText),
@@ -126,7 +126,7 @@ const intArg = (value: unknown, fallback: number, min: number, max: number): num
     (typeof value === "number" && Number.isInteger(value) ? Math.min(max, Math.max(min, value)) : fallback);
 
 const fieldsArg = (value: unknown): ReadonlyArray<FinancialField> =>
-    (Array.isArray(value) ? value.flatMap((each) => decode(Field, each) ?? []) : []);
+    (Array.isArray(value) ? [...new Set(value.flatMap((each) => decode(Field, each) ?? []))] : []);
 
 const stockCodeArg = (call: SurfaceCall): string | null => decode(StockCode, call.args["stockCode"]);
 
@@ -223,6 +223,11 @@ const comparePeers = (call: SurfaceCall): Outcome =>
         const lines = view.rows.map((row) =>
             `- ${row.company.name}: 매출 ${wonText(row.revenue)}, 영업이익률 ${row.opmPct ?? "–"}%, ROE ${row.roePct ?? "–"}%`);
 
+        if (table.year === null)
+        {
+            return done(`${table.focus.name}의 연간 재무가 아직 없어 견줄 해를 정하지 못했어요. show_financials 로 실린 재무부터 확인해 주세요.`, view); // ux-writing: 모델이 읽는 답
+        }
+
         return done(view.rows.length <= 1
             ? `${table.focus.name}와 견줄 상장 피어를 찾지 못했어요. withStockCodes 로 비교할 회사를 넣어 주세요.`
             : `${view.title} · ${view.period}\n${lines.join("\n")}\n출처: ${view.source}. 피어는 업종 코드로 넓게 고른 후보라 사용자와 함께 추려 주세요. ${DISCLAIMER}`, view);
@@ -238,6 +243,14 @@ const valueCompany = (call: SurfaceCall): Outcome =>
             return failed("적정가 입력이 맞지 않아요. 매출 · 순이익률 · 배수의 세 갈래와 발행주식수를 숫자로 넣어 주세요."); // ux-writing: 모델이 읽는 답
         }
 
+        const method = args.method ?? "per";
+
+        // PSR 은 매출에만 배수를 곱하므로 순이익률을 받지 않아도 된다
+        if (method === "per" && args.netMarginPct === undefined)
+        {
+            return failed("PER 로 계산하려면 순이익률의 세 갈래가 있어야 해요. 적자라면 method 를 psr 로 넣어 주세요."); // ux-writing: 모델이 읽는 답
+        }
+
         const found = yield* company(args.stockCode);
 
         if (found === null)
@@ -248,9 +261,9 @@ const valueCompany = (call: SurfaceCall): Outcome =>
         const input: ValuationInput = {
             targetYear: args.targetYear,
             sharesOutstanding: args.sharesOutstanding,
-            method: args.method ?? "per",
+            method,
             revenue: args.revenue,
-            netMarginPct: args.netMarginPct,
+            netMarginPct: args.netMarginPct ?? { bear: 0, base: 0, bull: 0 },
             multiple: args.multiple,
             currentPrice: args.currentPrice ?? null,
         };
@@ -262,7 +275,9 @@ const valueCompany = (call: SurfaceCall): Outcome =>
             return done(view.refusal, view);
         }
 
-        const gap = view.gapToBuyPct === null ? "오늘 주가를 넣지 않아 거리는 재지 않았어요." : `오늘 주가는 매수가보다 ${view.gapToBuyPct}% ${view.gapToBuyPct >= 0 ? "위" : "아래"}예요.`;
+        const gapText = (pct: number): string =>
+            (pct === 0 ? "오늘 주가가 매수가와 같아요." : `오늘 주가는 매수가보다 ${Math.abs(pct)}% ${pct > 0 ? "위" : "아래"}예요.`);
+        const gap = view.gapToBuyPct === null ? "오늘 주가를 넣지 않아 거리는 재지 않았어요." : gapText(view.gapToBuyPct);
 
         return done(`${found.name} ${view.targetYear}년 기준 적정가 ${view.fairPrice?.toLocaleString("ko-KR") ?? "–"}원, 매수가(÷3) ${view.buyPrice?.toLocaleString("ko-KR") ?? "–"}원. ${gap}\n`
             + `가정: ${view.assumptions.join(" / ")}\n출처: ${view.source}. ${DISCLAIMER}`, view);
@@ -322,7 +337,11 @@ const screenStocks = (call: SurfaceCall): Outcome =>
             sortBy: args.sortBy ?? "opm",
             limit: intArg(args.limit, SCREEN_LIMIT, 1, 50),
         };
-        const view = screenView(filters, year, yield* screenCompanies(filters, year));
+        // 해를 말하지 않았는데 지난해 사업보고서가 아직 다 들어오지 않았으면 그 전해로 잰다
+        const rows = yield* screenCompanies(filters, year);
+        const fallback = args.year === undefined && rows.total === 0;
+        const screenedYear = fallback ? year - 1 : year;
+        const view = screenView(filters, screenedYear, fallback ? yield* screenCompanies(filters, screenedYear) : rows);
         const lines = view.rows.slice(0, 10).map((row) =>
             `- ${row.company.name} (${row.company.stockCode}): 영업이익률 ${row.opmPct ?? "–"}%, 3년 CAGR ${row.revenueCagrPct ?? "–"}%`);
 

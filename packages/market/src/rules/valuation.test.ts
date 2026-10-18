@@ -88,6 +88,20 @@ describe("적정가", () =>
         }
     });
 
+    it("PSR 인데 기본 갈래의 매출이 0 이하면 계산을 거절한다", () =>
+    {
+        expect(valuate({ ...INPUT, method: "psr", revenue: { bear: 0, base: 0, bull: 1_000_000_000 } }))
+            .toEqual({ _tag: "Refused", reason: "no-revenue" });
+    });
+
+    it("배수가 하나라도 0 이하면 계산을 거절한다", () =>
+    {
+        for (const multiple of [{ low: 0, mid: 15, high: 20 }, { low: 10, mid: -1, high: 20 }, { low: 10, mid: 15, high: Number.NaN }])
+        {
+            expect(valuate({ ...INPUT, multiple })).toEqual({ _tag: "Refused", reason: "bad-multiple" });
+        }
+    });
+
     it("금액은 원 단위 정수로 내린다", () =>
     {
         // 순이익 2억 × 15 ÷ 70만 주 = 4,285.71…원, 매수가는 1,428.57…원
