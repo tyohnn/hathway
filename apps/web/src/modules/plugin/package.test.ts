@@ -75,7 +75,7 @@ describe("플러그인 패키지", () =>
     it("스킬이 부르는 도구가 도구 목록에 있다", () =>
     {
         const known = new Set([...TOOLS, ...PLUGIN_SHAPE.tools].map((tool) => tool.name));
-        const skills = ["plugin/skills/notes/SKILL.md", "plugin/skills/setup/SKILL.md"];
+        const skills = ["plugin/skills/company-analysis/SKILL.md", "plugin/skills/setup/SKILL.md"];
 
         for (const path of skills)
         {
@@ -92,7 +92,7 @@ describe("플러그인 패키지", () =>
 
     it("스킬마다 이름과 설명이 있다. 호스트가 설명을 보고 언제 쓸지 고른다", () =>
     {
-        for (const name of ["notes", "setup"])
+        for (const name of ["company-analysis", "setup"])
         {
             const text = read(`plugin/skills/${name}/SKILL.md`);
 

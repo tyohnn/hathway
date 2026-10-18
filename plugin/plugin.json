@@ -2,25 +2,35 @@
     "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
     "name": "hathway",
     "version": "0.0.1",
-    "description": "쪽지를 읽고 쓰고 대화에 붙여요.",
+    "description": "DART 공시와 재무로 한국 상장사를 읽고 교재의 방법으로 적정가를 계산해요.",
     "author": {
         "name": "Hathway"
     },
-    "keywords": ["notes"],
+    "keywords": [
+        "stocks",
+        "dart",
+        "valuation",
+        "korea"
+    ],
     "extensions": {
         "com.openai": {
             "apps": "./.app.json",
             "onboardingSkill": "./skills/setup/SKILL.md",
             "interface": {
-                "displayName": "Hathway",
-                "shortDescription": "쪽지를 읽고 쓰고 대화에 붙여요",
-                "longDescription": "쪽지를 살펴보고, 새로 쓰고, 고른 쪽지를 대화에 붙여 함께 봐요. 텍스트 파일을 쪽지로 가져올 수도 있어요.",
+                "displayName": "Hathway 기업분석",
+                "shortDescription": "한국 상장사의 재무 · 피어 · 공시와 적정가",
+                "longDescription": "종목을 찾아 요약과 재무 추이를 보고, 같은 업종의 상장사와 견주고, 최근 공시를 훑어요. 시나리오를 함께 정하면 교재의 방법으로 적정가와 매수가를 계산하고, 분석은 리서치 보드에 남겨요. 분석 연습용 자료이고 투자 자문이 아니에요.",
                 "developerName": "Hathway",
-                "category": "Productivity",
-                "capabilities": ["Interactive", "Read", "Write"],
+                "category": "Finance",
+                "capabilities": [
+                    "Interactive",
+                    "Read",
+                    "Write"
+                ],
                 "defaultPrompt": [
-                    "@Hathway 쪽지 보여 줘",
-                    "@Hathway 오늘 회의 내용을 쪽지로 남겨 줘"
+                    "@Hathway 크래프톤 요약해 줘",
+                    "@Hathway 게임 업종에서 영업이익률 20% 넘는 종목 찾아 줘",
+                    "@Hathway 에코프로비엠 최근 공시 보여 줘"
                 ],
                 "composerIcon": "./assets/icon.svg",
                 "logo": "./assets/icon.svg"

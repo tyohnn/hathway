@@ -2,7 +2,19 @@ import { assert, describe, it } from "vitest";
 
 import { mcpPlan } from "@/lib/mcp";
 
-import { FILE_EXTENSIONS, PLUGIN_SHAPE, UI_FILE, UI_LIBRARY, UI_MIME, UI_TRAY, uiContents } from "./surface";
+import {
+    PLUGIN_SHAPE,
+    UI_BOARDS,
+    UI_COMPANY,
+    UI_FILINGS,
+    UI_FINANCIALS,
+    UI_HOME,
+    UI_MIME,
+    UI_PEERS,
+    UI_SCREEN,
+    UI_VALUATION,
+    uiContents,
+} from "./surface";
 
 const tool = (name: string) =>
 {
@@ -15,79 +27,116 @@ const tool = (name: string) =>
 
 const metaOf = (name: string, key: string): Record<string, unknown> => (tool(name)._meta?.[key] ?? {}) as Record<string, unknown>;
 
+const SCREENS: ReadonlyArray<readonly [string, string]> = [
+    ["show_company", UI_COMPANY],
+    ["show_financials", UI_FINANCIALS],
+    ["compare_peers", UI_PEERS],
+    ["value_company", UI_VALUATION],
+    ["list_filings", UI_FILINGS],
+    ["screen_stocks", UI_SCREEN],
+    ["open_home", UI_HOME],
+    ["open_boards", UI_BOARDS],
+];
+
 describe("플러그인이 MCP 에 더하는 것", () =>
 {
-    it("보관함은 global 진입점과 바로 가기를, 서랍은 thread 진입점을 선언한다", () =>
+    it("도구 지도의 열둘이 선다", () =>
     {
-        const library = metaOf("open_library", "openai/ui")["entrypoints"] as ReadonlyArray<Record<string, unknown>>;
-        const quickAction = library[0]?.["quickAction"] as { target: { type: string; name: string } };
-
-        assert.strictEqual(library[0]?.["type"], "global");
-        assert.strictEqual(quickAction.target.type, "tool");
-        assert.isDefined(PLUGIN_SHAPE.tools.find((each) => each.name === quickAction.target.name), "바로 가기가 부르는 도구가 목록에 있어야 한다");
-        assert.deepStrictEqual(metaOf("open_tray", "openai/ui")["entrypoints"], [{ type: "thread" }]);
-        assert.strictEqual(metaOf("open_library", "ui")["resourceUri"], UI_LIBRARY);
-        assert.strictEqual(metaOf("open_tray", "ui")["resourceUri"], UI_TRAY);
+        assert.deepStrictEqual(PLUGIN_SHAPE.tools.map((each) => each.name), [
+            "find_company", "show_company", "show_financials", "compare_peers", "value_company", "list_filings", "screen_stocks",
+            "open_home", "open_boards", "save_to_board", "browse_company", "search_mentions",
+        ]);
     });
 
-    it("진입점 도구는 빈 인자로 불려도 답한다. 사이드바에서 열 때 {} 가 온다", () =>
+    it("화면을 그리는 도구마다 제 ui:// 주소가 있고, 주소는 모두 화면 자원 목록에 있다", () =>
     {
-        for (const name of ["open_library", "open_tray"])
+        const listed = PLUGIN_SHAPE.resources.map((resource) => resource.uri);
+
+        for (const [name, uri] of SCREENS)
         {
-            assert.notProperty(tool(name).inputSchema, "required", name);
-            assert.strictEqual(mcpPlan({ id: 1, method: "tools/call", params: { name, arguments: {} } }, PLUGIN_SHAPE).kind, "surface-call");
+            assert.strictEqual(metaOf(name, "ui")["resourceUri"], uri, name);
+            assert.include(listed, uri);
+        }
+
+        assert.deepStrictEqual(PLUGIN_SHAPE.resources.map((resource) => resource.mimeType), SCREENS.map(() => UI_MIME));
+    });
+
+    it("글로 답하는 도구는 화면을 선언하지 않는다", () =>
+    {
+        for (const name of ["find_company", "save_to_board"])
+        {
+            assert.isUndefined(metaOf(name, "ui")["resourceUri"], name);
         }
     });
 
-    it("진입점 도구에는 아이콘과 사람이 읽는 제목이 있다. 사이드바와 탭이 그것으로 선다", () =>
+    it("홈은 global 진입점과 「종목 분석 시작」 바로 가기를, 보드는 thread 진입점을 선언한다", () =>
     {
-        for (const name of ["open_library", "open_tray", "open_file"])
+        const home = metaOf("open_home", "openai/ui")["entrypoints"] as ReadonlyArray<Record<string, unknown>>;
+        const quickAction = home[0]?.["quickAction"] as { title: string; target: { type: string; name: string } };
+
+        assert.strictEqual(home[0]?.["type"], "global");
+        assert.strictEqual(quickAction.title, "종목 분석 시작");
+        assert.isDefined(PLUGIN_SHAPE.tools.find((each) => each.name === quickAction.target.name), "바로 가기가 부르는 도구가 목록에 있어야 한다");
+        assert.deepStrictEqual(metaOf("open_boards", "openai/ui")["entrypoints"], [{ type: "thread" }]);
+    });
+
+    it("진입점 도구는 빈 인자로 불려도 답하고, 아이콘과 사람이 읽는 제목이 있다", () =>
+    {
+        for (const name of ["open_home", "open_boards"])
         {
+            assert.notProperty(tool(name).inputSchema, "required", name);
+            assert.strictEqual(mcpPlan({ id: 1, method: "tools/call", params: { name, arguments: {} } }, PLUGIN_SHAPE).kind, "surface-call");
             assert.isAbove(tool(name).icons?.length ?? 0, 0, name);
             assert.notStrictEqual(tool(name).title ?? "", "", name);
         }
     });
 
-    it("파일 도구는 점으로 시작하는 확장자만 선언한다", () =>
+    it("읽기만 하는 도구는 readOnlyHint 이고, 보드에 담는 도구만 쓴다", () =>
     {
-        const entrypoints = metaOf("open_file", "openai/ui")["entrypoints"] as ReadonlyArray<{ type: string; extensions: ReadonlyArray<string> }>;
+        const writers = PLUGIN_SHAPE.tools.filter((each) => each.annotations?.["readOnlyHint"] !== true).map((each) => each.name);
 
-        assert.deepStrictEqual(entrypoints, [{ type: "file", extensions: FILE_EXTENSIONS }]);
-        assert.isTrue(FILE_EXTENSIONS.every((extension) => /^\.[a-z0-9]+$/.test(extension)));
-        assert.deepStrictEqual(tool("open_file").inputSchema["required"], ["file"]);
-        assert.strictEqual(metaOf("open_file", "ui")["resourceUri"], UI_FILE);
+        assert.deepStrictEqual(writers, ["save_to_board"]);
     });
 
-    it("화면 자원은 text/html;profile=mcp-app 이고 보관함은 전체 화면을, 서랍은 대화 안을 먼저 청한다", () =>
+    it("모델이 읽는 설명은 영어이고 비어 있지 않다. 사람이 보는 제목은 한국어다", () =>
     {
-        const library = uiContents(UI_LIBRARY, "<!doctype html>")[0];
-        const tray = uiContents(UI_TRAY, "<!doctype html>")[0];
+        for (const each of PLUGIN_SHAPE.tools.filter((candidate) => candidate.description !== undefined))
+        {
+            assert.notMatch(each.description ?? "", /[가-힣]/, each.name);
+            assert.isAbove((each.description ?? "").length, 40, each.name);
+        }
 
-        assert.strictEqual(library?.["mimeType"], UI_MIME);
-        assert.strictEqual(library?.["text"], "<!doctype html>");
-        assert.deepStrictEqual((library?.["_meta"] as Record<string, unknown>)["openai/ui"], { preferredDisplayMode: "fullscreen", availableDisplayModes: ["inline", "fullscreen"] });
-        assert.deepStrictEqual((tray?.["_meta"] as Record<string, unknown>)["openai/ui"], { preferredDisplayMode: "inline", availableDisplayModes: ["inline", "fullscreen"] });
-        assert.deepStrictEqual(PLUGIN_SHAPE.resources.map((resource) => resource.mimeType), [UI_MIME, UI_MIME, UI_MIME]);
+        assert.match(tool("show_company").title ?? "", /[가-힣]/);
+    });
+
+    it("스크리너와 홈은 전체 화면을, 카드는 대화 안을 먼저 청한다", () =>
+    {
+        const preferred = (uri: string) => ((uiContents(uri, "<!doctype html>")[0]?.["_meta"] as Record<string, Record<string, unknown>>)["openai/ui"])?.["preferredDisplayMode"];
+
+        assert.deepStrictEqual([UI_SCREEN, UI_HOME].map(preferred), ["fullscreen", "fullscreen"]);
+        assert.deepStrictEqual([UI_COMPANY, UI_VALUATION, UI_BOARDS].map(preferred), ["inline", "inline", "inline"]);
+        assert.strictEqual(uiContents(UI_COMPANY, "<!doctype html>")[0]?.["text"], "<!doctype html>");
     });
 
     it("화면 자원은 밖의 주소를 하나도 부르지 않는다. 틀에 든 것만으로 선다", () =>
     {
-        const ui = (uiContents(UI_LIBRARY, "")[0]?.["_meta"] as Record<string, unknown>)["ui"] as { csp: Record<string, ReadonlyArray<string>> };
+        const ui = (uiContents(UI_COMPANY, "")[0]?.["_meta"] as Record<string, unknown>)["ui"] as { csp: Record<string, ReadonlyArray<string>> };
 
         assert.deepStrictEqual(ui.csp, { connectDomains: [], resourceDomains: [] });
     });
 
     it("앱만 부르는 도구는 visibility 가 app 뿐이다. 모델의 목록에 서지 않는다", () =>
     {
-        for (const name of ["search_mentions", "import_file", "reveal_file_path"])
+        for (const name of ["search_mentions", "browse_company"])
         {
             assert.deepStrictEqual(metaOf(name, "ui")["visibility"], ["app"], name);
         }
     });
 
-    it("멘션 도구는 mentions/search 를 선언한다", () =>
+    it("멘션 도구는 mentions/search 를 선언하고, 멘션이 돌려주는 주소의 앞머리를 자원으로 받는다", () =>
     {
         assert.deepStrictEqual(tool("search_mentions")._meta?.["openai/extensions"], { "mentions/search": {} });
+        assert.deepStrictEqual(PLUGIN_SHAPE.resourcePrefixes, ["company://", "board://"]);
     });
 
     it("도구의 인자에 테넌트나 계정이 없다. 누구의 눈으로 도는지는 토큰이 정한다", () =>
@@ -96,26 +145,13 @@ describe("플러그인이 MCP 에 더하는 것", () =>
 
         assert.notInclude(properties, "tenantId");
         assert.notInclude(properties, "accountId");
-        assert.notInclude(properties, "authorId");
     });
 
-    it("initialize 와 server/discover 가 설정 도구의 이름을 알린다", () =>
+    it("적정가 도구는 주가와 발행주식수를 인자로 받는다. DB 에 없는 값이다", () =>
     {
-        const initialized = mcpPlan({ id: 1, method: "initialize" }, PLUGIN_SHAPE);
-        const discovered = mcpPlan({ id: 2, method: "server/discover" }, PLUGIN_SHAPE);
-        const settings = { readTool: "read_settings", updateTool: "update_settings" };
-        const capabilities = (plan: typeof initialized) => (plan.kind === "reply" ? plan.reply.result?.["capabilities"] : {}) as Record<string, Record<string, unknown>>;
+        const properties = Object.keys(tool("value_company").inputSchema["properties"] as Record<string, unknown>);
 
-        assert.deepStrictEqual(capabilities(initialized)["extensions"]?.["openai/settings"], settings);
-        assert.deepStrictEqual(capabilities(initialized)["experimental"]?.["openai/settings"], settings);
-        assert.deepStrictEqual(capabilities(discovered)["extensions"]?.["openai/settings"], settings);
-        assert.isDefined(PLUGIN_SHAPE.tools.find((each) => each.name === settings.readTool));
-        assert.isDefined(PLUGIN_SHAPE.tools.find((each) => each.name === settings.updateTool));
-    });
-
-    it("설정을 읽는 도구는 읽기 전용이고 결과의 모양을 선언한다", () =>
-    {
-        assert.strictEqual(tool("read_settings").annotations?.["readOnlyHint"], true);
-        assert.deepStrictEqual((tool("read_settings").outputSchema?.["required"]), ["schema", "values"]);
+        assert.includeMembers(properties, ["sharesOutstanding", "sharesSource", "currentPrice", "currentPriceSource"]);
+        assert.include(tool("value_company").inputSchema["required"] as ReadonlyArray<string>, "sharesOutstanding");
     });
 });
