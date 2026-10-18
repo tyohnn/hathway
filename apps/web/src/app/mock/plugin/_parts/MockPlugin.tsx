@@ -111,12 +111,15 @@ function SceneView({ scene, theme, bare }: { readonly scene: Scene; readonly the
         }
     };
 
+    const displayMode = scene.place === "inline" || scene.place === "panel" ? "inline" : "fullscreen";
+    // 테마나 표시 방식이 바뀌면 창을 새로 세운다. 위젯은 악수할 때 한 번만 호스트의 값을 읽는다
     const widget = (
         <WidgetFrame
+            key={`${theme}-${displayMode}-${scene.tool}`}
             tool={scene.tool}
             result={scene.result}
             theme={theme}
-            displayMode={scene.place === "inline" || scene.place === "panel" ? "inline" : "fullscreen"}
+            displayMode={displayMode}
             {...(scene.height === undefined ? {} : { height: scene.height })}
             onHostEvent={onHostEvent}
         />
