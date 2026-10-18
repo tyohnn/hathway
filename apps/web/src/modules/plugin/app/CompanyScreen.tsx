@@ -1,9 +1,13 @@
+import type { CSSProperties } from "react";
+
+import { cn } from "@hathway/ui/lib/utils";
+
 import type { CompanyView, KeyMetric, PeriodPoint } from "../investing/contract";
 
 import { Bars, type BarSeries } from "./charts";
 import { companyContext } from "./context";
 import { COPY } from "./copy";
-import { formatEok, formatMetric } from "./format";
+import { formatCompact, formatMetric } from "./format";
 import { ActionButton, AddToggle, CompanyTitle, Delta, InlineCard, Notice, Pending, Section, SourceLine, WideFrame, type ScreenProps } from "./parts";
 import { isWide } from "./state";
 
@@ -17,20 +21,31 @@ export function CompanyScreen({ view, state, onAction }: ScreenProps<CompanyView
 }
 
 const trendSeries = (revenue: ReadonlyArray<PeriodPoint>, operating: ReadonlyArray<PeriodPoint>, labels: ReadonlyArray<string>): ReadonlyArray<BarSeries> => [
-    { key: "revenue", label: COPY.company.revenue, values: labels.map((label) => revenue.find((point) => point.label === label)?.value ?? null), fill: "fill-foreground/20", swatch: "bg-foreground/20" },
-    { key: "operating", label: COPY.company.operatingIncome, values: labels.map((label) => operating.find((point) => point.label === label)?.value ?? null), fill: "fill-chart-1", swatch: "bg-chart-1" },
+    { key: "revenue", label: COPY.company.revenue, values: labels.map((label) => revenue.find((point) => point.label === label)?.value ?? null), background: "bg-chart-2", swatch: "bg-chart-2" },
+    { key: "operating", label: COPY.company.operatingIncome, values: labels.map((label) => operating.find((point) => point.label === label)?.value ?? null), background: "bg-chart-1", swatch: "bg-chart-1" },
 ];
 
 const labelsOf = (view: CompanyView | null): ReadonlyArray<string> => view?.revenue.map((point) => point.label) ?? [];
 
-/** 숫자 하나의 칸. 라벨 · 값 · 전년 대비가 늘 같은 높이로 선다 */
-function Metric({ metric, size = "md" }: { readonly metric: KeyMetric | null; readonly size?: "md" | "lg" })
+/** 숫자 묶음의 머리. 칸마다 「전년 대비」를 되풀이하지 않고 여기서 한 번 말한다 */
+function YoyHead({ title }: { readonly title: string })
 {
     return (
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex items-baseline justify-between gap-3 text-[11px] text-muted-foreground">
+            <span>{title}</span>
+            <span>▲▼ {COPY.company.yoy}</span>
+        </div>
+    );
+}
+
+/** 숫자 하나의 칸. 라벨 · 값 · 전년 대비가 늘 같은 높이로 선다 */
+function Metric({ metric, size = "md", className }: { readonly metric: KeyMetric | null; readonly size?: "md" | "lg"; readonly className?: string })
+{
+    return (
+        <div className={cn("flex min-w-0 flex-col gap-0.5", className)}>
             <span className="truncate text-[11px] text-muted-foreground">{metric === null ? <Pending className="w-12" /> : metric.label}</span>
             <span className={size === "lg" ? "text-xl font-semibold tracking-tight tabular-nums" : "text-base font-semibold tracking-tight tabular-nums"}>
-                {metric === null ? <Pending className="w-16" /> : formatMetric(metric.value, metric.unit, { compact: size === "md" && metric.unit === "won" })}
+                {metric === null ? <Pending className="w-16" /> : formatMetric(metric.value, metric.unit, { compact: true })}
             </span>
             <span className="h-4 text-[11px]">
                 {metric === null ? <Pending className="w-10" /> : <Delta value={metric.change} unit={metric.unit} />}
@@ -67,7 +82,8 @@ function CompanyCard({ view, state, onAction }: ScreenProps<CompanyView>)
             )}
         >
             <CompanyTitle company={view?.company ?? null} />
-            <div className="grid grid-cols-3 gap-3">
+            <YoyHead title={COPY.company.headline} />
+            <div className="-mt-2 grid grid-cols-3 gap-3">
                 {headline.map((metric, index) => <Metric key={metric?.key ?? index} metric={metric} />)}
             </div>
             <Bars labels={labels} series={trendSeries(view?.revenue ?? [], view?.operatingIncome ?? [], labels)} height={64} />
@@ -81,6 +97,8 @@ function CompanyWide({ view, state, onAction }: ScreenProps<CompanyView>)
     const labels = labelsOf(view);
     const metrics: ReadonlyArray<KeyMetric | null> = view === null ? Array.from({ length: 6 }, () => null) : [...view.headline, ...view.metrics];
     const company = view?.company ?? null;
+    // 여섯 칸까지는 한 줄, 그보다 많으면 두 줄로 고르게 나눈다
+    const columns = metrics.length <= 6 ? metrics.length : Math.ceil(metrics.length / 2);
 
     return (
         <WideFrame page="company" loading={view === null}>
@@ -98,19 +116,24 @@ function CompanyWide({ view, state, onAction }: ScreenProps<CompanyView>)
                 </div>
             </header>
             <Notice text={state.notice} />
-            <Section title={COPY.company.allMetrics}>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4 rounded-lg border p-4 sm:grid-cols-3 lg:grid-cols-4">
-                    {metrics.map((metric, index) => <Metric key={metric?.key ?? index} metric={metric} size="lg" />)}
+            <Section title={COPY.company.allMetrics} aside={<span className="text-[11px] text-muted-foreground">▲▼ {COPY.company.yoy}</span>}>
+                {/* 칸 수에 열을 맞추고 칸 사이를 1px 선으로 나눈다. 바탕이 선 색이고 칸이 판 색이다 */}
+                <div
+                    className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-3 lg:grid-cols-[repeat(var(--metric-columns),minmax(0,1fr))]"
+                    style={{ "--metric-columns": columns } as CSSProperties}
+                >
+                    {metrics.map((metric, index) => <Metric key={metric?.key ?? index} metric={metric} size="lg" className="bg-background p-4" />)}
+                    {Array.from({ length: (columns - (metrics.length % columns)) % columns }, (_, index) => <span key={`fill-${index}`} aria-hidden className="hidden bg-background lg:block" />)}
                 </div>
             </Section>
             <Section title={COPY.company.trend}>
                 <Bars labels={labels} series={trendSeries(view?.revenue ?? [], view?.operatingIncome ?? [], labels)} height={160} />
             </Section>
-            <Section title={COPY.company.table} aside={<span className="text-[11px] text-muted-foreground">{COPY.financials.unitWon}</span>}>
+            <Section title={COPY.company.table}>
                 <div className="overflow-x-auto rounded-lg border">
                     <table className="w-full text-sm tabular-nums">
                         <thead>
-                            <tr className="border-b bg-muted/40 text-xs text-muted-foreground">
+                            <tr className="border-b bg-muted/40 text-[11px] text-muted-foreground">
                                 <th className="px-3 py-2 text-left font-medium">&nbsp;</th>
                                 {(labels.length === 0 ? ["", "", "", "", ""] : labels).map((label, index) => <th key={`${label}-${index}`} className="px-3 py-2 text-right font-medium">{label === "" ? <Pending className="w-8" /> : label}</th>)}
                             </tr>
@@ -124,7 +147,7 @@ function CompanyWide({ view, state, onAction }: ScreenProps<CompanyView>)
                                     <th scope="row" className="px-3 py-2 text-left font-medium">{line.label}</th>
                                     {(labels.length === 0 ? ["", "", "", "", ""] : labels).map((label, index) => (
                                         <td key={`${label}-${index}`} className="px-3 py-2 text-right">
-                                            {line.points === null ? <Pending className="w-12" /> : formatEok(line.points.find((point) => point.label === label)?.value ?? null)}
+                                            {line.points === null ? <Pending className="w-12" /> : formatCompact(line.points.find((point) => point.label === label)?.value ?? null)}
                                         </td>
                                     ))}
                                 </tr>

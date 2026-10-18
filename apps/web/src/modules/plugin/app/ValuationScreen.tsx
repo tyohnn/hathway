@@ -7,7 +7,7 @@ import { ActionButton, CompanyTitle, InlineCard, Notice, Pending, Section, Sourc
 import { isWide, type AppState } from "./state";
 
 /**
- * 적정가. 큰 숫자 둘(적정가 · 매수가)과 한 줄의 사다리(매수가 · 적정가 · 오늘 주가)를 먼저 세운다(Simply Wall St 의 적정가 막대,
+ * 적정가. 큰 숫자 둘(적정가 · 매수가, 오늘 주가를 받았으면 셋)과 한 줄의 사다리(매수가 · 적정가 · 오늘 주가)를 먼저 세운다(Simply Wall St 의 적정가 막대,
  * Morningstar 의 적정가와 안전마진). 시나리오 9칸과 가정은 크게 보기에 둔다.
  *
  * ⚠ **계산을 거절했으면 숫자를 그리지 않는다.** 거절한 까닭 한 줄만 세운다. 「0원」이나 「–」로 숫자가 있는 척하지 않는다.
@@ -17,22 +17,39 @@ export function ValuationScreen({ view, state, onAction }: ScreenProps<Valuation
     return isWide(state) ? <ValuationWide view={view} state={state} onAction={onAction} /> : <ValuationCard view={view} state={state} onAction={onAction} />;
 }
 
+/** 매수가는 보일 때만 100원 아래를 버린다. 계산값은 서버의 것을 그대로 둔다 */
+const shownBuy = (value: number | null): number | null => (value === null ? null : Math.floor(value / 100) * 100);
+
+/** 거절이 「PER 대신 PSR 로」일 때만 PSR 로 다시 계산하자는 단추를 세운다 */
+const suggestsPsr = (view: ValuationView | null): boolean =>
+    view !== null && view.method === "per" && view.refusal !== null && view.refusal.includes("PSR");
+
 const subtitle = (view: ValuationView): string => `${COPY.valuation.year(view.targetYear)} · ${COPY.valuation.method[view.method]}`;
 
 function Headline({ view, size }: { readonly view: ValuationView | null; readonly size: "md" | "lg" })
 {
-    const big = size === "lg" ? "text-3xl" : "text-2xl";
+    const current = view?.currentPrice ?? null;
+    // 카드 안에 숫자가 셋 서면 한 단 줄여 한 줄에 들게 한다
+    const big = size === "lg" ? "text-3xl" : current === null ? "text-2xl" : "text-xl";
 
     return (
-        <div className="grid grid-cols-2 gap-4">
+        <div className={current === null ? "grid grid-cols-2 gap-4" : "grid grid-cols-3 gap-4"}>
             <div className="flex flex-col gap-0.5">
                 <span className="text-[11px] text-muted-foreground">{COPY.valuation.fair}</span>
                 <span className={`${big} font-semibold tracking-tight tabular-nums`}>{view === null ? <Pending className="w-28" /> : formatPrice(view.fairPrice)}</span>
             </div>
             <div className="flex flex-col gap-0.5">
                 <span className="text-[11px] text-muted-foreground">{COPY.valuation.buy} <span className="text-foreground-subtle">({COPY.valuation.buyHint})</span></span>
-                <span className={`${big} font-semibold tracking-tight tabular-nums`}>{view === null ? <Pending className="w-24" /> : formatPrice(view.buyPrice)}</span>
+                <span className={`${big} font-semibold tracking-tight tabular-nums`}>{view === null ? <Pending className="w-24" /> : formatPrice(shownBuy(view.buyPrice))}</span>
             </div>
+            {current === null
+                ? null
+                : (
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-[11px] text-muted-foreground">{COPY.valuation.current}</span>
+                        <span className={`${big} font-semibold tracking-tight text-muted-foreground tabular-nums`}>{formatPrice(current)}</span>
+                    </div>
+                )}
         </div>
     );
 }
@@ -54,7 +71,7 @@ function GapLine({ view }: { readonly view: ValuationView | null })
 
     return (
         <p className="text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">{view.gapToBuyPct > 0 ? COPY.valuation.gap(pct) : COPY.valuation.below(pct)}</span>
+            <span className="font-medium text-foreground">{pct === formatPct(0) ? COPY.valuation.same : view.gapToBuyPct > 0 ? COPY.valuation.gap(pct) : COPY.valuation.below(pct)}</span>
             {view.currentPriceSource === null ? null : <span> · {view.currentPriceSource}</span>}
         </p>
     );
@@ -63,7 +80,7 @@ function GapLine({ view }: { readonly view: ValuationView | null })
 function Refusal({ text }: { readonly text: string })
 {
     return (
-        <div className="flex flex-col gap-1 rounded-md border border-dashed px-3 py-2.5" data-refusal="">
+        <div className="flex flex-col gap-1 rounded-md bg-muted/50 px-3 py-2.5 ring-1 ring-border" data-refusal="">
             <span className="text-sm font-medium">{COPY.valuation.refused}</span>
             <span className="text-xs text-muted-foreground">{text}</span>
         </div>
@@ -73,6 +90,17 @@ function Refusal({ text }: { readonly text: string })
 function CardActions({ view, state, onAction }: { readonly view: ValuationView | null; readonly state: AppState; readonly onAction: OnAction })
 {
     const refused = view?.refusal !== null && view?.refusal !== undefined;
+
+    if (refused)
+    {
+        return state.abilities.message && suggestsPsr(view)
+            ? (
+                <ActionButton name="use-psr" size="sm" onAction={onAction} action={{ kind: "send", text: COPY.prompts.psr(view?.company.name ?? "") }}>
+                    {COPY.actions.psr}
+                </ActionButton>
+            )
+            : null;
+    }
 
     return (
         <>
@@ -105,7 +133,7 @@ function ValuationCard({ view, state, onAction }: ScreenProps<ValuationView>)
                 : (
                     <>
                         <Headline view={view} size="md" />
-                        <Ladder buy={view?.buyPrice ?? null} fair={view?.fairPrice ?? null} current={view?.currentPrice ?? null} />
+                        <Ladder buy={shownBuy(view?.buyPrice ?? null)} fair={view?.fairPrice ?? null} current={view?.currentPrice ?? null} />
                         <GapLine view={view} />
                     </>
                 )}
@@ -143,7 +171,7 @@ function ValuationWide({ view, state, onAction }: ScreenProps<ValuationView>)
                     <>
                         <div className="flex flex-col gap-4 rounded-lg border p-5">
                             <Headline view={view} size="lg" />
-                            <Ladder buy={view?.buyPrice ?? null} fair={view?.fairPrice ?? null} current={view?.currentPrice ?? null} />
+                            <Ladder buy={shownBuy(view?.buyPrice ?? null)} fair={view?.fairPrice ?? null} current={view?.currentPrice ?? null} />
                             <GapLine view={view} />
                         </div>
                         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
@@ -165,7 +193,7 @@ function ValuationWide({ view, state, onAction }: ScreenProps<ValuationView>)
 
                                                     return (
                                                         <td key={per} className="p-1 text-right">
-                                                            <span className={base ? "block rounded-md bg-foreground px-2 py-2 font-semibold text-background" : "block rounded-md bg-muted/60 px-2 py-2"} data-base={base ? "" : undefined}>
+                                                            <span className={base ? "block rounded-md bg-primary/15 px-2 py-2 font-semibold ring-1 ring-primary" : "block rounded-md bg-muted/40 px-2 py-2"} data-base={base ? "" : undefined}>
                                                                 {view === null ? <Pending className="w-14" /> : formatPrice(cellOf(view.cells, revenue, per))}
                                                             </span>
                                                         </td>

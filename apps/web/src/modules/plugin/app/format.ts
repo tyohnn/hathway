@@ -22,7 +22,7 @@ const grouped = (value: number, digits = 0): string =>
 const signOf = (value: number): string => (value < 0 ? MINUS : "");
 
 /**
- * 원 단위 금액을 조 · 억으로. `compact` 이면 큰 단위 하나로 줄인다(「2.7조원」).
+ * 원 단위 금액을 조 · 억으로. `compact` 이면 큰 단위 하나로 줄인다(「2.7조원」). 조는 늘 소수 한 자리, 1조 아래는 억의 정수다.
  *
  *   formatWon(2_709_800_000_000) → 「2조 7,098억원」
  *   formatWon(2_709_800_000_000, { compact: true }) → 「2.7조원」
@@ -41,7 +41,7 @@ export const formatWon = (value: number | null, options: { readonly compact?: bo
     {
         if (options.compact === true)
         {
-            return `${sign}${grouped(Math.round(size / JO * 10) / 10, size >= 10 * JO ? 0 : 1)}조원`;
+            return `${sign}${grouped(Math.round(size / JO * 10) / 10, 1)}조원`;
         }
 
         const jo = Math.floor(size / JO);
@@ -64,7 +64,20 @@ export const formatWon = (value: number | null, options: { readonly compact?: bo
     return `${sign}${grouped(Math.round(size))}원`;
 };
 
-/** 표의 칸. 머리에 「(억원)」을 두고 칸에는 억 단위 숫자만 쓴다 */
+/**
+ * 표의 칸과 막대 위의 값. 카드의 큰 숫자와 같은 규칙(조는 소수 한 자리, 그 아래는 억의 정수)으로 쓰되 「원」은 뗀다.
+ *
+ *   formatCompact(2_709_800_000_000) → 「2.7조」
+ *   formatCompact(345_600_000_000) → 「3,456억」
+ */
+export const formatCompact = (value: number | null): string =>
+{
+    const text = formatWon(value, { compact: true });
+
+    return text === EMPTY ? text : text.replace(/원$/, "");
+};
+
+/** 억 단위 숫자만. 머리에 「(억원)」을 둔 표의 칸 */
 export const formatEok = (value: number | null): string =>
     (value === null || !Number.isFinite(value) ? EMPTY : `${signOf(value)}${grouped(Math.round(Math.abs(value) / EOK))}`);
 

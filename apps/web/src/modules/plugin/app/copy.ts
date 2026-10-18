@@ -21,6 +21,8 @@ export const COPY = {
         summarizeFilings: "최근 공시 요약해 줘",
         openDart: "DART 원문 열기",
         continueBoard: "이어서 분석",
+        psr: "PSR로 계산해 줘",
+        select: "고르기",
     },
     prompts: {
         analyze: (name: string) => `${name} 기본 분석해 줘`,
@@ -29,6 +31,7 @@ export const COPY = {
         saveBoard: (name: string) => `${name} 적정가 계산을 리서치 보드에 담아 줘`,
         filings: (name: string) => `${name} 최근 공시 요약해 줘`,
         board: (title: string) => `「${title}」 보드 이어서 분석해 줘`,
+        psr: (name: string) => `${name} PSR로 적정가 계산해 줘`,
     },
     company: {
         headline: "핵심 숫자",
@@ -48,7 +51,7 @@ export const COPY = {
     },
     peers: {
         company: "종목",
-        revenue: "매출(억원)",
+        revenue: "매출",
         growth: "성장률",
         opm: "영업이익률",
         roe: "ROE",
@@ -61,6 +64,7 @@ export const COPY = {
         current: "오늘 주가",
         gap: (pct: string) => `오늘 주가가 매수가보다 ${pct} 높아요.`,
         below: (pct: string) => `오늘 주가가 매수가보다 ${pct} 낮아요.`,
+        same: "오늘 주가가 매수가와 같아요.",
         noCurrent: "오늘 주가를 말하면 매수가와 비교해 줘요.",
         method: { per: "PER 기준", psr: "PSR 기준" },
         year: (year: number) => `${year}년 기준`,
@@ -69,6 +73,7 @@ export const COPY = {
         perCase: { low: "낮은 배수", mid: "중간 배수", high: "높은 배수" },
         assumptions: "가정",
         refused: "적정가를 계산하지 않았어요",
+        zone: { below: "매수가 아래", between: "매수가~적정가", above: "적정가 위" },
     },
     filings: {
         empty: "최근 공시가 없어요.",
@@ -80,6 +85,8 @@ export const COPY = {
         cagr: "3년 성장률",
         empty: "조건에 맞는 종목이 없어요.",
         picked: (count: number) => `${count}곳을 대화에 추가했어요.`,
+        selected: (count: number) => `${count}곳 고름`,
+        added: "추가됨",
     },
     home: {
         title: "기업분석",

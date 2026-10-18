@@ -1,5 +1,6 @@
 import type { FilingItem, FilingKind, FilingsView } from "../investing/contract";
 
+import { Badge } from "@hathway/ui/components/badge";
 import { ExternalLink } from "@hathway/ui/icons";
 import { cn } from "@hathway/ui/lib/utils";
 
@@ -23,11 +24,14 @@ const DOT: Readonly<Record<FilingKind, string>> = {
     other: "bg-muted-foreground/40",
 };
 
+/** 눈여겨볼 갈래만 테두리 배지로 세우고, 정기 · 기타는 글자만 둔다 */
+const MARKED: ReadonlySet<FilingKind> = new Set(["major", "ownership"]);
+
 export function FilingsScreen({ view, state, onAction }: ScreenProps<FilingsView>)
 {
     const items: ReadonlyArray<FilingItem | null> = view?.items.slice(0, SHOWN) ?? Array.from({ length: 5 }, () => null);
-    // 올해의 날짜는 연도를 빼고 쓴다. 기준은 가장 최근 공시의 해다. 렌더 중에 오늘을 읽지 않는다
-    const year = view?.items[0] === undefined ? null : Number(view.items[0].date.slice(0, 4));
+    // 날짜는 월 · 일만 쓰고, 해가 바뀐 첫 줄(맨 윗줄 포함)에만 연도를 붙인다. 렌더 중에 오늘을 읽지 않는다
+    const yearOf = (item: FilingItem | null): string | null => item?.date.slice(0, 4) ?? null;
 
     return (
         <InlineCard
@@ -49,7 +53,9 @@ export function FilingsScreen({ view, state, onAction }: ScreenProps<FilingsView
                 ? <p className="text-sm text-muted-foreground">{COPY.filings.empty}</p>
                 : (
                     <ol className="-mx-2 flex flex-col">
-                        {items.map((item, index) => <Line key={item?.rceptNo ?? index} item={item} year={year} state={state} onAction={onAction} />)}
+                        {items.map((item, index) => (
+                            <Line key={item?.rceptNo ?? index} item={item} withYear={index === 0 || yearOf(item) !== yearOf(items[index - 1] ?? null)} state={state} onAction={onAction} />
+                        ))}
                     </ol>
                 )}
             <Notice text={state.notice} />
@@ -57,17 +63,23 @@ export function FilingsScreen({ view, state, onAction }: ScreenProps<FilingsView
     );
 }
 
-function Line({ item, year, state, onAction }: { readonly item: FilingItem | null; readonly year: number | null; readonly state: AppState; readonly onAction: OnAction })
+function Line({ item, withYear, state, onAction }: { readonly item: FilingItem | null; readonly withYear: boolean; readonly state: AppState; readonly onAction: OnAction })
 {
     const body = (
         <>
-            <span className="w-14 shrink-0 text-xs text-muted-foreground tabular-nums">{item === null ? <Pending className="w-10" /> : formatDay(item.date, year)}</span>
-            <span className="flex w-16 shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", item === null ? "bg-muted" : DOT[item.kind])} />
-                {item === null ? <Pending className="w-8" /> : COPY.filings.kind[item.kind]}
+            <span className="w-16 shrink-0 text-xs text-muted-foreground tabular-nums">
+                {item === null ? <Pending className="w-10" /> : formatDay(item.date, withYear ? null : Number(item.date.slice(0, 4)))}
+            </span>
+            <span className="flex w-[4.5rem] shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span aria-hidden className={cn("size-2 shrink-0 rounded-full", item === null ? "bg-muted" : DOT[item.kind])} />
+                {item === null
+                    ? <Pending className="w-8" />
+                    : MARKED.has(item.kind)
+                        ? <Badge variant="outline" className="px-1.5 text-[10px]">{COPY.filings.kind[item.kind]}</Badge>
+                        : COPY.filings.kind[item.kind]}
             </span>
             <span className={cn("min-w-0 flex-1 truncate text-sm", item?.kind === "major" && "font-medium")}>{item === null ? <Pending className="w-40" /> : item.title}</span>
-            {item === null ? null : <ExternalLink aria-hidden className="size-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />}
+            {item === null ? null : <ExternalLink aria-hidden className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />}
         </>
     );
     const className = "group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left hover:bg-muted/60 focus-visible:bg-muted/60 focus-visible:outline-none";

@@ -42,7 +42,7 @@ export function HomeScreen({ view, state, onAction }: ScreenProps<HomeView>)
                     </Section>
                 )
                 : null}
-            <Section title={COPY.home.recent}>
+            <Section title={COPY.home.recent} aside={view !== null && view.companies.length === 0 ? null : <span className="text-[11px] text-muted-foreground">▲▼ {COPY.company.yoy}</span>}>
                 {view !== null && view.companies.length === 0
                     ? <p className="text-sm text-muted-foreground">{COPY.home.recentEmpty}</p>
                     : (
@@ -73,8 +73,12 @@ function CompanyTile({ company, state, onAction }: { readonly company: HomeCompa
             <Card size="sm" className="w-full gap-2.5 px-3">
                 <div className="flex min-w-0 items-baseline justify-between gap-2">
                     <span className="truncate text-sm font-semibold">{company === null ? <Pending className="w-20" /> : company.name}</span>
-                    <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">{company === null ? <Pending className="w-12" /> : company.stockCode}</span>
-                </div>
+                    </div>
+                <span className="-mt-1.5 truncate text-[11px] text-muted-foreground tabular-nums">
+                    {company === null
+                        ? <Pending className="w-24" />
+                        : [company.stockCode, company.market === null ? null : COPY.market[company.market], company.sector].filter((each) => each !== null).join(" · ")}
+                </span>
                 <dl className="grid grid-cols-2 gap-2">
                     {metrics.map((metric, index) => (
                         <div key={metric?.key ?? index} className="flex min-w-0 flex-col">
@@ -84,10 +88,10 @@ function CompanyTile({ company, state, onAction }: { readonly company: HomeCompa
                         </div>
                     ))}
                 </dl>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="mt-auto flex flex-wrap gap-1.5">
                     {state.abilities.message
                         ? (
-                            <ActionButton name="analyze" size="xs" disabled={company === null} onAction={onAction}
+                            <ActionButton name="analyze" size="sm" disabled={company === null} onAction={onAction}
                                 aria-label={company === null ? undefined : `${company.name} ${COPY.actions.analyze}`}
                                 action={{ kind: "send", text: COPY.prompts.analyze(company?.name ?? "") }}
                             >
@@ -95,7 +99,7 @@ function CompanyTile({ company, state, onAction }: { readonly company: HomeCompa
                             </ActionButton>
                         )
                         : null}
-                    <AddToggle item={company === null ? null : companyContext(company, company.headline, null)} state={state} onAction={onAction} size="xs" {...(company === null ? {} : { label: company.name })} />
+                    <AddToggle item={company === null ? null : companyContext(company, company.headline, null)} state={state} onAction={onAction} size="sm" {...(company === null ? {} : { label: company.name })} />
                 </div>
             </Card>
         </li>
@@ -113,9 +117,9 @@ export function BoardTile({ board, state, onAction, primary = "continue" }: {
 {
     return (
         <li>
-            <Card size="sm" className="gap-2 px-3">
-                <div className="flex items-start gap-2.5">
-                    <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground"><Kanban className="size-4" /></span>
+            <Card size="sm" className="px-3">
+                <div className="flex items-center gap-2.5">
+                    <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-md bg-accent text-accent-foreground"><Kanban className="size-4" /></span>
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="truncate text-sm font-semibold">{board === null ? <Pending className="w-28" /> : board.title}</span>
                         <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground tabular-nums">
@@ -124,24 +128,25 @@ export function BoardTile({ board, state, onAction, primary = "continue" }: {
                                 : (
                                     <>
                                         <Badge variant="secondary">{COPY.boards.theme[board.theme]}</Badge>
-                                        {COPY.boards.widgets(board.widgets)}{board.updatedAt === null ? null : ` · ${board.updatedAt}`}
+                                        <span className="truncate">{COPY.boards.widgets(board.widgets)}{board.updatedAt === null ? null : ` · ${board.updatedAt}`}</span>
                                     </>
                                 )}
                         </span>
                     </div>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                    {primary === "continue" && state.abilities.message
-                        ? (
-                            <ActionButton name="continue-board" size="xs" disabled={board === null} onAction={onAction}
-                                aria-label={board === null ? undefined : `${board.title} ${COPY.actions.continueBoard}`}
-                                action={{ kind: "send", text: COPY.prompts.board(board?.title ?? "") }}
-                            >
-                                {COPY.actions.continueBoard}
-                            </ActionButton>
-                        )
-                        : null}
-                    <AddToggle item={board === null ? null : boardContext(board)} state={state} onAction={onAction} size="xs" {...(board === null ? {} : { label: board.title })} />
+                    {/* 단추는 제목 줄의 오른쪽에 같은 높이로 선다 */}
+                    <div className="flex shrink-0 gap-1.5">
+                        {primary === "continue" && state.abilities.message
+                            ? (
+                                <ActionButton name="continue-board" size="sm" disabled={board === null} onAction={onAction}
+                                    aria-label={board === null ? undefined : `${board.title} ${COPY.actions.continueBoard}`}
+                                    action={{ kind: "send", text: COPY.prompts.board(board?.title ?? "") }}
+                                >
+                                    {COPY.actions.continueBoard}
+                                </ActionButton>
+                            )
+                            : null}
+                        <AddToggle item={board === null ? null : boardContext(board)} state={state} onAction={onAction} size="sm" {...(board === null ? {} : { label: board.title })} />
+                    </div>
                 </div>
             </Card>
         </li>

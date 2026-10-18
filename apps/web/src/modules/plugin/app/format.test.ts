@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatChange, formatDay, formatEok, formatPct, formatPrice, formatSignedPct, formatWon, toneOf } from "./format";
+import { formatChange, formatCompact, formatDay, formatEok, formatPct, formatPrice, formatSignedPct, formatWon, toneOf } from "./format";
 
 describe("formatWon", () =>
 {
@@ -18,7 +18,7 @@ describe("formatWon", () =>
     it("compact 이면 큰 단위 하나로 줄인다", () =>
     {
         expect(formatWon(2_709_800_000_000, { compact: true })).toBe("2.7조원");
-        expect(formatWon(12_345_000_000_000, { compact: true })).toBe("12조원");
+        expect(formatWon(12_345_000_000_000, { compact: true })).toBe("12.3조원");
         expect(formatWon(345_600_000_000, { compact: true })).toBe("3,456억원");
     });
 
@@ -48,6 +48,13 @@ describe("표와 가격", () =>
         expect(formatEok(2_709_800_000_000)).toBe("27,098");
         expect(formatEok(-4_200_000_000)).toBe("−42");
         expect(formatEok(null)).toBe("–");
+    });
+
+    it("막대와 표의 값은 카드와 같은 줄임을 쓰고 「원」을 뗀다", () =>
+    {
+        expect(formatCompact(2_709_800_000_000)).toBe("2.7조");
+        expect(formatCompact(345_600_000_000)).toBe("3,456억");
+        expect(formatCompact(null)).toBe("–");
     });
 
     it("주가는 원 단위에 쉼표를 찍는다", () =>
