@@ -1,7 +1,7 @@
-import { classifySector, type Company } from "@investment/schema";
-import { Badge } from "@investment/ui/components/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@investment/ui/components/card";
-import { Separator } from "@investment/ui/components/separator";
+import { classifySector, type Company } from "@hathway/schema";
+import { Badge } from "@hathway/ui/components/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@hathway/ui/components/card";
+import { Separator } from "@hathway/ui/components/separator";
 
 function formatKoDate(date: string | null | undefined): string
 {

@@ -7,10 +7,10 @@ import { createBoardAction } from "@/actions/research";
 import type { ResearchBoard, ResearchBoardTheme } from "@/lib/research/types";
 import { researchBoardHref, researchBoardsHref } from "@/lib/nav";
 import { paths } from "@/lib/paths";
-import { EmptyState } from "@investment/blocks/empty-state";
-import { ItemList } from "@investment/blocks/item-list";
-import { PageHeader } from "@investment/blocks/page-header";
-import { Button } from "@investment/ui/components/button";
+import { EmptyState } from "@hathway/blocks/empty-state";
+import { ItemList } from "@hathway/blocks/item-list";
+import { PageHeader } from "@hathway/blocks/page-header";
+import { Button } from "@hathway/ui/components/button";
 
 export function ResearchBoardList({
     theme,

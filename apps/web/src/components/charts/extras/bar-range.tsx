@@ -7,7 +7,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
-} from "@investment/ui/components/chart";
+} from "@hathway/ui/components/chart";
 
 const chartData = [
     { day: "Mon", range: [18, 42] as [number, number] },

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-01T23:34:33.196Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "tap",
+        "summary": "tap link \"{{param:/title}} 열기\"",
+        "target": {
+          "role": "link",
+          "name": "{{param:/title}} 열기",
+          "text": "열기"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap button \"보관하기\"",
+        "target": {
+          "role": "button",
+          "name": "보관하기"
+        }
+      },
+      {
+        "name": "tap",
+        "summary": "tap button \"보관하기\"",
+        "target": {
+          "role": "button",
+          "name": "보관하기"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "e2e-agent/notes.e2e.ts::%EC%AA%BD%EC%A7%80%20%28%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%29::%EC%93%B4%20%EC%AA%BD%EC%A7%80%EB%A5%BC%20%EC%97%B4%EC%96%B4%20%EB%B3%B4%EA%B4%80%ED%95%98%EB%A9%B4%20%EB%B3%B4%EA%B4%80%EB%90%A8%EC%9C%BC%EB%A1%9C%20%EC%84%A0%EB%8B%A4",
+      "targetId": "web",
+      "instructionDigest": "daa7d969224a160680cd8a1601379e6561669199a3b11ba303211770f5abc06d"
+    },
+    "summary": "쪽지 'e2e 에이전트 보관 af7969eb'를 열고 확인 창에서 보관을 확인했습니다. 화면에 '보관됨'이 표시되어 완료를 확인했습니다.",
+    "startPath": "/notes",
+    "endPath": "/notes/1020",
+    "endAnchors": [
+      {
+        "role": "heading",
+        "name": "{{param:/title}}"
+      }
+    ],
+    "endWaitMs": 13445
+  }
+}

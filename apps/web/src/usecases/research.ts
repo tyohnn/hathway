@@ -1,11 +1,11 @@
 import { Effect, Schema } from "effect";
 
-import type { Actor } from "@investment/access/domain/Actor";
-import { BoardSlug, BoardTheme, Group, type Board } from "@investment/research/domain/Board";
-import { BoardStore } from "@investment/research/ports/BoardStore";
-import { draftBoard } from "@investment/research/rules/draft";
-import { editVerdict, removeVerdict } from "@investment/research/rules/edit";
-import { limitVerdict } from "@investment/research/rules/limits";
+import type { Actor } from "@hathway/access/domain/Actor";
+import { BoardSlug, BoardTheme, Group, type Board } from "@hathway/research/domain/Board";
+import { BoardStore } from "@hathway/research/ports/BoardStore";
+import { draftBoard } from "@hathway/research/rules/draft";
+import { editVerdict, removeVerdict } from "@hathway/research/rules/edit";
+import { limitVerdict } from "@hathway/research/rules/limits";
 
 /**
  * 리서치 보드 화면과 액션의 조립. 서버 액션의 ③~⑤를 이 파일이 잇는다.

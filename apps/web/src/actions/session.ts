@@ -20,7 +20,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 const originOf = async (): Promise<string> =>
 {
     const store = await headers();
-    const host = store.get("x-forwarded-host") ?? store.get("host") ?? "localhost:3000";
+    const host = store.get("x-forwarded-host") ?? store.get("host") ?? "localhost:4400";
     const protocol = store.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
 
     return `${protocol}://${host}`;
@@ -85,6 +85,5 @@ export async function signOut(): Promise<void>
 
     await supabase.auth.signOut();
 
-    // 이 앱은 로그인하지 않아도 읽을 수 있다. 나간 뒤에는 로그인 화면이 아니라 첫 화면으로 간다
-    redirect(paths.home());
+    redirect(paths.login());
 }

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "trace-1",
+  "createdAt": "2026-10-01T23:34:21.987Z",
+  "payload": {
+    "actions": [
+      {
+        "name": "type",
+        "summary": "type \"{{param:/title}}\" into textbox \"제목\"",
+        "target": {
+          "role": "textbox",
+          "name": "제목"
+        },
+        "value": "{{param:/title}}"
+      },
+      {
+        "name": "type",
+        "summary": "type \"에이전트가 썼어요\" into textbox \"내용\"",
+        "target": {
+          "role": "textbox",
+          "name": "내용"
+        },
+        "value": "에이전트가 썼어요"
+      },
+      {
+        "name": "tap",
+        "summary": "tap button \"쪽지 쓰기\"",
+        "target": {
+          "role": "button",
+          "name": "쪽지 쓰기"
+        }
+      }
+    ],
+    "executor": {
+      "name": "e2e-default-agent",
+      "version": "2"
+    },
+    "recordedFor": {
+      "testId": "e2e-agent/notes.e2e.ts::%EC%AA%BD%EC%A7%80%20%28%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%29::%EC%AA%BD%EC%A7%80%EB%A5%BC%20%EC%93%B0%EB%A9%B4%20%EB%AA%A9%EB%A1%9D%EC%97%90%20%EC%84%A0%EB%8B%A4",
+      "targetId": "web",
+      "instructionDigest": "a13f727d90597e280c101b7dc72b1f6e59c9f87aa7b3c6ea43983742cd48087b"
+    },
+    "summary": "쪽지 목록에 제목 ‘e2e 에이전트 8149c8d9’와 내용 ‘에이전트가 썼어요’가 표시되어 저장을 확인했습니다.",
+    "startPath": "/notes",
+    "endPath": "/notes",
+    "endAnchors": [
+      {
+        "text": "요금제"
+      },
+      {
+        "text": "김고객"
+      },
+      {
+        "text": "{{param:/title}}"
+      },
+      {
+        "text": "에이전트가 썼어요"
+      },
+      {
+        "role": "link",
+        "name": "{{param:/title}} 열기",
+        "text": "열기"
+      },
+      {
+        "text": "e2e 에이전트 보관 62c9d02e"
+      },
+      {
+        "role": "link",
+        "name": "e2e 에이전트 보관 62c9d02e 열기",
+        "text": "열기"
+      },
+      {
+        "text": "되살리기 검사"
+      }
+    ],
+    "endWaitMs": 12157
+  }
+}

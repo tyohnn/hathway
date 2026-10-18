@@ -1,19 +1,20 @@
 import "server-only";
 
 import { Effect, Layer } from "effect";
+import { connection } from "next/server";
 
-import { poolExecutor, postgresPool } from "@investment/adapters-postgres/connection";
-import { companyDirectoryPostgresLayer } from "@investment/adapters-postgres/market/CompanyDirectoryPostgres";
-import { filingLedgerPostgresLayer } from "@investment/adapters-postgres/market/FilingLedgerPostgres";
-import { financialPeriodsPostgresLayer } from "@investment/adapters-postgres/market/FinancialPeriodsPostgres";
-import { filingDocumentsSupabaseLayer } from "@investment/adapters-storage/FilingDocumentsSupabase";
+import { poolExecutor, postgresPool } from "@hathway/adapters-postgres/connection";
+import { companyDirectoryPostgresLayer } from "@hathway/adapters-postgres/market/CompanyDirectoryPostgres";
+import { filingLedgerPostgresLayer } from "@hathway/adapters-postgres/market/FilingLedgerPostgres";
+import { financialPeriodsPostgresLayer } from "@hathway/adapters-postgres/market/FinancialPeriodsPostgres";
+import { filingDocumentsSupabaseLayer } from "@hathway/adapters-storage/FilingDocumentsSupabase";
 import {
     MarketStoreError,
     type CompanyDirectory,
     type FilingDocuments,
     type FilingLedger,
     type FinancialPeriods,
-} from "@investment/market/ports/MarketStore";
+} from "@hathway/market/ports/MarketStore";
 
 import { supabaseServiceKey, supabaseUrl } from "./platform/supabase-env";
 import { runtime } from "./runtime";
@@ -47,6 +48,14 @@ const marketLayer: Effect.Effect<Layer.Layer<Market>, MarketStoreError> = Effect
     ));
 });
 
-/** 조회 하나를 돌린다. 실패하면 던진다. 화면이 그것을 잡을지는 화면이 정한다 */
-export const runMarket = <A, E>(program: Effect.Effect<A, E, Market>): Promise<A> =>
-    runtime.runPromise(Effect.flatMap(marketLayer, (layer) => program.pipe(Effect.provide(layer))));
+/**
+ * 조회 하나를 돌린다. 실패하면 던진다. 화면이 그것을 잡을지는 화면이 정한다.
+ *
+ * ⚠ 시세 화면은 요청마다 읽는다. `connection()` 을 먼저 기다려서 빌드가 이 조회를 미리 굽지 않게 한다.
+ *    빌드 환경에는 DB 접속값이 없다.
+ */
+export const runMarket = async <A, E>(program: Effect.Effect<A, E, Market>): Promise<A> =>
+{
+    await connection();
+    return runtime.runPromise(Effect.flatMap(marketLayer, (layer) => program.pipe(Effect.provide(layer))));
+};

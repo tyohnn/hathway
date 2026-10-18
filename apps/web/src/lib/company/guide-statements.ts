@@ -2,7 +2,7 @@ import { r0, r1, r2, type GuideBindKey, type GuideRowDef } from "./guide-model";
 
 const pct = { unit: "pct" as const };
 
-/** 재무제표 포괄손익계산서 — IA 3-1. LVL 2가 계정 사전 상한. */
+/** 재무제표 포괄손익계산서: IA 3-1. LVL 2가 계정 사전 상한. */
 export function incomeStatementRows(): GuideRowDef[]
 {
     return [
@@ -72,7 +72,7 @@ export function incomeStatementRows(): GuideRowDef[]
     ];
 }
 
-/** 재무제표 재무상태표 — IA 3-2. */
+/** 재무제표 재무상태표: IA 3-2. */
 export function balanceSheetRows(): GuideRowDef[]
 {
     return [
@@ -160,7 +160,7 @@ export function balanceSheetRows(): GuideRowDef[]
     ];
 }
 
-/** 재무제표 현금흐름표 — IA 3-3. */
+/** 재무제표 현금흐름표: IA 3-3. */
 export function cashFlowRows(): GuideRowDef[]
 {
     return [
@@ -266,7 +266,7 @@ export function cashFlowRows(): GuideRowDef[]
     ];
 }
 
-/** Snapshot Financial Highlight — IA 1. 들여쓰기만, 재무제표보다 얕다. */
+/** Snapshot Financial Highlight: IA 1. 들여쓰기만, 재무제표보다 얕다. */
 export function snapshotHighlightRows(): GuideRowDef[]
 {
     return [
@@ -312,7 +312,7 @@ function ratio(
     return r1(id, label, bind, [left, right], { unit: "pct", formula });
 }
 
-/** 재무비율 연간 — IA 4. + 는 산식 구성항. */
+/** 재무비율 연간: IA 4. + 는 산식 구성항. */
 export function ratioAnnualRows(): GuideRowDef[]
 {
     return [
@@ -513,7 +513,7 @@ export function ratioAnnualRows(): GuideRowDef[]
     ];
 }
 
-/** 재무비율 3개월 — 안정성·활동성 없음. */
+/** 재무비율 3개월: 안정성·활동성 없음. */
 export function ratioQuarterRows(): GuideRowDef[]
 {
     return [
@@ -580,7 +580,7 @@ export function ratioQuarterRows(): GuideRowDef[]
     ];
 }
 
-/** 투자지표 기업가치 — IA 5. */
+/** 투자지표 기업가치: IA 5. */
 export function investValueRows(): GuideRowDef[]
 {
     return [

@@ -1,3 +1,2 @@
-// `server-only` 는 서버 컴포넌트 밖에서 불리면 던진다. 테스트는 그 조건 밖에서 돌므로 빈 모듈로 바꿔 읽는다
-// (vitest.config.ts 의 alias). 이 별칭이 없으면 서버 모듈을 부르는 테스트가 import 단계에서 실패한다.
+// vitest 전용 — `server-only` 는 React 서버 환경 밖에서 import 되면 throw 한다. 테스트에서는 빈 모듈로 바꿔 끼운다(vitest.config.ts alias).
 export {};

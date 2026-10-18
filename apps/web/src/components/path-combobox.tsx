@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 import {
     Command,
     CommandEmpty,
@@ -12,8 +12,8 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@investment/ui/components/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@investment/ui/components/popover";
+} from "@hathway/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@hathway/ui/components/popover";
 
 export type PathComboboxItem = {
     value: string;

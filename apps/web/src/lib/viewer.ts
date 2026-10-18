@@ -2,8 +2,8 @@ import "server-only";
 
 import { Effect, Exit } from "effect";
 
-import type { Actor } from "@investment/access/domain/Actor";
-import { ActorResolver } from "@investment/access/ports/ActorResolver";
+import type { Actor } from "@hathway/access/domain/Actor";
+import { ActorResolver } from "@hathway/access/ports/ActorResolver";
 
 import { actorResolverLayer } from "./auth";
 import { runtime } from "./runtime";

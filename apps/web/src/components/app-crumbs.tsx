@@ -10,7 +10,7 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@investment/ui/components/breadcrumb";
+} from "@hathway/ui/components/breadcrumb";
 import { StockAnalysisCrumbs } from "@/components/stock-analysis-crumbs";
 
 /** 테마 밖에 서는 화면. 테마의 이름을 적으면 틀린 위치가 된다 */

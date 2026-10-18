@@ -9,7 +9,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
-} from "@investment/ui/components/chart";
+} from "@hathway/ui/components/chart";
 
 const chartData = [
     { month: "January", users: 1860, revenue: 12.4 },

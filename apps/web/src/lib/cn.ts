@@ -1,1 +1,1 @@
-export { cn } from "@investment/ui/lib/utils";
+export { cn } from "@hathway/ui/lib/utils";

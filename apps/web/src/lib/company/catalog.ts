@@ -18,7 +18,7 @@ export type CompanyMenuMeta = {
 };
 
 /**
- * FnGuide Company Guide 기업정보 서브메뉴 — 이름·순서 정본.
+ * FnGuide Company Guide 기업정보 서브메뉴: 이름·순서 정본.
  * https://comp.fnguide.com/SVO2/ASP/SVD_Main.asp (Snapshot … 금감원공시)
  */
 export const COMPANY_MENUS: CompanyMenuMeta[] = [

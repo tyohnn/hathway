@@ -6,7 +6,7 @@ import {
     formatWon,
     readOwnership,
     type Company,
-} from "@investment/schema";
+} from "@hathway/schema";
 import type { CompanyPageData, GuideFinPeriod, GuideFinValues } from "@/lib/platform/db";
 import { SHAREHOLDER_GROUPS, type GuideBindKey, type GuideColumnPreset, type GuideRowDef, type GuideSectionDef, type GuideUnit } from "./guide-model";
 import { GUIDE_CONCEPTS, type GuideConcept } from "./guide-model";

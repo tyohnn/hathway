@@ -1,11 +1,11 @@
-/** 바깥 보드 RGL — 칸 하나가 그룹 */
+/** 바깥 보드 RGL: 칸 하나가 그룹 */
 export const OUTER_GRID = {
     cols: 12,
     rowHeight: 36,
     margin: [16, 16] as const,
 } as const;
 
-/** 그룹 안 nested RGL — 칸 하나가 위젯 */
+/** 그룹 안 nested RGL: 칸 하나가 위젯 */
 export const INNER_GRID = {
     cols: 12,
     rowHeight: 32,

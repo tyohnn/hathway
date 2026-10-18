@@ -1,4 +1,4 @@
-import { classifySector } from "@investment/schema";
+import { classifySector } from "@hathway/schema";
 import { getBoardBySlug, LEGACY_BOARD_SLUGS } from "@/lib/analysis";
 import {
     DEFAULT_COMPANY_MENU_SLUG,
@@ -19,13 +19,6 @@ export type IndustryIndex = {
     slug: string;
     name: string;
     tagline: string;
-};
-
-export type ChapterIndex = {
-    href: string;
-    title: string;
-    heading: string;
-    bookLabel: string;
 };
 
 export type MarketChip = "all" | "KOSPI" | "KOSDAQ" | "recent";
@@ -107,11 +100,4 @@ export function matchesIndustry(industry: IndustryIndex, query: string): boolean
     const q = query.trim().toLowerCase();
     if (!q) return true;
     return `${industry.name} ${industry.tagline} ${industry.slug}`.toLowerCase().includes(q);
-}
-
-export function matchesChapter(chapter: ChapterIndex, query: string): boolean
-{
-    const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return `${chapter.title} ${chapter.heading} ${chapter.bookLabel}`.toLowerCase().includes(q);
 }

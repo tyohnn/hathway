@@ -1,7 +1,7 @@
 /**
  * 종목 · 재무 · 공시를 읽는 화면의 입구. 서버 컴포넌트는 여기의 함수만 부른다.
  *
- * 함수마다 유스케이스(`src/usecases/market.ts`) 하나를 돌린다. 읽는 조건과 차례는 포트(`@investment/market`)에,
+ * 함수마다 유스케이스(`src/usecases/market.ts`) 하나를 돌린다. 읽는 조건과 차례는 포트(`@hathway/market`)에,
  * 접고 고르는 판단은 그 패키지의 규칙에 있다. 여기에는 판단이 없다.
  *
  * ⚠ **서버 전용이다.** 클라이언트 컴포넌트는 타입만 `import type` 으로 가져간다. 접속 문자열과 저장소 키가 이 뒤에 있다.
@@ -20,13 +20,13 @@ import type {
     FilingSection,
     OwnershipTxn,
     TrackingFact,
-} from "@investment/schema";
+} from "@hathway/schema";
 import type {
     DivisionCount,
     GuideFinPeriod as MarketGuideFinPeriod,
     MemberFinancials,
     NoteSectionListItem,
-} from "@investment/market/domain/rows";
+} from "@hathway/market/domain/rows";
 
 import { GUIDE_CONCEPTS, type GuideConcept } from "@/lib/company/guide-model";
 import { runMarket } from "@/lib/marketRuntime";

@@ -1,14 +1,14 @@
 import type { ChainMember, Industry, Verdict } from "./types";
 
 /**
- * 산업 카탈로그 정본 — 산업의 경계와 밸류체인 단계는 여기서만 정의된다.
+ * 산업 카탈로그 정본: 산업의 경계와 밸류체인 단계는 여기서만 정의된다.
  *
  * 왜 DB가 아니라 상수인가: 산업 경계는 수집되는 사실이 아니라 **감독의 판단**이다.
  * AGENTS.md 가 "후보 풀은 KSIC 접두로 넓게 긁고, 최종 peer set 은 감독이 손으로 확정한다"
  * 로 못박은 바로 그 확정이 이 파일이다. 손으로 쓴 판단은 손으로 쓴 파일에 있어야 리뷰가
  * 되고, git 이 변경 이력을 담는다. 스키마가 굳고 산업이 여러 개로 늘면 DB로 승격한다.
  *
- * 여기에 숫자를 적지 않는다. 매출·이익률·ROE는 fin_periods 에서 읽는다 — 적어 두면
+ * 여기에 숫자를 적지 않는다. 매출·이익률·ROE는 fin_periods 에서 읽는다: 적어 두면
  * 반드시 낡고, 낡은 줄도 모른 채 인용된다.
  */
 
@@ -21,7 +21,7 @@ export const INDUSTRIES: Industry[] = [
       "종목이 아니라 사슬로 봐야 같은 뉴스가 회사마다 다른 의미를 갖는다는 것이 보인다. " +
       "리튬 가격 폭락은 광물 회사에는 재앙이지만 장비 회사에는 거의 무관하다. " +
       "2026-08-06 실행에서 정량 스크린 28개사에 채 0~4단계를 적용했다.",
-        // KSIC 로는 한 덩어리가 아니다 — 실제 28개사가 일곱 중분류로 흩어져 있다.
+        // KSIC 로는 한 덩어리가 아니다: 실제 28개사가 일곱 중분류로 흩어져 있다.
         // 이 접두들은 후보를 놓치지 않으려고 넓게 던진 그물이고, 그물에는 이차전지와
         // 무관한 회사가 대량으로 걸린다(20 화학 171개사, 26 전자부품 293개사).
         ksicPrefixes: ["19", "20", "24", "26", "28", "29", "64"],
@@ -32,11 +32,6 @@ export const INDUSTRIES: Industry[] = [
             { label: "산업해부 — 밸류체인·채찍효과·국면 3문", path: "리서치/산업/이차전지/분석/2026-08-06-산업해부.md" },
             { label: "정량스크린 — 2021~2025 매출·이익률·ROE·부채비율", path: "리서치/산업/이차전지/스크리닝/2026-08-06-정량스크린.md" },
             { label: "QC 로그 — 걸러낸 결함과 도구 수정", path: "리서치/산업/이차전지/2026-08-06-QC로그.md" },
-        ],
-        textbooks: [
-            { label: "1권 12장 산업 분석 프레임", href: "/book/book1/B3" },
-            { label: "1권 11장 경제적 해자와 가격결정권", href: "/book/book1/B2" },
-            { label: "2권 13장 밸류체인 지도와 채찍효과", note: "2권 비공개" },
         ],
         phase: [
             {
@@ -317,7 +312,7 @@ export function getIndustry(slug: string): Industry | undefined
     return INDUSTRIES.find((i) => i.slug === slug);
 }
 
-/** 이 산업에 속한 상장 종목코드 전부 — 화면이 fin_periods 를 긁을 때 쓴다. */
+/** 이 산업에 속한 상장 종목코드 전부: 화면이 fin_periods 를 긁을 때 쓴다. */
 export function industryStockCodes(industry: Industry): string[]
 {
     return industry.stages.flatMap((s) =>
@@ -326,7 +321,7 @@ export function industryStockCodes(industry: Industry): string[]
 }
 
 /**
- * 판정은 받았는데 종목 페이지가 없는 멤버 — 우선주처럼 DART 법인이 아닌 것들.
+ * 판정은 받았는데 종목 페이지가 없는 멤버: 우선주처럼 DART 법인이 아닌 것들.
  *
  * 이게 있으면 "판정 건수"와 "상장 종목 수"가 어긋난다. 어긋남 자체는 정상이지만 설명 없이
  * 두면 둘 중 하나가 틀린 것처럼 보이므로, 화면이 이 목록을 그대로 붙인다.

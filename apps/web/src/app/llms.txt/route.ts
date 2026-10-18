@@ -1,36 +1,9 @@
-import { getManifest } from "@/lib/book/manifest";
+import { llmsText } from "@/lib/discovery";
+import { SITE_URL } from "@/lib/site";
+import { SITE_INDEX } from "@/lib/siteIndex";
 
-export const revalidate = false;
-
-/** llms.txt — the shelf as an outline, one link per chapter. */
-export async function GET()
+/** `/llms.txt`. AI 가 이 서비스를 한 번에 파악하도록 이름 · 한 줄 설명 · 읽을 글의 목록을 마크다운으로 낸다(https://llmstxt.org) */
+export function GET(): Response
 {
-    const manifest = await getManifest();
-    const lines = [`# ${manifest.title}`, "", `> ${manifest.description}`, ""];
-
-    for (const book of manifest.books)
-    {
-        lines.push(`## ${book.title}`, "");
-        for (const part of book.parts)
-        {
-            if (part.title) lines.push(`### ${part.title}`, "");
-            for (const chapter of part.chapters)
-            {
-                lines.push(
-                    `- [${chapter.title}](/book/${book.folder}/${chapter.slug}): ${chapter.description}`,
-                );
-            }
-            lines.push("");
-        }
-    }
-
-    lines.push(`## ${manifest.reference.title}`, "");
-    for (const page of manifest.reference.pages)
-    {
-        lines.push(`- [${page.title}](/book/reference/${page.slug}): ${page.description}`);
-    }
-
-    return new Response(`${lines.join("\n")}\n`, {
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
+    return new Response(llmsText(SITE_URL, SITE_INDEX), { headers: { "content-type": "text/markdown; charset=utf-8" } });
 }

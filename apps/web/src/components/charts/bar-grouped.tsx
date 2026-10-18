@@ -9,7 +9,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
-} from "@investment/ui/components/chart";
+} from "@hathway/ui/components/chart";
 
 const chartData = [
     { quarter: "Q1", productA: 186, productB: 80, productC: 120 },

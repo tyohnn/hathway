@@ -1,0 +1,7 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "buildCommand": "turbo build --filter=@hathway/web",
+    "outputDirectory": ".next",
+    "regions": ["icn1"],
+    "crons": [{ "path": "/api/toss/renew", "schedule": "0 18 * * *" }]
+}

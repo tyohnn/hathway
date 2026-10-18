@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader } from "@investment/blocks/section-header";
+import { SectionHeader } from "@hathway/blocks/section-header";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 

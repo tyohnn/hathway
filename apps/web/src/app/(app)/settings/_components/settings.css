@@ -1,0 +1,17 @@
+/* 설정 화면(팀 · 내 계정 · 요금제)이 함께 쓰는 글자와 구분선. 시스템 토큰만 읽는다.
+   템플릿 화면의 조각(`tk-*`)과 같은 값을 읽어 두 묶음이 한 화면처럼 보인다. 코어는 그 조각을 가져다 쓰지 못해 여기 따로 둔다 */
+.st-title { margin: 0; font-family: var(--font-heading); font-size: var(--ui-text-lg); line-height: var(--ui-line-height-lg); font-weight: 600; color: var(--foreground); }
+.st-meta { font-size: var(--ui-text-sm); line-height: var(--ui-line-height-sm); color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.st-figure { font-family: var(--font-heading); font-size: var(--ui-text-lg); line-height: var(--ui-line-height-lg); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--foreground); }
+/* 카드의 주인공인 값 하나(요금제 이름 · 남은 크레딧 · 내 이름) */
+.st-figure-lg { font-family: var(--font-heading); font-size: var(--heading-font-size-md); line-height: var(--heading-line-height-md); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--foreground); }
+.st-number { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st-nowrap { white-space: nowrap; }
+.st-truncate { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-head { border-bottom: 1px solid var(--border); }
+.st-foot { border-top: 1px solid var(--border); }
+/* 이름과 값이 짝을 이루는 줄(`FactList`). 줄 사이에만 선이 선다 */
+.st-fact + .st-fact { border-top: 1px solid var(--border); }
+/* 큰 얼굴(`PersonAvatar` 의 `xl`). 시스템의 아바타 축에는 이 크기가 없어 제목 축의 글자를 읽는다 */
+.st-avatar-xl { width: 56px; height: 56px; }
+.st-avatar-xl .cn-avatar-fallback { font-family: var(--font-heading); font-size: var(--heading-font-size-sm); line-height: var(--heading-line-height-sm); font-weight: 600; }

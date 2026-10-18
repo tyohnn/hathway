@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarTrigger } from "@investment/ui/components/sidebar";
+import { SidebarTrigger } from "@hathway/ui/components/sidebar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,7 +10,7 @@ import { paths } from "@/lib/paths";
 import { fitBoardGroupHeights } from "@/lib/research/document";
 import type { ResearchBoard } from "@/lib/research/types";
 import { researchBoardsHref } from "@/lib/nav";
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 import {
     Dialog,
     DialogContent,
@@ -18,7 +18,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@investment/ui/components/dialog";
+} from "@hathway/ui/components/dialog";
 import { ResearchBoardFlow } from "@/components/research/research-board-flow";
 
 type SaveState = "saved" | "saving" | "error";

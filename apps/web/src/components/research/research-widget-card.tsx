@@ -1,20 +1,20 @@
 "use client";
 
-import type { Tone } from "@investment/blocks/tone";
-import { StatusBadge } from "@investment/blocks/status-badge";
+import type { Tone } from "@hathway/blocks/tone";
+import { StatusBadge } from "@hathway/blocks/status-badge";
 import Link from "next/link";
 import { DotsSixVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import type { ResearchBoard, ResearchWidget } from "@/lib/research";
 import { moveWidget, removeWidget, renameWidget } from "@/lib/research/document";
 import { cn } from "@/lib/cn";
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 import {
     Command,
     CommandGroup,
     CommandItem,
     CommandList,
-} from "@investment/ui/components/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@investment/ui/components/popover";
+} from "@hathway/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@hathway/ui/components/popover";
 
 export const WIDGET_MIME = "text/research-widget";
 

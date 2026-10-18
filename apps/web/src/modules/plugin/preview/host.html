@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>플러그인 미리 보기</title>
+<!--
+    호스트(ChatGPT)를 흉내 낸 창. `server.mjs` 가 내준다. 생김새와 자리는 스펙의 화면 갈무리(docs/resources)를 따랐다.
+
+    | 진짜 호스트의 자리 | 이 창의 자리 |
+    |---|---|
+    | 사이드바의 앱 | 왼쪽 「앱」. 누르면 가운데가 그 앱의 화면이 되고 오른쪽 아래에 컴포저가 뜬다 |
+    | 대화 옆 패널 | 대화의 오른쪽 탭. 「＋」로 연다. 파일도 여기서 열린다 |
+    | 대화 안의 화면 | 모델이 도구를 부르면 대화 안에 화면이 선다 |
+    | 폼 | 모델이 부른 도구가 되물으면 대화 안에 폼 카드가 선다 |
+    | 컴포저의 멘션 | 글 칸에 `@` 를 치면 뜬다 |
+    | 플러그인 화면 | 왼쪽 「플러그인」. 소개 · 설정 · 스킬이 선다 |
+
+    ⚠ **모델이 없다.** 보낸 글의 낱말을 보고 도구를 고른다(`ROUTES`). 진짜 호스트에서는 모델이 도구의 설명을 읽고 고른다.
+    ⚠ 서버에서 온 글은 전부 `textContent` 로 넣는다. 쪽지의 제목과 본문은 사람이 적은 글이다.
+    ⚠ 이 창이 「된다」고 보여 주는 것은 우리가 스펙을 읽은 대로다. 실물 호스트의 확인을 대신하지 않는다.
+-->
+<style>
+    :root { color-scheme: dark; --bg: light-dark(#ffffff, #212121); --side: light-dark(#f9f9f9, #171717); --raised: light-dark(#f4f4f4, #2f2f2f); --fg: light-dark(#0d0d0d, #ececec); --soft: light-dark(#5d5d5d, #a8a8a8); --line: light-dark(#e5e5e5, #333333); --accent: light-dark(#0d0d0d, #ffffff); --accent-fg: light-dark(#ffffff, #0d0d0d); }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; height: 100vh; display: flex; background: var(--bg); color: var(--fg); font: 14px/1.55 system-ui, -apple-system, "Pretendard", sans-serif; overflow: hidden; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    .spacer { flex: 1; }
+    .soft { color: var(--soft); }
+
+    /* 사이드바 */
+    .sidebar { width: 244px; flex: none; display: flex; flex-direction: column; gap: 2px; padding: 10px 8px; background: var(--side); border-right: 1px solid var(--line); overflow: auto; }
+    .sidebar h2 { margin: 16px 10px 4px; font-size: 12px; font-weight: 500; color: var(--soft); }
+    .sidebar button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px; border: 0; border-radius: 10px; background: transparent; text-align: left; }
+    .sidebar button:hover, .sidebar button[aria-current="true"] { background: var(--raised); }
+    .sidebar .glyph { width: 20px; text-align: center; }
+    .sidebar .quick { margin-left: auto; width: auto; padding: 0 6px; border-radius: 6px; color: var(--soft); }
+    .sidebar .row { display: flex; align-items: center; }
+    .sidebar .row > button:first-child { flex: 1; min-width: 0; }
+    .icon { display: inline-block; flex: none; width: 20px; height: 20px; background: currentColor; -webkit-mask: var(--src) center / contain no-repeat; mask: var(--src) center / contain no-repeat; }
+    .me { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--soft); }
+    .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--raised); display: grid; place-items: center; font-size: 12px; }
+
+    /* 가운데 */
+    .content { flex: 1; min-width: 0; position: relative; display: flex; }
+    .view { flex: 1; min-width: 0; display: flex; }
+    .titlebar { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; flex: none; }
+    .titlebar strong { font-weight: 600; font-size: 15px; }
+    .ghost { border: 1px solid var(--line); border-radius: 10px; background: transparent; padding: 5px 12px; }
+    .ghost:hover { background: var(--raised); }
+    .primary { border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-fg); padding: 6px 16px; font-weight: 500; }
+
+    /* 대화 */
+    .thread-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    #threads { flex: 1; overflow: auto; }
+    .messages { max-width: 760px; margin: 0 auto; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 18px; min-height: 100%; }
+    .hero { margin: auto 0; text-align: center; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .hero h1 { margin: 0; font-size: 26px; font-weight: 500; }
+    .starters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .starters button { border: 1px solid var(--line); border-radius: 999px; background: transparent; padding: 6px 14px; }
+    .starters button:hover { background: var(--raised); }
+    .msg.user { align-self: flex-end; max-width: 80%; padding: 10px 16px; border-radius: 20px; background: var(--raised); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .msg.assistant { align-self: stretch; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .msg.note { align-self: flex-start; display: flex; align-items: center; gap: 8px; color: var(--soft); font-size: 13px; }
+    .msg.error { color: light-dark(#b42318, #ff8a80); }
+    .msg details { margin-top: 6px; color: var(--soft); }
+    .msg pre { margin: 6px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.5 ui-monospace, monospace; }
+    .replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .attached { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .card { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--bg); }
+    .card iframe { display: block; width: 100%; height: 320px; border: 0; }
+    .card.expanded { position: absolute; inset: 0; z-index: 5; border: 0; border-radius: 0; display: flex; flex-direction: column; }
+    .card.expanded iframe { flex: 1; height: auto; }
+    .card .shrink { display: none; }
+    .card.expanded .shrink { display: flex; }
+
+    /* 폼 카드 */
+    .form-card { border: 1px solid var(--line); border-radius: 16px; background: var(--raised); }
+    .form-card header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; font-weight: 500; }
+    .form-card header button { margin-left: auto; border: 0; background: transparent; color: var(--soft); }
+    .form-card .fields { max-height: 340px; overflow: auto; padding: 0 16px 8px; display: flex; flex-direction: column; gap: 10px; }
+    .form-card h3 { margin: 6px 0 0; font-size: 12px; font-weight: 500; color: var(--soft); }
+    .form-card .option { display: flex; align-items: center; gap: 12px; padding: 6px 4px; border-radius: 10px; cursor: pointer; }
+    .form-card .option:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+    .form-card .option input { position: absolute; opacity: 0; }
+    .form-card .option .num { width: 22px; height: 22px; flex: none; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; font-size: 11px; color: var(--soft); }
+    .form-card .option:has(input:checked) .num { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .form-card .option img { width: 34px; height: 34px; border-radius: 8px; flex: none; }
+    .form-card .option small { display: block; color: var(--soft); }
+    .form-card label.text { display: flex; flex-direction: column; gap: 4px; }
+    .form-card input[type="text"], .form-card textarea, .form-card select { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); padding: 7px 10px; }
+    .form-card footer { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); }
+    .form-card.answered { opacity: 0.6; pointer-events: none; }
+
+    /* 컴포저 */
+    .composer-wrap { flex: none; padding: 0 20px 16px; }
+    .composer { position: relative; max-width: 760px; margin: 0 auto; border-radius: 24px; background: var(--raised); padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+    .composer textarea { border: 0; outline: 0; resize: none; background: transparent; width: 100%; max-height: 120px; }
+    .composer .tools { display: flex; align-items: center; gap: 8px; color: var(--soft); font-size: 13px; }
+    .composer .send { margin-left: auto; width: 30px; height: 30px; border: 0; border-radius: 50%; background: var(--accent); color: var(--accent-fg); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chips:empty { display: none; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; max-width: 260px; }
+    .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip button { border: 0; background: transparent; padding: 0; color: var(--soft); }
+    .mention-popup { position: absolute; left: 0; right: 0; bottom: calc(100% + 6px); border: 1px solid var(--line); border-radius: 14px; background: var(--raised); padding: 6px; max-height: 240px; overflow: auto; box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); }
+    .mention-popup .head { padding: 4px 8px; color: var(--soft); font-size: 12px; }
+    .mention-popup button { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 8px; background: transparent; padding: 6px 8px; text-align: left; }
+    .mention-popup button:hover, .mention-popup button[aria-selected="true"] { background: color-mix(in srgb, var(--fg) 10%, transparent); }
+    .floating { position: absolute; right: 16px; bottom: 16px; width: min(460px, calc(100% - 32px)); z-index: 4; }
+    .floating .composer { box-shadow: 0 8px 24px rgb(0 0 0 / 0.3); border: 1px solid var(--line); }
+
+    /* 대화 옆 패널 */
+    #side { width: 46%; min-width: 320px; flex: none; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+    .tabs { display: flex; align-items: center; gap: 4px; height: 48px; padding: 0 8px; flex: none; border-bottom: 1px solid var(--line); position: relative; }
+    .tab { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; }
+    .tab[aria-selected="true"] { background: var(--raised); border-color: var(--line); }
+    .tab .close { border: 0; background: transparent; padding: 0; color: var(--soft); }
+    .menu { position: absolute; top: 44px; z-index: 6; min-width: 200px; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); padding: 6px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); }
+    .menu button { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 8px; background: transparent; padding: 6px 8px; text-align: left; }
+    .menu button:hover { background: color-mix(in srgb, var(--fg) 10%, transparent); }
+    #side-body, #app-body { flex: 1; min-height: 0; display: flex; }
+    #side-body > div, #app-body > div { flex: 1; min-width: 0; display: flex; }
+    #side-body iframe, #app-body iframe { flex: 1; width: 100%; border: 0; }
+
+    /* 앱 화면 */
+    #view-app { flex-direction: column; position: relative; }
+
+    /* 플러그인 화면 */
+    #view-plugin { flex-direction: column; overflow: auto; }
+    .plugin { width: min(640px, calc(100% - 40px)); margin: 0 auto; padding: 8px 0 60px; display: flex; flex-direction: column; gap: 14px; }
+    .plugin .logo { width: 56px; height: 56px; border: 1px solid var(--line); border-radius: 14px; display: grid; place-items: center; }
+    .plugin .logo .icon { width: 30px; height: 30px; }
+    .plugin .head { display: flex; align-items: flex-end; gap: 12px; }
+    .plugin .head h1 { margin: 0; font-size: 20px; font-weight: 600; }
+    .plugin .banner { border-radius: 16px; padding: 28px 16px; display: grid; place-items: center; background: linear-gradient(120deg, #2b2f6b, #5a3d8a 55%, #2a5b8f); }
+    .plugin .banner button { border: 0; border-radius: 999px; background: rgb(20 20 20 / 0.75); color: #fff; padding: 8px 16px; }
+    .plugin h2 { margin: 14px 0 0; padding-bottom: 8px; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 500; }
+    .plugin h3 { margin: 8px 0 0; font-size: 13px; font-weight: 500; }
+    .group { border: 1px solid var(--line); border-radius: 14px; background: var(--raised); }
+    .group > * { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; }
+    .group > * + * { border-top: 1px solid var(--line); }
+    .group select { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 4px 8px; }
+    .switch { appearance: none; width: 36px; height: 20px; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; margin: 0; }
+    .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left 0.15s; }
+    .switch:checked { background: #4f7cff; }
+    .switch:checked::after { left: 18px; }
+    .skill { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+
+    /* 개발 도구 */
+    #dev { width: 340px; flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--side); border-left: 1px solid var(--line); overflow: auto; font-size: 12px; }
+    #dev h2 { margin: 6px 0 0; font-size: 12px; font-weight: 600; color: var(--soft); }
+    #dev .row { display: flex; flex-wrap: wrap; gap: 6px; }
+    #dev input { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: 4px 8px; width: 110px; }
+    #dev details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+    #dev summary { cursor: pointer; overflow-wrap: anywhere; }
+    #dev pre { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 11px/1.5 ui-monospace, monospace; }
+    #dev .dir { display: inline-block; min-width: 72px; color: var(--soft); }
+</style>
+</head>
+<body>
+<nav class="sidebar" aria-label="사이드바">
+    <button id="new-chat" type="button"><span class="glyph">✎</span>새 채팅</button>
+    <button id="open-plugins" type="button"><span class="glyph">⊞</span>플러그인</button>
+    <h2>앱</h2>
+    <div id="apps"></div>
+    <h2>채팅</h2>
+    <div id="chats"></div>
+    <span class="spacer"></span>
+    <button id="toggle-dev" type="button"><span class="glyph">⚙</span>개발 도구</button>
+    <div class="me"><span class="avatar">나</span><a class="soft" href="/disconnect">다른 계정으로 들어가기</a></div>
+</nav>
+
+<section class="content">
+    <div class="view" id="view-chat">
+        <div class="thread-col">
+            <header class="titlebar"><strong id="chat-title">새 채팅</strong><span class="spacer"></span><button class="ghost" id="open-side" type="button">옆에 열기 ＋</button></header>
+            <div id="threads"></div>
+            <div class="composer-wrap" id="chat-composer"></div>
+        </div>
+        <aside id="side" hidden>
+            <header class="tabs" id="side-tabs"></header>
+            <div id="side-body"></div>
+        </aside>
+    </div>
+    <div class="view" id="view-app" hidden>
+        <header class="titlebar"><strong id="app-title"></strong></header>
+        <div id="app-body"></div>
+        <div class="floating" id="app-composer"></div>
+    </div>
+    <div class="view" id="view-plugin" hidden></div>
+</section>
+
+<aside id="dev" hidden>
+    <h2>호스트 바꿔 보기</h2>
+    <div class="row">
+        <button class="ghost" id="toggle-theme" type="button">밝은 테마</button>
+        <button class="ghost" id="toggle-desktop" type="button">데스크톱 능력 끄기</button>
+    </div>
+    <div class="row"><input id="link" value="/notes/1" aria-label="딥링크의 길"><button class="ghost" id="send-link" type="button">딥링크 보내기</button></div>
+    <div class="row"><button class="ghost" id="touch-file" type="button">밖에서 파일 바꾸기</button></div>
+    <p class="soft">모델이 없어서 보낸 글의 낱말로 도구를 고른다. 서버 · DB · 화면은 진짜다.</p>
+    <h2>오간 말</h2>
+    <div id="entries"></div>
+</aside>
+
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+
+/** 글은 반드시 `textContent` 로 들어간다. 속성은 `props`, 자식은 글이나 요소다 */
+const el = (tag, props = {}, ...children) =>
+{
+    const element = Object.assign(document.createElement(tag), props);
+
+    element.append(...children.flat().filter((child) => child !== null && child !== undefined && child !== ""));
+
+    return element;
+};
+
+/** 단색 아이콘. 그림을 가림막으로 써서 글자색(테마)을 따르게 한다. `<img>` 로 넣으면 `currentColor` 가 검정으로 굳는다 */
+const icon = (src) =>
+{
+    const element = el("span", { className: "icon", ariaHidden: "true" });
+
+    element.style.setProperty("--src", `url("${src}")`);
+
+    return element;
+};
+
+/** 새 판의 요청에 싣는 것. 폼을 띄울 수 있는 호스트라고 알린다 */
+const MODERN = {
+    "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+    "io.modelcontextprotocol/clientCapabilities": { extensions: { "openai/elicitation": { form: {} } } },
+};
+
+/**
+ * 모델 대신 낱말로 도구를 고른다. 위에서부터 처음 맞는 것을 부른다.
+ * 진짜 호스트에서는 모델이 도구의 `description` 을 읽고 고르므로 이 표는 미리 보기에만 있다.
+ */
+const ROUTES = [
+    [/골라|고를|고르/, "pick_note"],
+    [/붙여|참고|요약/, "attach_notes"],
+    [/남겨|쓸래|써 줘|적어|새 쪽지/, "compose_note"],
+    [/서랍/, "open_tray"],
+    [/보여|열어|목록|쪽지/, "open_library"],
+];
+
+const host = {
+    tools: [],
+    plugin: null,
+    theme: "dark",
+    desktop: true,
+    threads: [],
+    thread: null,
+    /** 사이드바 앱마다 하나씩 띄워 둔 화면 */
+    globals: new Map(),
+    updates: 0,
+    /** 호스트가 쥔 파일. 화면은 주소만 알고, 읽고 쓰는 일은 호스트가 한다 */
+    file: { name: "메모.md", uri: "host-resource://memo", text: "# 회의 메모\n\n- 첫 안건\n- 둘째 안건\n", etag: "v1", path: "/Users/me/Documents/메모.md" },
+};
+
+/** 떠 있는 화면들. 화면마다 제 iframe 과 제 컨텍스트를 갖는다 */
+const instances = new Set();
+
+const log = (direction, what, payload) =>
+{
+    const entries = $("entries");
+
+    entries.prepend(el("details", {}, el("summary", {}, el("span", { className: "dir" }, direction), what), el("pre", {}, JSON.stringify(payload ?? null, null, 2))));
+
+    while (entries.children.length > 200)
+    {
+        entries.lastChild.remove();
+    }
+};
+
+let rpcId = 0;
+
+const rpc = async (method, params = {}) =>
+{
+    rpcId += 1;
+
+    const response = await fetch("/rpc", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: rpcId, method, params }),
+    });
+
+    if (response.status === 401)
+    {
+        location.href = "/connect";
+        throw new Error("다시 연결한다");
+    }
+
+    const answered = await response.json();
+
+    log("호스트→서버", `${method} ${params.name ?? params.uri ?? ""}`, { params, answer: answered.error ?? answered.result });
+
+    if (answered.error !== undefined)
+    {
+        throw new Error(answered.error.message);
+    }
+
+    return answered.result;
+};
+
+const callTool = (name, args = {}, more = {}) => rpc("tools/call", { name, arguments: args, ...more });
+const toolNamed = (name) => host.tools.find((tool) => tool.name === name);
+const entrypointsOf = (tool) => tool._meta?.["openai/ui"]?.entrypoints ?? [];
+const toolsWith = (type) => host.tools.filter((tool) => entrypointsOf(tool).some((entry) => entry.type === type));
+const iconOf = (tool) => tool.icons?.[0]?.src ?? `data:image/svg+xml,${encodeURIComponent(host.plugin.icon)}`;
+const pluginName = () => host.plugin.interface.displayName ?? host.plugin.name;
+
+// ── 화면(iframe)과 말하기 ─────────────────────────────────────────────────────
+
+const post = (instance, message) => instance.frame.contentWindow?.postMessage({ jsonrpc: "2.0", ...message }, "*");
+
+const notify = (instance, method, params) =>
+{
+    log("호스트→화면", method, params);
+    post(instance, { method, params });
+};
+
+const capabilities = () => ({
+    openLinks: {},
+    serverTools: {},
+    serverResources: {},
+    message: { text: {} },
+    updateModelContext: { text: {}, structuredContent: {} },
+    experimental: {
+        "openai/message": {},
+        "openai/modelContext": {},
+        // 파일을 읽고 쓰고 여는 능력은 데스크톱 앱에만 있다
+        ...(host.desktop ? { "openai/files": {}, "openai/resource": {} } : {}),
+    },
+});
+
+const hostContext = (instance) => ({
+    theme: host.theme,
+    displayMode: instance.mode,
+    availableDisplayModes: ["inline", "fullscreen"],
+    platform: host.desktop ? "desktop" : "web",
+    ...(instance.context === null ? {} : { "openai/modelContext": instance.context }),
+});
+
+/**
+ * 화면 하나를 띄운다. 도구를 불러 결과를 받고, 그 도구가 가리키는 화면 자원을 읽어 iframe 에 넣는다.
+ * 악수가 끝나면 화면에 도구의 인자와 결과를 넘긴다(아래 `message` 처리).
+ */
+const mountApp = async (container, tool, input, { result = null, mode = "fullscreen", thread = null } = {}) =>
+{
+    const opened = result ?? await callTool(tool.name, input);
+    const content = (await rpc("resources/read", { uri: tool._meta.ui.resourceUri })).contents[0];
+    const frame = el("iframe", { title: tool.title ?? tool.name });
+    const instance = { frame, tool, input, result: opened, inFile: input.file !== undefined, mode, thread, context: null, container };
+
+    instances.add(instance);
+    container.append(frame);
+    frame.srcdoc = content.text;
+
+    return instance;
+};
+
+const unmount = (instance) =>
+{
+    instances.delete(instance);
+    instance.frame.remove();
+    refreshChips();
+};
+
+/** 화면이 호스트에 청한 것에 답한다. 여기가 가짜 호스트의 몸통이다 */
+const onRequest = async (instance, method, params) =>
+{
+    switch (method)
+    {
+        case "ui/initialize":
+            return { protocolVersion: "2026-01-26", hostInfo: { name: "plugin-preview", version: "0.0.1" }, hostCapabilities: capabilities(), hostContext: hostContext(instance) };
+
+        case "tools/call":
+            // 파일 진입점에서 나간 도구 호출에는 호스트가 그 파일의 자리를 얹는다. 화면에는 자리를 직접 주지 않는다
+            return rpc("tools/call", { ...params, ...(instance.inFile && host.desktop ? { _meta: { "openai/resource": { path: host.file.path } } } : {}) });
+
+        case "resources/read":
+            return params.uri === host.file.uri
+                ? { contents: [{ uri: host.file.uri, text: host.file.text, _meta: { "openai/resource": { etag: host.file.etag, writable: host.desktop } } }] }
+                : rpc("resources/read", { uri: params.uri });
+
+        case "resources/subscribe":
+        case "resources/unsubscribe":
+        case "ping":
+            return {};
+
+        case "openai/resources/write":
+            if (params.ifMatch !== undefined && params.ifMatch !== host.file.etag)
+            {
+                return { outcome: "conflict", etag: host.file.etag };
+            }
+
+            host.file = { ...host.file, text: params.text, etag: `v${Number(host.file.etag.slice(1)) + 1}` };
+
+            return { outcome: "saved", etag: host.file.etag };
+
+        case "ui/update-model-context":
+        {
+            const empty = (params.content ?? []).length === 0 && params.structuredContent === undefined;
+
+            host.updates += 1;
+            instance.context = empty ? null : { updateId: `update-${host.updates}`, ...params };
+            refreshChips();
+
+            return empty ? {} : { _meta: { "openai/modelContext": { updateId: instance.context.updateId } } };
+        }
+
+        case "ui/message":
+        {
+            const blocks = params.content ?? [];
+            const target = params._meta?.["openai/message"]?.target ?? "active";
+            // 새 대화로 보내라고 했거나 화면이 대화에 딸려 있지 않으면 새 대화를 연다
+            const thread = target === "new" || instance.thread === null ? newThread() : instance.thread;
+
+            showThread(thread);
+            void sendUser(thread, {
+                text: blocks.filter((block) => block.type === "text").map((block) => block.text).join("\n"),
+                mentions: blocks.filter((block) => block.type === "resource_link").map((block) => ({ uri: block.uri, title: block.name })),
+                contexts: [],
+            });
+
+            return {};
+        }
+
+        case "ui/request-display-mode":
+            return { mode: setMode(instance, params.mode === "fullscreen" ? "fullscreen" : "inline") };
+
+        case "openai/files/open":
+            note(instance.thread ?? host.thread ?? newThread(), `호스트가 기본 뷰어로 파일을 열었어요: ${params.path}`);
+
+            return {};
+
+        default:
+            throw new Error(`미리 보기가 모르는 메서드다: ${method}`);
+    }
+};
+
+window.addEventListener("message", (event) =>
+{
+    const instance = [...instances].find((each) => each.frame.contentWindow === event.source);
+    const message = event.data;
+
+    if (instance === undefined || message?.jsonrpc !== "2.0" || message.method === undefined)
+    {
+        return;
+    }
+
+    log("화면→호스트", message.method, message.params);
+
+    if (message.id === undefined)
+    {
+        if (message.method === "ui/notifications/initialized")
+        {
+            notify(instance, "ui/notifications/tool-input", { arguments: instance.input });
+            notify(instance, "ui/notifications/tool-result", instance.result);
+        }
+        else if (message.method === "ui/notifications/size-changed" && instance.mode === "inline")
+        {
+            instance.frame.style.height = `${Math.min(520, Math.max(120, message.params.height))}px`;
+        }
+
+        return;
+    }
+
+    onRequest(instance, message.method, message.params ?? {}).then(
+        (result) => post(instance, { id: message.id, result }),
+        (error) => post(instance, { id: message.id, error: { code: -32000, message: String(error.message ?? error) } }),
+    );
+});
+
+/** 대화 안에 선 화면을 키우거나 줄인다. 사이드바와 옆 패널의 화면은 늘 전체 화면이다 */
+const setMode = (instance, mode) =>
+{
+    const card = instance.container.closest(".card");
+
+    if (card === null)
+    {
+        return "fullscreen";
+    }
+
+    instance.mode = mode;
+    card.classList.toggle("expanded", mode === "fullscreen");
+    instance.frame.style.height = "";
+    notify(instance, "ui/notifications/host-context-changed", { displayMode: mode });
+
+    return mode;
+};
+
+// ── 컴포저 ────────────────────────────────────────────────────────────────────
+
+const composers = [];
+
+const refreshChips = () => composers.forEach((composer) => composer.render());
+
+const titleOfBlock = (block) => block._meta?.["openai/title"] ?? String(block.text ?? block.name ?? block.type).slice(0, 40);
+
+/** 사람에게 보이는 조각. 모델만 읽는 조각(`audience: assistant`)은 첨부로 서지 않는다 */
+const visibleBlocks = (context) =>
+    (context?.content ?? []).filter((block) => !(block.annotations?.audience ?? ["user"]).every((who) => who === "assistant"));
+
+/**
+ * 글 쓰는 칸. 화면이 붙인 컨텍스트가 첨부로 서고, `@` 를 치면 플러그인의 멘션 검색이 뜬다.
+ */
+const createComposer = ({ placeholder, scope, onSend }) =>
+{
+    const chips = el("div", { className: "chips" });
+    const popup = el("div", { className: "mention-popup", hidden: true });
+    const input = el("textarea", { rows: 1, placeholder });
+    const send = el("button", { type: "button", className: "send", ariaLabel: "보내기" }, "↑");
+    const mentionTool = host.tools.find((tool) => tool._meta?.["openai/extensions"]?.["mentions/search"] !== undefined);
+    let mentions = [];
+    let searching = 0;
+
+    const render = () =>
+    {
+        chips.replaceChildren(
+            ...mentions.map((mention) => el("span", { className: "chip" }, el("span", {}, `@${mention.title}`), el("button", {
+                type: "button",
+                ariaLabel: "멘션 떼기",
+                onclick: () =>
+                {
+                    mentions = mentions.filter((each) => each !== mention);
+                    render();
+                },
+            }, "✕"))),
+            ...scope().filter((instance) => visibleBlocks(instance.context).length > 0).map((instance) => el("span", { className: "chip" },
+                icon(iconOf(instance.tool)),
+                el("span", {}, visibleBlocks(instance.context).map(titleOfBlock).join(", ")),
+                el("button", {
+                    type: "button",
+                    ariaLabel: "첨부 떼기",
+                    onclick: () =>
+                    {
+                        // 사람이 첨부를 뗐다. 화면에 알려 고른 표시를 풀게 한다
+                        instance.context = null;
+                        render();
+                        notify(instance, "ui/notifications/host-context-changed", { "openai/modelContext": null });
+                    },
+                }, "✕"))),
+        );
+    };
+
+    const closePopup = () =>
+    {
+        popup.hidden = true;
+        popup.replaceChildren();
+    };
+
+    const search = async () =>
+    {
+        const match = /@([^\s@]*)$/.exec(input.value.slice(0, input.selectionStart));
+
+        // 멘션은 데스크톱 앱의 컴포저에서만 뜬다
+        if (match === null || mentionTool === undefined || !host.desktop)
+        {
+            return closePopup();
+        }
+
+        searching += 1;
+
+        const turn = searching;
+        const { items } = (await callTool(mentionTool.name, { query: match[1] })).structuredContent;
+
+        if (turn !== searching)
+        {
+            return undefined;
+        }
+
+        popup.hidden = false;
+        popup.replaceChildren(
+            el("div", { className: "head" }, `${pluginName()} · ${items.length === 0 ? "찾은 것이 없어요" : "검색어를 이어서 적어요"}`),
+            ...items.map((item) => el("button", {
+                type: "button",
+                onclick: () =>
+                {
+                    const before = input.value.slice(0, input.selectionStart).replace(/@([^\s@]*)$/, "");
+
+                    input.value = before + input.value.slice(input.selectionStart);
+                    mentions = [...mentions, { uri: item.uri, title: item.title ?? item.name }];
+                    closePopup();
+                    render();
+                    input.focus();
+                },
+            }, icon(iconOf(mentionTool)), item.title ?? item.name)),
+        );
+
+        return undefined;
+    };
+
+    const submit = () =>
+    {
+        const text = input.value.trim();
+        const attached = scope().filter((instance) => instance.context !== null);
+
+        if (text === "" && mentions.length === 0)
+        {
+            return;
+        }
+
+        onSend({ text, mentions, contexts: attached.map((instance) => instance.context) });
+        input.value = "";
+        mentions = [];
+        closePopup();
+        render();
+    };
+
+    input.addEventListener("input", () => void search());
+    input.addEventListener("keydown", (event) =>
+    {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing)
+        {
+            event.preventDefault();
+            submit();
+        }
+        else if (event.key === "Escape")
+        {
+            closePopup();
+        }
+    });
+    send.onclick = submit;
+
+    const composer = { element: el("div", { className: "composer" }, popup, chips, input, el("div", { className: "tools" }, el("span", {}, "＋"), el("span", {}, "@ 로 쪽지 찾기"), send)), render, fill: (text) =>
+    {
+        input.value = text;
+        input.focus();
+    } };
+
+    composers.push(composer);
+
+    return composer;
+};
+
+// ── 대화 ──────────────────────────────────────────────────────────────────────
+
+const addMessage = (thread, role, ...children) =>
+{
+    thread.hero?.remove();
+    thread.hero = null;
+
+    const message = el("div", { className: `msg ${role}` }, ...children);
+
+    thread.messages.append(message);
+    message.scrollIntoView({ block: "end" });
+
+    return message;
+};
+
+const note = (thread, text) => addMessage(thread, "note", icon(`data:image/svg+xml,${encodeURIComponent(host.plugin.icon)}`), text);
+
+const newThread = (title = "새 채팅") =>
+{
+    const starters = [...(host.plugin.interface.defaultPrompt ?? []), "쪽지 하나 골라 줘", "쪽지 몇 개 붙여서 요약해 줘"];
+    const thread = { title, messages: el("div", { className: "messages" }), hero: null, tabs: [], active: null };
+
+    thread.hero = el("div", { className: "hero" },
+        el("h1", {}, "무엇을 도와드릴까요?"),
+        el("div", { className: "starters" }, ...starters.map((prompt) => el("button", {
+            type: "button",
+            onclick: () => sendUser(thread, { text: prompt, mentions: [], contexts: [] }),
+        }, prompt))));
+    thread.messages.append(thread.hero);
+    $("threads").append(thread.messages);
+    host.threads.unshift(thread);
+
+    return thread;
+};
+
+const renderChats = () =>
+    $("chats").replaceChildren(...host.threads.map((thread) => el("button", {
+        type: "button",
+        ariaCurrent: String(thread === host.thread && !$("view-chat").hidden),
+        onclick: () => showThread(thread),
+    }, thread.title)));
+
+const showView = (name) =>
+{
+    for (const view of ["chat", "app", "plugin"])
+    {
+        $(`view-${view}`).hidden = view !== name;
+    }
+
+    for (const button of $("apps").querySelectorAll("button[data-tool]"))
+    {
+        button.ariaCurrent = String(name === "app" && button.dataset.tool === host.appTool);
+    }
+
+    $("open-plugins").ariaCurrent = String(name === "plugin");
+    renderChats();
+    refreshChips();
+};
+
+const showThread = (thread) =>
+{
+    host.thread = thread;
+
+    for (const each of host.threads)
+    {
+        each.messages.hidden = each !== thread;
+    }
+
+    $("chat-title").textContent = thread.title;
+    renderTabs();
+    showView("chat");
+};
+
+/** 모델 대신 답한다. 멘션으로 붙인 쪽지는 서버에서 읽고, 글의 낱말로 도구를 고른다 */
+const respond = async (thread, { text, mentions }) =>
+{
+    if (mentions.length > 0)
+    {
+        const read = await Promise.all(mentions.map((mention) => rpc("resources/read", { uri: mention.uri }).then((result) => result.contents[0].text, () => null)));
+
+        addMessage(thread, "assistant", `붙인 쪽지 ${read.filter((each) => each !== null).length}개를 읽었어요.`,
+            el("details", {}, el("summary", {}, "모델이 읽은 글"), el("pre", {}, read.map((each) => each ?? "(읽지 못한 쪽지)").join("\n\n"))));
+    }
+
+    const routed = ROUTES.find(([pattern]) => pattern.test(text));
+    const tool = routed === undefined ? undefined : toolNamed(routed[1]);
+
+    if (tool === undefined)
+    {
+        if (mentions.length === 0)
+        {
+            addMessage(thread, "assistant", "미리 보기에는 모델이 없어요. 「쪽지 보여 줘」 · 「쪽지 골라 줘」 · 「새 쪽지 쓸래」 · 「쪽지 붙여서 요약해 줘」처럼 말하면 그 도구를 불러요.");
+        }
+
+        return;
+    }
+
+    if (entrypointsOf(tool).some((entry) => entry.type === "thread"))
+    {
+        note(thread, `${pluginName()} · ${tool.title} 을 대화 옆에 열었어요`);
+        await openTab(thread, tool, {});
+
+        return;
+    }
+
+    await invoke(thread, tool, {});
+};
+
+const sendUser = async (thread, { text, mentions, contexts }) =>
+{
+    const attached = [...mentions.map((mention) => `@${mention.title}`), ...contexts.flatMap((context) => visibleBlocks(context).map(titleOfBlock))];
+
+    if (thread.title === "새 채팅" && text !== "")
+    {
+        thread.title = text.slice(0, 24);
+        $("chat-title").textContent = thread.title;
+        renderChats();
+    }
+
+    addMessage(thread, "user", text, attached.length > 0 ? el("div", { className: "attached" }, ...attached.map((title) => el("span", { className: "chip" }, el("span", {}, title)))) : null);
+
+    try
+    {
+        await respond(thread, { text, mentions });
+    }
+    catch (error)
+    {
+        addMessage(thread, "assistant error", String(error.message ?? error));
+    }
+};
+
+/** 모델이 도구를 부른 것처럼 부른다. 새 판으로 부르므로 폼이 필요하면 `input_required` 가 온다 */
+const invoke = async (thread, tool, args, more = {}) =>
+{
+    if (more.inputResponses === undefined)
+    {
+        note(thread, `${pluginName()} · ${tool.title ?? tool.name}`);
+    }
+
+    const result = await callTool(tool.name, args, { _meta: MODERN, ...more });
+
+    if (result.resultType === "input_required")
+    {
+        return formCard(thread, tool, args, result);
+    }
+
+    if (tool._meta?.ui?.resourceUri !== undefined && result.isError !== true && result.structuredContent?.page !== undefined)
+    {
+        return inlineApp(thread, tool, args, result);
+    }
+
+    const texts = (result.content ?? []).filter((block) => block.type === "text").map((block) => block.text);
+    const resources = (result.content ?? []).filter((block) => block.type === "resource").map((block) => block.resource.text);
+
+    return addMessage(thread, result.isError === true ? "assistant error" : "assistant", texts.join("\n"),
+        resources.length > 0 ? el("details", {}, el("summary", {}, `모델이 읽은 쪽지 ${resources.length}개`), el("pre", {}, resources.join("\n\n"))) : null);
+};
+
+/** 모델이 부른 도구에 화면이 딸려 있으면 대화 안에 선다. 화면이 「크게 보기」를 청하면 전체로 키운다 */
+const inlineApp = async (thread, tool, args, result) =>
+{
+    const body = el("div", {});
+    const card = el("div", { className: "card" }, el("div", { className: "titlebar shrink" }, el("strong", {}, tool.title ?? tool.name), el("span", { className: "spacer" }), el("button", {
+        type: "button",
+        className: "ghost",
+        onclick: () => setMode(instance, "inline"),
+    }, "대화로 돌아가기")), body);
+    let instance = null;
+
+    addMessage(thread, "assistant", card);
+    instance = await mountApp(body, tool, args, { result, mode: "inline", thread });
+};
+
+/** 폼의 칸 하나. 스펙의 확장(설명 · 썸네일 · 제안 값 · 패턴 · 자원 고르기)을 아는 만큼 그린다 */
+const field = (name, schema) =>
+{
+    const title = schema.title ?? name;
+    const input = schema["x-openai-input"];
+    const option = (type, value, label, more = {}, index = 0) => el("label", { className: "option" },
+        el("input", { type, name, value, checked: more.checked === true }),
+        el("span", { className: "num" }, String(index + 1)),
+        more.thumbnail ? el("img", { src: more.thumbnail, alt: "" }) : null,
+        el("span", {}, label, more.description ? el("small", {}, more.description) : null),
+        more.preview ? el("button", {
+            type: "button",
+            className: "ghost",
+            onclick: async (event) =>
+            {
+                event.preventDefault();
+                alert((await rpc("resources/read", { uri: more.preview })).contents[0].text);
+            },
+        }, "미리 보기") : null);
+
+    if (Array.isArray(schema.oneOf) && schema.oneOf.length <= 3 && schema.oneOf.every((each) => each["x-openai-thumbnail"] === undefined))
+    {
+        return el("label", { className: "text" }, title,
+            el("select", { name }, ...schema.oneOf.map((each) => el("option", { value: each.const, selected: schema.default === each.const }, each.title))));
+    }
+
+    if (Array.isArray(schema.oneOf))
+    {
+        return el("div", {}, el("h3", {}, title), ...schema.oneOf.map((each, index) =>
+            option("radio", each.const, each.title, { thumbnail: each["x-openai-thumbnail"]?.src, description: each.description, checked: schema.default === each.const }, index)));
+    }
+
+    if (schema.type === "array")
+    {
+        const options = input?.options?.map((each) => ({ value: each.uri, title: each.title ?? each.name, preview: each._meta?.["openai/preview"]?.target?.uri }))
+            ?? (schema.items?.anyOf ?? []).map((each) => ({ value: each.const, title: each.title }));
+
+        return el("div", {}, el("h3", {}, title), ...options.map((each, index) => option("checkbox", each.value, each.title, { preview: each.preview }, index)));
+    }
+
+    const suggestions = schema["x-openai-suggestions"] ?? [];
+    const control = (schema.maxLength ?? 0) > 200 ? el("textarea", { name, rows: 3 }) : el("input", { name, type: "text" });
+
+    if (suggestions.length > 0)
+    {
+        control.setAttribute("list", `suggest-${name}`);
+    }
+
+    return el("label", { className: "text" }, title, control,
+        suggestions.length > 0 ? el("datalist", { id: `suggest-${name}` }, ...suggestions.map((each) => el("option", { value: each.const }))) : null);
+};
+
+/** 도구가 되물은 폼을 대화 안에 세운다. 답은 서버가 맡긴 상태와 함께 같은 도구로 돌아간다 */
+const formCard = (thread, tool, args, result) =>
+{
+    const [key, request] = Object.entries(result.inputRequests)[0];
+    const schema = request.params.requestedSchema;
+    const form = el("form", { className: "fields" }, ...Object.entries(schema.properties).map(([name, each]) => field(name, each)));
+    const card = el("div", { className: "form-card" });
+    const answer = async (action) =>
+    {
+        const data = new FormData(form);
+        const content = {};
+
+        for (const [name, each] of Object.entries(schema.properties))
+        {
+            const values = data.getAll(name).map(String);
+
+            if (each.type === "array")
+            {
+                content[name] = values;
+            }
+            else if ((values[0] ?? "") !== "")
+            {
+                content[name] = values[0];
+            }
+        }
+
+        card.classList.add("answered");
+
+        try
+        {
+            // 답과 함께 서버가 맡긴 상태를 그대로 돌려보낸다. 호스트는 그 속을 읽지 않는다
+            await invoke(thread, tool, args, { inputResponses: { [key]: action === "accept" ? { action, content } : { action } }, requestState: result.requestState });
+        }
+        catch (error)
+        {
+            addMessage(thread, "assistant error", String(error.message ?? error));
+        }
+    };
+
+    form.addEventListener("submit", (event) =>
+    {
+        event.preventDefault();
+        void answer("accept");
+    });
+    card.append(
+        el("header", {}, icon(`data:image/svg+xml,${encodeURIComponent(host.plugin.icon)}`), request.params.message,
+            el("button", { type: "button", ariaLabel: "닫기", onclick: () => answer("cancel") }, "✕")),
+        form,
+        el("footer", {}, el("button", { type: "button", className: "ghost", onclick: () => answer("decline") }, "건너뛰기"), el("button", { type: "button", className: "primary", onclick: () => answer("accept") }, "계속")),
+    );
+
+    addMessage(thread, "assistant", el("div", { className: "soft" }, `${pluginName()}이(가) 정보를 요청해요`), card);
+};
+
+// ── 대화 옆 패널 ──────────────────────────────────────────────────────────────
+
+const renderTabs = () =>
+{
+    const thread = host.thread;
+    const tabs = thread?.tabs ?? [];
+
+    $("side").hidden = tabs.length === 0;
+
+    for (const each of host.threads)
+    {
+        for (const tab of each.tabs)
+        {
+            tab.body.hidden = each !== thread || tab !== thread.active;
+        }
+    }
+
+    $("side-tabs").replaceChildren(
+        ...tabs.map((tab) => el("button", { type: "button", className: "tab", ariaSelected: String(tab === thread.active), onclick: () =>
+        {
+            thread.active = tab;
+            renderTabs();
+        } }, icon(iconOf(tab.instance.tool)), tab.title, el("span", {
+            className: "close",
+            role: "button",
+            ariaLabel: "탭 닫기",
+            onclick: (event) =>
+            {
+                event.stopPropagation();
+                unmount(tab.instance);
+                tab.body.remove();
+                thread.tabs = thread.tabs.filter((other) => other !== tab);
+                thread.active = thread.tabs[0] ?? null;
+                renderTabs();
+            },
+        }, "✕"))),
+        el("button", { type: "button", className: "tab", ariaLabel: "탭 더하기", onclick: (event) => tabMenu(event.currentTarget) }, "＋"),
+    );
+};
+
+const openTab = async (thread, tool, input, title = tool.title ?? tool.name) =>
+{
+    const existing = thread.tabs.find((tab) => tab.title === title);
+
+    if (existing !== undefined)
+    {
+        thread.active = existing;
+
+        return renderTabs();
+    }
+
+    const body = el("div", {});
+    const tab = { title, body, instance: null };
+
+    $("side-body").append(body);
+    tab.instance = await mountApp(body, tool, input, { mode: "fullscreen", thread });
+    thread.tabs = [...thread.tabs, tab];
+    thread.active = tab;
+
+    return renderTabs();
+};
+
+/** 탭에 열 수 있는 것. 플러그인의 대화 옆 패널과, 플러그인이 여는 확장자의 파일이다 */
+const tabMenu = (anchor) =>
+{
+    document.querySelector(".menu")?.remove();
+
+    const thread = host.thread;
+    const close = () => menu.remove();
+    const menu = el("div", { className: "menu" },
+        ...toolsWith("thread").map((tool) => el("button", { type: "button", onclick: () =>
+        {
+            close();
+            void openTab(thread, tool, {});
+        } }, icon(iconOf(tool)), tool.title ?? tool.name)),
+        ...(host.desktop ? toolsWith("file").map((tool) => el("button", { type: "button", onclick: () =>
+        {
+            close();
+            void openTab(thread, tool, { file: { name: host.file.name, resourceUri: host.file.uri } }, host.file.name);
+        } }, "📄", `${host.file.name} 열기`)) : []),
+    );
+
+    menu.style.left = `${anchor.offsetLeft}px`;
+    anchor.parentElement.append(menu);
+    setTimeout(() => document.addEventListener("click", close, { once: true }), 0);
+};
+
+// ── 사이드바 앱 ───────────────────────────────────────────────────────────────
+
+/** 사이드바의 앱을 연다. 가운데가 그 앱의 화면이 되고, 오른쪽 아래의 컴포저가 그 화면의 컨텍스트를 받는다 */
+const openGlobal = async (tool) =>
+{
+    host.appTool = tool.name;
+    $("app-title").textContent = tool.title ?? tool.name;
+
+    if (!host.globals.has(tool.name))
+    {
+        const body = el("div", {});
+
+        $("app-body").append(body);
+        host.globals.set(tool.name, { body, instance: await mountApp(body, tool, {}, { mode: "fullscreen" }) });
+    }
+
+    for (const [name, mounted] of host.globals)
+    {
+        mounted.body.hidden = name !== tool.name;
+    }
+
+    showView("app");
+
+    return host.globals.get(tool.name).instance;
+};
+
+const renderApps = () =>
+    $("apps").replaceChildren(...toolsWith("global").map((tool) =>
+    {
+        const quick = entrypointsOf(tool).find((entry) => entry.type === "global")?.quickAction;
+
+        return el("div", { className: "row" },
+            el("button", { type: "button", onclick: () => openGlobal(tool) }, icon(iconOf(tool)), tool.title ?? tool.name),
+            quick === undefined ? null : el("button", {
+                type: "button",
+                className: "quick",
+                title: quick.title,
+                ariaLabel: quick.title,
+                // 바로 가기는 화면을 띄우지 않고 도구를 곧바로 부른다
+                onclick: () =>
+                {
+                    const thread = newThread(quick.title);
+
+                    showThread(thread);
+                    void invoke(thread, toolNamed(quick.target.name), quick.target.arguments ?? {});
+                },
+            }, "＋"));
+    }).map((row, index) =>
+    {
+        row.firstChild.dataset.tool = toolsWith("global")[index].name;
+
+        return row;
+    }));
+
+// ── 플러그인 화면 ─────────────────────────────────────────────────────────────
+
+/** 구조화 설정. 호스트가 서버의 스키마를 읽어 제 모양의 칸으로 그린다 */
+const settingsSection = async () =>
+{
+    const discovered = await rpc("server/discover", { _meta: MODERN });
+    const settings = discovered.capabilities.extensions?.["openai/settings"];
+    const section = el("div", {});
+
+    if (settings === undefined)
+    {
+        return section;
+    }
+
+    const draw = (read) =>
+    {
+        const { schema, values, layout = [] } = read;
+        const listed = new Set(layout.flatMap((group) => group.items.filter((item) => item.kind === "property").map((item) => item.property)));
+        const rest = Object.keys(schema.properties).filter((name) => !listed.has(name));
+        const groups = [...layout, ...(rest.length > 0 ? [{ title: "Other settings", items: rest.map((property) => ({ kind: "property", property })) }] : [])];
+        const save = async (name, value) =>
+        {
+            // 바뀐 칸만 보낸다. 서버가 거절하면 읽어 둔 값으로 되돌린다
+            const updated = await callTool(settings.updateTool, { set: { [name]: value } });
+
+            draw(updated.isError === true ? read : { ...read, values: updated.structuredContent.values });
+        };
+        const control = (name) =>
+        {
+            const each = schema.properties[name];
+
+            return el("label", {}, each.title, each.type === "boolean"
+                ? el("input", { type: "checkbox", className: "switch", checked: values[name] === true, onchange: (event) => save(name, event.target.checked) })
+                : el("select", { onchange: (event) => save(name, event.target.value) }, ...(each.enum ?? []).map((choice) => el("option", { value: choice, selected: values[name] === choice }, choice))));
+        };
+
+        section.replaceChildren(el("h2", {}, "설정"), ...groups.flatMap((group) => [
+            el("h3", {}, group.title),
+            el("div", { className: "group" }, ...group.items.map((item) => (item.kind === "property"
+                ? control(item.property)
+                : el("div", {}, item.title, el("button", { type: "button", className: "ghost", onclick: () => openGlobal(toolNamed(item.tool)) }, "열기"))))),
+        ]));
+    };
+
+    draw((await callTool(settings.readTool)).structuredContent);
+
+    return section;
+};
+
+/**
+ * 온보딩. 진짜 호스트에서는 깔고 난 뒤 온보딩 스킬을 모델이 읽고 대화로 묻는다.
+ * 여기에는 모델이 없어서 그 스킬의 차례를 대본으로 옮겼다. 부르는 도구는 스킬이 적은 것과 같다.
+ */
+const onboard = async () =>
+{
+    const thread = newThread("처음 설정");
+    const ask = (question, choices) => new Promise((resolve) =>
+    {
+        const replies = el("div", { className: "replies" }, ...choices.map(([label, value]) => el("button", { type: "button", className: "ghost", onclick: () =>
+        {
+            replies.remove();
+            addMessage(thread, "user", label);
+            resolve(value);
+        } }, label)));
+
+        addMessage(thread, "assistant", question, replies);
+    });
+
+    showThread(thread);
+    note(thread, `${pluginName()} · 온보딩 스킬(${host.plugin.onboardingSkill})`);
+
+    const settings = (await rpc("server/discover", { _meta: MODERN })).capabilities.extensions["openai/settings"];
+    const { schema } = (await callTool(settings.readTool)).structuredContent;
+    const [everyone, onlyMe] = [schema.properties.defaultVisibility.enum[1], schema.properties.defaultVisibility.enum[0]];
+    const visibility = await ask("새 쪽지를 조직 전체에 보일까요, 나만 볼까요?", [[everyone, everyone], [onlyMe, onlyMe], ["지금대로 둘게요", null]]);
+    const archived = await ask("보관한 쪽지도 목록에 보일까요?", [["보일게요", true], ["숨길게요", false], ["지금대로 둘게요", null]]);
+    const set = { ...(visibility === null ? {} : { defaultVisibility: visibility }), ...(archived === null ? {} : { showArchived: archived }) };
+
+    if (Object.keys(set).length > 0)
+    {
+        const updated = await callTool(settings.updateTool, { set });
+
+        addMessage(thread, updated.isError === true ? "assistant error" : "assistant", updated.isError === true ? updated.content?.[0]?.text ?? "" : "설정을 저장했어요. 쪽지를 열어 둘게요.");
+    }
+
+    await invoke(thread, toolNamed("open_library"), {});
+};
+
+const showPlugin = async () =>
+{
+    const face = host.plugin.interface;
+    const page = el("div", { className: "plugin" },
+        el("div", { className: "titlebar soft" }, "플러그인  ›  ", el("span", { style: "color: var(--fg)" }, pluginName())),
+        el("div", { className: "logo" }, icon(`data:image/svg+xml,${encodeURIComponent(host.plugin.icon)}`)),
+        el("div", { className: "head" },
+            el("div", {}, el("h1", {}, pluginName()), el("div", { className: "soft" }, face.shortDescription ?? "")),
+            el("span", { className: "spacer" }),
+            host.plugin.onboardingSkill === null ? null : el("button", { type: "button", className: "ghost", onclick: onboard }, "설정 시작"),
+            el("button", { type: "button", className: "primary", onclick: () => openGlobal(toolsWith("global")[0]) }, "플러그인 열기")),
+        el("div", { className: "banner" }, el("button", {
+            type: "button",
+            onclick: () =>
+            {
+                const thread = newThread();
+
+                showThread(thread);
+                void sendUser(thread, { text: face.defaultPrompt?.[0] ?? "", mentions: [], contexts: [] });
+            },
+        }, `${face.defaultPrompt?.[0] ?? ""}  →`)),
+        el("p", {}, face.longDescription ?? ""),
+        el("h2", {}, "MCP 서버"),
+        el("div", { className: "soft" }, host.plugin.server),
+        await settingsSection(),
+        el("h2", {}, `스킬 ${host.plugin.skills.length}`),
+        ...host.plugin.skills.map((skill) => el("div", { className: "skill" }, el("strong", {}, skill.name), el("span", { className: "soft" }, skill.description))),
+    );
+
+    $("view-plugin").replaceChildren(page);
+    showView("plugin");
+};
+
+// ── 개발 도구 ─────────────────────────────────────────────────────────────────
+
+$("toggle-dev").onclick = () =>
+{
+    $("dev").hidden = !$("dev").hidden;
+};
+
+$("toggle-theme").onclick = () =>
+{
+    host.theme = host.theme === "light" ? "dark" : "light";
+    document.documentElement.style.colorScheme = host.theme;
+    $("toggle-theme").textContent = host.theme === "light" ? "어두운 테마" : "밝은 테마";
+    instances.forEach((instance) => notify(instance, "ui/notifications/host-context-changed", { theme: host.theme }));
+};
+
+$("toggle-desktop").onclick = () =>
+{
+    host.desktop = !host.desktop;
+    $("toggle-desktop").textContent = host.desktop ? "데스크톱 능력 끄기" : "데스크톱 능력 켜기";
+    // 능력은 악수할 때 알린다. 뜬 화면을 다시 띄워 새 능력으로 악수하게 한다
+    instances.forEach((instance) =>
+    {
+        instance.frame.srcdoc = instance.frame.srcdoc;
+    });
+};
+
+$("send-link").onclick = async () =>
+{
+    // 딥링크는 사이드바 앱의 어느 화면을 여는 주소다. 그 앱을 먼저 띄운다
+    const fresh = !host.globals.has(toolsWith("global")[0].name);
+    const instance = await openGlobal(toolsWith("global")[0]);
+
+    setTimeout(() => notify(instance, "ui/notifications/host-context-changed", { "openai/deepLink": { url: $("link").value } }), fresh ? 600 : 0);
+};
+
+$("touch-file").onclick = () =>
+{
+    host.file = { ...host.file, text: `${host.file.text}- 밖에서 더한 줄\n`, etag: `v${Number(host.file.etag.slice(1)) + 1}` };
+    instances.forEach((instance) => notify(instance, "notifications/resources/updated", { uri: host.file.uri }));
+};
+
+$("new-chat").onclick = () => showThread(host.threads.find((thread) => thread.hero !== null) ?? newThread());
+$("open-plugins").onclick = () => showPlugin().catch((error) => alert(String(error.message ?? error)));
+$("open-side").onclick = (event) => tabMenu(event.currentTarget);
+
+// ── 시작 ──────────────────────────────────────────────────────────────────────
+
+Promise.all([rpc("tools/list"), fetch("/plugin").then((response) => response.json())])
+    .then(([{ tools }, plugin]) =>
+    {
+        host.tools = tools;
+        host.plugin = plugin;
+        renderApps();
+
+        const chat = createComposer({
+            placeholder: "무엇이든 물어보세요",
+            scope: () => [...instances].filter((instance) => instance.thread === host.thread && host.thread !== null),
+            onSend: (message) => sendUser(host.thread, message),
+        });
+        const floating = createComposer({
+            placeholder: "무엇이든 물어보세요",
+            scope: () => [...host.globals.values()].filter((mounted) => !mounted.body.hidden).map((mounted) => mounted.instance),
+            onSend: (message) =>
+            {
+                const thread = newThread();
+
+                showThread(thread);
+                void sendUser(thread, message);
+            },
+        });
+
+        $("chat-composer").append(chat.element);
+        $("app-composer").append(floating.element);
+        showThread(newThread());
+    })
+    .catch((error) =>
+    {
+        document.body.replaceChildren(el("pre", { style: "padding: 24px" }, `미리 보기를 띄우지 못했다: ${String(error.message ?? error)}`));
+    });
+</script>
+</body>
+</html>

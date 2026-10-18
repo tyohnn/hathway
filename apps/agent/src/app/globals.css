@@ -1,0 +1,43 @@
+/* tyohnn:begin system */
+/* Design system graphite (tyohnn). One system per app; this order is the cascade contract: tailwindcss → layer 1
+   globals → layer 1 theme colours → layer 2 tokens → typeset → layer 3 rules in layer(base), so className utilities still win. */
+@import "tailwindcss";
+@import "@hathway/ui/systems/graphite/globals.css";
+@import "@hathway/ui/systems/graphite/theme.css";
+@import "@hathway/ui/systems/graphite/tokens.css";
+@import "@hathway/ui/systems/graphite/typeset.css";
+@import "@hathway/ui/systems/graphite/typeset-preset.css";
+@import "@hathway/ui/systems/graphite/style.css" layer(base);
+/* tyohnn:end system */
+
+/* 우리 것이다. 시스템 축에 속하지 않는 제품 치수이고, tyohnn 블록 뒤에서 읽혀 시스템 토큰을 덮는다. */
+@import "@hathway/ui/product.css";
+
+/* tyohnn:begin theme */
+/* Tailwind does not scan workspace packages by itself; the system folders hold CSS, not class names. */
+@source "../../../../packages/ui/src";
+@source not "../../../../packages/ui/src/systems";
+
+/* Font stacks on the next/font variables of the root layout (next/font registers its own family names). */
+:root {
+    --font-sans: var(--font-sans-pretendard), ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", var(--font-sans-pretendard), monospace;
+}
+/* tyohnn:end theme */
+
+/* 이 파일은 진입점만 담당한다. 3층 CSS 의 실체는 `@hathway/ui/systems/<system>` 이 소유하고,
+   아래 `tyohnn:*` 블록은 tyohnn CLI 가 소유한다 — 손으로 고치지 말고
+   `npx tyohnn use <system>` · `npx tyohnn theme <name>` 으로 바꾼다.
+
+   순서가 곧 우선순위다. 3층(style.css)만 layer(base) 로 읽는 것이 요점으로, 그래야 호출부가
+   className 으로 준 유틸리티가 컴포넌트 기본 스타일을 이긴다. layer() 를 빼면 레이어 밖
+   규칙이 되어 `<Button className="h-10">` 같은 지역 조정이 통째로 무시된다.
+
+   블록 뒤에 선언하는 커스텀 속성은 시스템 토큰을 덮는다. 덮을 생각이 없다면 이름을 겹치지
+   말 것 — `npx tyohnn doctor` 가 겹친 이름을 경고한다. */
+
+/* ⚠ Tailwind 는 여기 적힌 곳만 훑어 유틸리티를 만든다. 블록 층을 빠뜨리면 클래스가 생성되지 않아
+   블록이 스타일 없이 렌더된다 — 오류가 나지 않아 증상이 조용하다(resolv-ai 에서 두 번 겪었다).
+   ⚠ CLI 는 tyohnn 블록 사이만 다시 쓰므로 packages/blocks 는 여기에 적는다. */
+@source "../../../../packages/blocks/src";

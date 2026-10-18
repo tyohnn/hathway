@@ -8,7 +8,7 @@ import {
     RadialBarChart,
 } from "recharts";
 
-import { ChartContainer, type ChartConfig } from "@investment/ui/components/chart";
+import { ChartContainer, type ChartConfig } from "@hathway/ui/components/chart";
 
 const defaultChartConfig = {
     progress: { label: "Progress", color: "var(--chart-1)" },
