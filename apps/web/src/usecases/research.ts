@@ -201,6 +201,14 @@ export const saveNoteToBoard = (
             }
 
             const drafted = { ...verdict.board, groups: appendNote(verdict.board.groups, input.note, newId) };
+            // 있는 보드의 저장과 같은 한도를 지난다. 노트 제목과 본문의 길이가 여기서 걸린다
+            const limit = limitVerdict(drafted);
+
+            if (limit._tag === "Over")
+            {
+                return { ok: false, reason: "limit", message: limit.message } as const;
+            }
+
             const board = yield* Effect.flatMap(BoardStore, (store) => store.create(drafted));
 
             return { ok: true, board } as const;

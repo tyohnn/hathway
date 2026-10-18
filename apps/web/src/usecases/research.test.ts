@@ -8,7 +8,7 @@ import { boardStoreMemory } from "@hathway/research/testing/boardStoreMemory";
 
 import { RESEARCH_BOARDS } from "@/lib/research/catalog";
 
-import { createBoard, listBoards, openBoard, removeBoard, saveBoard, SaveBoardInput } from "./research";
+import { createBoard, listBoards, openBoard, removeBoard, saveBoard, SaveBoardInput, saveNoteToBoard } from "./research";
 
 const seeded: Board = {
     slug: "board-1",
@@ -90,6 +90,21 @@ describe("리서치 보드의 조립", () =>
 
         expect(result).toMatchObject({ ok: false, reason: "limit", message: "제목은 120자까지 쓸 수 있어요." });
         expect(title).toBe("양극재");
+    });
+
+    it("INV-RESEARCH-05 새 보드에 노트를 담을 때도 한도를 넘으면 보드를 만들지 않는다", async () =>
+    {
+        const [result, listed] = await run(Effect.all([
+            saveNoteToBoard(customerActor("3"), {
+                slug: null,
+                boardTitle: "크래프톤",
+                note: { groupTitle: "크래프톤", title: "가".repeat(121), body: "메모" },
+            }, () => "new-id"),
+            listBoards("stocks"),
+        ], { concurrency: 1 }));
+
+        expect(result).toMatchObject({ ok: false, reason: "limit", message: "제목은 120자까지 쓸 수 있어요." });
+        expect(listed.map((board) => board.slug)).toEqual(["board-1"]);
     });
 
     it("시드 보드는 그대로 통과한다. 지금 저장된 보드가 저장되지 않으면 고칠 수 없다", async () =>
