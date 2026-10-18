@@ -273,8 +273,14 @@
 .dark {
     --color-scheme: dark;
 
-    /* 어두운 쪽은 카드가 바탕보다 밝다. 판은 배경과 같은 단이면 충분하다. */
-    --canvas: color-mix(in oklab, var(--background) 54%, var(--ring));
+    /* 어두운 쪽은 카드가 바탕보다 밝다. 판은 배경과 같은 단이다.
+       ⚠ 참조 캔버스의 #3d3d3d 는 앱 창 **바깥**의 작업대 색이었다. 그 값을 판에 쓰면 카드보다 바닥이 밝은
+          뒤집힌 화면이 된다(2026-10-02 실사용에서 드러남). */
+    --canvas: var(--background);
+
+    /* 카드도 같은 재질로 살짝 빚는다. 위쪽 모서리에 빛 한 줄, 아래에 접지 그림자.
+       면을 가르는 것은 여전히 색의 단이고, 이 그림자는 떠 있다는 뜻이 아니라 빚은 덩어리라는 뜻이다. */
+    --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.35), 0 4px 12px -4px rgb(0 0 0 / 0.3);
 
     --primary-soft: color-mix(in oklab, var(--primary) 10%, transparent);
 
@@ -339,12 +345,20 @@
 
     /* Clay materials. Layer 2 composes them into --shadow-control · --shadow-raised ·
        --surface-control … when a system opts into raised controls. Foundation is flat. */
-    --clay-highlight: rgb(255 255 255 / 0.03);
-    --clay-contact: rgb(0 0 0 / 0.2);
-    --clay-contact-soft: rgb(0 0 0 / 0.12);
-    --clay-surface-top: #191919;
-    --clay-surface-bottom: #191919;
+    /* 참조 세기다(2026-10-02 소유자 결정). 9월 15일의 은은한 단계 C(윗빛 3%, 그늘 · 주변 그림자 없음, 단색 면)는
+       컨트롤이 드문 화면에서 빚은 느낌이 읽히지 않았다. 낮추려면 이 값들만 내린다. */
+    --clay-highlight: rgb(255 255 255 / 0.06);
+    --clay-shade: rgb(0 0 0 / 0.45);
+    --clay-shade-soft: rgb(0 0 0 / 0.3);
+    --clay-contact: rgb(0 0 0 / 0.3);
+    --clay-contact-soft: rgb(0 0 0 / 0.2);
+    --clay-ambient: rgb(0 0 0 / 0.35);
+    --clay-ambient-soft: rgb(0 0 0 / 0.2);
+    --clay-surface-top: #212121;
+    --clay-surface-bottom: #181818;
     --clay-primary-highlight: rgb(255 255 255 / 0.1);
+    --clay-primary-shade: rgb(0 0 0 / 0.25);
+    --clay-primary-ambient: color-mix(in oklab, var(--primary) 35%, transparent);
     --clay-primary-top: #4a5af7;
     --clay-primary-bottom: #3443ea;
 }

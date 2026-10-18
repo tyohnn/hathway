@@ -2,13 +2,13 @@
 
 import { useId } from "react";
 
-import { Badge } from "@investment/ui/components/badge";
-import { Button } from "@investment/ui/components/button";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@investment/ui/components/input-group";
-import { Label } from "@investment/ui/components/label";
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { ChevronDown, Search, X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Badge } from "@hathway/ui/components/badge";
+import { Button } from "@hathway/ui/components/button";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@hathway/ui/components/input-group";
+import { Label } from "@hathway/ui/components/label";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { ChevronDown, Search, X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { FilterTrigger, facetSummary } from "../filter-trigger";
 import { FacetFilter } from "./FacetFilter";

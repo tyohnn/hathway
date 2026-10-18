@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { customerActor, operatorActor, otherCustomerActor } from "@investment/access/testing/actor";
+import { customerActor, operatorActor, otherCustomerActor } from "@hathway/access/testing/actor";
 
 import type { Board } from "../domain/Board.ts";
 import { editVerdict, removeVerdict } from "./edit.ts";

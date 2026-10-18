@@ -4,15 +4,15 @@ import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
 import { cn } from "cn"
 
-import { Button } from "@investment/ui/components/button"
+import { Button } from "@hathway/ui/components/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@investment/ui/components/input-group"
-import { Check, ChevronDown, X } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+} from "@hathway/ui/components/input-group"
+import { Check, ChevronDown, X } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 const Combobox = ComboboxPrimitive.Root
 

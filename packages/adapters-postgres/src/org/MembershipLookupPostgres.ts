@@ -3,9 +3,9 @@ import "server-only";
 
 import { Effect } from "effect";
 
-import type { AccountFacts, TenantMembership } from "@investment/access/access/membership";
-import { NotAppMember } from "@investment/access/ports/ActorResolver";
-import { TENANT_KINDS, type TenantKind } from "@investment/shared/constants/tenancy";
+import type { AccountFacts, TenantMembership } from "@hathway/access/access/membership";
+import { NotAppMember } from "@hathway/access/ports/ActorResolver";
+import { TENANT_KINDS, type TenantKind } from "@hathway/shared/constants/tenancy";
 
 import type { SqlExecutor } from "../connection.ts";
 
@@ -15,7 +15,7 @@ import type { SqlExecutor } from "../connection.ts";
  * ⚠ **이 파일이 `src/org/` 에 있는 까닭**은 앱이 늘어도 모두 이 함수를 부르기 때문이다. 사람은 어느
  *    도메인의 것도 아니라 도메인을 가로지르는 기준 정보이고, 표도 `org` 에 있다.
  *
- * ⚠ **판정하지 않는다.** 이 앱을 쓸 수 있는 사람인지는 `@investment/access` 의 `canEnterApp` 이 정하고,
+ * ⚠ **판정하지 않는다.** 이 앱을 쓸 수 있는 사람인지는 `@hathway/access` 의 `canEnterApp` 이 정하고,
  *    여기서는 계정 한 행과 그 계정의 멤버십 전부를 사실 그대로 읽어 올린다. 여러 앱이 같은 표를 읽고
  *    서로 다른 답을 내야 하므로 판정이 어댑터에 있으면 앱마다 그 답을 다시 쓰게 된다.
  *

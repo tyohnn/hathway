@@ -2,8 +2,8 @@ import { afterAll, assert, describe, it } from "vitest";
 import { Effect } from "effect";
 import { Pool } from "pg";
 
-import { BoardStore } from "@investment/research/ports/BoardStore";
-import { boardStoreContract } from "@investment/research/testing/contracts/board-store";
+import { BoardStore } from "@hathway/research/ports/BoardStore";
+import { boardStoreContract } from "@hathway/research/testing/contracts/board-store";
 
 import { closePostgresPools, poolExecutor, postgresPool } from "../connection.ts";
 import { localDb } from "../testing/local-db.ts";

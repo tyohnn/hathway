@@ -9,8 +9,8 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@investment/ui/components/breadcrumb";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/breadcrumb";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { PendingText } from "../pending";
 import type { PageHeaderProps } from "./types";

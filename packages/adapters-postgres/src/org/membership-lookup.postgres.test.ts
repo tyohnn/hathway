@@ -1,7 +1,7 @@
 import { afterAll, assert, describe, it } from "vitest";
 import { Effect } from "effect";
 
-import { actorForApp } from "@investment/access/access/actorForApp";
+import { actorForApp } from "@hathway/access/access/actorForApp";
 
 import { closePostgresPools, poolExecutor, postgresPool } from "../connection.ts";
 import { localDb } from "../testing/local-db.ts";
@@ -35,6 +35,7 @@ const AUTH = {
 
 const ROLES = [
     { app: "web", env: "WEB_DATABASE_URL" },
+    { app: "agent", env: "AGENT_DATABASE_URL" },
 ] as const;
 
 afterAll(async () =>
@@ -117,5 +118,20 @@ for (const { app, env } of ROLES)
     });
 }
 
-// 스캐폴드의 이 파일은 겸직 계정이 agent 앱에서 운영팀으로 서는 것(INV-ACCESS-02)도 잰다. 이 저장소에는 agent 앱과
-// 그 롤이 없어서 옮기지 않았다. 순수 판정은 `packages/access` 의 `actorForApp.test.ts` 가 그대로 잰다.
+describe("겸직 계정은 앱마다 다른 테넌트로 선다", () =>
+{
+    it("INV-ACCESS-02 운영팀이면서 고객사 A 의 사람은 agent 에서 운영팀으로 선다", async () =>
+    {
+        const db = localDb("AGENT_DATABASE_URL");
+
+        assert.isTrue(db.ok);
+
+        const sql = poolExecutor(postgresPool(db.ok ? db.url : ""));
+        const actor = await Effect.runPromise(findMembershipsByUserId(sql, AUTH.both).pipe(
+            Effect.flatMap((account) => actorForApp({ app: "agent", account })),
+        ));
+
+        assert.strictEqual(actor.tenantKind, "operator");
+        assert.strictEqual(actor.tenantId, "1");
+    });
+});

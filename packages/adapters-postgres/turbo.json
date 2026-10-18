@@ -1,0 +1,21 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "extends": ["//"],
+    "tasks": {
+        "test": {
+            // ⚠ 계약 테스트의 결과는 이 패키지의 코드만이 아니라 로컬 스택에 선 스키마와 시드가 정한다.
+            //    그 스키마는 supabase/ 가 만들고 스택의 이미지는 CI 가 고정한 Supabase CLI 버전이 고르므로
+            //    셋을 모두 입력으로 적는다. 빠뜨리면 마이그레이션만 고친 PR 에서 계약 테스트가 캐시로
+            //    끝나고, 깨진 GRANT 가 초록으로 들어간다.
+            //    supabase/.temp 는 `supabase start` 가 쓰는 자리라 넣지 않는다
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "$TURBO_ROOT$/supabase/config.toml",
+                "$TURBO_ROOT$/supabase/migrations/**",
+                "$TURBO_ROOT$/supabase/seeds/**",
+                "$TURBO_ROOT$/supabase/seed.sql",
+                "$TURBO_ROOT$/.github/workflows/check.yml"
+            ]
+        }
+    }
+}

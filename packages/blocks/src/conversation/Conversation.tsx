@@ -1,13 +1,13 @@
 "use client";
 
-import { Bubble, BubbleContent } from "@investment/ui/components/bubble";
-import { Button } from "@investment/ui/components/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@investment/ui/components/card";
+import { Bubble, BubbleContent } from "@hathway/ui/components/bubble";
+import { Button } from "@hathway/ui/components/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@hathway/ui/components/card";
 import {
     Message,
     MessageContent,
     MessageFooter,
-} from "@investment/ui/components/message";
+} from "@hathway/ui/components/message";
 import {
     MessageScroller,
     MessageScrollerButton,
@@ -15,9 +15,9 @@ import {
     MessageScrollerItem,
     MessageScrollerProvider,
     MessageScrollerViewport,
-} from "@investment/ui/components/message-scroller";
-import { ArrowDown, Check, ShieldCheck, X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/message-scroller";
+import { ArrowDown, Check, ShieldCheck, X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { PropertyList } from "../property-list/PropertyList";
 import { ToolCalls } from "../tool-calls/ToolCalls";

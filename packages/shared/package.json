@@ -1,5 +1,5 @@
 {
-    "name": "@investment/shared",
+    "name": "@hathway/shared",
     "version": "0.0.1",
     "private": true,
     "//": "도메인이 아닌 공용 모듈. 새 공용 코드를 여기에 계속 더하지 말고, 도메인 코드는 그 도메인 패키지에 둔다. React/DB/Next 의존 금지.",
@@ -13,14 +13,18 @@
     },
     "scripts": {
         "typecheck": "tsc --noEmit",
-        "test": "vitest run --passWithNoTests && node scripts/check-invariants.mjs",
-        "check:invariants": "node scripts/check-invariants.mjs"
+        "test": "vitest run --passWithNoTests && node scripts/check-invariants.mjs && node scripts/check-comments.mjs && node scripts/check-migrations.mjs && node scripts/check-dependencies.mjs && node scripts/check-modules.mjs",
+        "test:watch": "vitest",
+        "check:invariants": "node scripts/check-invariants.mjs",
+        "check:comments": "node scripts/check-comments.mjs",
+        "check:migrations": "node scripts/check-migrations.mjs",
+        "check:dependencies": "node scripts/check-dependencies.mjs",
+        "check:modules": "node scripts/check-modules.mjs"
     },
     "dependencies": {
         "dayjs": "^1.11.19"
     },
     "devDependencies": {
-        "vitest": "^4.1.11",
-        "typescript": "^5"
+        "vitest": "^4.1.11"
     }
 }

@@ -3,14 +3,14 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import { emailConfirmationEnforced } from "@investment/access/access/authSettings";
-import { AuthSettings, AuthSettingsUnavailable } from "@investment/access/ports/AuthSettings";
+import { emailConfirmationEnforced } from "@hathway/access/access/authSettings";
+import { AuthSettings, AuthSettingsUnavailable } from "@hathway/access/ports/AuthSettings";
 
 /**
  * `AuthSettings` 의 Supabase 구현. 인증 서버의 공개 설정(`/auth/v1/settings`)을 HTTP 로 읽는다.
  *
  * 첫 로그인에 계정을 잇기 직전에만 불린다(INV-ACCESS-08). 대시보드의 「Confirm email」 토글이 이
- * 응답의 `mailer_autoconfirm` 으로 드러나고, 그 값을 읽는 규칙은 `@investment/access` 의
+ * 응답의 `mailer_autoconfirm` 으로 드러나고, 그 값을 읽는 규칙은 `@hathway/access` 의
  * `emailConfirmationEnforced` 하나가 갖는다.
  *
  * ⚠ **캐시하지 않는다.** 묻는 것은 한 사람당 첫 로그인 한 번이라 빈도가 낮고, 캐시를 두면 토글을

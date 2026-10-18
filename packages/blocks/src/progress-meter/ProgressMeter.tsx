@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@investment/ui/lib/utils";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { Tone } from "../tone";
 import { clampCompleted, hasTrack, toPercent } from "./ratio";

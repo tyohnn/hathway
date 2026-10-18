@@ -35,16 +35,27 @@ three CSS layers). Every file under `styles/` is this system's own; nothing is c
 | `--control-font-weight-regular` · `--ui-font-weight-regular` | 400 | only the primary button and labels stay at 500 |
 | `--table-row-height` · `--table-head-height-default` | 41px · 37px | row boxes include the divider |
 
-## Clay (restrained, level C)
+## Clay (reference strength)
 
-Controls look very slightly moulded. Layer 2 composes `--shadow-control`, `--shadow-control-primary`,
+Controls look moulded. Layer 2 composes `--shadow-control`, `--shadow-control-primary`,
 `--shadow-raised`, `--shadow-control-pressed`, `--shadow-recessed`, `--surface-control` and
 `--surface-primary` from layer-1 `--clay-*` materials.
 
-The reference canvas was stronger (6% highlight, 45% shade, 35% ambient, top-to-bottom gradients).
-On 2026-09-15 the owner chose the restrained step **C**: in dark mode only a 3% top highlight and a
-contact shadow (20% / 12%) remain, shade and ambient are transparent, the control surface is a single
-colour (`#191919`), and only the primary button keeps a gentle gradient (`#4a5af7` → `#3443ea`).
+Dark mode runs at the reference canvas's strength: a 6% top highlight, a 45% bottom shade, a contact
+shadow (30% / 20%) and a 35% ambient shadow. The control surface is a top-to-bottom gradient
+(`#212121` → `#181818`) and the primary button keeps its own (`#4a5af7` → `#3443ea`) with a tinted
+ambient glow.
+
+History: on 2026-09-15 the owner chose a restrained step **C** (3% highlight, no shade or ambient, a
+single-colour surface). On 2026-10-02, after a first product with few controls on screen, the owner
+went back to the reference strength — at step C the moulded look did not read at all. To soften it
+again, lower the `--clay-*` materials in `globals.css`; nothing else changes.
+
+Cards are moulded too, in dark mode only: `--shadow-card` is a 5% top highlight plus a contact
+shadow. It says "a shaped slab", not "floating" — planes are still separated by colour.
+
+The app canvas (`--canvas`) is the page background in dark mode. The reference's `#3d3d3d` was the
+desk colour *outside* the app window; using it under cards made the floor lighter than the cards.
 
 Where clay applies: outline, secondary and primary buttons (pressed state sinks in), the select
 trigger, the active sidebar item and its count badge. Ghost, destructive and link buttons stay flat.

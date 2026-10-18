@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { cn } from "@investment/ui/lib/utils";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { WorkbenchProps } from "./types";
 

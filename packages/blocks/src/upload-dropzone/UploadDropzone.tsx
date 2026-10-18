@@ -2,10 +2,10 @@
 
 import { useRef, useState } from "react";
 
-import { Button } from "@investment/ui/components/button";
-import { Progress } from "@investment/ui/components/progress";
-import { Loader, Upload } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Button } from "@hathway/ui/components/button";
+import { Progress } from "@hathway/ui/components/progress";
+import { Loader, Upload } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { UPLOAD_DROPZONE_LABELS } from "./labels";
 import type { UploadDropzoneProps } from "./types";

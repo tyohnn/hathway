@@ -1,5 +1,5 @@
-import { Skeleton } from "@investment/ui/components/skeleton";
-import { cn } from "@investment/ui/lib/utils";
+import { Skeleton } from "@hathway/ui/components/skeleton";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { FilterBarLayout } from "./types";
 

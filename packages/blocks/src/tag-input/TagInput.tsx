@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { Badge } from "@investment/ui/components/badge";
-import { X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Badge } from "@hathway/ui/components/badge";
+import { X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TAG_INPUT_LABELS } from "./labels";
 import { mergeTags, splitTags } from "./tags";

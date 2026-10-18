@@ -55,10 +55,68 @@ export const strings = {
     toEnd: "맨 아래로 가기",
     toStart: "맨 위로 가기",
   },
+  table: {
+    scrollRegion: "옆으로 넘겨 보는 표",
+  },
   questionnaire: {
     previous: "이전",
     skip: "건너뛰기",
     next: "다음",
     submit: "제출하기",
+  },
+  blocks: {
+    dataTable: {
+      selectAll: "모두 선택",
+      selectRow: "항목 선택",
+    },
+    rowMenu: {
+      label: "더 보기",
+    },
+    search: {
+      label: "검색",
+      submit: "검색",
+    },
+    calendar: {
+      today: "오늘",
+      previous: "이전",
+      next: "다음",
+      views: "보기 방식",
+      allDay: "종일",
+      now: "지금",
+    },
+    comments: {
+      reply: "답글",
+    },
+    diff: {
+      collapse: "파일 접기",
+      expand: "파일 펼치기",
+      viewed: "확인함",
+      label: "변경 내용",
+    },
+    kanban: {
+      add: "카드 추가하기",
+    },
+    onThisPage: {
+      title: "목차",
+    },
+    pager: {
+      previous: "이전",
+      next: "다음",
+    },
+    prompt: {
+      label: "메시지",
+      send: "보내기",
+    },
+    reply: {
+      label: "답장",
+    },
+    parameters: {
+      name: "이름",
+      type: "타입",
+      required: "필수 여부",
+      description: "설명",
+      requiredBadge: "필수",
+      optionalBadge: "선택",
+    },
   },
 } satisfies Strings

@@ -3,9 +3,9 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import type { LinkableAccount } from "@investment/access/access/accountLink";
-import { AccountDirectory, type LinkOutcome } from "@investment/access/ports/AccountDirectory";
-import { NotAppMember } from "@investment/access/ports/ActorResolver";
+import type { LinkableAccount } from "@hathway/access/access/accountLink";
+import { AccountDirectory, type LinkOutcome } from "@hathway/access/ports/AccountDirectory";
+import { NotAppMember } from "@hathway/access/ports/ActorResolver";
 
 import type { SqlExecutor } from "../connection.ts";
 

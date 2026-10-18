@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 
-import { MarketStoreError } from "@investment/market/ports/MarketStore";
+import { MarketStoreError } from "@hathway/market/ports/MarketStore";
 
 import type { SqlExecutor } from "../connection.ts";
 

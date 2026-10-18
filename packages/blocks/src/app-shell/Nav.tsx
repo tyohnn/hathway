@@ -10,7 +10,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
     SidebarSeparator,
-} from "@investment/ui/components/sidebar";
+} from "@hathway/ui/components/sidebar";
 
 import { activeNavItem } from "./active";
 import type { AppShellNavProps } from "./types";

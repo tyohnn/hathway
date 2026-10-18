@@ -1,10 +1,10 @@
 "use client";
 
-import { Badge } from "@investment/ui/components/badge";
-import { Button } from "@investment/ui/components/button";
-import { Separator } from "@investment/ui/components/separator";
-import { Plus } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Badge } from "@hathway/ui/components/badge";
+import { Button } from "@hathway/ui/components/button";
+import { Separator } from "@hathway/ui/components/separator";
+import { Plus } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 /**
  * 조건 트리거 — 테두리 버튼에 이름과 선택 요약이 붙는다.

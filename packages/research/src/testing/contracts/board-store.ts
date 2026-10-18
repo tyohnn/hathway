@@ -8,7 +8,7 @@ import { BoardStore } from "../../ports/BoardStore.ts";
  * 보드 저장소의 계약. 메모리 구현과 Postgres 구현이 **같은 코드로** 돈다.
  *
  * ⚠ **목록 단언은 이 검사가 심은 것만 본다.** Postgres 는 여러 검사와 로컬 시드가 한 표를 함께 쓴다.
- * ⚠ **테넌트와 계정은 로컬 시드(`platform/supabase/seeds/org.sql`)의 고정 id 다.** 운영팀 1, 고객사 둘이 2 와 3 이고,
+ * ⚠ **테넌트와 계정은 로컬 시드(`supabase/seed.sql`)의 고정 id 다.** 운영팀 1, 고객사 둘이 2 와 3 이고,
  *    계정 2 와 3 은 고객사 2 의 사람이다. 보드의 FK 가 그 행을 가리킨다.
  */
 export type MakeBoardStore = () => Effect.Effect<Layer.Layer<BoardStore>>;

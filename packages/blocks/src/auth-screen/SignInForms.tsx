@@ -2,9 +2,9 @@
 
 import { useFormStatus } from "react-dom";
 
-import { Button } from "@investment/ui/components/button";
-import { Field, FieldLabel } from "@investment/ui/components/field";
-import { Input } from "@investment/ui/components/input";
+import { Button } from "@hathway/ui/components/button";
+import { Field, FieldLabel } from "@hathway/ui/components/field";
+import { Input } from "@hathway/ui/components/input";
 
 import { GoogleMark } from "../google-mark";
 import { LOGIN_PANEL_LABELS } from "./labels";

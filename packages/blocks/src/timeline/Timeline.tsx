@@ -1,8 +1,8 @@
 "use client";
 
-import { Empty, EmptyDescription, EmptyHeader } from "@investment/ui/components/empty";
-import { Circle, CircleCheck, Clock } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Empty, EmptyDescription, EmptyHeader } from "@hathway/ui/components/empty";
+import { Circle, CircleCheck, Clock } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TONE_TEXT } from "../tone";
 import { TIMELINE_LABELS } from "./labels";

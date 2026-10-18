@@ -1,7 +1,7 @@
 import { cn } from "cn"
 
-import { Loader } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { Loader } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (

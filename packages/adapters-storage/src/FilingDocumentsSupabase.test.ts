@@ -3,7 +3,7 @@ import { gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { Effect } from "effect";
 
-import { FilingDocuments } from "@investment/market/ports/MarketStore";
+import { FilingDocuments } from "@hathway/market/ports/MarketStore";
 
 import { filingDocumentsSupabaseLayer } from "./FilingDocumentsSupabase.ts";
 

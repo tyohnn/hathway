@@ -4,9 +4,9 @@ import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { cn } from "cn"
 
-import { Button } from "@investment/ui/components/button"
-import { X } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { Button } from "@hathway/ui/components/button"
+import { X } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />

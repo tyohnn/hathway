@@ -29,11 +29,10 @@
     --sidebar-collapsed-width: 56px;
     --workbench-aside-width: 360px;
 
-    /* 교재 본문(`/book`)의 조판. 시스템의 문서 프리셋(18px)보다 촘촘한데, 숫자와 표가 많은 교재를
-       한 화면에 더 담으려는 값이다. `.typeset-notes` 가 읽는다(진입 CSS). */
-    --typeset-notes-size: 15px;
-    --typeset-notes-leading: 1.75;
-    --typeset-notes-flow: 1.25em;
+    /* 블록 편집기(packages/blocks 의 block-editor)가 읽는 긴 글의 제목 결. graphite 는 typeset 을 갖지 않아
+       loam 과 같은 값을 여기 둔다. */
+    --typeset-heading-weight: 600;
+    --typeset-heading-tracking: -0.03em;
 }
 
 .dark {

@@ -5,8 +5,8 @@
  * KST 타임존 핵심 유틸(getMonthRangeInUTC, getCurrentKSTDate 등)은 dateUtils.ts에 유지됩니다.
  *
  * 기존 코드 호환성:
- *   import { formatDateShort } from '@investment/shared/utils/dateUtils': dateUtils.ts가 이 파일을 re-export하므로 유지됩니다.
- *   import { formatDateShort } from '@investment/shared/utils/dateFormatting': 직접 import도 가능합니다.
+ *   import { formatDateShort } from '@hathway/shared/utils/dateUtils': dateUtils.ts가 이 파일을 re-export하므로 유지됩니다.
+ *   import { formatDateShort } from '@hathway/shared/utils/dateFormatting': 직접 import도 가능합니다.
  */
 
 import dayjs from 'dayjs';

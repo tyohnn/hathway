@@ -1,8 +1,8 @@
 "use client";
 
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { Switch } from "@investment/ui/components/switch";
-import { cn } from "@investment/ui/lib/utils";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { Switch } from "@hathway/ui/components/switch";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { SettingControl, SettingsListProps } from "./types";
 

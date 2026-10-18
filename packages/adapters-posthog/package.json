@@ -1,0 +1,25 @@
+{
+    "name": "@hathway/adapters-posthog",
+    "version": "0.0.1",
+    "private": true,
+    "//": "analytics 도메인의 이벤트 창구(EventSink)의 PostHog 구현. posthog-node 는 이 패키지에만 있다. 키가 없는 개발과 e2e 는 연습 창구(rehearsalSink)로 돈다.",
+    "exports": {
+        "./*": "./src/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@hathway/analytics": "*",
+        "effect": "4.0.0-rc.112",
+        "posthog-node": "5.54.1",
+        "server-only": "^0.0.1"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "typescript": "^5",
+        "vitest": "^4.1.11"
+    }
+}

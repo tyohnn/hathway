@@ -3,7 +3,11 @@
 //
 // 카탈로그는 도메인마다 하나다. 도메인 규칙은 그 도메인이 소유하기 때문이다.
 //   packages/access/src/invariants.ts   INV-ACCESS-*
+//   packages/notes/src/invariants.ts    INV-NOTE-*   (예시 도메인. 새 제품에서 이름을 바꾼다)
+//   packages/agents/src/invariants.ts   INV-AGENT-*
 //   packages/research/src/invariants.ts INV-RESEARCH-*
+//   packages/analytics/src/invariants.ts  INV-ANALYTICS-*   (분석 모듈) scaffold:module posthog
+//   packages/preferences/src/invariants.ts  INV-PREFERENCE-*   (플러그인 모듈) scaffold:module plugin
 //   packages/shared/src/invariants/requirements.ts   REQ-*  (도메인이 없는 저장소 규약)
 //
 // 인용 표기는 `INV-<도메인>-<두 자리>` 와 `REQ-<두 자리>` 다. 종류(앱·데이터)는 id 가 아니라
@@ -28,7 +32,11 @@ const repoRoot = join(here, "..", "..", "..");
 /** 카탈로그와 그 카탈로그만 선언할 수 있는 접두사 */
 const CATALOGS = [
     { file: join(repoRoot, "packages/access/src/invariants.ts"), prefix: "INV-ACCESS-" },
+    { file: join(repoRoot, "packages/notes/src/invariants.ts"), prefix: "INV-NOTE-" },
+    { file: join(repoRoot, "packages/agents/src/invariants.ts"), prefix: "INV-AGENT-" },
     { file: join(repoRoot, "packages/research/src/invariants.ts"), prefix: "INV-RESEARCH-" },
+    { file: join(repoRoot, "packages/analytics/src/invariants.ts"), prefix: "INV-ANALYTICS-" }, // scaffold:module posthog
+    { file: join(repoRoot, "packages/preferences/src/invariants.ts"), prefix: "INV-PREFERENCE-" }, // scaffold:module plugin
     { file: join(repoRoot, "packages/shared/src/invariants/requirements.ts"), prefix: "REQ-" },
 ];
 
@@ -38,11 +46,19 @@ const CATALOGS = [
  */
 const SCAN_ROOTS = [
     join(repoRoot, "packages/access/src"),
+    join(repoRoot, "packages/notes/src"),
+    join(repoRoot, "packages/agents/src"),
     join(repoRoot, "packages/research/src"),
+    join(repoRoot, "packages/market/src"),
     join(repoRoot, "packages/shared/src"),
     join(repoRoot, "packages/adapters-postgres/src"),
+    join(repoRoot, "packages/analytics/src"), // scaffold:module posthog
+    join(repoRoot, "packages/preferences/src"), // scaffold:module plugin
     join(repoRoot, "apps/web/src"),
-    join(repoRoot, "platform/supabase/migrations"),
+    join(repoRoot, "apps/web/e2e"),
+    join(repoRoot, "apps/agent/src"),
+    join(repoRoot, "apps/agent/e2e"),
+    join(repoRoot, "supabase/migrations"),
 ];
 
 const SCANNED_EXTENSIONS = new Set([".ts", ".tsx", ".sql"]);
@@ -71,7 +87,11 @@ const CITATION = /\b(?:INV-[A-Z]+-\d{2}|REQ-\d{2})\b/g;
 //    (A1 · B3 · D2)이고 `AGENTS.md` 가 정한 정본 식별자다. 목록을 비워 두어 아래 검사가 아무것도 잡지 않게 한다.
 const RETIRED = [];
 
-const isTestFile = (path) => /\.(test|spec)\.tsx?$/.test(path);
+/**
+ * 시험 파일인가. 포트의 계약(`src/testing/contracts/*.ts`)도 센다. 계약의 `it(...)` 은 메모리 구현과 Postgres 구현의 시험
+ * 파일이 함께 불러 돌리므로, 이름은 계약 파일에 있어도 실제로 재는 시험이다.
+ */
+const isTestFile = (path) => /\.(test|spec)\.tsx?$/.test(path) || /(^|\/)testing\/contracts\/[^/]+\.tsx?$/.test(path);
 
 const walk = (root) =>
 {

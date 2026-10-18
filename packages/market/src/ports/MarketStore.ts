@@ -1,12 +1,12 @@
 import { Context, type Effect, Schema } from "effect";
 
-import type { Company, CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@investment/schema";
+import type { Company, CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@hathway/schema";
 
 import type { CompanyIndexRow, FinPeriodRow, ListedSectorRow, PeriodType, RawSection, ReportRef } from "../domain/rows.ts";
 
 /**
  * 적재된 시장 데이터를 읽는 포트 넷. 구현은 메모리(`testing/marketMemory.ts`)와 Postgres
- * (`@investment/adapters-postgres/market/*`) 둘이고, 계약 테스트 한 벌이 둘을 함께 잰다.
+ * (`@hathway/adapters-postgres/market/*`) 둘이고, 계약 테스트 한 벌이 둘을 함께 잰다.
  *
  * ⚠ **연산마다 메서드가 하나다.** 걸러 내는 조건과 차례와 한도가 메서드에 들어 있다. 화면이 조건을 조립하지 않는다.
  * ⚠ **읽기는 공개다.** 이 데이터는 공시된 것이라 누구에게나 보인다. 그래서 행위자를 받지 않는다.
@@ -30,7 +30,7 @@ export class CompanyDirectory extends Context.Service<CompanyDirectory, {
     readonly findByStockCodes: (stockCodes: ReadonlyArray<string>) => Read<ReadonlyArray<Company>>;
     /** KOSPI · KOSDAQ 상장사의 업종 코드와 시장 */
     readonly listedSectors: () => Read<ReadonlyArray<ListedSectorRow>>;
-}>()("@investment/market/ports/CompanyDirectory")
+}>()("@hathway/market/ports/CompanyDirectory")
 {}
 
 export class FinancialPeriods extends Context.Service<FinancialPeriods, {
@@ -41,7 +41,7 @@ export class FinancialPeriods extends Context.Service<FinancialPeriods, {
         corpCodes: ReadonlyArray<string>,
         years: ReadonlyArray<number>,
     ) => Read<ReadonlyArray<FinPeriodRow>>;
-}>()("@investment/market/ports/FinancialPeriods")
+}>()("@hathway/market/ports/FinancialPeriods")
 {}
 
 export class FilingLedger extends Context.Service<FilingLedger, {
@@ -60,11 +60,11 @@ export class FilingLedger extends Context.Service<FilingLedger, {
     readonly ownershipTxns: (corpCode: string, limit: number) => Read<ReadonlyArray<OwnershipTxn>>;
     /** 사실의 날짜순 */
     readonly trackings: (corpCode: string) => Read<ReadonlyArray<TrackingFact>>;
-}>()("@investment/market/ports/FilingLedger")
+}>()("@hathway/market/ports/FilingLedger")
 {}
 
 export class FilingDocuments extends Context.Service<FilingDocuments, {
     /** 공시 하나의 본문 조각 전부. 아직 추출되지 않았거나 읽지 못하면 `null` 이다 */
     readonly sections: (corpCode: string, rceptNo: string) => Read<ReadonlyArray<RawSection> | null>;
-}>()("@investment/market/ports/FilingDocuments")
+}>()("@hathway/market/ports/FilingDocuments")
 {}

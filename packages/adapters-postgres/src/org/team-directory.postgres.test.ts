@@ -2,9 +2,9 @@ import { afterAll, assert, describe, it } from "vitest";
 import { Effect } from "effect";
 import { Pool } from "pg";
 
-import { canEnterApp } from "@investment/access/access/membership";
-import { TeamDirectory } from "@investment/access/ports/TeamDirectory";
-import { teamDirectoryContract, type TeamSeedMember } from "@investment/access/testing/contracts/team-directory";
+import { canEnterApp } from "@hathway/access/access/membership";
+import { TeamDirectory } from "@hathway/access/ports/TeamDirectory";
+import { teamDirectoryContract, type TeamSeedMember } from "@hathway/access/testing/contracts/team-directory";
 
 import { closePostgresPools, poolExecutor, postgresPool } from "../connection.ts";
 import { localDb } from "../testing/local-db.ts";
@@ -15,11 +15,12 @@ import { teamDirectoryPostgresLayer } from "./TeamDirectoryPostgres.ts";
 /**
  * 팀 명부의 Postgres 계약과, 팀 관리가 연 쓰기 권한의 경계.
  *
- * ⚠ **재는 질의는 `web_app` 이 낸다.** 소유자 롤로 돌리면 GRANT 가 모자라도 통과한다.
+ * ⚠ **재는 질의는 `web_app` 이 낸다.** 팀 관리는 web 에만 있다. 소유자 롤로 돌리면 GRANT 가 모자라도 통과한다.
  * ⚠ **테넌트와 사람을 심는 일만 소유자로 붙는다.** 테넌트는 운영이 세우는 행이라 앱의 롤에 INSERT 가 없다.
  */
 const owner = new Pool({ connectionString: process.env["OWNER_DATABASE_URL"] as string });
 const web = localDb("WEB_DATABASE_URL");
+const agent = localDb("AGENT_DATABASE_URL");
 
 afterAll(async () =>
 {
@@ -71,11 +72,11 @@ const attempt = async (url: string, statement: string, params: ReadonlyArray<unk
     }
 };
 
-if (!web.ok)
+if (!web.ok || !agent.ok)
 {
     describe("팀 명부 (postgres)", () =>
     {
-        throw new Error(web.reason);
+        throw new Error(web.ok ? (agent.ok ? "" : agent.reason) : web.reason);
     });
 }
 else
@@ -178,6 +179,21 @@ else
             const refusals = await Promise.all([
                 attempt(web.url, "insert into org.tenant (kind, name) values ('customer', '몰래')"),
                 attempt(web.url, "update org.tenant set active = active where false"),
+            ]);
+
+            for (const refusal of refusals)
+            {
+                assert.include(refusal, "permission denied");
+            }
+        });
+
+        it("agent_app 은 org 에 사람을 더하거나 역할을 바꾸지 못한다. 팀 관리는 web 에만 있다", async () =>
+        {
+            const refusals = await Promise.all([
+                attempt(agent.url, "insert into org.account (email) values ('x@example.test')"),
+                attempt(agent.url, "update org.account set name = name where false"),
+                attempt(agent.url, "insert into org.membership (account_id, tenant_id, role) values (1, 1, 'member')"),
+                attempt(agent.url, "update org.membership set role = role where false"),
             ]);
 
             for (const refusal of refusals)

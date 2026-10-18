@@ -45,5 +45,5 @@ export class NotAppMember extends Schema.TaggedError<NotAppMember>()(
 export class ActorResolver extends Context.Service<ActorResolver, {
     /** 이번 요청의 행위자. 익명 폴백을 두지 않는다 */
     readonly current: Effect.Effect<Actor, NoSession | NotAppMember>;
-}>()("@investment/access/ports/ActorResolver")
+}>()("@hathway/access/ports/ActorResolver")
 {}

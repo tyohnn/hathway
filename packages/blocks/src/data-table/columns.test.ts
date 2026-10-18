@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatCurrency } from "@investment/shared/utils/formatters";
+import { formatCurrency } from "@hathway/shared/utils/formatters";
 
 import { buildColumnDefs, defaultAlign, formatCellValue, matchesFacet, matchesText, metaColumnIds } from "./columns";
 import type { ColumnSpec } from "./types";

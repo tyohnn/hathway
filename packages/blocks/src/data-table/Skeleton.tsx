@@ -1,6 +1,6 @@
-import { Skeleton } from "@investment/ui/components/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@investment/ui/components/table";
-import { cn } from "@investment/ui/lib/utils";
+import { Skeleton } from "@hathway/ui/components/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@hathway/ui/components/table";
+import { cn } from "@hathway/ui/lib/utils";
 
 export interface DataTableSkeletonProps
 {

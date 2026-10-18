@@ -4,7 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
 
-import { Check, ChevronDown, ChevronUp, SelectIndicator } from "@investment/ui/icons"
+import { Check, ChevronDown, ChevronUp, SelectIndicator } from "@hathway/ui/icons"
 
 const Select = SelectPrimitive.Root
 

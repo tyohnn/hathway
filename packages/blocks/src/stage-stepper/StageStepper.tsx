@@ -1,7 +1,7 @@
 "use client";
 
-import { Check } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Check } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { Pause } from "../icons/extra";
 import { stageLayout } from "./layout";

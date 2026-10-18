@@ -8,12 +8,12 @@ import {
     FieldLabel,
     FieldLegend,
     FieldSet,
-} from "@investment/ui/components/field";
-import { Input } from "@investment/ui/components/input";
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { Switch } from "@investment/ui/components/switch";
-import { Textarea } from "@investment/ui/components/textarea";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/field";
+import { Input } from "@hathway/ui/components/input";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { Switch } from "@hathway/ui/components/switch";
+import { Textarea } from "@hathway/ui/components/textarea";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { matchesAll } from "./rules";
 import type { FieldGroupProps, FieldSpec } from "./types";

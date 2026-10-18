@@ -1,7 +1,7 @@
-import type { Filing, FilingSection } from "@investment/schema";
+import type { Filing, FilingSection } from "@hathway/schema";
 
 /**
- * 읽은 행의 모양. 회사 · 공시 · 이벤트처럼 화면까지 그대로 가는 행은 `@investment/schema` 의 계약을 쓰고,
+ * 읽은 행의 모양. 회사 · 공시 · 이벤트처럼 화면까지 그대로 가는 행은 `@hathway/schema` 의 계약을 쓰고,
  * 여기에는 이 도메인이 접거나 고르기 전의 중간 모양만 둔다.
  */
 

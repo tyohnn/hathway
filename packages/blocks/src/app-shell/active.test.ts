@@ -1,6 +1,6 @@
 import { assert, describe, it } from "vitest";
 
-import { Building } from "@investment/ui/icons";
+import { Building } from "@hathway/ui/icons";
 
 import { activeNavItem, activeTrail } from "./active";
 import type { AppShellNavItem } from "./types";

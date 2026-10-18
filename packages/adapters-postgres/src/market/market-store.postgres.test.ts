@@ -2,10 +2,10 @@ import { afterAll, assert, describe, it } from "vitest";
 import { Effect, Layer } from "effect";
 import { Pool } from "pg";
 
-import { FIN_PERIOD_COLUMNS } from "@investment/market/domain/rows";
-import { CompanyDirectory } from "@investment/market/ports/MarketStore";
-import { marketStoreContract } from "@investment/market/testing/contracts/market-store";
-import type { MarketSeed } from "@investment/market/testing/marketMemory";
+import { FIN_PERIOD_COLUMNS } from "@hathway/market/domain/rows";
+import { CompanyDirectory } from "@hathway/market/ports/MarketStore";
+import { marketStoreContract } from "@hathway/market/testing/contracts/market-store";
+import type { MarketSeed } from "@hathway/market/testing/marketMemory";
 
 import { closePostgresPools, poolExecutor, postgresPool } from "../connection.ts";
 import { localDb } from "../testing/local-db.ts";

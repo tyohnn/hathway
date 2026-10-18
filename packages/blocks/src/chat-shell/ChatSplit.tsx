@@ -1,7 +1,7 @@
 "use client";
 
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@investment/ui/components/resizable";
-import { cn } from "@investment/ui/lib/utils";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@hathway/ui/components/resizable";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { CHAT_SHELL_LABELS } from "./labels";
 import type { ChatSplitProps } from "./types";

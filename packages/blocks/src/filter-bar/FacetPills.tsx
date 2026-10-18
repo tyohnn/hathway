@@ -1,6 +1,6 @@
 "use client";
 
-import { ToggleGroup, ToggleGroupItem } from "@investment/ui/components/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@hathway/ui/components/toggle-group";
 
 import { FACET_ALL_VALUE } from "./filter-state";
 import type { FacetSpec, FilterBarLabels } from "./types";

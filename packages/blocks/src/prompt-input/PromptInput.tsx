@@ -6,10 +6,10 @@ import {
     InputGroupButton,
     InputGroupText,
     InputGroupTextarea,
-} from "@investment/ui/components/input-group";
-import { Kbd } from "@investment/ui/components/kbd";
-import { ArrowUp, Paperclip } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/input-group";
+import { Kbd } from "@hathway/ui/components/kbd";
+import { ArrowUp, Paperclip } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { PROMPT_INPUT_LABELS } from "./labels";
 import type { PromptInputProps } from "./types";

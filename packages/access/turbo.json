@@ -1,0 +1,25 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "extends": ["//"],
+    "tasks": {
+        "test": {
+            // ⚠ `boundary.test.ts` 는 앱과 패키지 전체의 .ts · .tsx 를 읽어 문을 여는 판정이 한 곳에만
+            //    있는지 잰다. 앱은 access 에 의존하는 쪽이라 turbo 가 스스로는 이 파일들을 입력으로 보지
+            //    않는다. 제외하는 폴더는 그 검사의 SKIP_DIRS 와 같고, next-env.d.ts 는 빌드가 만드는
+            //    파일이라 뺀다
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "$TURBO_ROOT$/apps/**/*.ts",
+                "$TURBO_ROOT$/apps/**/*.tsx",
+                "$TURBO_ROOT$/packages/**/*.ts",
+                "$TURBO_ROOT$/packages/**/*.tsx",
+                "!$TURBO_ROOT$/**/node_modules/**",
+                "!$TURBO_ROOT$/**/.next/**",
+                "!$TURBO_ROOT$/**/dist/**",
+                "!$TURBO_ROOT$/**/.turbo/**",
+                "!$TURBO_ROOT$/**/e2e/**",
+                "!$TURBO_ROOT$/**/next-env.d.ts"
+            ]
+        }
+    }
+}

@@ -1,4 +1,4 @@
-# @investment/shared
+# @hathway/shared
 
 도메인이 아닌 공용 모듈을 둡니다. 도메인 코드는 그 도메인 패키지에 두고, 여기에 새 모듈을 계속 더하지 않습니다.
 
@@ -24,4 +24,4 @@
 | `check-invariants.mjs` | 없는 불변식 id 를 인용하거나 `enforced` 인데 지키는 테스트가 없는 것 |
 | `check-comments.mjs` | 주석의 엠대시 · 명사형 종결 · 연결어미 종결(범위는 스크립트의 `SCOPE`) |
 | `check-migrations.mjs` | 마이그레이션 판 번호가 겹치는 것 |
-| `check-dependencies.mjs` | 선언하지 않은 `@investment/*` import · 층을 거스르는 의존 · 도메인의 effect 밖 런타임 의존 |
+| `check-dependencies.mjs` | 선언하지 않은 `@hathway/*` import · 층을 거스르는 의존 · 도메인의 effect 밖 런타임 의존 |

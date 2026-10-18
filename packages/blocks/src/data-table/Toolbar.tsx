@@ -13,8 +13,8 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, v
 import { CSS } from "@dnd-kit/utilities";
 import type { Column } from "@tanstack/react-table";
 
-import { Badge } from "@investment/ui/components/badge";
-import { Button } from "@investment/ui/components/button";
+import { Badge } from "@hathway/ui/components/badge";
+import { Button } from "@hathway/ui/components/button";
 import {
     Command,
     CommandEmpty,
@@ -23,7 +23,7 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator,
-} from "@investment/ui/components/command";
+} from "@hathway/ui/components/command";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -34,14 +34,14 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@investment/ui/components/dropdown-menu";
-import { Input } from "@investment/ui/components/input";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@investment/ui/components/input-group";
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { Popover, PopoverContent, PopoverTrigger } from "@investment/ui/components/popover";
-import { Separator } from "@investment/ui/components/separator";
-import { ArrowDown, ArrowUp, ArrowUpDown, Check, Search, SettingsAdvanced, X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/dropdown-menu";
+import { Input } from "@hathway/ui/components/input";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@hathway/ui/components/input-group";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { Popover, PopoverContent, PopoverTrigger } from "@hathway/ui/components/popover";
+import { Separator } from "@hathway/ui/components/separator";
+import { ArrowDown, ArrowUp, ArrowUpDown, Check, Search, SettingsAdvanced, X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { isMetaColumnId, toFilterValue } from "./columns";
 import { FilterTrigger, facetSummary } from "../filter-trigger";

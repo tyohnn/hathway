@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "cn"
 
-import { SelectIndicator } from "@investment/ui/icons"
+import { SelectIndicator } from "@hathway/ui/icons"
 
 type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
   size?: "sm" | "default"

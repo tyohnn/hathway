@@ -16,7 +16,7 @@ import { Pool, types as pgTypes, type PoolClient, type PoolConfig, type QueryRes
  *    그쪽에 실리지 않으므로, 그때는 접속 문자열 검사를 포트 초기화의 일부로 Effect 안에
  *    끌어올려 해결할 것.
  *
- * ⚠ 종전에는 `@investment/shared/lib/logger` 를 썼다(2026-09-11 제거). 파일 일곱 개에 1,100줄이
+ * ⚠ 종전에는 `@hathway/shared/lib/logger` 를 썼다(2026-09-11 제거). 파일 일곱 개에 1,100줄이
  *    드는 로거를 고정 문자열 두 줄과 오류 한 줄을 위해 들고 있었고, 그 로거의 마스킹·전송
  *    계층은 이 자리에서 하는 일이 없었다. `packages/core` 가 이미 Effect 로깅을 쓰므로
  *    축을 하나로 합친다.

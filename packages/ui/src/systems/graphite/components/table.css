@@ -24,6 +24,14 @@
     @apply relative w-full overflow-x-auto;
 }
 
+/* The container takes focus only while the table is wider than its place (table.tsx gives it
+   tabindex and a name then), so a keyboard can scroll it. The ring is drawn inside the box: a table
+   usually sits flush in a card that clips, where a ring outside would be cut off. */
+.cn-table-container:focus-visible {
+    outline: var(--focus-ring-width) solid var(--ring);
+    outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
 .cn-table {
     font-size: var(--table-font-size);
     letter-spacing: var(--ui-letter-spacing);
