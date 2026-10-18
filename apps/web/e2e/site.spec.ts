@@ -23,7 +23,8 @@ test.describe("공개 화면", () =>
     test("블로그 목록에서 글을 열 수 있다", async ({ page }) =>
     {
         await page.goto("/blog");
-        await page.getByRole("list").getByRole("link").first().click();
+        // 글이 하나뿐이면 목록 없이 큰 표지로 선다(`featureFirst`). 본문의 첫 글 링크를 연다
+        await page.locator('main a[href^="/blog/"]').first().click();
 
         await expect(page).toHaveURL(/\/blog\/[a-z0-9-]+$/);
         await expect(page.getByRole("article").getByRole("heading", { level: 1 })).toBeVisible();
@@ -64,7 +65,7 @@ test.describe("공개 화면", () =>
         await page.goto("/blog/hello");
 
         await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /^index, follow/);
-        const ld = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? "{}") as { "@type"?: string };
+        const ld = JSON.parse(await page.locator('.blog-frame script[type="application/ld+json"]').textContent() ?? "{}") as { "@type"?: string };
         expect(ld["@type"]).toBe("BlogPosting");
     });
 
