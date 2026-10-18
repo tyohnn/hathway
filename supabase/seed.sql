@@ -1,23 +1,26 @@
 -- ============================================================
--- 로컬 개발과 계약 테스트의 시드: 테넌트 · 계정 · 멤버십 · 로컬 로그인 · 앱 롤의 접속 속성.
--- 스캐폴드의 seed.sql 에서 옮겼다.
+-- 로컬 개발과 e2e 의 시드. `supabase start` 와 `supabase db reset` 이 마이그레이션 뒤에 이 파일을 돌리고,
+-- 이어서 `seeds/*.sql` 을 돌린다.
 --
--- ⚠ **`seed.sql` 과 따로 넣는다.** 그 파일은 적재 데이터의 덤프라 `supabase start` 가 돌린다. 이 파일은
---    마이그레이션을 올린 뒤 손으로 한 번 넣는다(platform/README.md 「로그인과 앱 롤」).
 -- ⚠ 이 파일은 **커밋된다.** PII 를 넣지 말 것. 전부 합성 데이터다.
--- ⚠ **로컬 전용이다.** 비밀번호를 여기 두는 것이 안전한 이유가 그것이다. 원격에 넣지 않는다.
--- ⚠ **id 는 고정이다.** 계약 테스트(`packages/*/src/testing/contracts`)와 테스트 전용 행위자
---    (`packages/access/src/testing/actor.ts`)가 이 값을 상수로 들고 있다. 바꾸면 함께 고친다.
--- ⚠ 운영팀(1)은 마이그레이션(`20261002000200`)이 이미 세운다. 아래의 `on conflict do nothing` 이 그 행을 지난다.
+-- ⚠ **로컬 전용이다.** `db push` 는 시드를 타지 않으므로 원격에 나가지 않는다. 비밀번호를 여기 두는 것이
+--    안전한 이유가 그것이다.
+-- ⚠ **id 는 고정이다.** 계약 테스트(`packages/*/src/testing/contracts`)와 e2e 와 테스트 전용 행위자
+--    (`packages/access/src/testing/actor.ts`)가 이 값을 상수로 들고 있다. 바꾸면 셋을 함께 고친다.
 -- ============================================================
 
--- 테넌트 셋. 고객사를 둘 두는 것은 행 단위 판정이 테넌트를 가르는지 보려는 것이다.
+-- 테넌트 셋. 앱의 문을 여는 축이 테넌트의 종류이므로 종류마다 하나가 있어야 「고객은 web 을 지나고 agent 를
+-- 지나지 못한다」를 실제로 잴 수 있다. 고객사를 둘 두는 것은 행 단위 판정이 테넌트를 가르는지 보려는 것이다.
+-- ⚠ 모듈이 쓰는 테넌트와 계정은 그 모듈의 시드(`seeds/`)가 심는다. 모듈을 떼면 시드와 함께 사라진다.
 insert into org.tenant (id, kind, name)
 overriding system value
 values
     (1, 'operator', '운영팀'),
     (2, 'customer', '고객사 A'),
-    (3, 'customer', '고객사 B')
+    (3, 'customer', '고객사 B'),
+    -- 쪽지가 하나도 없는 조직. 홈의 첫날 점검표(e2e `home.spec.ts`)가 이 조직의 소유자(cee)로 들어간다.
+    -- ⚠ 결제 모듈의 시드(`seeds/20-billing.sql`)가 같은 id 로 같은 조직을 쓴다. 모듈을 붙여도 겹치지 않는다
+    (4, 'customer', '고객사 C')
 on conflict (id) do nothing;
 
 -- 계정. 역할마다 한 사람이다.
@@ -36,7 +39,8 @@ values
     (5, 'new@example.test',  '새사람',     null),
     (6, 'gone@example.test', '나간사람',   now() - interval '30 days'),
     (7, 'both@example.test', '겸직',       null),
-    (8, 'leaver@example.test', '내보낼사람', null)
+    (8, 'leaver@example.test', '내보낼사람', null),
+    (9, 'cee@example.test', '최고객', null)
 on conflict (id) do nothing;
 
 -- 멤버십. 어느 테넌트에서 무엇인지가 앱의 문과 운영 도구의 자격을 함께 정한다.
@@ -55,7 +59,8 @@ values
     (6, 6, 2, 'member'),
     (7, 7, 1, 'member'),
     (8, 7, 2, 'member'),
-    (9, 8, 2, 'member')
+    (9, 8, 2, 'member'),
+    (10, 9, 4, 'owner')
 on conflict (id) do nothing;
 
 select setval(pg_get_serial_sequence('org.tenant',     'id'), 1000, true);
@@ -73,7 +78,8 @@ values
     ('00000000-0000-4000-8000-0000000000e6', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'gone@example.test',     now(), now()),
     ('00000000-0000-4000-8000-0000000000e7', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'both@example.test',     now(), now()),
     ('00000000-0000-4000-8000-0000000000e8', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'leaver@example.test',   now(), now()),
-    ('00000000-0000-4000-8000-0000000000e9', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'outsider@example.test', now(), now())
+    ('00000000-0000-4000-8000-0000000000e9', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'outsider@example.test', now(), now()),
+    ('00000000-0000-4000-8000-0000000000ea', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'cee@example.test',      now(), now())
 on conflict (id) do nothing;
 
 -- 로컬 계정으로 로그인할 수 있게 비밀번호와 확인 시각을 넣는다. 모두 `hathway-local` 이다.
@@ -114,6 +120,7 @@ update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000e4' whe
 update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000e6' where id = 6;
 update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000e7' where id = 7;
 update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000e8' where id = 8;
+update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000ea' where id = 9;
 
 
 -- ============================================================
@@ -127,3 +134,5 @@ update org.account set auth_user_id = '00000000-0000-4000-8000-0000000000e8' whe
 
 alter role web_app login password 'postgres';
 alter role web_app bypassrls;
+alter role agent_app login password 'postgres';
+alter role agent_app bypassrls;

@@ -12236,7 +12236,7 @@ INSERT INTO "public"."financial_facts" ("id", "corp_code", "bsns_year", "reprt_c
 	(9282, '01160363', 2026, '11013', 'CFS', 'SCE', 'ifrs-full_IncreaseDecreaseThroughTransfersAndOtherChangesEquity', '기타의 자본조정', 43291682, NULL, NULL, 12, 'KRW', '20260515001109'),
 	(9283, '01160363', 2026, '11013', 'CFS', 'SCE', 'ifrs-full_ProfitLoss', '분기손이익(손실)', 12156221655, NULL, NULL, 13, 'KRW', '20260515001109'),
 	(9284, '01160363', 2026, '11013', 'CFS', 'SCE', 'ifrs-full_ProfitLoss', '분기손이익(손실)', 8251269880, NULL, NULL, 13, 'KRW', '20260515001109'),
-	(9286, '01160363', 2026, '11013', 'CFS', 'SCE', 'ifrs-full_ProfitLoss', '분기손이익(손실)', 3904951775, NULL, NULL, 13, 'KRW', '20260515001109');
+	(9286, '01160363', 2026, '11013', 'CFS', 'SCE', 'ifrs-full_ProfitLoss', '분기손이익(손실)', 3904951775, NULL, NULL, 13, 'KRW', '20260515001109') ON CONFLICT (natural_key) DO NOTHING;
 
 
 --
