@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@investment/ui/components/button";
-import { X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Button } from "@hathway/ui/components/button";
+import { X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { ACTION_BAR_LABELS } from "./labels";
 import type { ActionBarProps } from "./types";

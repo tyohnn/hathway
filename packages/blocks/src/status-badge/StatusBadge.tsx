@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@investment/ui/components/badge";
-import { cn } from "@investment/ui/lib/utils";
+import { Badge } from "@hathway/ui/components/badge";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TONE_SURFACE } from "../tone";
 import type { StatusBadgeProps } from "./types";

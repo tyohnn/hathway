@@ -1,4 +1,4 @@
-import type { Actor } from "@investment/access/domain/Actor";
+import type { Actor } from "@hathway/access/domain/Actor";
 
 import type { Board } from "../domain/Board.ts";
 

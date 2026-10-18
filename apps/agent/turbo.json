@@ -1,0 +1,18 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "extends": ["//"],
+    "tasks": {
+        // ⚠ `next build` 가 workflow 의 경로를 src/app/.well-known/workflow/ 에 만든다. 그 폴더는 자기 안에
+        //    `*` 만 적힌 .gitignore 를 두는데 turbo 는 그 .gitignore 를 입력으로 센다. 첫 빌드 뒤에 같은
+        //    코드에서도 해시가 달라지므로 빌드가 만드는 그 폴더를 세 작업 모두에서 뺀다
+        "typecheck": {
+            "inputs": ["$TURBO_DEFAULT$", "!src/app/.well-known/workflow/**"]
+        },
+        "test": {
+            "inputs": ["$TURBO_DEFAULT$", "!src/app/.well-known/workflow/**"]
+        },
+        "build": {
+            "inputs": ["$TURBO_DEFAULT$", "!src/app/.well-known/workflow/**"]
+        }
+    }
+}

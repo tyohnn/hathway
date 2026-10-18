@@ -5,7 +5,7 @@
  * 리포트(에이전트가 파이썬으로 계산)와 대시보드(여기)가 같은 숫자를 내야 하므로,
  * 산식·반올림 위치를 바꾸지 않는다. 산식을 고칠 일이 생기면 양쪽을 함께 고친다.
  *
- * 단위 규약 — 금액은 **억 원**, 주가는 **원**, 비율은 소수(23% → 0.23).
+ * 단위 규약: 금액은 **억 원**, 주가는 **원**, 비율은 소수(23% → 0.23).
  *
  *   ① 3년 후 매출 = 기준연도 매출 × 누적성장배수
  *   ② 영업이익   = 매출 × 영업이익률
@@ -22,7 +22,7 @@ export interface ValuationInput {
     currentPrice: number;
     /** 억 원 */
     currentMarketCap: number;
-    /** 억 원 — 보통 최근 연간 매출 */
+    /** 억 원: 보통 최근 연간 매출 */
     baseRevenue: number;
     /** 영업이익률, 0~1 소수 */
     opmRatio: number;
@@ -42,14 +42,14 @@ export interface ValuationCell {
     fairMarketCap: number;
     /** 원 */
     fairPrice: number;
-    /** 소수 — 2.0 이면 +200% */
+    /** 소수: 2.0 이면 +200% */
     upside: number;
     isNail: boolean;
 }
 
 export interface ValuationRow {
     growth: GrowthCase;
-    /** 표시용 — 배열이면 CAGR 환산치를 병기한다. */
+    /** 표시용: 배열이면 CAGR 환산치를 병기한다. */
     growthLabel: string;
     /** 억 원 */
     revenue: number;
@@ -62,7 +62,7 @@ export interface ValuationRow {
 
 export interface ValuationResult {
     rows: ValuationRow[];
-    /** 원 — 9칸 최소·최대 */
+    /** 원: 9칸 최소·최대 */
     fairPriceRange: [number, number];
     upsideRange: [number, number];
     nail: {
@@ -73,7 +73,7 @@ export interface ValuationResult {
         fairPrice: number;
         upside: number;
     };
-    /** 원 — 낙점 적정주가 ÷ 3 (교재 2장 A2 안전마진) */
+    /** 원: 낙점 적정주가 ÷ 3 (교재 2장 A2 안전마진) */
     entryPrice: number;
     /** 상승여력 ≥ 200% (3년 3배) */
     meetsSafetyMargin: boolean;
@@ -164,7 +164,7 @@ export function computeNineCell(input: ValuationInput): ValuationResult
         const cells: ValuationCell[] = input.perCases.map((per, pi) =>
         {
             const fairMarketCap = netIncome * per;
-            // 발행주식수를 몰라도 되는 비례식 — 시총 비율이 곧 주가 비율이다.
+            // 발행주식수를 몰라도 되는 비례식: 시총 비율이 곧 주가 비율이다.
             const fairPrice = (fairMarketCap / currentMarketCap) * currentPrice;
             return {
                 per,
@@ -220,7 +220,7 @@ export function computeNineCell(input: ValuationInput): ValuationResult
 }
 
 /**
- * 실전 PER = 시가총액 ÷ (영업이익 × 0.8). 교재 9장 C1 — 주가·EPS 가 아니라 시총으로,
+ * 실전 PER = 시가총액 ÷ (영업이익 × 0.8). 교재 9장 C1: 주가·EPS 가 아니라 시총으로,
  * 당기순이익이 아니라 영업이익×80% 로 계산한다(순이익은 일회성 손익으로 오염된다).
  */
 export function practicalPer(

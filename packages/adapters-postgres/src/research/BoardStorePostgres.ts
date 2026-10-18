@@ -2,8 +2,8 @@ import "server-only";
 
 import { Effect, Exit, Layer, Schema } from "effect";
 
-import { BoardDocument, type Board, type Group } from "@investment/research/domain/Board";
-import { BoardStore, BoardStoreError, type RemoveOutcome, type SaveOutcome } from "@investment/research/ports/BoardStore";
+import { BoardDocument, type Board, type Group } from "@hathway/research/domain/Board";
+import { BoardStore, BoardStoreError, type RemoveOutcome, type SaveOutcome } from "@hathway/research/ports/BoardStore";
 
 import type { SqlExecutor } from "../connection.ts";
 

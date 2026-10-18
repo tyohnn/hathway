@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
-import { TooltipProvider } from "@investment/ui/components/tooltip";
+import { TooltipProvider } from "@hathway/ui/components/tooltip";
 
 /**
  * Dark mode. `attribute="class"` matches the `.dark` selector the design system's

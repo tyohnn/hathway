@@ -1,0 +1,28 @@
+{
+    "name": "@hathway/notes",
+    "version": "0.0.1",
+    "private": true,
+    "//": "예시 도메인. `notes` 스키마의 타입과 순수 규칙과 포트를 둔다. 도메인 패키지가 어떤 모양인지 보이려고 세운 것이라 새 제품에서는 이름을 바꾸거나 지운다. 런타임 의존은 effect 뿐이다.",
+    "exports": {
+        "./invariants": "./src/invariants.ts",
+        "./domain/*": "./src/domain/*.ts",
+        "./rules/*": "./src/rules/*.ts",
+        "./ports/*": "./src/ports/*.ts",
+        "./testing/*": "./src/testing/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@hathway/access": "*",
+        "@hathway/shared": "*",
+        "effect": "4.0.0-rc.112"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "typescript": "^5",
+        "vitest": "^4.1.11"
+    }
+}

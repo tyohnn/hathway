@@ -1,16 +1,20 @@
 import { assert, describe, it } from "@effect/vitest";
-import { Effect, Schema } from "effect";
+import { Effect, Layer, Schema } from "effect";
 
-import { TeamDirectory } from "@investment/access/ports/TeamDirectory";
-import { actorOf } from "@investment/access/testing/actor";
-import { teamWorldMemory } from "@investment/access/testing/teamDirectoryMemory";
+import { TeamDirectory } from "@hathway/access/ports/TeamDirectory";
+import { actorOf } from "@hathway/access/testing/actor";
+import { teamWorldMemory } from "@hathway/access/testing/teamDirectoryMemory";
 
-import { changeRole, ChangeRoleInput, currentOrgName, invite, InviteInput, listTeam, removeMember, renameMe } from "./team";
+import { PlanLimits, unlimitedPlanLimits } from "@/extensions/PlanLimits";
+
+import { changeRole, ChangeRoleInput, currentOrgName, invite, InviteInput, listTeam, myAccount, removeMember, renameMe, summarizeTeam, teamOverview } from "./team";
 
 /**
  * 팀 유스케이스. 액션 파일이 부르는 조립을 메모리 명부로 도커 없이 잰다.
  *
  * ⚠ 판정 규칙 자체는 `packages/access` 의 `team.test.ts` 가 잰다. 여기서 보는 것은 **조립이 판정을 건너뛰지 않는가**다.
+ * ⚠ 멤버 한도는 확장 지점(`PlanLimits`)이 답한다. 여기서는 코어의 기본 구현(한도 없음)으로 돌고, 요금제의 한도는 결제
+ *    모듈이 잰다(`modules/<이름>/acceptance.json` 의 검사).
  */
 const setUp = () =>
     Effect.gen(function*()
@@ -29,7 +33,8 @@ const setUp = () =>
 
             return actorOf({ accountId: member?.accountId ?? "", tenantId: team.tenantId, tenantKind: "customer", role });
         };
-        const run = <A>(program: Effect.Effect<A, unknown, TeamDirectory>) => program.pipe(Effect.provide(team.layer));
+        const run = <A>(program: Effect.Effect<A, unknown, TeamDirectory | PlanLimits>) =>
+            program.pipe(Effect.provide(Layer.mergeAll(team.layer, unlimitedPlanLimits)));
 
         return { team, other, as, run };
     });
@@ -118,5 +123,81 @@ describe("팀 유스케이스", () =>
                 directory.addMembership({ tenantId: other.tenantId, accountId: team.members[2]?.accountId ?? "", role: "member" })));
 
             assert.strictEqual(yield* run(currentOrgName(as(2))), `조직 ${team.tenantId}`);
+        }));
+});
+
+describe("팀 화면의 요약", () =>
+{
+    /** 한도를 답하는 모듈이 붙은 자리. 요금제의 한도 자체는 그 모듈이 잰다 */
+    const limited = (maxMembers: number, upgradeHref: string | null) =>
+        Layer.succeed(PlanLimits, PlanLimits.of({ forActor: () => Effect.succeed({ maxMembers, mcp: true, upgradeHref }) }));
+
+    it.effect("역할마다의 수와 초대만 받은 사람의 수를 센다", () =>
+        Effect.gen(function*()
+        {
+            const { as, run } = yield* setUp();
+
+            yield* run(invite(as(0), { email: "new@example.test", role: "member" }));
+
+            const view = yield* run(teamOverview(as(2)));
+
+            assert.deepStrictEqual(view.summary.roles, { owner: 1, admin: 1, member: 2 });
+            assert.deepStrictEqual([view.summary.total, view.summary.joined, view.summary.invited], [4, 3, 1]);
+            assert.isFalse(view.canManage);
+        }));
+
+    it.effect("멤버 한도가 없으면 자리를 재지 않고 인원만 센다", () =>
+        Effect.gen(function*()
+        {
+            const { as, run } = yield* setUp();
+            const view = yield* run(teamOverview(as(0)));
+
+            assert.isNull(view.summary.seats);
+            assert.isNull(view.upgradeHref);
+            assert.strictEqual(view.summary.total, 3);
+        }));
+
+    it.effect("멤버 한도가 있으면 초대만 받은 사람까지 자리로 세고, 남은 자리와 한도를 올리러 갈 주소를 함께 준다", () =>
+        Effect.gen(function*()
+        {
+            const { team, as } = yield* setUp();
+            const layer = Layer.mergeAll(team.layer, limited(5, "/settings/billing"));
+
+            yield* invite(as(0), { email: "new@example.test", role: "member" }).pipe(Effect.provide(layer));
+
+            const view = yield* teamOverview(as(0)).pipe(Effect.provide(layer));
+
+            assert.deepStrictEqual(view.summary.seats, { max: 5, left: 1 });
+            assert.strictEqual(view.upgradeHref, "/settings/billing");
+        }));
+
+    it.effect("한도보다 많이 들어와 있어도 남은 자리는 0 아래로 내려가지 않는다", () =>
+        Effect.gen(function*()
+        {
+            const { as, run } = yield* setUp();
+            const { members } = yield* run(listTeam(as(0)));
+
+            assert.deepStrictEqual(summarizeTeam(members, 2).seats, { max: 2, left: 0 });
+        }));
+});
+
+describe("내 계정", () =>
+{
+    it.effect("지금 들어온 팀의 이름과 내 역할을 주고, 다른 팀은 속해 있을 때만 준다", () =>
+        Effect.gen(function*()
+        {
+            const { team, other, as, run } = yield* setUp();
+            const alone = yield* run(myAccount(as(2)));
+
+            assert.deepStrictEqual(alone, { email: "kim@example.test", name: "김", role: "member", team: `조직 ${team.tenantId}`, otherTeams: [] });
+
+            yield* run(Effect.flatMap(TeamDirectory, (directory) =>
+                directory.addMembership({ tenantId: other.tenantId, accountId: team.members[2]?.accountId ?? "", role: "admin" })));
+
+            const both = yield* run(myAccount(as(2)));
+
+            // 역할은 지금 들어온 팀의 것이다. 다른 팀에서 관리자여도 여기서는 멤버다
+            assert.strictEqual(both.role, "member");
+            assert.deepStrictEqual(both.otherTeams, [`조직 ${other.tenantId}`]);
         }));
 });

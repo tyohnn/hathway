@@ -16,5 +16,5 @@ export class AuthSettingsUnavailable extends Schema.TaggedError<AuthSettingsUnav
 export class AuthSettings extends Context.Service<AuthSettings, {
     /** 이메일 확인이 켜져 있는가. 켜졌다고 확실할 때만 `true` 다 */
     readonly emailConfirmationEnforced: Effect.Effect<boolean, AuthSettingsUnavailable>;
-}>()("@investment/access/ports/AuthSettings")
+}>()("@hathway/access/ports/AuthSettings")
 {}

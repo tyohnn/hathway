@@ -3,9 +3,9 @@
 import type React from "react";
 import { useState } from "react";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@investment/ui/components/collapsible";
-import { ChevronDown, ShieldCheck } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hathway/ui/components/collapsible";
+import { ChevronDown, ShieldCheck } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TONE_TEXT } from "../tone";
 import { CodeBlock } from "./CodeBlock";

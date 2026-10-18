@@ -1,0 +1,20 @@
+{
+    "name": "hathway-local",
+    "interface": {
+        "displayName": "Hathway (로컬)"
+    },
+    "plugins": [
+        {
+            "name": "hathway",
+            "source": {
+                "source": "local",
+                "path": "./plugin"
+            },
+            "policy": {
+                "installation": "AVAILABLE",
+                "authentication": "ON_INSTALL"
+            },
+            "category": "Productivity"
+        }
+    ]
+}

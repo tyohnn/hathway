@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@investment/ui/components/button";
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { ChevronLeft, ChevronRight } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Button } from "@hathway/ui/components/button";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { ChevronLeft, ChevronRight } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { useDataTable } from "./context";
 import { ChevronsLeft, ChevronsRight } from "../icons/extra";

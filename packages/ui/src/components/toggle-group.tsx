@@ -6,7 +6,7 @@ import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group
 import { type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-import { toggleVariants } from "@investment/ui/components/toggle"
+import { toggleVariants } from "@hathway/ui/components/toggle"
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
@@ -26,6 +26,7 @@ function ToggleGroup({
   size,
   spacing = 2,
   orientation = "horizontal",
+  style,
   children,
   ...props
 }: ToggleGroupPrimitive.Props &
@@ -40,7 +41,7 @@ function ToggleGroup({
       data-size={size}
       data-spacing={spacing}
       data-orientation={orientation}
-      style={{ "--gap": spacing } as React.CSSProperties}
+      style={{ ...({ "--gap": spacing } as React.CSSProperties), ...style }}
       className={cn(
         "cn-toggle-group group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] data-vertical:flex-col data-vertical:items-stretch",
         className

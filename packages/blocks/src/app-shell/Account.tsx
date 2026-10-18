@@ -1,4 +1,4 @@
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 
 import { PendingText } from "../pending";
 import { APP_SHELL_LABELS } from "./labels";
@@ -16,9 +16,16 @@ import type { AppShellAccountProps, AppShellLabels } from "./types";
  * ⚠ **권한 축을 화면에 적지 않는다.** 사람이 자기 계정을 알아보는 데 필요한 것은 이메일 하나다.
  *    `org` 은 어느 조직으로 들어와 있는지를 적는 한 줄이지 등급이 아니다.
  *
+ * ⚠ **접힌 사이드바(아이콘만)에서는 얼굴만 선다.** 이름과 로그아웃은 좁은 띠에 들어가지 않아 띠 밖으로 삐져나온다.
+ *    로그아웃은 사이드바를 펴면 다시 선다.
+ *
  * ⚠ **기다리는 얼굴은 `loading` 이다.** 같은 줄에 이름 자리만 막대이고 단추는 꺼진 채 같은 자리에 선다. 값이 와도
  *    사이드바 발치가 움직이지 않는다.
  */
+const ROW = "flex items-center gap-2 px-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0";
+const NAME = "flex min-w-0 flex-col group-data-[collapsible=icon]:hidden";
+const SIGN_OUT = "ml-auto group-data-[collapsible=icon]:hidden";
+
 export function AppShellAccount(props: AppShellAccountProps)
 {
     const text: AppShellLabels = { ...APP_SHELL_LABELS, ...props.labels };
@@ -26,12 +33,12 @@ export function AppShellAccount(props: AppShellAccountProps)
     if (props.loading === true)
     {
         return (
-            <div aria-busy className="flex items-center gap-2 px-1">
+            <div aria-busy className={ROW}>
                 <span aria-hidden className="bg-muted flex size-6 shrink-0 rounded-full" />
-                <span className="flex min-w-0 flex-col">
+                <span className={NAME}>
                     <span className="truncate text-[13px] leading-[18px] font-medium"><PendingText length={6} /></span>
                 </span>
-                <Button className="ml-auto" disabled size="xs" type="button" variant="ghost">{text.signOut}</Button>
+                <Button className={SIGN_OUT} disabled size="xs" type="button" variant="ghost">{text.signOut}</Button>
             </div>
         );
     }
@@ -40,15 +47,15 @@ export function AppShellAccount(props: AppShellAccountProps)
     const shown = name === undefined || name === "" ? email : name;
 
     return (
-        <div className="flex items-center gap-2 px-1">
+        <div className={ROW}>
             <span aria-hidden className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold">
                 {shown.slice(0, 1).toUpperCase()}
             </span>
-            <span className="flex min-w-0 flex-col">
+            <span className={NAME}>
                 <span className="truncate text-[13px] leading-[18px] font-medium">{shown}</span>
                 {org === undefined ? null : <span className="text-muted-foreground text-xs leading-4">{org}</span>}
             </span>
-            <form action={onSignOut} className="ml-auto">
+            <form action={onSignOut} className={SIGN_OUT}>
                 <Button type="submit" variant="ghost" size="xs">{text.signOut}</Button>
             </form>
         </div>

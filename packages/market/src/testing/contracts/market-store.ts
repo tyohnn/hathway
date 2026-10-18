@@ -1,7 +1,7 @@
 import { assert, describe, it } from "@effect/vitest";
 import { Effect, type Layer } from "effect";
 
-import type { Company, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@investment/schema";
+import type { Company, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@hathway/schema";
 
 import type { FinPeriodRow } from "../../domain/rows.ts";
 import { CompanyDirectory, FilingLedger, FinancialPeriods } from "../../ports/MarketStore.ts";

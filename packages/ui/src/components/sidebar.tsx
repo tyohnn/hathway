@@ -6,24 +6,24 @@ import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-import { useIsMobile } from "@investment/ui/hooks/use-mobile"
-import { Button } from "@investment/ui/components/button"
-import { Input } from "@investment/ui/components/input"
-import { Separator } from "@investment/ui/components/separator"
+import { useIsMobile } from "@hathway/ui/hooks/use-mobile"
+import { Button } from "@hathway/ui/components/button"
+import { Input } from "@hathway/ui/components/input"
+import { Separator } from "@hathway/ui/components/separator"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@investment/ui/components/sheet"
-import { Skeleton } from "@investment/ui/components/skeleton"
+} from "@hathway/ui/components/sheet"
+import { Skeleton } from "@hathway/ui/components/skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@investment/ui/components/tooltip"
-import { PanelLeft } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+} from "@hathway/ui/components/tooltip"
+import { PanelLeft } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

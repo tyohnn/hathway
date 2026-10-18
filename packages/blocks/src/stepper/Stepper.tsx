@@ -1,7 +1,7 @@
 "use client";
 
-import { CircleCheck, TriangleAlert } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { CircleCheck, TriangleAlert } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { Step, StepStatus, StepperProps } from "./types";
 

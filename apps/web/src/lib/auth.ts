@@ -4,13 +4,13 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { Effect, Layer } from "effect";
 
-import { accountDirectoryPostgresLayer } from "@investment/adapters-postgres/org/AccountDirectoryPostgres";
-import { authSettingsSupabaseLayer } from "@investment/adapters-storage/AuthSettingsSupabase";
-import { signedInUserOf, type SignedInUser } from "@investment/access/access/accountLink";
-import { actorForApp } from "@investment/access/access/actorForApp";
-import { resolveAccountFacts } from "@investment/access/access/resolveAccount";
-import { poolExecutor, postgresPool } from "@investment/adapters-postgres/connection";
-import { ActorResolver, NoSession, NotAppMember } from "@investment/access/ports/ActorResolver";
+import { accountDirectoryPostgresLayer } from "@hathway/adapters-postgres/org/AccountDirectoryPostgres";
+import { authSettingsSupabaseLayer } from "@hathway/adapters-storage/AuthSettingsSupabase";
+import { signedInUserOf, type SignedInUser } from "@hathway/access/access/accountLink";
+import { actorForApp } from "@hathway/access/access/actorForApp";
+import { resolveAccountFacts } from "@hathway/access/access/resolveAccount";
+import { poolExecutor, postgresPool } from "@hathway/adapters-postgres/connection";
+import { ActorResolver, NoSession, NotAppMember } from "@hathway/access/ports/ActorResolver";
 
 /**
  * 요청 하나의 행위자 확정(`ActorResolver` 의 어댑터).

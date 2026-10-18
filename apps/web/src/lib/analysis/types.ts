@@ -1,10 +1,10 @@
 /**
- * 종목 분석 IA — 분석 화면 / 위젯 메타 타입. 레이아웃은 catalog 상수로만 정의한다.
+ * 종목 분석 IA: 분석 화면 / 위젯 메타 타입. 레이아웃은 catalog 상수로만 정의한다.
  *
  * IA 는 주제별 서랍이 아니라 **순서 있는 논증**이다. 교재의 의존 그래프
  * (B1 능력범위 → B2 해자 → B3 산업 → C3 매출 → C2 5단계 → A2 진입가)를 그대로 화면
  * 순서로 옮겼고, 리포트 골격(`plugin/skills/company-analysis/references/report-templates.md`)
- * 과 1:1 로 맞춘다 — 에이전트가 쓰는 리포트와 대시보드가 같은 뼈대를 공유해야
+ * 과 1:1 로 맞춘다: 에이전트가 쓰는 리포트와 대시보드가 같은 뼈대를 공유해야
  * 한쪽에서 채운 내용이 다른 쪽에서 그대로 읽힌다.
  */
 
@@ -13,7 +13,7 @@ export type TrustLevel = "filing" | "ir" | "news" | "estimate" | "secondary";
 /**
  * 이 화면을 지금 무엇이 채울 수 있는가.
  *
- * 로드맵의 수익 구조가 여기에 걸려 있다 — 정형(DB)은 전 종목 무료로 즉시 채워지고,
+ * 로드맵의 수익 구조가 여기에 걸려 있다: 정형(DB)은 전 종목 무료로 즉시 채워지고,
  * 정성 판정은 에이전트가 생성한다. 그래서 'agent' 는 결함이 아니라 제품의 한 상태다.
  */
 export type DataState =
@@ -35,7 +35,7 @@ export type BoardId =
   | "watch";
 
 export type WidgetId =
-  // 1 판정 — 판정 자체는 위젯이 아니라 9칸에서 파생되는 전용 화면이다
+  // 1 판정: 판정 자체는 위젯이 아니라 9칸에서 파생되는 전용 화면이다
   // 2 능력범위
   | "business-model"
   | "segment-mix"
@@ -62,7 +62,7 @@ export type WidgetId =
   | "scorecard"
   | "phase-three-qs"
   | "bullwhip-cycle"
-  // 6 밸류에이션 — 9칸 자체는 위젯이 아니라 전용 인터랙티브 화면이다
+  // 6 밸류에이션: 9칸 자체는 위젯이 아니라 전용 인터랙티브 화면이다
   | "market-share-frame"
   | "margin-three-layers"
   | "per-basis"
@@ -73,12 +73,6 @@ export type WidgetId =
   | "sell-triggers"
   | "news-yt-facts";
 
-export interface TextbookLink {
-    label: string;
-    /** 교재 경로, 예: /book/book1/C2 */
-    href: string;
-}
-
 export interface AnalysisWidgetMeta {
     id: WidgetId;
     title: string;
@@ -86,7 +80,6 @@ export interface AnalysisWidgetMeta {
     claim: string;
     question?: string;
     trust: TrustLevel;
-    textbooks: TextbookLink[];
     /** tracking topic 필터 (DB 연결용) */
     trackingTopics?: string[];
 }
@@ -103,8 +96,6 @@ export interface AnalysisBoardMeta {
     slug: string;
     kind: "widgets" | "source" | "valuation";
     dataState: DataState;
-    /** 이 단계의 근거가 되는 교재 장. */
-    textbooks: TextbookLink[];
     widgets: WidgetId[];
     /**
    * dataState 가 'agent' 인 화면에서 "에이전트가 무엇을 써 줄 것인가"를 설명하는 문구.

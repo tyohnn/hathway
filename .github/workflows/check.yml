@@ -1,0 +1,103 @@
+# 저장소의 게이트를 PR 마다 돌린다.
+#
+# ⚠ 한 잡이다. 타입체크와 테스트를 나누면 의존 설치와 도커 기동을 두 번 하게 되고,
+#    그 값이 검사를 나눠 얻는 것보다 크다.
+#
+# 게이트 넷이 여기로 들어온다. 셋은 이미 `turbo test` 안에 물려 있다.
+#   - 타입체크            turbo typecheck
+#   - 단위·계약 테스트     turbo test
+#   - 불변식 인용 검사     @hathway/shared 의 test 스크립트가 함께 돌린다(주석·마이그레이션 검사도 같은 자리다)
+#   - 토큰 스캔           @hathway/ui 의 test 스크립트가 그것 자체다
+#
+# turbo 캐시를 실행 사이에 이어 쓴다. 입력 해시가 같은 작업은 다시 돌지 않고 앞선 결과를 받아 오므로,
+# 고친 패키지와 그 패키지에 의존하는 쪽만 실제로 돈다. 저장소의 다른 자리를 읽는 검사는
+# 각 패키지의 turbo.json 이 inputs 로 선언해서 캐시가 그 검사를 건너뛰지 않는다.
+#
+# ⚠ e2e(Playwright)는 여기 없다. 앱을 띄워야 해서 시간이 배로 들고, 이 워크플로가
+#    맡은 것은 「빠르고 믿을 만한 게이트」다. 붙일 때는 별도 잡으로 세운다.
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 같은 브랜치에 새 푸시가 오면 앞의 실행을 접는다. main 은 접지 않는다 —
+# 거기서는 모든 커밋의 결과가 남아야 어느 커밋이 깨뜨렸는지 알 수 있다.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # ⚠ 키에 커밋을 넣어 실행마다 새 항목으로 저장하고, 받을 때는 앞머리로 가장 최근 것을 고른다.
+      #    PR 은 자기 브랜치의 지난 실행을 먼저 찾고 없으면 main 의 것을 받는다. main 에 밀 때마다
+      #    전체가 돌며 저장되므로 새 PR 도 첫 실행부터 main 의 결과를 이어 쓴다.
+      #    저장은 잡이 성공했을 때만 일어난다. 실패한 실행은 일부 작업만 돌아서 정리 단계가 필요한
+      #    해시까지 지우게 되기 때문이다.
+      #    캐시를 통째로 버려야 할 때는 키의 `v1` 을 올린다.
+      - uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-v1-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-v1-${{ runner.os }}-
+
+      # 계약 테스트 둘이 모두 캐시에 있으면 아래 두 단계를 건너뛰어 스택 기동의 1분 30초를 아낀다.
+      # 무엇으로 판정하고 틀리면 어떻게 되는지는 스크립트 머리말에 있다
+      - id: stack
+        run: node .github/scripts/needs-supabase.mjs >> "$GITHUB_OUTPUT"
+
+      # ⚠ 계약 테스트가 붙는 자리가 둘이다. `packages/adapters-postgres` 는 DB(54362)에 직결하고
+      #    `packages/adapters-storage` 는 인증 서버의 공개 설정(`/auth/v1/settings`)을 HTTP 로 읽는다.
+      #    그래서 컨테이너가 셋 필요하다.
+      #
+      #      db      마이그레이션과 시드가 여기 선다
+      #      gotrue  인증 서버. `AuthSettingsSupabase` 의 계약 테스트가 이 설정을 읽는다
+      #      kong    54361 로 들어온 요청을 gotrue 로 보낸다. 밖에 열린 포트가 이것뿐이라
+      #              빼면 gotrue 가 떠 있어도 닿을 길이 없다
+      #
+      #    나머지는 전부 뺀다. 서류를 올리는 포트가 이 저장소에 없어서 storage-api 도 뺀다.
+      #    `start` 가 마이그레이션과 `supabase/seed.sql` 을 함께 적용하므로 `db reset` 은 필요 없다.
+      #
+      # ⚠ plain Postgres 컨테이너로 바꾸지 말 것. 마이그레이션이 service_role 에 GRANT 를 주고
+      #    시드가 `auth.users` 에 행을 넣어서, 그 부트스트랩을 우리가 흉내 내야 한다. 그 사본이
+      #    어긋나는 날 계약 테스트가 거짓으로 초록이 된다.
+      - if: steps.stack.outputs.needed == 'true'
+        uses: supabase/setup-cli@v1
+        with:
+          # ⚠ 버전을 고정한다. latest 로 두면 어느 날 CLI 가 달라져 CI 만 깨진다.
+          version: 2.117.0
+
+      - name: 로컬 스택 (DB · Auth · Kong)
+        if: steps.stack.outputs.needed == 'true'
+        run: >
+          supabase start
+          -x storage-api,realtime,imgproxy,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+
+      # `--summarize` 는 이번 실행이 쓴 작업 해시를 남긴다. 마지막 정리 단계가 그것을 읽는다
+      - run: npx turbo typecheck --summarize
+
+      # 접속 문자열(`WEB_DATABASE_URL` · `AGENT_DATABASE_URL` · `OWNER_DATABASE_URL`)과 API 의 주소·열쇠는 두 어댑터
+      # 패키지의 `vitest.config.ts` 가 로컬 기본값(54362 · 54361)으로 깐다. 열쇠는 `supabase start` 가
+      # 누구에게나 같은 것을 찍어 주는 데모 값이고, 로컬이 아닌 주소를 가리키면 그 검사가 아예 시작하지 않는다.
+      - run: npx turbo test --summarize
+
+      - run: npx turbo build --summarize
+
+      # 저장하기 전에 이번 실행이 쓰지 않은 해시를 지운다. 까닭은 스크립트 머리말에 있다
+      - run: node .github/scripts/prune-turbo-cache.mjs
+

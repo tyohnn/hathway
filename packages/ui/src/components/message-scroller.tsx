@@ -9,9 +9,9 @@ import {
 } from "@shadcn/react/message-scroller"
 import { cn } from "cn"
 
-import { Button } from "@investment/ui/components/button"
-import { ArrowDown } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { Button } from "@hathway/ui/components/button"
+import { ArrowDown } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function MessageScrollerProvider(
   props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>

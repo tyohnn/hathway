@@ -1,9 +1,9 @@
 "use client";
 
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@investment/ui/components/alert";
-import { Button } from "@investment/ui/components/button";
-import { CircleCheck, Info, TriangleAlert, X } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@hathway/ui/components/alert";
+import { Button } from "@hathway/ui/components/button";
+import { CircleCheck, Info, TriangleAlert, X } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TONE_TEXT, type Tone } from "../tone";
 import { CALLOUT_LABELS } from "./labels";

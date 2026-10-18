@@ -19,8 +19,8 @@ import {
     type SortingState,
 } from "@tanstack/react-table";
 
-import { Card } from "@investment/ui/components/card";
-import { cn } from "@investment/ui/lib/utils";
+import { Card } from "@hathway/ui/components/card";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { collectRange, normalizeRange } from "./cell-range";
 import { buildColumnDefs, cellText, isMetaColumnId, META_COLUMN, metaColumnIds, toFilterValue } from "./columns";

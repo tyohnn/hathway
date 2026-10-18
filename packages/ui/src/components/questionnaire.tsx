@@ -4,9 +4,9 @@ import * as React from "react"
 import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire"
 import { cn } from "cn"
 
-import { buttonVariants, type Button } from "@investment/ui/components/button"
-import { Check } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { buttonVariants, type Button } from "@hathway/ui/components/button"
+import { Check } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Questionnaire({
   className,

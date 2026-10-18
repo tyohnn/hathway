@@ -1,0 +1,18 @@
+{
+    "//": "이 모듈을 붙이거나 뗀 뒤 반드시 지나야 할 검사. 붙였으면 전부, 뗐으면 checks 와 코어의 검사(turbo typecheck test · web e2e)가 초록이어야 한다.",
+    "checks": [
+        { "cwd": ".", "run": "npm run check:modules -w @hathway/shared" },
+        { "cwd": ".", "run": "npm run check:dependencies -w @hathway/shared" },
+        { "cwd": ".", "run": "npm run check:invariants -w @hathway/shared" },
+        { "cwd": ".", "run": "npx turbo typecheck" }
+    ],
+    "unit": [
+        { "cwd": "packages/analytics", "run": "npx vitest run" },
+        { "cwd": "packages/adapters-posthog", "run": "npx vitest run" },
+        { "cwd": "apps/web", "run": "npx vitest run src/modules/posthog src/extensions" }
+    ],
+    "contract": [],
+    "e2e": [
+        { "cwd": "apps/web", "run": "npm run e2e -- analytics.spec.ts", "needs": "supabase start" }
+    ]
+}

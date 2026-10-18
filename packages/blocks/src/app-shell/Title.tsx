@@ -8,7 +8,7 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@investment/ui/components/breadcrumb";
+} from "@hathway/ui/components/breadcrumb";
 
 import { activeTrail } from "./active";
 import { APP_SHELL_LABELS } from "./labels";

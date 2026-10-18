@@ -11,8 +11,8 @@ import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
-} from "@investment/ui/components/sidebar";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/sidebar";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { AppShellNav } from "./Nav";
 import { AppShellTitle } from "./Title";
@@ -51,16 +51,17 @@ import type { AppShellProps } from "./types";
  *    `user` 뿐이고, 셸을 통째로 `<Suspense>` 에 넣으면 `children` 이 fallback 과 본문에서 두 번 그려진다.
  */
 export function AppShell(
-    { brand, groups, nav, title, user, children, layout = "well", labels, className }: AppShellProps,
+    { brand, groups, nav, title, user, tools, footerGroups, footerNav, children, layout = "well", labels, className }: AppShellProps,
 )
 {
     return (
         <SidebarProvider
             style={{ "--sidebar-width-icon": "var(--sidebar-collapsed-width)" } as React.CSSProperties}
-            // ⚠ **`full` 은 화면 높이에 묶는다**(2026-09-23 사용자 확정). 묶지 않으면 셸이 본문만큼 자라서
-            //    문서 전체가 구르고, 대화의 머리와 곁칸이 말과 함께 위로 밀려 올라간다. 구르는 자리는
-            //    기둥마다 제 안에 둔다
-            className={layout === "full" ? "h-svh overflow-hidden" : undefined}
+            // ⚠ **셸은 화면 높이에 묶는다**(`full` 2026-09-23 · `well` 2026-10-02 사용자 확정). 묶지 않으면 셸이
+            //    본문만큼 자라서 문서 전체가 구르고, 위 띠와 판의 테두리가 본문과 함께 위로 밀려 올라간다.
+            //    구르는 자리는 안쪽에 둔다: `well` 은 본문(`main`)이 구르고, `full` 은 기둥마다 제 안에서 구른다.
+            //    ⚠ 위 띠를 `sticky` 로 붙이는 길은 없다. 판이 모서리를 깎느라 `overflow: hidden` 이라 붙을 자리가 없다
+            className="h-svh overflow-hidden"
         >
             {/*
               * ⚠ **떠 있는 사이드바다**(2026-09-28, loam). 사이드바와 본문이 검은 바닥 위의 판 둘로 서고 둘 다
@@ -89,6 +90,13 @@ export function AppShell(
                     )}
                 </SidebarHeader>
 
+                {tools === undefined
+                    ? null
+                    : (
+                        // 찾기 · 만들기. 머리의 브랜드와 메뉴 사이에 서고, 무엇이 서는지는 앱이 정한다
+                        <SidebarGroup className="pb-0">{tools}</SidebarGroup>
+                    )}
+
                 <SidebarContent>
                     <SidebarGroup>
                         {/* 기다리는 동안에는 같은 목록이 아무것도 켜지지 않은 채로 선다 */}
@@ -97,6 +105,17 @@ export function AppShell(
                         </Suspense>
                     </SidebarGroup>
                 </SidebarContent>
+
+                {footerGroups === undefined || footerGroups.length === 0
+                    ? null
+                    : (
+                        // 가끔 가는 곳. 메뉴와 같은 모양이고 계정 자리 바로 위에 선다
+                        <SidebarGroup className="mt-auto pt-0">
+                            <Suspense fallback={<AppShellNav groups={footerGroups} pathname="" />}>
+                                {footerNav ?? <AppShellNav groups={footerGroups} pathname="" />}
+                            </Suspense>
+                        </SidebarGroup>
+                    )}
 
                 <SidebarFooter className="border-t border-sidebar-border">{user}</SidebarFooter>
             </Sidebar>
@@ -123,6 +142,10 @@ export function AppShell(
                   * ⚠ **본문 자리는 `<div>` 다.** `SidebarInset` 이 이미 `<main>` 을 그린다. 여기서 또 그리면 본문
                   *    랜드마크가 두 겹이 되어 스크린리더가 본문을 둘로 읽고, `getByRole("main")` 이 둘을 잡는다
                   *    (2026-10-02 실측).
+                  *
+                  * ⚠ **`well` 에서 화면이 `data-screen="fill"` 을 달면 우물을 푼다.** 표 · 기둥으로 판을 다 쓰는 화면은 가운데로
+                  *    모은 너비와 큰 여백 대신 판의 가장자리까지 쓴다(안쪽 여백 16px). 셸이 화면을 알 필요 없이 화면이 스스로
+                  *    고른다. 서버가 구운 틀에서도 같은 모양이라 붙을 때 움직이지 않는다
                   */}
                 {layout === "full"
                     ? (
@@ -131,8 +154,12 @@ export function AppShell(
                         </div>
                     )
                     : (
-                        <div className={cn("flex min-h-0 flex-1 flex-col bg-canvas px-8 py-6", className)}>
-                            <div className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6">
+                        <div className={cn("flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-8 py-6 has-[[data-screen=fill]]:p-4", className)}>
+                            {/*
+                              * ⚠ **`min-h-0` 이 있어야 화면이 판의 높이에 맞춰 설 수 있다.** 화면이 `min-h-0 flex-1` 로 서면 남은
+                              *    높이를 채우고 제 안에서 구르고(목록 · 기둥 화면), 그러지 않으면 내용만큼 자라 본문이 구른다
+                              */}
+                            <div className="mx-auto flex min-h-0 w-full max-w-[1280px] flex-1 flex-col gap-6 has-[[data-screen=fill]]:max-w-none">
                                 {children}
                             </div>
                         </div>

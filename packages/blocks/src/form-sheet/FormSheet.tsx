@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 import {
     Sheet,
     SheetClose,
@@ -9,8 +9,8 @@ import {
     SheetFooter,
     SheetHeader,
     SheetTitle,
-} from "@investment/ui/components/sheet";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/sheet";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { FieldGroup } from "../field-group";
 import { FORM_SHEET_LABELS } from "./labels";

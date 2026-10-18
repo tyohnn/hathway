@@ -19,8 +19,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@investment/ui/components/dropdown-menu"
-import { Check } from "@investment/ui/icons"
+} from "@hathway/ui/components/dropdown-menu"
+import { Check } from "@hathway/ui/icons"
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (

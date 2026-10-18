@@ -10,13 +10,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@investment/ui/components/dialog"
+} from "@hathway/ui/components/dialog"
 import {
   InputGroup,
   InputGroupAddon,
-} from "@investment/ui/components/input-group"
-import { Check, Search } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+} from "@hathway/ui/components/input-group"
+import { Check, Search } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Command({
   className,

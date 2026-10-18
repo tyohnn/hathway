@@ -1,6 +1,6 @@
 import { Effect, Layer } from "effect";
 
-import type { Company, CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@investment/schema";
+import type { Company, CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@hathway/schema";
 
 import type { FinPeriodRow, RawSection } from "../domain/rows.ts";
 import { CompanyDirectory, FilingDocuments, FilingLedger, FinancialPeriods } from "../ports/MarketStore.ts";

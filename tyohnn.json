@@ -1,25 +1,39 @@
 {
     "version": 1,
     "source": {
-        "commit": "2a6f9c35ba95a6fc53a241aebc0e8e2887f2e21d",
+        "commit": "ea3e35c9457150484ff9f9f4ad7e1009e0c0c2f2",
         "kind": "github",
-        "ref": "main",
+        "ref": "ea3e35c9457150484ff9f9f4ad7e1009e0c0c2f2",
         "repo": "tyohnn/ui"
     },
     "project": "monorepo",
-    "packageManager": "pnpm",
+    "packageManager": "npm",
     "ui": {
         "path": "packages/ui",
-        "importBase": "@investment/ui",
+        "importBase": "@hathway/ui",
         "systems": [
             "graphite"
         ],
         "icons": [
             "phosphor"
         ],
-        "locale": "ko"
+        "locale": "ko",
+        "blocks": true
     },
     "apps": {
+        "apps/agent": {
+            "framework": "next",
+            "system": "graphite",
+            "icons": "phosphor",
+            "fonts": {
+                "sans": "pretendard",
+                "heading": "inherit",
+                "mono": "system",
+                "hangulFallback": "pretendard"
+            },
+            "mode": "dark",
+            "css": "apps/agent/src/app/globals.css"
+        },
         "apps/web": {
             "framework": "next",
             "system": "graphite",
@@ -31,45 +45,440 @@
                 "hangulFallback": "pretendard"
             },
             "mode": "dark",
-            "css": "apps/web/src/app/global.css"
+            "css": "apps/web/src/app/globals.css"
         }
     },
     "packages": {
+        "apps/agent/package.json": [
+            "pretendard"
+        ],
         "apps/web/package.json": [
-            "@investment/ui",
             "pretendard"
         ],
         "packages/ui/package.json": [
-            "@base-ui/react",
-            "@phosphor-icons/react",
-            "@shadcn/react",
-            "@types/react",
-            "@types/react-dom",
-            "class-variance-authority",
-            "cmdk",
-            "cn",
-            "date-fns",
-            "embla-carousel-react",
-            "input-otp",
-            "react",
-            "react-day-picker",
-            "react-dom",
-            "react-resizable-panels",
-            "recharts",
-            "shadcn",
-            "tailwindcss",
-            "tw-animate-css",
-            "typescript"
+            "@phosphor-icons/react"
         ]
     },
     "files": {
+        "packages/ui/src/blocks/action-item-list.tsx": {
+            "from": "registry/blocks/action-item-list.tsx",
+            "hash": "sha256-8605622cfd4e947b"
+        },
+        "packages/ui/src/blocks/activity-bars.tsx": {
+            "from": "registry/blocks/activity-bars.tsx",
+            "hash": "sha256-be7968e5557b5911"
+        },
+        "packages/ui/src/blocks/activity-feed.tsx": {
+            "from": "registry/blocks/activity-feed.tsx",
+            "hash": "sha256-d162e73e5086c7ff"
+        },
+        "packages/ui/src/blocks/agenda.tsx": {
+            "from": "registry/blocks/agenda.tsx",
+            "hash": "sha256-ce34ab30c717050a"
+        },
+        "packages/ui/src/blocks/article-heading.tsx": {
+            "from": "registry/blocks/article-heading.tsx",
+            "hash": "sha256-fe42c44a954b17c4"
+        },
+        "packages/ui/src/blocks/attachment-list.tsx": {
+            "from": "registry/blocks/attachment-list.tsx",
+            "hash": "sha256-e0d15279ec3494ce"
+        },
+        "packages/ui/src/blocks/avatar-stack.tsx": {
+            "from": "registry/blocks/avatar-stack.tsx",
+            "hash": "sha256-c084f3b1cb8f83b8"
+        },
+        "packages/ui/src/blocks/byline.tsx": {
+            "from": "registry/blocks/byline.tsx",
+            "hash": "sha256-8a29dee6e64bc922"
+        },
+        "packages/ui/src/blocks/calendar-toolbar.tsx": {
+            "from": "registry/blocks/calendar-toolbar.tsx",
+            "hash": "sha256-aab55ed5acc2338b"
+        },
+        "packages/ui/src/blocks/callout-list.tsx": {
+            "from": "registry/blocks/callout-list.tsx",
+            "hash": "sha256-cd26cc678899ff2c"
+        },
+        "packages/ui/src/blocks/card-toolbar.tsx": {
+            "from": "registry/blocks/card-toolbar.tsx",
+            "hash": "sha256-ac674ede1fc009f2"
+        },
+        "packages/ui/src/blocks/category-bar-chart.tsx": {
+            "from": "registry/blocks/category-bar-chart.tsx",
+            "hash": "sha256-f436467a1884c427"
+        },
+        "packages/ui/src/blocks/chat-notice.tsx": {
+            "from": "registry/blocks/chat-notice.tsx",
+            "hash": "sha256-541f33a595b5a0c0"
+        },
+        "packages/ui/src/blocks/chat-prompt.tsx": {
+            "from": "registry/blocks/chat-prompt.tsx",
+            "hash": "sha256-c74a70c4f9149a34"
+        },
+        "packages/ui/src/blocks/chat-reply.tsx": {
+            "from": "registry/blocks/chat-reply.tsx",
+            "hash": "sha256-eafc25540ec6fab3"
+        },
+        "packages/ui/src/blocks/checkbox-matrix.tsx": {
+            "from": "registry/blocks/checkbox-matrix.tsx",
+            "hash": "sha256-f16e92f273773d39"
+        },
+        "packages/ui/src/blocks/checklist.tsx": {
+            "from": "registry/blocks/checklist.tsx",
+            "hash": "sha256-ee06d6daaaec3f2a"
+        },
+        "packages/ui/src/blocks/code-block.tsx": {
+            "from": "registry/blocks/code-block.tsx",
+            "hash": "sha256-09bfa3990bfbf8d8"
+        },
+        "packages/ui/src/blocks/code-tabs.tsx": {
+            "from": "registry/blocks/code-tabs.tsx",
+            "hash": "sha256-c894d3a8c9680831"
+        },
+        "packages/ui/src/blocks/collapsed-thread.tsx": {
+            "from": "registry/blocks/collapsed-thread.tsx",
+            "hash": "sha256-c5457294e08f3151"
+        },
+        "packages/ui/src/blocks/comment-thread.tsx": {
+            "from": "registry/blocks/comment-thread.tsx",
+            "hash": "sha256-2620a96a5ca168bd"
+        },
+        "packages/ui/src/blocks/compact-select.tsx": {
+            "from": "registry/blocks/compact-select.tsx",
+            "hash": "sha256-7a3ffc93f511820b"
+        },
+        "packages/ui/src/blocks/contact-options.tsx": {
+            "from": "registry/blocks/contact-options.tsx",
+            "hash": "sha256-c4aed64abb8755da"
+        },
+        "packages/ui/src/blocks/data-table-card.tsx": {
+            "from": "registry/blocks/data-table-card.tsx",
+            "hash": "sha256-44858c91a1d72cd6"
+        },
+        "packages/ui/src/blocks/data-table.tsx": {
+            "from": "registry/blocks/data-table.tsx",
+            "hash": "sha256-1068df2a321965d4"
+        },
+        "packages/ui/src/blocks/definition-list.tsx": {
+            "from": "registry/blocks/definition-list.tsx",
+            "hash": "sha256-2d25906b0ca50f90"
+        },
+        "packages/ui/src/blocks/detail-heading.tsx": {
+            "from": "registry/blocks/detail-heading.tsx",
+            "hash": "sha256-3926b05f7daee4ad"
+        },
+        "packages/ui/src/blocks/detail-sections.tsx": {
+            "from": "registry/blocks/detail-sections.tsx",
+            "hash": "sha256-cfb6d3921d3ecc83"
+        },
+        "packages/ui/src/blocks/diff-file.tsx": {
+            "from": "registry/blocks/diff-file.tsx",
+            "hash": "sha256-d43088bb13fb7a9f"
+        },
+        "packages/ui/src/blocks/diff-stat.tsx": {
+            "from": "registry/blocks/diff-stat.tsx",
+            "hash": "sha256-b32b5603363b79f3"
+        },
+        "packages/ui/src/blocks/diff-view.tsx": {
+            "from": "registry/blocks/diff-view.tsx",
+            "hash": "sha256-663bb0b2a38ed4db"
+        },
+        "packages/ui/src/blocks/document-title.tsx": {
+            "from": "registry/blocks/document-title.tsx",
+            "hash": "sha256-7bbd0d510f791808"
+        },
+        "packages/ui/src/blocks/endpoint-header.tsx": {
+            "from": "registry/blocks/endpoint-header.tsx",
+            "hash": "sha256-bf2d52c90ce500a6"
+        },
+        "packages/ui/src/blocks/field-panel.tsx": {
+            "from": "registry/blocks/field-panel.tsx",
+            "hash": "sha256-b93f02af49e007ff"
+        },
+        "packages/ui/src/blocks/figure-row.tsx": {
+            "from": "registry/blocks/figure-row.tsx",
+            "hash": "sha256-281780fc599f4eca"
+        },
+        "packages/ui/src/blocks/file-tiles.tsx": {
+            "from": "registry/blocks/file-tiles.tsx",
+            "hash": "sha256-ac87f6b9423e218d"
+        },
+        "packages/ui/src/blocks/filter-bar.tsx": {
+            "from": "registry/blocks/filter-bar.tsx",
+            "hash": "sha256-1c4c66aceccc7dcb"
+        },
+        "packages/ui/src/blocks/form-footer.tsx": {
+            "from": "registry/blocks/form-footer.tsx",
+            "hash": "sha256-f95892588ef3ee1b"
+        },
+        "packages/ui/src/blocks/hint-field.tsx": {
+            "from": "registry/blocks/hint-field.tsx",
+            "hash": "sha256-b218b68247392536"
+        },
+        "packages/ui/src/blocks/icon-meta.tsx": {
+            "from": "registry/blocks/icon-meta.tsx",
+            "hash": "sha256-c017a26d087eddb8"
+        },
+        "packages/ui/src/blocks/icon-note.tsx": {
+            "from": "registry/blocks/icon-note.tsx",
+            "hash": "sha256-48b219735d42461e"
+        },
+        "packages/ui/src/blocks/icon-toolbar.tsx": {
+            "from": "registry/blocks/icon-toolbar.tsx",
+            "hash": "sha256-c0efd409e4729b7a"
+        },
+        "packages/ui/src/blocks/info-card.tsx": {
+            "from": "registry/blocks/info-card.tsx",
+            "hash": "sha256-6af7af01a75612cb"
+        },
+        "packages/ui/src/blocks/inline-facts.tsx": {
+            "from": "registry/blocks/inline-facts.tsx",
+            "hash": "sha256-06aad9365050973f"
+        },
+        "packages/ui/src/blocks/kanban-board.tsx": {
+            "from": "registry/blocks/kanban-board.tsx",
+            "hash": "sha256-e444d281b66bdbf8"
+        },
+        "packages/ui/src/blocks/kanban-card.tsx": {
+            "from": "registry/blocks/kanban-card.tsx",
+            "hash": "sha256-85766c6715deb34d"
+        },
+        "packages/ui/src/blocks/lib/bands.ts": {
+            "from": "registry/blocks/lib/bands.ts",
+            "hash": "sha256-846318bc76bc266f"
+        },
+        "packages/ui/src/blocks/lib/chart.ts": {
+            "from": "registry/blocks/lib/chart.ts",
+            "hash": "sha256-f786b892de3b6027"
+        },
+        "packages/ui/src/blocks/lib/copy.ts": {
+            "from": "registry/blocks/lib/copy.ts",
+            "hash": "sha256-fd991968f246e60c"
+        },
+        "packages/ui/src/blocks/lib/frame.ts": {
+            "from": "registry/blocks/lib/frame.ts",
+            "hash": "sha256-d9371484f77c1479"
+        },
+        "packages/ui/src/blocks/lib/text.ts": {
+            "from": "registry/blocks/lib/text.ts",
+            "hash": "sha256-79c61c4417766ee0"
+        },
+        "packages/ui/src/blocks/link-item-list.tsx": {
+            "from": "registry/blocks/link-item-list.tsx",
+            "hash": "sha256-f421c5c9368434cf"
+        },
+        "packages/ui/src/blocks/list-card.tsx": {
+            "from": "registry/blocks/list-card.tsx",
+            "hash": "sha256-2b8ebf023fc189d7"
+        },
+        "packages/ui/src/blocks/mail-header.tsx": {
+            "from": "registry/blocks/mail-header.tsx",
+            "hash": "sha256-a360f4c04da6b2ce"
+        },
+        "packages/ui/src/blocks/metric-cards.tsx": {
+            "from": "registry/blocks/metric-cards.tsx",
+            "hash": "sha256-7646830083378ddf"
+        },
+        "packages/ui/src/blocks/on-this-page.tsx": {
+            "from": "registry/blocks/on-this-page.tsx",
+            "hash": "sha256-0a647146678b9938"
+        },
+        "packages/ui/src/blocks/page-bar.tsx": {
+            "from": "registry/blocks/page-bar.tsx",
+            "hash": "sha256-795868757dfdfe40"
+        },
+        "packages/ui/src/blocks/page-heading.tsx": {
+            "from": "registry/blocks/page-heading.tsx",
+            "hash": "sha256-77421f3226a56288"
+        },
+        "packages/ui/src/blocks/page-split.tsx": {
+            "from": "registry/blocks/page-split.tsx",
+            "hash": "sha256-d5d6983542f0390c"
+        },
+        "packages/ui/src/blocks/page-tabs.tsx": {
+            "from": "registry/blocks/page-tabs.tsx",
+            "hash": "sha256-545c9af9f65b3350"
+        },
+        "packages/ui/src/blocks/page.tsx": {
+            "from": "registry/blocks/page.tsx",
+            "hash": "sha256-9f8ebacb547843a6"
+        },
+        "packages/ui/src/blocks/pager-cards.tsx": {
+            "from": "registry/blocks/pager-cards.tsx",
+            "hash": "sha256-3bec8b1be4e5c7b3"
+        },
+        "packages/ui/src/blocks/parameter-table.tsx": {
+            "from": "registry/blocks/parameter-table.tsx",
+            "hash": "sha256-46a078de5ad0569c"
+        },
+        "packages/ui/src/blocks/pending.tsx": {
+            "from": "registry/blocks/pending.tsx",
+            "hash": "sha256-ebd8ef29815867dc"
+        },
+        "packages/ui/src/blocks/person.tsx": {
+            "from": "registry/blocks/person.tsx",
+            "hash": "sha256-ad28668cd9aa6482"
+        },
+        "packages/ui/src/blocks/prompt-input.tsx": {
+            "from": "registry/blocks/prompt-input.tsx",
+            "hash": "sha256-ba17fad278416898"
+        },
+        "packages/ui/src/blocks/property-list.tsx": {
+            "from": "registry/blocks/property-list.tsx",
+            "hash": "sha256-5cefe041eedfa5de"
+        },
+        "packages/ui/src/blocks/prose.tsx": {
+            "from": "registry/blocks/prose.tsx",
+            "hash": "sha256-456906ab0456376f"
+        },
+        "packages/ui/src/blocks/radio-cards.tsx": {
+            "from": "registry/blocks/radio-cards.tsx",
+            "hash": "sha256-83e035aca2bc5d73"
+        },
+        "packages/ui/src/blocks/record-heading.tsx": {
+            "from": "registry/blocks/record-heading.tsx",
+            "hash": "sha256-cf00ba0be7bb526c"
+        },
+        "packages/ui/src/blocks/ref-chip.tsx": {
+            "from": "registry/blocks/ref-chip.tsx",
+            "hash": "sha256-8d98075691f414a4"
+        },
+        "packages/ui/src/blocks/reply-composer.tsx": {
+            "from": "registry/blocks/reply-composer.tsx",
+            "hash": "sha256-3612338ef44f992d"
+        },
+        "packages/ui/src/blocks/row-menu.tsx": {
+            "from": "registry/blocks/row-menu.tsx",
+            "hash": "sha256-cb9bf93dd53d43cd"
+        },
+        "packages/ui/src/blocks/rule-steps.tsx": {
+            "from": "registry/blocks/rule-steps.tsx",
+            "hash": "sha256-b35bc4c0977db3c5"
+        },
+        "packages/ui/src/blocks/search-hero.tsx": {
+            "from": "registry/blocks/search-hero.tsx",
+            "hash": "sha256-638e95296d33046e"
+        },
+        "packages/ui/src/blocks/section-card.tsx": {
+            "from": "registry/blocks/section-card.tsx",
+            "hash": "sha256-ae1d4bc4001305e1"
+        },
+        "packages/ui/src/blocks/section-heading.tsx": {
+            "from": "registry/blocks/section-heading.tsx",
+            "hash": "sha256-b8eb0bf096f02c95"
+        },
+        "packages/ui/src/blocks/section-title.tsx": {
+            "from": "registry/blocks/section-title.tsx",
+            "hash": "sha256-dcc0409f132d336a"
+        },
+        "packages/ui/src/blocks/segment-meter.tsx": {
+            "from": "registry/blocks/segment-meter.tsx",
+            "hash": "sha256-3150b5f187756953"
+        },
+        "packages/ui/src/blocks/segmented-control.tsx": {
+            "from": "registry/blocks/segmented-control.tsx",
+            "hash": "sha256-47bb47ba6148ef16"
+        },
+        "packages/ui/src/blocks/select-field.tsx": {
+            "from": "registry/blocks/select-field.tsx",
+            "hash": "sha256-303a662a403aecc2"
+        },
+        "packages/ui/src/blocks/service-status.tsx": {
+            "from": "registry/blocks/service-status.tsx",
+            "hash": "sha256-bcf7049b8ebebed4"
+        },
+        "packages/ui/src/blocks/settings-section.tsx": {
+            "from": "registry/blocks/settings-section.tsx",
+            "hash": "sha256-52713c55a6b7f817"
+        },
+        "packages/ui/src/blocks/share-meter.tsx": {
+            "from": "registry/blocks/share-meter.tsx",
+            "hash": "sha256-2c36ab0196840f08"
+        },
+        "packages/ui/src/blocks/slider-field.tsx": {
+            "from": "registry/blocks/slider-field.tsx",
+            "hash": "sha256-335af2f7cdafb838"
+        },
+        "packages/ui/src/blocks/stat-cards.tsx": {
+            "from": "registry/blocks/stat-cards.tsx",
+            "hash": "sha256-99d0350d7e36bb60"
+        },
+        "packages/ui/src/blocks/status-line.tsx": {
+            "from": "registry/blocks/status-line.tsx",
+            "hash": "sha256-9adf95f0e6874af9"
+        },
+        "packages/ui/src/blocks/step-list.tsx": {
+            "from": "registry/blocks/step-list.tsx",
+            "hash": "sha256-9609a87145fcd5cb"
+        },
+        "packages/ui/src/blocks/summary-bar.tsx": {
+            "from": "registry/blocks/summary-bar.tsx",
+            "hash": "sha256-773995b8189eec79"
+        },
+        "packages/ui/src/blocks/switch-field.tsx": {
+            "from": "registry/blocks/switch-field.tsx",
+            "hash": "sha256-1b949277afa3a5d4"
+        },
+        "packages/ui/src/blocks/switch-row.tsx": {
+            "from": "registry/blocks/switch-row.tsx",
+            "hash": "sha256-025e7d63a140252b"
+        },
+        "packages/ui/src/blocks/tab-card.tsx": {
+            "from": "registry/blocks/tab-card.tsx",
+            "hash": "sha256-5426bcc4399826e4"
+        },
+        "packages/ui/src/blocks/table-frame.tsx": {
+            "from": "registry/blocks/table-frame.tsx",
+            "hash": "sha256-d16b512dde98fdc4"
+        },
+        "packages/ui/src/blocks/table-search.tsx": {
+            "from": "registry/blocks/table-search.tsx",
+            "hash": "sha256-7f515d0281909787"
+        },
+        "packages/ui/src/blocks/task-list.tsx": {
+            "from": "registry/blocks/task-list.tsx",
+            "hash": "sha256-dd93f77432eaa994"
+        },
+        "packages/ui/src/blocks/ticket-list.tsx": {
+            "from": "registry/blocks/ticket-list.tsx",
+            "hash": "sha256-0e14c5eb6be3b7ed"
+        },
+        "packages/ui/src/blocks/timeline-bars.tsx": {
+            "from": "registry/blocks/timeline-bars.tsx",
+            "hash": "sha256-ed53ed161eff833e"
+        },
+        "packages/ui/src/blocks/tone-dot.tsx": {
+            "from": "registry/blocks/tone-dot.tsx",
+            "hash": "sha256-8f5b65f14302ba4a"
+        },
+        "packages/ui/src/blocks/topic-cards.tsx": {
+            "from": "registry/blocks/topic-cards.tsx",
+            "hash": "sha256-3265fb48af2ebb6f"
+        },
+        "packages/ui/src/blocks/trend-area-chart.tsx": {
+            "from": "registry/blocks/trend-area-chart.tsx",
+            "hash": "sha256-e6411d11c833a15b"
+        },
+        "packages/ui/src/blocks/two-line-label.tsx": {
+            "from": "registry/blocks/two-line-label.tsx",
+            "hash": "sha256-1219ef125aa41b18"
+        },
+        "packages/ui/src/blocks/usage-meter.tsx": {
+            "from": "registry/blocks/usage-meter.tsx",
+            "hash": "sha256-55cc7c7de0494bcf"
+        },
+        "packages/ui/src/blocks/week-view.tsx": {
+            "from": "registry/blocks/week-view.tsx",
+            "hash": "sha256-1d9ac08f39d78a7a"
+        },
         "packages/ui/src/components/accordion.tsx": {
             "from": "registry/ui/components/accordion.tsx",
-            "hash": "sha256-f08667770826c6c2"
+            "hash": "sha256-4c5c7f14a7771850"
         },
         "packages/ui/src/components/alert-dialog.tsx": {
             "from": "registry/ui/components/alert-dialog.tsx",
-            "hash": "sha256-73dff5b0c3c0ecf8"
+            "hash": "sha256-04b4bebcec5f19ae"
         },
         "packages/ui/src/components/alert.tsx": {
             "from": "registry/ui/components/alert.tsx",
@@ -77,11 +486,11 @@
         },
         "packages/ui/src/components/aspect-ratio.tsx": {
             "from": "registry/ui/components/aspect-ratio.tsx",
-            "hash": "sha256-6df19df6b983c450"
+            "hash": "sha256-16a03b9c5f44b2a2"
         },
         "packages/ui/src/components/attachment.tsx": {
             "from": "registry/ui/components/attachment.tsx",
-            "hash": "sha256-9cb1871efe598e9c"
+            "hash": "sha256-77333fb2f1a7fdd9"
         },
         "packages/ui/src/components/avatar.tsx": {
             "from": "registry/ui/components/avatar.tsx",
@@ -93,7 +502,7 @@
         },
         "packages/ui/src/components/breadcrumb.tsx": {
             "from": "registry/ui/components/breadcrumb.tsx",
-            "hash": "sha256-e3b44874965cac44"
+            "hash": "sha256-0d95ed732bca7ca1"
         },
         "packages/ui/src/components/bubble.tsx": {
             "from": "registry/ui/components/bubble.tsx",
@@ -101,7 +510,7 @@
         },
         "packages/ui/src/components/button-group.tsx": {
             "from": "registry/ui/components/button-group.tsx",
-            "hash": "sha256-32c07acd39e0a0b8"
+            "hash": "sha256-05868015346611a7"
         },
         "packages/ui/src/components/button.tsx": {
             "from": "registry/ui/components/button.tsx",
@@ -109,7 +518,7 @@
         },
         "packages/ui/src/components/calendar.tsx": {
             "from": "registry/ui/components/calendar.tsx",
-            "hash": "sha256-b99efc5ab1c45378"
+            "hash": "sha256-2de4b21b85ea5e6e"
         },
         "packages/ui/src/components/card.tsx": {
             "from": "registry/ui/components/card.tsx",
@@ -117,15 +526,15 @@
         },
         "packages/ui/src/components/carousel.tsx": {
             "from": "registry/ui/components/carousel.tsx",
-            "hash": "sha256-b7481e5f5ef57e2d"
+            "hash": "sha256-a6ab83160763d569"
         },
         "packages/ui/src/components/chart.tsx": {
             "from": "registry/ui/components/chart.tsx",
-            "hash": "sha256-ebf4e179c1c65721"
+            "hash": "sha256-7b236550f8a9d930"
         },
         "packages/ui/src/components/checkbox.tsx": {
             "from": "registry/ui/components/checkbox.tsx",
-            "hash": "sha256-ec2d848a9fe063c0"
+            "hash": "sha256-cfd23689779238db"
         },
         "packages/ui/src/components/collapsible.tsx": {
             "from": "registry/ui/components/collapsible.tsx",
@@ -133,19 +542,19 @@
         },
         "packages/ui/src/components/combobox.tsx": {
             "from": "registry/ui/components/combobox.tsx",
-            "hash": "sha256-8fcb24f519c32075"
+            "hash": "sha256-80a214e316c98bde"
         },
         "packages/ui/src/components/command.tsx": {
             "from": "registry/ui/components/command.tsx",
-            "hash": "sha256-95e4d122fb5e33d5"
+            "hash": "sha256-d3ce8595e02e5678"
         },
         "packages/ui/src/components/context-menu.tsx": {
             "from": "registry/ui/components/context-menu.tsx",
-            "hash": "sha256-b794576bb16dfb08"
+            "hash": "sha256-24690abf99f255ec"
         },
         "packages/ui/src/components/dialog.tsx": {
             "from": "registry/ui/components/dialog.tsx",
-            "hash": "sha256-aa89056682e31e77"
+            "hash": "sha256-a2c8502da485fa4a"
         },
         "packages/ui/src/components/direction.tsx": {
             "from": "registry/ui/components/direction.tsx",
@@ -157,7 +566,7 @@
         },
         "packages/ui/src/components/dropdown-menu.tsx": {
             "from": "registry/ui/components/dropdown-menu.tsx",
-            "hash": "sha256-8dbab2c28568b5a0"
+            "hash": "sha256-032f1f345163ac41"
         },
         "packages/ui/src/components/empty.tsx": {
             "from": "registry/ui/components/empty.tsx",
@@ -165,7 +574,7 @@
         },
         "packages/ui/src/components/field.tsx": {
             "from": "registry/ui/components/field.tsx",
-            "hash": "sha256-562c2344ec850bbf"
+            "hash": "sha256-3f8791d53b4abd3a"
         },
         "packages/ui/src/components/hover-card.tsx": {
             "from": "registry/ui/components/hover-card.tsx",
@@ -173,11 +582,11 @@
         },
         "packages/ui/src/components/input-group.tsx": {
             "from": "registry/ui/components/input-group.tsx",
-            "hash": "sha256-66cc3e636d8d687e"
+            "hash": "sha256-21aad1612b28fab4"
         },
         "packages/ui/src/components/input-otp.tsx": {
             "from": "registry/ui/components/input-otp.tsx",
-            "hash": "sha256-8b027aeb7bb39098"
+            "hash": "sha256-56f600ef90248878"
         },
         "packages/ui/src/components/input.tsx": {
             "from": "registry/ui/components/input.tsx",
@@ -185,7 +594,7 @@
         },
         "packages/ui/src/components/item.tsx": {
             "from": "registry/ui/components/item.tsx",
-            "hash": "sha256-2f2742d9d90403ba"
+            "hash": "sha256-081a56ec662b8c3c"
         },
         "packages/ui/src/components/kbd.tsx": {
             "from": "registry/ui/components/kbd.tsx",
@@ -201,11 +610,11 @@
         },
         "packages/ui/src/components/menubar.tsx": {
             "from": "registry/ui/components/menubar.tsx",
-            "hash": "sha256-255b5dc851f37405"
+            "hash": "sha256-3924028e27e4b9e1"
         },
         "packages/ui/src/components/message-scroller.tsx": {
             "from": "registry/ui/components/message-scroller.tsx",
-            "hash": "sha256-91586aa5efab53af"
+            "hash": "sha256-0751ab8c9ade1af1"
         },
         "packages/ui/src/components/message.tsx": {
             "from": "registry/ui/components/message.tsx",
@@ -213,15 +622,15 @@
         },
         "packages/ui/src/components/native-select.tsx": {
             "from": "registry/ui/components/native-select.tsx",
-            "hash": "sha256-4c552e5c7e74475e"
+            "hash": "sha256-11e3e81a6c90ea1c"
         },
         "packages/ui/src/components/navigation-menu.tsx": {
             "from": "registry/ui/components/navigation-menu.tsx",
-            "hash": "sha256-9dafc2d4b7171841"
+            "hash": "sha256-9e5896fe40d09dad"
         },
         "packages/ui/src/components/pagination.tsx": {
             "from": "registry/ui/components/pagination.tsx",
-            "hash": "sha256-0aacf260f7b7bac1"
+            "hash": "sha256-43ed91dab8aa4610"
         },
         "packages/ui/src/components/popover.tsx": {
             "from": "registry/ui/components/popover.tsx",
@@ -233,7 +642,7 @@
         },
         "packages/ui/src/components/questionnaire.tsx": {
             "from": "registry/ui/components/questionnaire.tsx",
-            "hash": "sha256-8d5dc51aef45a3a5"
+            "hash": "sha256-84327eccd6e0152b"
         },
         "packages/ui/src/components/radio-group.tsx": {
             "from": "registry/ui/components/radio-group.tsx",
@@ -249,7 +658,7 @@
         },
         "packages/ui/src/components/select.tsx": {
             "from": "registry/ui/components/select.tsx",
-            "hash": "sha256-1cbf7f76475eb764"
+            "hash": "sha256-95f7f2e196116ce6"
         },
         "packages/ui/src/components/separator.tsx": {
             "from": "registry/ui/components/separator.tsx",
@@ -257,11 +666,11 @@
         },
         "packages/ui/src/components/sheet.tsx": {
             "from": "registry/ui/components/sheet.tsx",
-            "hash": "sha256-6276a915741d8f38"
+            "hash": "sha256-2e38a7a399ff50e4"
         },
         "packages/ui/src/components/sidebar.tsx": {
             "from": "registry/ui/components/sidebar.tsx",
-            "hash": "sha256-b1ba9ac70f81f0a8"
+            "hash": "sha256-8619c08d3c668250"
         },
         "packages/ui/src/components/skeleton.tsx": {
             "from": "registry/ui/components/skeleton.tsx",
@@ -273,7 +682,7 @@
         },
         "packages/ui/src/components/spinner.tsx": {
             "from": "registry/ui/components/spinner.tsx",
-            "hash": "sha256-b214bece9a22373e"
+            "hash": "sha256-bdd100cfbe8fb775"
         },
         "packages/ui/src/components/switch.tsx": {
             "from": "registry/ui/components/switch.tsx",
@@ -281,7 +690,7 @@
         },
         "packages/ui/src/components/table.tsx": {
             "from": "registry/ui/components/table.tsx",
-            "hash": "sha256-77d15e11fcf1fb2f"
+            "hash": "sha256-e83c6e7dcd4345b4"
         },
         "packages/ui/src/components/tabs.tsx": {
             "from": "registry/ui/components/tabs.tsx",
@@ -293,11 +702,11 @@
         },
         "packages/ui/src/components/toast.tsx": {
             "from": "registry/ui/components/toast.tsx",
-            "hash": "sha256-b35120e92cfb64cd"
+            "hash": "sha256-6b2de0c3c9c260ed"
         },
         "packages/ui/src/components/toggle-group.tsx": {
             "from": "registry/ui/components/toggle-group.tsx",
-            "hash": "sha256-900a6c9aa6cfed34"
+            "hash": "sha256-79ce481f13f31b0a"
         },
         "packages/ui/src/components/toggle.tsx": {
             "from": "registry/ui/components/toggle.tsx",
@@ -317,7 +726,7 @@
         },
         "packages/ui/src/icons/index.ts": {
             "from": "generated:icons/index.ts",
-            "hash": "sha256-2cd33a116d54a1f0"
+            "hash": "sha256-ad6ae0b335a1981a"
         },
         "packages/ui/src/icons/libraries/phosphor.tsx": {
             "from": "registry/ui/icons/libraries/phosphor.tsx",
@@ -337,11 +746,11 @@
         },
         "packages/ui/src/strings/locales/ko.ts": {
             "from": "registry/ui/strings/locales/ko.ts",
-            "hash": "sha256-0160f3802e38b95a"
+            "hash": "sha256-60a94e444d374cf9"
         },
         "packages/ui/src/strings/names.ts": {
             "from": "registry/ui/strings/names.ts",
-            "hash": "sha256-4a267e240feb490d"
+            "hash": "sha256-4dcbc25a3208f8c4"
         },
         "packages/ui/src/systems/graphite/components/_control-family.css": {
             "from": "registry/systems/graphite/styles/components/_control-family.css",
@@ -561,7 +970,7 @@
         },
         "packages/ui/src/systems/graphite/components/table.css": {
             "from": "registry/systems/graphite/styles/components/table.css",
-            "hash": "sha256-d06ef580791d3da8"
+            "hash": "sha256-1e54894302495797"
         },
         "packages/ui/src/systems/graphite/components/tabs.css": {
             "from": "registry/systems/graphite/styles/components/tabs.css",
@@ -589,11 +998,11 @@
         },
         "packages/ui/src/systems/graphite/DESIGN.md": {
             "from": "registry/systems/graphite/DESIGN.md",
-            "hash": "sha256-7a002403b2551366"
+            "hash": "sha256-209a3396ff537281"
         },
         "packages/ui/src/systems/graphite/globals.css": {
             "from": "registry/systems/graphite/styles/globals.css",
-            "hash": "sha256-45da65e6236b82d7"
+            "hash": "sha256-808a1ab20f1c6146"
         },
         "packages/ui/src/systems/graphite/style.css": {
             "from": "registry/systems/graphite/styles/style.css",

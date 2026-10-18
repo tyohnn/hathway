@@ -1,0 +1,6 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "buildCommand": "turbo build --filter=@hathway/agent",
+    "outputDirectory": ".next",
+    "regions": ["icn1"]
+}

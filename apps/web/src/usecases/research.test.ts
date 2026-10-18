@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { Effect, Exit, Schema } from "effect";
 
-import { customerActor, otherCustomerActor } from "@investment/access/testing/actor";
-import type { Board } from "@investment/research/domain/Board";
-import { BoardStore } from "@investment/research/ports/BoardStore";
-import { boardStoreMemory } from "@investment/research/testing/boardStoreMemory";
+import { customerActor, otherCustomerActor } from "@hathway/access/testing/actor";
+import type { Board } from "@hathway/research/domain/Board";
+import { BoardStore } from "@hathway/research/ports/BoardStore";
+import { boardStoreMemory } from "@hathway/research/testing/boardStoreMemory";
 
 import { RESEARCH_BOARDS } from "@/lib/research/catalog";
 

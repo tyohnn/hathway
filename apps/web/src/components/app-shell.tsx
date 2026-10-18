@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppShell, AppShellNav, type AppShellNavItem } from "@investment/blocks/app-shell";
-import { BookOpen, Building, ChartLine, FileText, Globe, LayoutGrid, TrendingUp } from "@investment/ui/icons";
-import type { IconComponent } from "@investment/ui/icons/names";
+import { AppShell, AppShellNav, type AppShellNavItem } from "@hathway/blocks/app-shell";
+import { Building, ChartLine, FileText, Globe, LayoutGrid, TrendingUp } from "@hathway/ui/icons";
+import type { IconComponent } from "@hathway/ui/icons/names";
 import { appName } from "@/lib/shared";
 import {
     THEME_SECTIONS,
@@ -55,10 +55,7 @@ function navGroups(stockCode: string | null): ReadonlyArray<ReadonlyArray<AppShe
         }),
     }));
 
-    return [
-        themes,
-        [{ label: "교재", base: "/book", icon: BookOpen, render: <Link href="/book" /> }],
-    ];
+    return [themes];
 }
 
 /** 보드 하나를 연 화면은 캔버스가 남은 자리를 통째로 쓴다. 띠와 우물을 세우지 않는다 */

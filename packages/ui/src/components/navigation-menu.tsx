@@ -2,7 +2,7 @@ import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/naviga
 import { cva } from "class-variance-authority"
 import { cn } from "cn"
 
-import { ChevronDown } from "@investment/ui/icons"
+import { ChevronDown } from "@hathway/ui/icons"
 
 function NavigationMenu({
   align = "start",

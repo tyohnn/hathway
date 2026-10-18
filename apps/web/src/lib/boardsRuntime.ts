@@ -2,8 +2,8 @@ import "server-only";
 
 import { Effect, type Layer } from "effect";
 
-import { boardStorePostgresLayer } from "@investment/adapters-postgres/research/BoardStorePostgres";
-import type { BoardStore } from "@investment/research/ports/BoardStore";
+import { boardStorePostgresLayer } from "@hathway/adapters-postgres/research/BoardStorePostgres";
+import type { BoardStore } from "@hathway/research/ports/BoardStore";
 
 import { executor } from "./auth";
 

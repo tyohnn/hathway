@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@investment/ui/components/card";
-import { Skeleton } from "@investment/ui/components/skeleton";
+import { Card, CardContent, CardHeader } from "@hathway/ui/components/card";
+import { Skeleton } from "@hathway/ui/components/skeleton";
 
 export interface StatCardSkeletonProps
 {

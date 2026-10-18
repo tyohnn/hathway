@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@investment/ui/components/card";
-import { ArrowDown, ArrowUp } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@hathway/ui/components/card";
+import { ArrowDown, ArrowUp } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { GLYPH_COLOR, TONE_TEXT } from "../tone";
 import type { StatCardProps } from "./types";

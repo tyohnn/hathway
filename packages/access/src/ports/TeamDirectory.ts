@@ -5,7 +5,7 @@ import type { MembershipRole } from "../domain/AppAudience.ts";
 
 /**
  * 한 테넌트의 사람을 읽고 고치는 포트. 설정의 팀 화면과 내 계정 화면이 쓴다. 구현은 메모리
- * (`testing/teamDirectoryMemory.ts`)와 Postgres(`@investment/adapters-postgres/org/TeamDirectoryPostgres`) 둘이고,
+ * (`testing/teamDirectoryMemory.ts`)와 Postgres(`@hathway/adapters-postgres/org/TeamDirectoryPostgres`) 둘이고,
  * 계약 한 벌(`testing/contracts/team-directory.ts`)이 둘을 함께 잰다.
  *
  * ⚠ **판정은 여기서 하지 않는다.** 누가 무엇을 할 수 있는지는 `access/team.ts` 의 계획 함수가 정하고, 이 포트는
@@ -77,5 +77,5 @@ export class TeamDirectory extends Context.Service<TeamDirectory, {
     readonly accountOrgs: (accountId: string) => Effect.Effect<ReadonlyArray<AccountOrg>, TeamDirectoryError>;
     /** 계정 하나의 이름을 바꾼다 */
     readonly rename: (request: { readonly accountId: string; readonly name: string }) => Effect.Effect<void, TeamDirectoryError>;
-}>()("@investment/access/ports/TeamDirectory")
+}>()("@hathway/access/ports/TeamDirectory")
 {}

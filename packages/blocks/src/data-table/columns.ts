@@ -1,7 +1,7 @@
 import type { ColumnDef, FilterFn } from "@tanstack/react-table";
 
-import { formatDateShort, formatDateTime } from "@investment/shared/utils/dateFormatting";
-import { formatCurrency, formatHours, formatNumberWithCommas } from "@investment/shared/utils/formatters";
+import { formatDateShort, formatDateTime } from "@hathway/shared/utils/dateFormatting";
+import { formatCurrency, formatHours, formatNumberWithCommas } from "@hathway/shared/utils/formatters";
 
 import type { CellKind, ColumnAlign, ColumnSpec, DataRow, DataTableFeatures, FilterValue } from "./types";
 

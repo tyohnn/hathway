@@ -1,7 +1,7 @@
 "use client";
 
-import { RadioGroup, RadioGroupItem } from "@investment/ui/components/radio-group";
-import { cn } from "@investment/ui/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@hathway/ui/components/radio-group";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { ChoiceCardsProps } from "./types";
 

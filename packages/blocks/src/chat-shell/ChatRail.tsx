@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@investment/ui/components/card";
-import { cn } from "@investment/ui/lib/utils";
+import { Card } from "@hathway/ui/components/card";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { ChatRailProps } from "./types";
 

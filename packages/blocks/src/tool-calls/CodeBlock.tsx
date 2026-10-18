@@ -1,4 +1,4 @@
-import { cn } from "@investment/ui/lib/utils";
+import { cn } from "@hathway/ui/lib/utils";
 
 /**
  * 도구에 넣은 값을 담는 코드 블록.

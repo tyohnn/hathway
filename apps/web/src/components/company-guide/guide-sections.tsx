@@ -1,8 +1,8 @@
-import { SectionHeader } from "@investment/blocks/section-header";
-import type { AnnualSummary } from "@investment/schema";
+import { SectionHeader } from "@hathway/blocks/section-header";
+import type { AnnualSummary } from "@hathway/schema";
 import type { BoundSection } from "@/lib/company/guide-bound";
 import { cn } from "@/lib/cn";
-import { FinancialChart } from "@/app/(app)/lab/[stockCode]/_components/financial-chart";
+import { FinancialChart } from "@/components/analysis-board/financial-chart";
 import { GuideTabs } from "./guide-tabs";
 import { GuideTreeTable } from "./guide-tree-table";
 

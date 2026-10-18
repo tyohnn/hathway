@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { AuthSettings } from "@investment/access/ports/AuthSettings";
+import { AuthSettings } from "@hathway/access/ports/AuthSettings";
 
 import { authSettingsSupabaseLayer } from "./AuthSettingsSupabase.ts";
 

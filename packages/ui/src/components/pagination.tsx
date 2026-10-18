@@ -1,9 +1,9 @@
 import * as React from "react"
 import { cn } from "cn"
 
-import { Button } from "@investment/ui/components/button"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { Button } from "@hathway/ui/components/button"
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (

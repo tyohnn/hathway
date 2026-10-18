@@ -1,0 +1,19 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "extends": ["//"],
+    "tasks": {
+        "test": {
+            // ⚠ 토큰 스캔은 블록과 네 앱이 `var()` 로 읽는 토큰을 대조하고, 어느 시스템을 볼지는 루트
+            //    `tyohnn.json` 에서 읽는다. ui 에 의존하는 쪽이 앱이라 turbo 는 앱을 고쳐도 이 검사를
+            //    다시 돌리지 않으므로 그 자리를 입력으로 적는다. 스캔이 읽는 트리를 넓히면 여기에도 더한다.
+            //    마지막 줄은 next build 가 만드는 workflow 폴더를 뺀다. 까닭은 apps/agent/turbo.json 에 있다
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "$TURBO_ROOT$/tyohnn.json",
+                "$TURBO_ROOT$/packages/blocks/src/**",
+                "$TURBO_ROOT$/apps/*/src/**",
+                "!$TURBO_ROOT$/apps/*/src/app/.well-known/workflow/**"
+            ]
+        }
+    }
+}

@@ -11,8 +11,8 @@ import {
     parseAppPath,
     type AnalysisAreaId,
 } from "@/lib/nav";
-import { Button } from "@investment/ui/components/button";
-import { BreadcrumbItem, BreadcrumbSeparator } from "@investment/ui/components/breadcrumb";
+import { Button } from "@hathway/ui/components/button";
+import { BreadcrumbItem, BreadcrumbSeparator } from "@hathway/ui/components/breadcrumb";
 import { PathCombobox } from "@/components/path-combobox";
 import { useSymbolCommand } from "@/components/symbol-command";
 

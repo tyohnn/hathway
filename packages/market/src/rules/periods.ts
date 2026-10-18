@@ -1,4 +1,4 @@
-import type { AnnualSummary } from "@investment/schema";
+import type { AnnualSummary } from "@hathway/schema";
 
 import type { FinPeriodRow, GuideFinPeriod, MemberFinancials } from "../domain/rows.ts";
 

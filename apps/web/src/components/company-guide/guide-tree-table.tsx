@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader } from "@investment/blocks/section-header";
+import { SectionHeader } from "@hathway/blocks/section-header";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { BoundRow } from "@/lib/company/guide-bound";

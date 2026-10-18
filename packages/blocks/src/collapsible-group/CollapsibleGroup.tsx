@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@investment/ui/components/collapsible";
-import { ChevronRight } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@hathway/ui/components/collapsible";
+import { ChevronRight } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { TONE_SURFACE } from "../tone";
 import { COLLAPSIBLE_GROUP_LABELS } from "./labels";

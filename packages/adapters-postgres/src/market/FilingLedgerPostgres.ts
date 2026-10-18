@@ -2,10 +2,10 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import { CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@investment/schema";
-import type { ReportRef } from "@investment/market/domain/rows";
-import { FilingLedger } from "@investment/market/ports/MarketStore";
-import { REGULAR_REPORT_PATTERNS, THEMED_FILING_PATTERNS } from "@investment/market/rules/listing";
+import { CorrectionChain, DartEvent, Filing, OwnershipTxn, TrackingFact } from "@hathway/schema";
+import type { ReportRef } from "@hathway/market/domain/rows";
+import { FilingLedger } from "@hathway/market/ports/MarketStore";
+import { REGULAR_REPORT_PATTERNS, THEMED_FILING_PATTERNS } from "@hathway/market/rules/listing";
 
 import type { SqlExecutor } from "../connection.ts";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@investment/ui/lib/utils";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { StatGridProps } from "./types";
 

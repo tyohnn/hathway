@@ -4,27 +4,27 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Cell } from "@tanstack/react-table";
 
-import { Button } from "@investment/ui/components/button";
-import { Checkbox } from "@investment/ui/components/checkbox";
+import { Button } from "@hathway/ui/components/button";
+import { Checkbox } from "@hathway/ui/components/checkbox";
 import {
     ContextMenu,
     ContextMenuContent,
     ContextMenuItem,
     ContextMenuSeparator,
     ContextMenuTrigger,
-} from "@investment/ui/components/context-menu";
+} from "@hathway/ui/components/context-menu";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@investment/ui/components/dropdown-menu";
-import { Input } from "@investment/ui/components/input";
-import { NativeSelect, NativeSelectOption } from "@investment/ui/components/native-select";
-import { TableCell } from "@investment/ui/components/table";
-import { Textarea } from "@investment/ui/components/textarea";
-import { ChevronDown, ChevronRight, Copy, MoreHorizontal, Pencil } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/dropdown-menu";
+import { Input } from "@hathway/ui/components/input";
+import { NativeSelect, NativeSelectOption } from "@hathway/ui/components/native-select";
+import { TableCell } from "@hathway/ui/components/table";
+import { Textarea } from "@hathway/ui/components/textarea";
+import { ChevronDown, ChevronRight, Copy, MoreHorizontal, Pencil } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { isInRange, isNavigationKey, moveCell, normalizeRange } from "./cell-range";
 import { cellText, isMetaColumnId, META_COLUMN } from "./columns";

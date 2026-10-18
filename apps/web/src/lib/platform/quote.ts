@@ -1,5 +1,5 @@
 /**
- * 시세 조회 — 9칸 매트릭스의 유일한 비-DB 입력.
+ * 시세 조회: 9칸 매트릭스의 유일한 비-DB 입력.
  *
  * 적정주가 ⑤단계가 `적정시총 ÷ 현재시총 × 현재주가` 라서 주가와 시총이 없으면
  * 상승여력을 못 낸다. 그런데 주가는 `fin_periods` 에 없고 앞으로도 없다(공시 데이터가
@@ -7,24 +7,24 @@
  *
  * **비공식 엔드포인트다.** 다음금융 내부 API 이므로 예고 없이 바뀌거나 막힐 수 있다.
  * 그래서 이 모듈은 절대 throw 하지 않고 `null` 을 돌려주며, 화면은 수동 입력으로
- * 폴백한다 — 시세 조회가 깨져도 밸류에이션 자체는 계속 쓸 수 있어야 한다.
+ * 폴백한다: 시세 조회가 깨져도 밸류에이션 자체는 계속 쓸 수 있어야 한다.
  */
 import "server-only";
 
 export interface Quote {
     /** 원 */
     price: number;
-    /** 원 — 전일 종가 */
+    /** 원: 전일 종가 */
     previousClose: number;
     /** 소수 (0.0043 = +0.43%) */
     changeRate: number;
-    /** 억 원 — 계산 레이어가 억 원 단위로 돌아간다 */
+    /** 억 원: 계산 레이어가 억 원 단위로 돌아간다 */
     marketCapUkwon: number;
     listedShares: number | null;
     /** YYYY-MM-DD */
     date: string;
     source: string;
-    /** 수동 입력으로 들어온 값인지 — 화면이 출처를 구분해 표시한다 */
+    /** 수동 입력으로 들어온 값인지: 화면이 출처를 구분해 표시한다 */
     manual?: boolean;
 }
 
@@ -100,7 +100,7 @@ function num(v: unknown): number | null
     return null;
 }
 
-/** 수동 입력 폴백 — 주가와 시총만 있으면 9칸은 계산된다. */
+/** 수동 입력 폴백: 주가와 시총만 있으면 9칸은 계산된다. */
 export function manualQuote(price: number, marketCapUkwon: number): Quote
 {
     return {

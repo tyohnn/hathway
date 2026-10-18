@@ -1,0 +1,81 @@
+/*
+ * 공개 화면(문서 · 새 소식 · 블로그)의 본문 조각. tyohnn 의 docs · changelog 템플릿이 제 안에 둔 스타일(DOCS_STYLE ·
+ * CHANGELOG_STYLE)을 옮긴 것이고, 값은 토큰만 읽는다.
+ *
+ * ⚠ 레이어 밖에 둔다. 조판(`.typeset`)이 `@layer components` 에 있어서, 여기서 폭과 여백을 덮으려면 레이어 밖이어야 한다.
+ */
+
+/* 본문의 폭. 조판은 가운데에 서지만 문서는 왼쪽 선을 사이드바에 맞춘다 */
+.site-article { max-width: 52rem; margin-inline: 0; }
+.site-article-centered { max-width: 52rem; margin-inline: auto; }
+.site-article > h1 { margin-block-start: 0.25rem; }
+.site-article-centered > h1 { margin-block-start: 1rem; }
+.site-article [id] { scroll-margin-top: 1.5rem; }
+
+.site-lead { color: var(--muted-foreground); }
+.site-meta { font-size: var(--ui-text-sm); line-height: var(--ui-line-height-sm); color: var(--muted-foreground); }
+.site-meta svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* 조판 흐름 안에 선 조각의 위 여백 */
+.site-block,
+.site-code,
+.site-steps,
+.site-table,
+.site-figure { margin-block-start: 1.25rem; }
+
+/* 코드 블록: 머리(제목 · 복사)와 몸 */
+.site-code {
+    overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background-color: var(--muted); color: var(--foreground);
+}
+.site-code-bar { border-bottom: 1px solid var(--border); background-color: var(--background); }
+.site-code-title { font-family: var(--font-mono); font-size: var(--ui-text-sm); line-height: var(--ui-line-height-sm); color: var(--muted-foreground); }
+.site-code-bar svg { width: 14px; height: 14px; flex-shrink: 0; }
+.site-code pre { margin: 0; overflow-x: auto; font-family: var(--font-mono); font-size: var(--ui-text-md); line-height: 1.6; }
+
+/* 번호가 붙은 절차. 번호는 카운터가 매긴다 */
+.site-steps { list-style: none; margin-inline: 0; padding: 0; counter-reset: site-step; }
+.site-step-number {
+    border: 1px solid var(--border); border-radius: 999px; background-color: var(--muted);
+    font-size: var(--ui-text-sm); line-height: 1; font-variant-numeric: tabular-nums; color: var(--foreground);
+}
+.site-step-number::before { counter-increment: site-step; content: counter(site-step); }
+.site-step-title { margin: 0; font-size: var(--ui-text-lg); line-height: var(--ui-line-height-lg); font-weight: 600; }
+.site-step-body { font-size: var(--ui-text-md); line-height: var(--ui-line-height-md); color: var(--muted-foreground); }
+.site-step-body p { margin: 0; }
+.site-step-body > * + * { margin-block-start: 0.5rem; }
+.site-step-body strong { color: var(--foreground); font-weight: 500; }
+.site-step-body :not(pre) > code { font-family: var(--font-mono); font-size: var(--ui-text-sm); color: var(--foreground); }
+
+/* 표 */
+.site-table { overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.site-inline-code { font-family: var(--font-mono); font-size: var(--ui-text-sm); white-space: nowrap; }
+.site-wrap { white-space: normal; }
+
+/* 앞뒤 문서 카드 */
+.site-pager { display: block; border-radius: var(--radius-xl); text-decoration: none; }
+.site-pager:hover [data-slot="card"] { border-color: var(--ring); }
+.site-pager svg { width: 14px; height: 14px; }
+.site-pager-next { text-align: end; }
+
+/* 문서의 오른쪽 기둥 */
+.site-rail { position: sticky; top: 2rem; align-self: flex-start; font-size: var(--ui-text-sm); line-height: var(--ui-line-height-sm); }
+.site-rail-title { font-weight: 600; color: var(--foreground); }
+.site-rail a { color: var(--muted-foreground); text-decoration: none; }
+.site-rail a:hover { color: var(--foreground); }
+.site-rail a[data-active] { color: var(--foreground); font-weight: 500; }
+
+/* 새 소식의 머리와 그림 조각 */
+.site-small { font-size: var(--ui-text-sm); line-height: var(--ui-line-height-sm); color: var(--muted-foreground); }
+.site-small svg { width: 14px; height: 14px; flex-shrink: 0; }
+.site-row-name { font-size: var(--ui-text-md); line-height: var(--ui-line-height-md); font-weight: 500; }
+.site-title-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--muted-foreground); }
+
+/* 첫 화면과 블로그의 발치(`_components/SiteFooter.tsx`) */
+.landing-footer { border-top: 1px solid var(--border); }
+.landing-footer-inner {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;
+    max-width: 72rem; margin-inline: auto; padding: 2.5rem 1.5rem;
+}
+.landing-footer-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: var(--ui-text-sm); color: var(--muted-foreground); }
+.landing-footer-nav a:hover { color: var(--foreground); }

@@ -1,0 +1,28 @@
+{
+    "name": "@hathway/agents",
+    "version": "0.0.1",
+    "private": true,
+    "//": "`agent` 스키마의 타입과 순수 규칙과 포트. 에이전트와 나눈 대화의 장부를 소유한다. 대화 자체는 Workflow 가 들고 이 패키지는 사람이 다시 열어 볼 기록을 맡는다. 런타임 의존은 effect 뿐이다.",
+    "exports": {
+        "./invariants": "./src/invariants.ts",
+        "./domain/*": "./src/domain/*.ts",
+        "./rules/*": "./src/rules/*.ts",
+        "./ports/*": "./src/ports/*.ts",
+        "./testing/*": "./src/testing/*.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@hathway/access": "*",
+        "@hathway/shared": "*",
+        "effect": "4.0.0-rc.112"
+    },
+    "devDependencies": {
+        "@effect/vitest": "4.0.0-rc.112",
+        "typescript": "^5",
+        "vitest": "^4.1.11"
+    }
+}

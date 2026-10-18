@@ -1,8 +1,8 @@
 {
-    "name": "@investment/adapters-storage",
+    "name": "@hathway/adapters-storage",
     "version": "0.0.1",
     "private": true,
-    "//": "Supabase 의 HTTP 를 지나는 포트를 구현한다. packages/access 의 AuthSettings(인증 서버의 공개 설정)와 packages/market 의 FilingDocuments(저장소의 공시 본문 조각)다. server-only 다.",
+    "//": "Supabase 의 HTTP 를 지나는 포트를 구현한다. packages/delivery 의 파일 포트를 Supabase Storage 로 구현하고, packages/access 의 AuthSettings 를 인증 서버의 공개 설정으로 구현한다. 올리는 파일의 바이트는 이 패키지를 지나지 않는다 — 서버는 서명한 자리만 내주고 브라우저가 곧장 올린다. 첨부의 글을 읽을 때만 바이트를 받고, 그때는 크기 한도(20MB)를 둔다. server-only — 이 패키지가 쥐는 키는 클라이언트 번들에 섞이면 안 된다.",
     "exports": {
         "./*": "./src/*.ts"
     },
@@ -11,15 +11,17 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "@investment/access": "workspace:*",
-        "@investment/market": "workspace:*",
-        "@investment/shared": "workspace:*",
+        "@hathway/market": "*",
+        "@hathway/access": "*",
+        "@hathway/agents": "*",
+        "@hathway/shared": "*",
         "effect": "4.0.0-rc.112",
-        "server-only": "^0.0.1"
+        "fflate": "^0.8.3",
+        "server-only": "^0.0.1",
+        "unpdf": "^1.8.1"
     },
     "devDependencies": {
         "typescript": "^5",
-        "vitest": "^4.1.11",
-        "@types/node": "^22"
+        "vitest": "^4.1.11"
     }
 }

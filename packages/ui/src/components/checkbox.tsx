@@ -3,7 +3,7 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { cn } from "cn"
 
-import { Check } from "@investment/ui/icons"
+import { Check } from "@hathway/ui/icons"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (

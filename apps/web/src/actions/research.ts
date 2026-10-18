@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Effect } from "effect";
 
-import type { BoardTheme } from "@investment/research/domain/Board";
+import type { BoardTheme } from "@hathway/research/domain/Board";
 
 import { appAction } from "@/lib/action";
 import { boardStoreLayer } from "@/lib/boardsRuntime";
@@ -29,7 +29,7 @@ import {
  *    여기서 어휘(`sign-in` · `invalid` · `failed`)로 바꿔 돌려준다(`lib/gateRefusal.ts`).
  */
 
-const withBoards = <A, E>(program: Effect.Effect<A, E, import("@investment/research/ports/BoardStore").BoardStore>) =>
+const withBoards = <A, E>(program: Effect.Effect<A, E, import("@hathway/research/ports/BoardStore").BoardStore>) =>
     Effect.flatMap(boardStoreLayer, (layer) => program.pipe(Effect.provide(layer)));
 
 const newId = (prefix: string): string => `${prefix}-${crypto.randomUUID().slice(0, 8)}`;

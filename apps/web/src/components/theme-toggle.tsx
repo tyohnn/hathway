@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@phosphor-icons/react";
-import { Button } from "@investment/ui/components/button";
+import { Button } from "@hathway/ui/components/button";
 
 export function ThemeToggle()
 {

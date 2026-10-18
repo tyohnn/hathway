@@ -2,7 +2,7 @@
  * 리서치 보드의 불변식. 인용 표기는 `INV-RESEARCH-` 로 시작하는 두 자리 번호다.
  */
 
-import type { Invariant } from "@investment/shared/invariants/types";
+import type { Invariant } from "@hathway/shared/invariants/types";
 
 export const INVARIANTS: readonly Invariant[] = [
     {

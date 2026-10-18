@@ -2,7 +2,7 @@ import { afterAll, assert, describe, it } from "vitest";
 import { Effect } from "effect";
 import { Pool } from "pg";
 
-import { accountDirectoryContract } from "@investment/access/testing/contracts/account-directory";
+import { accountDirectoryContract } from "@hathway/access/testing/contracts/account-directory";
 
 import { closePostgresPools, poolExecutor, postgresPool } from "../connection.ts";
 import { localDb } from "../testing/local-db.ts";
@@ -26,6 +26,7 @@ afterAll(async () =>
 
 const ROLES = [
     { app: "web", env: "WEB_DATABASE_URL" },
+    { app: "agent", env: "AGENT_DATABASE_URL" },
 ] as const;
 
 for (const { app, env } of ROLES)

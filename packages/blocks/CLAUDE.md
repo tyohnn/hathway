@@ -1,9 +1,6 @@
 # packages/blocks
 
-> 2026-10-02 에 스캐폴드(`tyohnn/scaffold`)에서 옮겨 왔습니다. 아래 글은 스캐폴드의 것 그대로이고 이 저장소에서 다른 점은 셋입니다.
-> 소비처는 `apps/web` 하나입니다. 아이콘은 hugeicons · lucide 가 아니라 phosphor 입니다(`src/icons/extra.tsx`). 입은 시스템은 loam 이 아니라 graphite 입니다.
-
-`@investment/ui` 프리미티브를 조합해서 만든 화면 형태(블록)를 모아 두는 패키지입니다. 2026-09-06 현재 블록은 19개이고 전부 Figma 에서 확정(`■`)된 것입니다. 목록은 아래 「블록 목록」에 있습니다. 2026-09-16 에 `app-shell` 이 스무째로 들어왔습니다. 앱 셸이고, Figma 가 아니라 resolv-ai 의 advisor 앱이 세운 「셸 규격」에서 왔습니다.
+`@hathway/ui` 프리미티브를 조합해서 만든 화면 형태(블록)를 모아 두는 패키지입니다. 2026-09-06 현재 블록은 19개이고 전부 Figma 에서 확정(`■`)된 것입니다. 목록은 아래 「블록 목록」에 있습니다. 2026-09-16 에 `app-shell` 이 스무째로 들어왔습니다. 앱 셸이고, Figma 가 아니라 resolv-ai 의 advisor 앱이 세운 「셸 규격」에서 왔습니다.
 
 ⚠ **소비처는 `apps/web` · `apps/agent` 둘입니다.** 둘 다 아래 규약 3 의 등록 두 곳(`globals.css` 의 `@source` · `next.config.ts` 의 `transpilePackages`)을 마쳤습니다. ⚠ 새 앱이 블록을 처음 쓸 때 등록을 빠뜨리면 오류 없이 CSS 만 빕니다. resolv-ai 의 admin 앱이 그렇게 블록 전용 유틸리티를 통째로 잃었습니다. 새 앱에서 가장 먼저 확인할 자리입니다.
 
@@ -25,11 +22,12 @@
 
 | 허용하는 의존 | 금지하는 의존 |
 |---|---|
-| `@investment/ui` (컴포넌트, `cn`) | `apps/*` |
-| `@investment/shared` 의 순수 포매터 | 도메인 패키지(`packages/agents` · `packages/access`), 어댑터 패키지(`packages/adapters-*`) |
-| `@phosphor-icons/react`(`src/icons/extra.tsx` 에서만) | DB 클라이언트, `server-only` |
+| `@hathway/ui` (컴포넌트, `cn`) | `apps/*` |
+| `@hathway/shared` 의 순수 포매터 | 도메인 패키지(`packages/agents` · `packages/access`), 어댑터 패키지(`packages/adapters-*`) |
+| `lucide-react` | DB 클라이언트, `server-only` |
 | `@tanstack/react-table` 8.21, `@tanstack/react-virtual` 3.14 | `next/*` (블록은 Next 를 모릅니다) |
 | `@dnd-kit/core`·`sortable`·`utilities` | 도메인 타입 (`AgentDefinition`, `Skill` 등) |
+| `@tiptap/*` 3.31 · `@floating-ui/dom` 1.7 (`BlockEditor` 만) | |
 
 TanStack Table 은 8.x 에 고정합니다. 9.x 는 API 가 다시 쓰인 판이라 오프라인 환경에서 검증할 수 없었습니다.
 
@@ -43,8 +41,8 @@ TanStack Table 은 8.x 에 고정합니다. 9.x 는 API 가 다시 쓰인 판이
    ⚠ **설정형을 복합형으로 미리 만들지 마십시오.** 조각을 호출부에 열어 두면 그 배치가 곧 계약이 되어, 블록이 자기 짜임을 바꿀 수 없게 됩니다. 조각을 따로 놓아야 할 실제 요구가 나온 다음에 옮깁니다. `FilterBar` 와 `StatCard` 는 파일이 여럿이지만 `FacetPills` 같은 안쪽 조각을 내보내지 않아 설정형입니다.
 
    두 모양에 공통으로 적용되는 것도 있습니다. render prop 대신 `children` 을 쓰고, boolean props 대신 명시적 variant 를 씁니다. 데이터를 가져오지 않고 변경을 콜백으로 올리는 것은 위 「역할과 경계」가 정합니다.
-2. **값은 스타일 토큰으로 씁니다.** 색은 1층(`theme.css`), 밀도·형태는 2층(`tokens.css`)의 변수를 읽습니다. 두 파일 모두 `packages/ui/src/systems/<system>/` 에 있고 tyohnn 소유라 **여기서 새 토큰을 만들지 않습니다** — 기존 토큰으로 표현되면 그것을 쓰고, 표현이 안 되면 tyohnn 에 올립니다. 시스템 축이 아닌 제품 치수는 `packages/ui/src/product.css` 에 둡니다. 최소한의 변수로 전체 느낌을 바꿀 수 있어야 하기 때문입니다. 새 CSS 층은 만들지 않고 프리미티브 위에 조합만 합니다. `cn` 은 `@investment/ui/lib/utils` 에서 가져옵니다. JSX 에서 토큰을 읽는 방법은 Tailwind 임의값(`gap-[var(--surface-gap-lg)]`)이 기본입니다 — `className` 이라 호출부가 덮어쓸 수 있기 때문입니다. 굵기만 `style` 로 줍니다(`font-[…]` 가 굵기와 글꼴을 구분하지 못합니다). 토큰으로 만들지 **않는** 것도 있습니다 — 줄무늬의 반투명 바탕(`bg-muted/40`)은 3층 `table.css` 가 표 바닥선·행 hover 에 이미 적어 둔 판단을 따라 유틸리티로 두고, 가상 스크롤의 행 높이(44)는 가상화기가 픽셀 수를 요구해 CSS 변수로 둘 수 없어 이름 있는 상수(`DEFAULT_VIRTUAL_ROW_HEIGHT`)로 둡니다.
-3. **소비하는 앱이 두 곳을 등록해야 합니다.** `globals.css` 에 `@source "../../../../packages/blocks/src";` 를, `next.config.ts` 의 `transpilePackages` 에 `@investment/blocks` 를 넣습니다. `@source` 를 빠뜨리면 블록의 클래스가 CSS 에 들어가지 않아 레이아웃이 오류 없이 무너집니다.
+2. **값은 스타일 토큰으로 씁니다.** 색은 1층(`theme.css`), 밀도·형태는 2층(`tokens.css`)의 변수를 읽습니다. 두 파일 모두 `packages/ui/src/systems/<system>/` 에 있고 tyohnn 소유라 **여기서 새 토큰을 만들지 않습니다** — 기존 토큰으로 표현되면 그것을 쓰고, 표현이 안 되면 tyohnn 에 올립니다. 시스템 축이 아닌 제품 치수는 `packages/ui/src/product.css` 에 둡니다. 최소한의 변수로 전체 느낌을 바꿀 수 있어야 하기 때문입니다. 새 CSS 층은 만들지 않고 프리미티브 위에 조합만 합니다. `cn` 은 `@hathway/ui/lib/utils` 에서 가져옵니다. JSX 에서 토큰을 읽는 방법은 Tailwind 임의값(`gap-[var(--surface-gap-lg)]`)이 기본입니다 — `className` 이라 호출부가 덮어쓸 수 있기 때문입니다. 굵기만 `style` 로 줍니다(`font-[…]` 가 굵기와 글꼴을 구분하지 못합니다). 토큰으로 만들지 **않는** 것도 있습니다 — 줄무늬의 반투명 바탕(`bg-muted/40`)은 3층 `table.css` 가 표 바닥선·행 hover 에 이미 적어 둔 판단을 따라 유틸리티로 두고, 가상 스크롤의 행 높이(44)는 가상화기가 픽셀 수를 요구해 CSS 변수로 둘 수 없어 이름 있는 상수(`DEFAULT_VIRTUAL_ROW_HEIGHT`)로 둡니다.
+3. **소비하는 앱이 두 곳을 등록해야 합니다.** `globals.css` 에 `@source "../../../../packages/blocks/src";` 를, `next.config.ts` 의 `transpilePackages` 에 `@hathway/blocks` 를 넣습니다. `@source` 를 빠뜨리면 블록의 클래스가 CSS 에 들어가지 않아 레이아웃이 오류 없이 무너집니다.
 4. **문구는 `labels` 로 모읍니다.** 기본값은 한국어이고 호출부가 일부만 덮어씁니다. JSX 에 문구를 직접 적지 않습니다. 이름은 블록마다 다르게 둡니다(`CalloutLabels` · `CALLOUT_LABELS`) — 하위 경로가 갈라 주긴 하지만, 한 화면이 블록 여럿을 쓸 때 별칭을 열여덟 번 적지 않으려는 것입니다. `DataTable` 만 먼저 생겨 `Labels` · `DEFAULT_LABELS` 입니다.
 5. **자리를 차지하는 블록은 기다리는 얼굴을 `loading` 으로 함께 그립니다.** 따로 그린 Skeleton 은 줄 높이 · 여백이 달라 값이 오는 순간 화면이
    움직이므로, 같은 컴포넌트가 값 자리만 막대(`pending.tsx` 의 `PendingText`)로 바꿔 섭니다(`ItemList` · `PageHeader` · `AppShellAccount`,
@@ -76,8 +74,9 @@ PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx 
 | 블록 | 하는 일 | 눈여겨볼 것 |
 |---|---|---|
 | `ActionBar` | 선택 수와 일괄 액션을 담은 띠 | 선택 0 이면 그리지 않습니다. `DataTable` 의 선택 띠가 이것의 어댑터입니다 |
-| `AppShell` | 사이드바와 상단 띠와 본문 우물 | 사이드바는 떠 있는 판(`variant="floating"`)이고, 그 옆의 본문을 테두리 있는 판으로 그리는 것은 시스템(loam)의 3층입니다(2026-09-28). `layout` 이 둘입니다 — `well` 은 띠와 1280 우물을 셸이 갖고, `full` 은 둘 다 없이 본문이 남은 자리를 통째로 씁니다(기둥마다 제 머리를 갖는 화면) |
+| `AppShell` | 사이드바와 상단 띠와 본문 우물 | 사이드바는 떠 있는 판(`variant="floating"`)이고, 그 옆의 본문을 테두리 있는 판으로 그리는 것은 시스템(loam)의 3층입니다(2026-09-28). `layout` 이 둘입니다 — `well` 은 띠와 1280 우물을 셸이 갖고, `full` 은 둘 다 없이 본문이 남은 자리를 통째로 씁니다(기둥마다 제 머리를 갖는 화면). 둘 다 셸을 화면 높이에 묶어 위 띠가 늘 보이고, `well` 은 본문이 구릅니다(2026-10-02). `well` 에서 화면이 `data-screen="fill"` 을 달면 우물을 풀어 판 전체를 씁니다. 접힌 사이드바의 발치에는 얼굴만 섭니다. 머리 아래의 도구 줄(`tools`, 찾기 · 만들기)과 계정 위의 발치 메뉴(`footerGroups` · `footerNav`, 설정 · 문서)는 앱이 넘기고 주지 않으면 서지 않습니다(2026-10-06) |
 | `AttachmentList` | 첨부 파일 목록 | 아이콘은 확장자가 아니라 정본 MIME 으로 고릅니다. 줄을 누르는 것(`onPress`)과 내려받는 것은 다른 일입니다 |
+| `BlockEditor` | 노션 같은 블록 편집기 | 본문은 노션 enhanced markdown 으로 열고 닫습니다. 이 블록만 CSS 파일을 갖습니다. 아래 절 |
 | `Callout` | 액션이 달린 배너 | 바탕은 card 그대로, 아이콘과 제목만 tone 색입니다 |
 | `ChatNav` · `ChatPane` · `ChatRail` · `ChatSplit` | 대화 화면의 사이드바와 기둥과 곁칸과 너비 손잡이 | 아래 절 |
 | `ChoiceCards` | 라디오를 카드로 그린 선택기 | 카드 면은 직접 그렸습니다(Card 에 그릇이 없습니다) |
@@ -87,6 +86,7 @@ PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx 
 | `FieldGroup` | Field 를 범례 아래 묶는 폼 구역 | 프리미티브에도 같은 이름이 있어 import 를 별칭합니다. 보임 조건은 데이터(`rules.ts`, vitest) |
 | `FilterBar` | 목록 위의 조건 띠 | 배치(`layout`)와 패싯의 배치(`display`)는 서로 다른 축이고 둘 다 주지 않으면 종전 모양 그대로입니다. 조건 값의 병합과 직렬화는 `filter-state.ts`(vitest)가 갖습니다. 띠 배치의 트리거는 `DataTable` 과 같은 조각(`src/filter-trigger.tsx`)을 씁니다 |
 | `FormSheet` | 등록·편집 폼을 담은 시트 | 폭은 `DetailPanel` 과 같은 토큰을 읽습니다 |
+| `GallerySection` | 갤러리 홈의 묶음 하나. 제목과 「모두 보기」 아래 그림 카드 한 줄, 또는 종류 타일 | 2026-10-17 사용자가 Figma Community · v0 의 템플릿 홈을 보이며 확정했고 hwp-pilot 의 홈이 먼저 썼습니다. 카드 전체가 링크 하나이고 이름은 제목만입니다. 제목 칸은 늘 두 줄 높이라 카드 높이가 같습니다. ⚠ 링크 요소(`render` · `more`)는 **클라이언트 컴포넌트에서** 만들어 넘깁니다. 서버가 만든 `<Link />` 를 넘기면 화면이 떨어집니다(React #130) |
 | `ItemList` | 표가 아닌 카드·행 목록 | 누를 수 있는 항목에는 `aria-label` 로 제목만 이름으로 주고 셰브런을 블록이 그립니다 |
 | `PageHeader` | 라우트의 머리 | 제목 크기는 `heading/font-size/lg` |
 | `PromptInput` | 에이전트에게 말을 실어 보내는 칸 | `InputGroup` 한 벌입니다. 보내는 열쇠는 칸에 적힌 ⌘↵ 그대로입니다. Skeleton 을 두지 않습니다 — 데이터를 기다리지 않습니다 |
@@ -116,6 +116,37 @@ PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx 
 ⚠ **`react-resizable-panels` 4 판은 수를 픽셀로, 문자열을 백분율로 읽습니다.** 백분율인 줄 알고 26 을 넘겼다가 오른쪽 칸이 26px 로 섰습니다(2026-09-22 실측). `direction` 과 `order` 는 4 판에 없고, 묶음의 축은 `orientation` 이며 칸의 차례는 적는 차례가 정합니다.
 
 ⚠ **칸에 `style={{ overflow: "visible" }}` 를 줍니다.** 그 라이브러리가 안쪽 상자에 `overflow: auto` 를 걸어 두는데, 카드가 칸의 왼쪽 끝에 붙어 서므로 그 선에서 그림자가 잘립니다. `style` 이 안쪽 상자에 닿는 유일한 길입니다.
+
+### 블록 편집기 (2026-10-09)
+
+viewrush 의 노트 화면에서 자라 블록으로 떼어 낸 것을 옮겨 왔습니다. tiptap 3 위에 노션의 블록 다루기를 직접 얹었습니다.
+본문을 노션 enhanced markdown 으로 두는 것은 Claude 가 MCP 로 글을 그대로 읽고 쓰게 하려는 것입니다(노션 MCP 와 같은 꼴).
+
+```tsx
+<BlockEditor ref={handle} defaultValue={card.body} onChange={(getBody) => schedule(getBody)} />
+```
+
+| 파일 | 맡는 것 |
+|---|---|
+| `BlockEditor.tsx` | 편집기와 글자 메뉴. 값을 갖지 않고(`defaultValue`), 바뀌면 `onChange` 가 본문을 읽는 함수를 넘깁니다 |
+| `BlockLayer.tsx` | 편집기 위에 겹친 층. 줄마다의 손잡이와 「+」, 블록 메뉴, 끌어 옮기기, 범위 선택, 글 안에서 블록을 넘는 선택 |
+| `rows.ts` | 문서를 줄(블록)의 목록으로 펴고, 마우스 높이의 줄과 놓을 자리(깊이는 가로 위치)를 고릅니다. vitest |
+| `ops.ts` | 줄을 옮기고 지우고 복제하고 바꾸는 일. 한 번에 트랜잭션 하나이고, 옮기거나 지운 뒤 맞닿은 같은 목록을 잇습니다(vitest) |
+| `kinds.ts` · `SlashMenu.tsx` | 블록의 종류와 `/` 메뉴. 「바꾸기」가 같은 목록을 씁니다 |
+| `schema.ts` · `notion.ts` · `indent.ts` | 확장 목록, 토글과 콜아웃의 노션 꼴, 맨 바깥 블록의 들여쓰기(Tab · Shift+Tab) |
+| `format.ts` | 편집기 없이 본문과 문서를 오갑니다. 저장도 이것을 지나야 들여쓰기가 탭으로 남습니다. vitest |
+| `labels.ts` | 문구. 종류의 이름까지 여기 있습니다 |
+
+⚠ **이 블록만 CSS 파일(`block-editor.css`)을 갖습니다.** 편집기 안의 요소는 tiptap 이 그려서 클래스를 달 수 없기 때문입니다. 값은
+loam 의 읽는 문서 조판(`--typeset-doc-*`)을 읽고 새 토큰을 만들지 않습니다(규약 2).
+
+⚠ **끌기는 브라우저의 끌어 놓기를 쓰지 않고 포인터를 직접 따라갑니다.** 안쪽 목록이 있는 문서에서 브라우저의 끌기가 멈췄고 놓는 자리도
+엇갈렸습니다. tiptap 의 공식 손잡이는 실시간 협업 묶음(yjs)을 끌어와 쓰지 않습니다.
+
+⚠ **화면을 떠나며 저장할 때는 `onChange` 가 넘긴 함수로 읽습니다.** `ref` 의 손잡이는 호출부의 정리보다 먼저 풀립니다.
+
+⚠ **이 저장소에는 아직 쓰는 화면이 없어 상호작용을 재는 e2e 가 없습니다.** viewrush 의 노트(`apps/web/e2e/notebook.spec.ts`)가 같은
+코드를 잽니다. 처음 쓰는 화면이 서면 그 앱에 e2e 를 세웁니다.
 
 ### 블록 사이의 공용 조각
 
@@ -167,7 +198,7 @@ shadcnblocks data-table 15종(2, 3, 4, 7, 9, 11, 12, 15, 17, 18, 20, 27, 28, 29,
 - 열 드래그는 `th` 에 dnd-kit 포인터 리스너만 붙입니다. `attributes`(role=button, tabIndex)까지 붙이면 columnheader 의미와 `aria-sort` 가 깨집니다. 키보드 사용자는 열 메뉴의 왼쪽·오른쪽 이동으로 같은 상태를 바꿉니다.
 - 전역 검색은 표시 문자열(`cellText`)로 찾습니다. 원시값 `completed` 가 아니라 사용자가 보는 `완료` 로 검색됩니다.
 - 메타 열 id 는 `__drag`·`__select`·`__expand`·`__actions` 입니다. 데이터 열 키는 밑줄 둘로 시작할 수 없습니다.
-- 셀 형식은 `formatCellValue` 하나로 정합니다. 종류별 포매터는 `@investment/shared/utils/formatters` 와 `dateFormatting` 을 씁니다. 표마다 `toLocaleString` 을 따로 부르던 드리프트를 여기서 막습니다.
+- 셀 형식은 `formatCellValue` 하나로 정합니다. 종류별 포매터는 `@hathway/shared/utils/formatters` 와 `dateFormatting` 을 씁니다. 표마다 `toLocaleString` 을 따로 부르던 드리프트를 여기서 막습니다.
 - `SelectionBar` 는 `ActionBar` 블록의 어댑터입니다(2026-09-06). 모양은 `ActionBar` 가 갖고, 표의 `BulkAction`(행 배열을 받는다)을 `BarAction`(인자가 없다)으로 옮기는 것만 여기서 합니다.
 - 프리미티브 `Pagination` 은 `<a>` 를 그려 disabled 가 없으므로 `Button` 으로 그립니다.
 - 셀 종류 `badge` 는 `StatusBadge` 블록을 그립니다(2026-09-06). 표시 문자열은 `format` 으로, 색은 `tone` 또는 `facetOptions[].tone` 으로 정합니다. 상태 값의 tone 대응표는 온톨로지의 enum 정의가 소유하고, 블록은 받은 tone 만 그립니다 — 표 안팎의 상태 색이 한 자리가 됩니다.

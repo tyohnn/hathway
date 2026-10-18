@@ -6,9 +6,9 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 
-import { Button } from "@investment/ui/components/button"
-import { ChevronLeft, ChevronRight } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { Button } from "@hathway/ui/components/button"
+import { ChevronLeft, ChevronRight } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>

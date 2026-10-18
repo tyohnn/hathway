@@ -1,0 +1,81 @@
+/*
+ * 화면의 모양. 호스트가 주는 CSS 변수(MCP Apps 의 표준 이름)를 읽고, 주지 않으면 뒤의 값으로 선다.
+ * 그래서 ChatGPT 안에서는 ChatGPT 의 색과 글꼴을 입고, 다른 호스트에서도 깨지지 않는다.
+ * 제품의 디자인 시스템(packages/ui)은 입지 않는다. 화면은 호스트의 일부로 보여야 하고 묶음이 작아야 빨리 뜬다.
+ */
+:root {
+    color-scheme: light dark;
+    --bg: var(--color-background-primary, light-dark(#ffffff, #1c1c1e));
+    --bg-soft: var(--color-background-secondary, light-dark(#f4f4f5, #2a2a2d));
+    --fg: var(--color-text-primary, light-dark(#18181b, #f4f4f5));
+    --fg-soft: var(--color-text-secondary, light-dark(#52525b, #a1a1aa));
+    --line: var(--color-border-primary, light-dark(#e4e4e7, #3f3f46));
+    --ring: var(--color-ring-primary, light-dark(#18181b, #f4f4f5));
+    --radius: var(--border-radius-md, 8px);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-size: var(--font-text-md-size, 14px);
+    line-height: 1.5;
+}
+
+.app { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+
+.bar { display: flex; align-items: center; gap: 8px; }
+.bar h1 { margin: 0; font-size: var(--font-heading-sm-size, 16px); font-weight: var(--font-weight-semibold, 600); }
+.bar button { margin-left: auto; }
+.bar .badge { margin-left: 4px; }
+
+.columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; }
+[data-page="tray"] .columns, .columns:not(:has(.detail)) { grid-template-columns: minmax(0, 1fr); }
+
+.list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
+.row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-align: left;
+    background: transparent;
+    border-color: transparent;
+}
+.row[aria-pressed="true"] { background: var(--bg-soft); border-color: var(--line); }
+.row-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.badge { padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--fg-soft); font-size: var(--font-text-xs-size, 12px); white-space: nowrap; }
+
+.detail { padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); min-height: 96px; }
+.detail h2 { margin: 0 0 8px; font-size: var(--font-heading-sm-size, 16px); }
+.detail .body { margin: 0 0 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.empty { margin: 0; color: var(--fg-soft); }
+.notice, .status { margin: 0; color: var(--fg-soft); }
+.status:empty { display: none; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.compose { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.compose label { display: grid; gap: 4px; color: var(--fg-soft); font-size: var(--font-text-sm-size, 13px); }
+
+input, textarea, select, button {
+    font: inherit;
+    color: var(--fg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg);
+    padding: 6px 10px;
+}
+textarea { resize: vertical; }
+.editor { width: 100%; min-height: 240px; font-family: var(--font-mono, ui-monospace, monospace); }
+
+button { cursor: pointer; background: var(--bg-soft); }
+button.quiet { background: transparent; }
+button:disabled { cursor: default; opacity: 0.5; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }

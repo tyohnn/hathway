@@ -2,18 +2,18 @@
 
 import { flexRender, type Header } from "@tanstack/react-table";
 
-import { Button } from "@investment/ui/components/button";
-import { Checkbox } from "@investment/ui/components/checkbox";
+import { Button } from "@hathway/ui/components/button";
+import { Checkbox } from "@hathway/ui/components/checkbox";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@investment/ui/components/dropdown-menu";
-import { TableHead } from "@investment/ui/components/table";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, ChevronDown, Pin } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/dropdown-menu";
+import { TableHead } from "@hathway/ui/components/table";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, ChevronDown, Pin } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { isMetaColumnId, META_COLUMN } from "./columns";
 import { useDataTable } from "./context";

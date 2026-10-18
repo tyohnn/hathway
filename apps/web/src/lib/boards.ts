@@ -1,11 +1,12 @@
 import "server-only";
 
 import { Effect, Exit } from "effect";
+import { connection } from "next/server";
 
-import type { Actor } from "@investment/access/domain/Actor";
-import type { Board, BoardTheme } from "@investment/research/domain/Board";
-import type { BoardStore } from "@investment/research/ports/BoardStore";
-import { ownsBoard } from "@investment/research/rules/edit";
+import type { Actor } from "@hathway/access/domain/Actor";
+import type { Board, BoardTheme } from "@hathway/research/domain/Board";
+import type { BoardStore } from "@hathway/research/ports/BoardStore";
+import { ownsBoard } from "@hathway/research/rules/edit";
 
 import { parseBoardDocument } from "@/lib/research/document";
 import type { ResearchBoard } from "@/lib/research/types";
@@ -19,9 +20,11 @@ import { runtime } from "./runtime";
  *
  * ⚠ **읽지 못하면 목록은 비고 보드는 없는 것으로 답한다.** 접속 문자열이 없는 배포나 DB 가 내려간 때에도 셸과
  *    다른 화면은 서야 한다. 실패는 로그로 남긴다.
+ * ⚠ 요청마다 읽는다. `connection()` 을 먼저 기다려서 빌드가 보드를 미리 굽지 않게 한다.
  */
 const read = async <A>(program: Effect.Effect<A, unknown, BoardStore>, fallback: A, what: string): Promise<A> =>
 {
+    await connection();
     const exit = await runtime.runPromiseExit(
         Effect.flatMap(boardStoreLayer, (layer) => program.pipe(Effect.provide(layer))),
     );

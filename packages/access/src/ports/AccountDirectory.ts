@@ -37,5 +37,5 @@ export class AccountDirectory extends Context.Service<AccountDirectory, {
     readonly linkableByEmail: (email: string) => Effect.Effect<LinkableAccount | null, NotAppMember>;
     /** 칸이 비어 있고 주소가 같을 때만 붙인다. 어느 쪽이든 아니면 붙이지 않고 결과로 답한다 */
     readonly link: (request: LinkRequest) => Effect.Effect<LinkOutcome, NotAppMember>;
-}>()("@investment/access/ports/AccountDirectory")
+}>()("@hathway/access/ports/AccountDirectory")
 {}

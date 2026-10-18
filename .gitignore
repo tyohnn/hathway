@@ -1,3 +1,76 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+.next/
+out/
+.turbo/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+.claude/settings.local.json
+.claude/settings.json
+.claude/worktrees/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.idea/
+
+# dev server logs
+dev.log
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# supabase 로컬 스택 (CLI 생성)
+supabase/.branches
+supabase/.temp
+supabase/.env
+
+
+
+# Workflow DevKit 로컬 백엔드와 빌드가 만드는 경로
+.workflow-data/
+apps/*/src/app/.well-known/workflow/
+
+# agentic e2e (e2e runner): 보고서 · 기록 · 영상은 버리고, 되풀이 녹화(.e2e/cache)만 남긴다
+**/.e2e/*
+!**/.e2e/cache/
+
+# ── hathway ──
 # macOS
 .DS_Store
 
@@ -9,7 +82,9 @@ backup/
 
 # 각자 설치하는 외부 스킬. 저장소가 함께 쓰는 스킬은 .claude/skills/ 에 사본으로 들어 있고
 # 그 출처와 해시는 skills-lock.json 이 고정한다.
-.agents/
+.agents/*
+# 플러그인 모듈의 마켓플레이스 목록은 저장소가 갖는다
+!.agents/plugins/
 
 # Web app (apps/web)
 apps/web/node_modules/
@@ -32,8 +107,9 @@ __pycache__/
 # platform 로컬 산출물
 platform/data/
 
-# Supabase CLI 잔여물 (레포 루트에서 CLI 실행 시 재생성됨)
-/supabase/
+# pr:check 의 결과 표와 진행 도식
+.pr-check
+
 
 # 개인 저작 노트 (34 MB·613파일) — 저장소의 교재/·강의/ 와 성격은 같지만 로컬 전용이다
 /내 주식강의/

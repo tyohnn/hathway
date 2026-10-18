@@ -3,9 +3,9 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import type { InviteTarget } from "@investment/access/access/team";
-import type { MembershipRole } from "@investment/access/domain/AppAudience";
-import { type AccountOrg, type MemberRow, TeamDirectory, TeamDirectoryError, type WriteOutcome } from "@investment/access/ports/TeamDirectory";
+import type { InviteTarget } from "@hathway/access/access/team";
+import type { MembershipRole } from "@hathway/access/domain/AppAudience";
+import { type AccountOrg, type MemberRow, TeamDirectory, TeamDirectoryError, type WriteOutcome } from "@hathway/access/ports/TeamDirectory";
 
 import type { SqlExecutor } from "../connection.ts";
 

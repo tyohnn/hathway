@@ -8,7 +8,7 @@
  * id 가 들어오는 것을 막습니다.
  */
 
-import type { Invariant } from "@investment/shared/invariants/types";
+import type { Invariant } from "@hathway/shared/invariants/types";
 
 export const INVARIANTS: readonly Invariant[] = [
     {

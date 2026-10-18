@@ -1,0 +1,9 @@
+{
+    "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+    "mcpServers": {
+        "hathway": {
+            "type": "streamable-http",
+            "url": "http://localhost:4400/api/mcp"
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+    "name": "hathway",
+    "version": "0.0.1",
+    "description": "쪽지를 읽고 쓰고 대화에 붙여요.",
+    "author": {
+        "name": "Hathway"
+    },
+    "keywords": ["notes"],
+    "extensions": {
+        "com.openai": {
+            "apps": "./.app.json",
+            "onboardingSkill": "./skills/setup/SKILL.md",
+            "interface": {
+                "displayName": "Hathway",
+                "shortDescription": "쪽지를 읽고 쓰고 대화에 붙여요",
+                "longDescription": "쪽지를 살펴보고, 새로 쓰고, 고른 쪽지를 대화에 붙여 함께 봐요. 텍스트 파일을 쪽지로 가져올 수도 있어요.",
+                "developerName": "Hathway",
+                "category": "Productivity",
+                "capabilities": ["Interactive", "Read", "Write"],
+                "defaultPrompt": [
+                    "@Hathway 쪽지 보여 줘",
+                    "@Hathway 오늘 회의 내용을 쪽지로 남겨 줘"
+                ],
+                "composerIcon": "./assets/icon.svg",
+                "logo": "./assets/icon.svg"
+            }
+        }
+    }
+}

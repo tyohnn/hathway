@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { Effect, Layer } from "effect";
 
-import type { Company, Filing } from "@investment/schema";
-import type { FinPeriodRow, RawSection } from "@investment/market/domain/rows";
-import { FilingDocuments } from "@investment/market/ports/MarketStore";
-import { marketMemory, type MarketSeed } from "@investment/market/testing/marketMemory";
+import type { Company, Filing } from "@hathway/schema";
+import type { FinPeriodRow, RawSection } from "@hathway/market/domain/rows";
+import { FilingDocuments } from "@hathway/market/ports/MarketStore";
+import { marketMemory, type MarketSeed } from "@hathway/market/testing/marketMemory";
 
 import { companyPage, filingSection, noteSections } from "./market";
 

@@ -15,17 +15,15 @@ import {
     type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpenTextIcon, GlobeHemisphereEastIcon, XIcon } from "@phosphor-icons/react";
+import { GlobeHemisphereEastIcon, XIcon } from "@phosphor-icons/react";
 import { industryHref } from "@/lib/nav";
 import {
     companyMetaLine,
     companyHref,
     labHref,
-    matchesChapter,
     matchesCompany,
     matchesIndustry,
     parseStockPath,
-    type ChapterIndex,
     type CompanyIndex,
     type IndustryIndex,
     type MarketChip,
@@ -38,9 +36,9 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@investment/ui/components/command";
-import { Button } from "@investment/ui/components/button";
-import { Kbd, KbdGroup } from "@investment/ui/components/kbd";
+} from "@hathway/ui/components/command";
+import { Button } from "@hathway/ui/components/button";
+import { Kbd, KbdGroup } from "@hathway/ui/components/kbd";
 
 const RECENT_KEY = "symbol-command:recent";
 const RECENT_MAX = 8;
@@ -64,7 +62,6 @@ type SymbolCommandValue = {
     intent: StockSearchIntent | null;
     companies: CompanyIndex[];
     industries: IndustryIndex[];
-    chapters: ChapterIndex[];
     recentCodes: string[];
     remember: (stockCode: string) => void;
 };
@@ -187,12 +184,10 @@ export function ShortcutHint()
 export function SymbolCommandProvider({
     companies,
     industries,
-    chapters,
     children,
 }: {
     companies: CompanyIndex[];
     industries: IndustryIndex[];
-    chapters: ChapterIndex[];
     children: ReactNode;
 })
 {
@@ -250,11 +245,10 @@ export function SymbolCommandProvider({
             intent,
             companies,
             industries,
-            chapters,
             recentCodes,
             remember,
         }),
-        [open, setOpen, openSearch, intent, companies, industries, chapters, recentCodes, remember],
+        [open, setOpen, openSearch, intent, companies, industries, recentCodes, remember],
     );
 
     return (
@@ -267,7 +261,7 @@ export function SymbolCommandProvider({
 
 function SymbolCommandDialog()
 {
-    const { open, setOpen, intent, companies, industries, chapters, recentCodes, remember } =
+    const { open, setOpen, intent, companies, industries, recentCodes, remember } =
         useSymbolCommand();
     const pathname = usePathname();
     const router = useRouter();
@@ -303,7 +297,6 @@ function SymbolCommandDialog()
 
     const showExtras = chip === "all" || query.trim().length > 0;
     const filteredIndustries = showExtras ? industries.filter((item) => matchesIndustry(item, query)).slice(0, 12) : [];
-    const filteredChapters = showExtras ? chapters.filter((item) => matchesChapter(item, query)).slice(0, 12) : [];
 
     useEffect(() =>
     {
@@ -450,30 +443,6 @@ function SymbolCommandDialog()
                                         <span className="flex min-w-0 flex-col leading-tight">
                                             <span className="truncate font-medium">{industry.name}</span>
                                             <span className="truncate text-[11px] text-muted-foreground">{industry.tagline}</span>
-                                        </span>
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        )}
-                        {filteredChapters.length > 0 && (
-                            <CommandGroup heading="교재">
-                                {filteredChapters.map((chapter) => (
-                                    <CommandItem
-                                        key={chapter.href}
-                                        value={`chapter:${chapter.href}`}
-                                        onSelect={() => goHref(chapter.href)}
-                                        onMouseDown={(event) =>
-                                        {
-                                            event.preventDefault();
-                                            goHref(chapter.href);
-                                        }}
-                                    >
-                                        <BookOpenTextIcon className="size-4 text-muted-foreground" />
-                                        <span className="flex min-w-0 flex-col leading-tight">
-                                            <span className="truncate font-medium">{chapter.heading}</span>
-                                            <span className="truncate text-[11px] text-muted-foreground">
-                                                {chapter.bookLabel} · {chapter.title}
-                                            </span>
                                         </span>
                                     </CommandItem>
                                 ))}

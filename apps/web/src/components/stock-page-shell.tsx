@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Company } from "@investment/schema";
+import type { Company } from "@hathway/schema";
 import { CompanyHeader } from "@/components/company-header";
 
 export function StockPageShell({

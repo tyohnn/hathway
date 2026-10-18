@@ -1,7 +1,7 @@
 "use client";
 
-import { Table, TableBody, TableCell, TableRow } from "@investment/ui/components/table";
-import { cn } from "@investment/ui/lib/utils";
+import { Table, TableBody, TableCell, TableRow } from "@hathway/ui/components/table";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { formatCellValue } from "../data-table/columns";
 import { DateCell, DerivedCell, LockedCell, MultiCell, SelectCell, TextCell, TransitionCell } from "./EditCell";

@@ -1,10 +1,10 @@
 "use client";
 
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@investment/ui/components/card";
-import { Empty, EmptyDescription, EmptyHeader } from "@investment/ui/components/empty";
-import { Skeleton } from "@investment/ui/components/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@investment/ui/components/tabs";
-import { cn } from "@investment/ui/lib/utils";
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@hathway/ui/components/card";
+import { Empty, EmptyDescription, EmptyHeader } from "@hathway/ui/components/empty";
+import { Skeleton } from "@hathway/ui/components/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@hathway/ui/components/tabs";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { DetailPanelProps } from "./types";
 

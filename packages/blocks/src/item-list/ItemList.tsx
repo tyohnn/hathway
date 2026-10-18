@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 
-import { Empty, EmptyDescription, EmptyHeader } from "@investment/ui/components/empty";
+import { Empty, EmptyDescription, EmptyHeader } from "@hathway/ui/components/empty";
 import {
     Item,
     ItemActions,
@@ -12,9 +12,9 @@ import {
     ItemMedia,
     ItemSeparator,
     ItemTitle,
-} from "@investment/ui/components/item";
-import { ChevronRight } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/item";
+import { ChevronRight } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { isInteractiveTarget } from "../interaction";
 import { PendingText } from "../pending";
@@ -177,7 +177,12 @@ export function ItemList({
                                                 {item.meta}
                                             </span>
                                         )}
-                                    {item.actions}
+                                    {/*
+                                      * ⚠ 서버 컴포넌트가 만든 요소가 `items` 에 실려 오면 React 가 그것을 목록의 자식으로 보고 key 를
+                                      *    찾는다(「Each child in a list should have a unique key」). 블록이 제 자리에서 감싸면
+                                      *    호출부마다 key 를 달지 않아도 된다
+                                      */}
+                                    {item.actions === undefined ? null : <Fragment key="actions">{item.actions}</Fragment>}
                                     {onItemPress === undefined || item.disabled === true
                                         ? null
                                         : <ChevronRight className="size-4 text-muted-foreground" aria-hidden />}

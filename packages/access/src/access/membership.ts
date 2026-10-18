@@ -1,4 +1,4 @@
-import type { TenantKind } from "@investment/shared/constants/tenancy";
+import type { TenantKind } from "@hathway/shared/constants/tenancy";
 
 import type { AppAudience, MembershipRole } from "../domain/AppAudience.ts";
 

@@ -8,8 +8,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSkeleton,
-} from "@investment/ui/components/sidebar";
-import { Plus } from "@investment/ui/icons";
+} from "@hathway/ui/components/sidebar";
+import { Plus } from "@hathway/ui/icons";
 
 import { activeNavItem } from "../app-shell/active";
 import { CHAT_SHELL_LABELS } from "./labels";

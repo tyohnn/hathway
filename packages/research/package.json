@@ -1,5 +1,5 @@
 {
-    "name": "@investment/research",
+    "name": "@hathway/research",
     "version": "0.0.1",
     "private": true,
     "//": "리서치 보드 도메인. 보드의 타입과 순수 규칙(누가 고치고 지우는가 · 판 대조 · 새 보드)과 포트를 둔다. 런타임 의존은 effect 뿐이다.",
@@ -16,8 +16,8 @@
         "test:watch": "vitest"
     },
     "dependencies": {
-        "@investment/access": "workspace:*",
-        "@investment/shared": "workspace:*",
+        "@hathway/access": "*",
+        "@hathway/shared": "*",
         "effect": "4.0.0-rc.112"
     },
     "devDependencies": {

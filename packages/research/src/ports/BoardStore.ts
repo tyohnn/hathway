@@ -4,7 +4,7 @@ import type { Board, BoardChange, BoardTheme, NewBoard } from "../domain/Board.t
 
 /**
  * 보드를 읽고 쓰는 포트. 구현은 메모리(`testing/boardStoreMemory.ts`)와 Postgres
- * (`@investment/adapters-postgres/research/BoardStorePostgres`) 둘이고, 계약 테스트 한 벌이 둘을 함께 잰다.
+ * (`@hathway/adapters-postgres/research/BoardStorePostgres`) 둘이고, 계약 테스트 한 벌이 둘을 함께 잰다.
  *
  * ⚠ **읽는 메서드는 행위자를 받지 않는다.** 보드는 로그인하지 않아도 보인다(INV-RESEARCH-01). 읽기에 행위자를
  *    받기 시작하면 그것이 곧 「가려야 할 보드가 있다」는 뜻이므로, 그때는 술어를 `rules/` 에 먼저 세운다.
@@ -47,5 +47,5 @@ export class BoardStore extends Context.Service<BoardStore, {
     readonly create: (board: NewBoard) => Effect.Effect<Board, BoardStoreError>;
     readonly save: (request: SaveRequest) => Effect.Effect<SaveOutcome, BoardStoreError>;
     readonly remove: (request: RemoveRequest) => Effect.Effect<RemoveOutcome, BoardStoreError>;
-}>()("@investment/research/ports/BoardStore")
+}>()("@hathway/research/ports/BoardStore")
 {}

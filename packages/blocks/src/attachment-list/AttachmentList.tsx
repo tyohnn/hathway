@@ -8,11 +8,11 @@ import {
     AttachmentGroup,
     AttachmentMedia,
     AttachmentTitle,
-} from "@investment/ui/components/attachment";
-import { Button } from "@investment/ui/components/button";
-import { Empty, EmptyDescription, EmptyHeader } from "@investment/ui/components/empty";
-import { Download, FileText, Image, Trash } from "@investment/ui/icons";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/attachment";
+import { Button } from "@hathway/ui/components/button";
+import { Empty, EmptyDescription, EmptyHeader } from "@hathway/ui/components/empty";
+import { Download, FileText, Image, Trash } from "@hathway/ui/icons";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { isInteractiveTarget } from "../interaction";
 import { ATTACHMENT_LIST_LABELS } from "./labels";

@@ -1,4 +1,4 @@
-import { ksicDivision } from "@investment/schema";
+import { ksicDivision } from "@hathway/schema";
 
 import type { DivisionCount, ListedSectorRow } from "../domain/rows.ts";
 

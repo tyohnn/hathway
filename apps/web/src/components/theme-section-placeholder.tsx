@@ -1,4 +1,4 @@
-import { SectionPlaceholder } from "@investment/blocks/section-placeholder";
+import { SectionPlaceholder } from "@hathway/blocks/section-placeholder";
 import { getTheme, getThemeSection, type ThemeId, type ThemeSectionId } from "@/lib/nav";
 
 /** 아직 화면이 붙지 않은 섹션. 무엇이 이 자리에 서는지를 블록(`SectionPlaceholder`)으로 적는다 */

@@ -3,8 +3,8 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cn } from "cn"
 
-import { ChevronRight, MoreHorizontal } from "@investment/ui/icons"
-import { strings } from "@investment/ui/strings"
+import { ChevronRight, MoreHorizontal } from "@hathway/ui/icons"
+import { strings } from "@hathway/ui/strings"
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   return (

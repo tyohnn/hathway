@@ -2,8 +2,8 @@
 
 import type { Row } from "@tanstack/react-table";
 
-import { TableCell, TableRow } from "@investment/ui/components/table";
-import { cn } from "@investment/ui/lib/utils";
+import { TableCell, TableRow } from "@hathway/ui/components/table";
+import { cn } from "@hathway/ui/lib/utils";
 
 import { BodyCell, isInteractiveTarget } from "./BodyCell";
 import { isMetaColumnId } from "./columns";

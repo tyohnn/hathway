@@ -1,6 +1,6 @@
 import type React from "react";
 
-import type { IconComponent } from "@investment/ui/icons/names";
+import type { IconComponent } from "@hathway/ui/icons/names";
 
 /**
  * 사이드바 항목 하나.
@@ -70,6 +70,22 @@ export interface AppShellProps
     readonly title: React.ReactNode;
     /** 사이드바 아래에 서는 계정 자리. 앱이 `<Suspense>` 로 감싸 넘긴다 */
     readonly user: React.ReactNode;
+
+    /**
+     * 사이드바 머리 바로 아래의 도구 줄. 찾기(⌘K)와 만들기처럼 **어느 화면에서든 같은 자리에 서는 것**을 앱이 넘긴다.
+     *
+     * ⚠ 위 띠에 두지 않는다. 위 띠는 위치와 여닫는 단추만 갖는다(`AppShell` 의 머리말). 사이드바는 「어디로 가나」를,
+     *    이 줄은 「어디서든 하는 일」을 맡는다. 접힌 사이드바에서는 앱이 아이콘만 남긴다.
+     */
+    readonly tools?: React.ReactNode;
+
+    /**
+     * 사이드바 발치의 메뉴(설정 · 문서처럼 가끔 가는 곳). 계정 자리 바로 위에 선다. `groups` 와 같은 모양이고,
+     * 기다리는 동안 이것으로 아무것도 켜지 않은 목록을 그린다.
+     */
+    readonly footerGroups?: ReadonlyArray<ReadonlyArray<AppShellNavItem>>;
+    /** 발치 메뉴 가운데 지금 주소를 아는 것. `nav` 와 같은 까닭으로 셸이 `<Suspense>` 로 감싼다 */
+    readonly footerNav?: React.ReactNode;
     readonly children: React.ReactNode;
 
     /**

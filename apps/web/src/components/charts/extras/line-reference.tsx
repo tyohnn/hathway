@@ -16,7 +16,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
     type ChartConfig,
-} from "@investment/ui/components/chart";
+} from "@hathway/ui/components/chart";
 
 const chartData = [
     { month: "Jan", sessions: 210 },

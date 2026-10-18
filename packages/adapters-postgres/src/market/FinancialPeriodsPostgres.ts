@@ -2,8 +2,8 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import { FIN_PERIOD_COLUMNS, type FinPeriodRow } from "@investment/market/domain/rows";
-import { FinancialPeriods } from "@investment/market/ports/MarketStore";
+import { FIN_PERIOD_COLUMNS, type FinPeriodRow } from "@hathway/market/domain/rows";
+import { FinancialPeriods } from "@hathway/market/ports/MarketStore";
 
 import type { SqlExecutor } from "../connection.ts";
 
@@ -12,7 +12,7 @@ import { read } from "./rows.ts";
 /**
  * 재무 기간의 Postgres 구현. `public.fin_periods` 를 web_app 으로 읽는다.
  *
- * ⚠ **읽기만 하고 접지 않는다.** 연결과 별도를 한 줄로 접는 것은 규칙(`@investment/market/rules/periods`)의 몫이다.
+ * ⚠ **읽기만 하고 접지 않는다.** 연결과 별도를 한 줄로 접는 것은 규칙(`@hathway/market/rules/periods`)의 몫이다.
  *    여기서 접으면 그 판단이 SQL 과 코드 두 곳에 생긴다.
  * ⚠ **숫자를 수로 바꾼다.** `pg` 는 numeric 을 문자열로 돌려준다. 비었거나 수가 아니면 `null` 이다.
  * ⚠ 열 목록은 모듈 상수(`FIN_PERIOD_COLUMNS`)다. 화면이 고른 개념 이름을 SQL 에 넣지 않는다.

@@ -3,7 +3,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-import { Separator } from "@investment/ui/components/separator"
+import { Separator } from "@hathway/ui/components/separator"
 
 const buttonGroupVariants = cva(
   "cn-button-group flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",

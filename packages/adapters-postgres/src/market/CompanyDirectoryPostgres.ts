@@ -2,9 +2,9 @@ import "server-only";
 
 import { Effect, Layer } from "effect";
 
-import { Company } from "@investment/schema";
-import type { CompanyIndexRow, ListedSectorRow } from "@investment/market/domain/rows";
-import { CompanyDirectory } from "@investment/market/ports/MarketStore";
+import { Company } from "@hathway/schema";
+import type { CompanyIndexRow, ListedSectorRow } from "@hathway/market/domain/rows";
+import { CompanyDirectory } from "@hathway/market/ports/MarketStore";
 
 import type { SqlExecutor } from "../connection.ts";
 

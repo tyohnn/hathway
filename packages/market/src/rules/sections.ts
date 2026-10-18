@@ -1,4 +1,4 @@
-import type { FilingSection } from "@investment/schema";
+import type { FilingSection } from "@hathway/schema";
 
 import type { NoteSectionListItem, RawSection, ReportRef } from "../domain/rows.ts";
 

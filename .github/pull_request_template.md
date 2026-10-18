@@ -31,13 +31,15 @@
 - [ ] 리팩토링 (동작 변화 없음)
 - [ ] 문서·규약
 - [ ] 빌드·의존성·인프라
-- [ ] DB 스키마 변경 (`platform/supabase/migrations/` 포함)
+- [ ] DB 스키마 변경 (`supabase/migrations/` 포함)
 - [ ] 교재 · 리서치 (코드 변경 없음)
 
 ## 화면
 
 <!--
-  화면이 바뀌었으면 사진을 겁니다.
+  화면이 바뀌었으면 사진을 겁니다. 사진은 `assets/pr-screenshots` 브랜치에 두고
+  https://github.com/tyohnn/hathway/blob/assets/pr-screenshots/screenshots/<이름>.png?raw=1
+  꼴로 가리킵니다. ⚠ 공개 저장소라 사진에 원격 주소 · 메일 · 실제 키가 비치지 않게 시드 계정으로 찍습니다.
   스키마와 순수 층만 바꾸는 PR 이면 "없음" 이라고 적고 왜 없는지를 한 줄로 밝힙니다.
 -->
 
@@ -49,9 +51,9 @@
   화면 변경이라면 스크린샷을 붙인다.
 -->
 
-- [ ] `pnpm types:check`
-- [ ] `pnpm test`
-- [ ] `pnpm build`
+- [ ] `turbo typecheck`
+- [ ] `turbo test`
+- [ ] `turbo build`
 - [ ] 로컬에서 실제 화면·응답을 확인함
 - [ ] 셀프 리뷰를 마침
 
@@ -61,8 +63,8 @@
   리뷰어와 다음 작업자가 모르면 곤란한 것을 적는다. 예를 들면 이런 것들이다.
 
   - 이 PR 범위 밖으로 남겨 둔 작업과 그 이유
-  - DB 마이그레이션. 정본은 `platform/supabase/migrations/`, 절차는 `platform/README.md` 다.
-    되돌릴 수 없는 DDL 이면 명시한다
+  - DB 마이그레이션 — 정본은 `supabase/migrations/`, 절차는
+    `docs/supabase-migrations/README.md`. 되돌릴 수 없는 DDL 이면 명시한다
   - 환경변수 추가·변경 (호스트별로 어디에 넣어야 하는지)
   - 되돌리기 어려운 변경, 또는 되돌리는 방법
 -->

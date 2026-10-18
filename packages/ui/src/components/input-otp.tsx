@@ -4,7 +4,7 @@ import * as React from "react"
 import { cn } from "cn"
 import { OTPInput, OTPInputContext } from "input-otp"
 
-import { Minus } from "@investment/ui/icons"
+import { Minus } from "@hathway/ui/icons"
 
 function InputOTP({
   className,

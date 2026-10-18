@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { TENANT_KINDS } from "@investment/shared/constants/tenancy";
+import { TENANT_KINDS } from "@hathway/shared/constants/tenancy";
 
 import { MembershipRole } from "./AppAudience.ts";
 

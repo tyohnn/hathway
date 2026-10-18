@@ -7,8 +7,8 @@ import {
     EmptyHeader,
     EmptyMedia,
     EmptyTitle,
-} from "@investment/ui/components/empty";
-import { cn } from "@investment/ui/lib/utils";
+} from "@hathway/ui/components/empty";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { EmptyStateProps } from "./types";
 

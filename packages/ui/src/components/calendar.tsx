@@ -9,9 +9,9 @@ import {
   type Locale,
 } from "react-day-picker"
 
-import { Button, buttonVariants } from "@investment/ui/components/button"
-import { CalendarChevronDown, CalendarChevronLeft, CalendarChevronRight } from "@investment/ui/icons"
-import { dateLocale } from "@investment/ui/strings"
+import { Button, buttonVariants } from "@hathway/ui/components/button"
+import { CalendarChevronDown, CalendarChevronLeft, CalendarChevronRight } from "@hathway/ui/icons"
+import { dateLocale } from "@hathway/ui/strings"
 
 function Calendar({
   className,

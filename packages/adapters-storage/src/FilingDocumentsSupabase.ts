@@ -5,8 +5,8 @@ import { gunzipSync } from "node:zlib";
 
 import { Effect, Layer } from "effect";
 
-import type { RawSection } from "@investment/market/domain/rows";
-import { FilingDocuments } from "@investment/market/ports/MarketStore";
+import type { RawSection } from "@hathway/market/domain/rows";
+import { FilingDocuments } from "@hathway/market/ports/MarketStore";
 
 /**
  * 공시 본문 조각의 Supabase Storage 구현.

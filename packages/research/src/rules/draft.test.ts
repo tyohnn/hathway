@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { customerActor } from "@investment/access/testing/actor";
+import { customerActor } from "@hathway/access/testing/actor";
 
 import { draftBoard } from "./draft.ts";
 

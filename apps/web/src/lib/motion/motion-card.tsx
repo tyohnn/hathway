@@ -3,7 +3,7 @@
 import { useRef, type ElementType, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Card } from "@investment/ui/components/card";
+import { Card } from "@hathway/ui/components/card";
 import { cn } from "@/lib/cn";
 
 /**

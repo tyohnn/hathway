@@ -1,7 +1,7 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { cn } from "cn"
 
-import { ChevronDown, ChevronUp } from "@investment/ui/icons"
+import { ChevronDown, ChevronUp } from "@hathway/ui/icons"
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (

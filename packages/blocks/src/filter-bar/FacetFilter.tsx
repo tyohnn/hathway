@@ -2,10 +2,10 @@
 
 import type React from "react";
 
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@investment/ui/components/command";
-import { Check } from "@investment/ui/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@investment/ui/components/popover";
-import { cn } from "@investment/ui/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@hathway/ui/components/command";
+import { Check } from "@hathway/ui/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@hathway/ui/components/popover";
+import { cn } from "@hathway/ui/lib/utils";
 
 import type { FacetSpec, FilterBarLabels } from "./types";
 

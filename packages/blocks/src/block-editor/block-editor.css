@@ -1,0 +1,191 @@
+/* 블록 편집기의 본문. 블록의 생김새는 여기 한 곳이 갖는다.
+   글 크기 · 줄 간격 · 블록 사이 · 제목의 크기와 위 여백은 loam 의 읽는 문서 조판(`--typeset-doc-*`, tokens.css)을 그대로 읽는다.
+   처음에는 노션처럼 블록 사이를 0.35em 으로 좁게 두었는데 loam 의 문서(0.9em)보다 빽빽해 보였다(2026-10-09 사용자). */
+
+.block-editor .ProseMirror {
+    outline: none;
+    min-height: 40vh;
+    font-size: var(--typeset-doc-size);
+    line-height: var(--typeset-doc-leading);
+    color: var(--foreground);
+}
+
+.block-editor .ProseMirror > * + * {
+    margin-top: var(--typeset-doc-flow);
+}
+
+/* 제목 칸 바로 아래의 첫 블록은 위 여백 없이 붙는다 */
+.block-editor .ProseMirror > :first-child { margin-top: 0; }
+
+.block-editor .ProseMirror :is(h1, h2, h3) {
+    font-weight: var(--typeset-heading-weight);
+    letter-spacing: var(--typeset-heading-tracking);
+    line-height: 1.3;
+}
+.block-editor .ProseMirror h1 { font-size: var(--typeset-doc-scale-h1); margin-top: calc(var(--typeset-doc-flow) * var(--typeset-space-h1)); }
+.block-editor .ProseMirror h2 { font-size: var(--typeset-doc-scale-h2); margin-top: calc(var(--typeset-doc-flow) * var(--typeset-space-h2)); }
+.block-editor .ProseMirror h3 { font-size: var(--typeset-doc-scale-h3); margin-top: calc(var(--typeset-doc-flow) * var(--typeset-space-h3)); }
+/* 제목 바로 아래 블록은 붙는다. 제목이 그 아래 글의 머리라서다 */
+.block-editor .ProseMirror :is(h1, h2, h3) + * { margin-top: calc(var(--typeset-doc-flow) * 0.5); }
+
+.block-editor .ProseMirror ul { list-style: disc; padding-left: 1.5em; }
+.block-editor .ProseMirror ol { list-style: decimal; padding-left: 1.5em; }
+.block-editor .ProseMirror li > p { margin: 0; }
+/* 목록 항목 사이는 loam 의 문서처럼 0.5em 이다 */
+.block-editor .ProseMirror li + li { margin-top: 0.5em; }
+.block-editor .ProseMirror li > :is(ul, ol) { margin-top: 0.5em; }
+
+.block-editor .ProseMirror ul[data-type="taskList"] { list-style: none; padding-left: 0.25em; }
+.block-editor .ProseMirror ul[data-type="taskList"] li { display: flex; align-items: flex-start; gap: 0.5em; }
+.block-editor .ProseMirror ul[data-type="taskList"] li > label { margin-top: 0.3em; user-select: none; }
+.block-editor .ProseMirror ul[data-type="taskList"] li > label input { width: 1em; height: 1em; accent-color: var(--primary); }
+.block-editor .ProseMirror ul[data-type="taskList"] li > div { flex: 1; }
+.block-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div { color: var(--muted-foreground); text-decoration: line-through; }
+
+.block-editor .ProseMirror blockquote { border-left: 3px solid var(--foreground); padding-left: 1em; }
+
+.block-editor .ProseMirror code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    padding: 0.15em 0.35em;
+    border-radius: 0.375rem;
+    background: var(--muted);
+}
+
+.block-editor .ProseMirror pre {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    line-height: 1.6;
+    padding: 1em 1.25em;
+    border-radius: 0.75rem;
+    background: var(--muted);
+    overflow-x: auto;
+}
+
+.block-editor .ProseMirror pre code { padding: 0; background: none; }
+
+/* 구분선은 글 한 줄 높이의 블록이고 선은 그 가운데에 그린다. 선(1px)만 블록이면 손잡이가 선 아래에 엇나가 서고,
+   마우스로 그 높이를 맞추기도 어려웠다(2026-10-10 사용자) */
+.block-editor .ProseMirror hr {
+    border: none;
+    height: calc(var(--typeset-doc-size) * var(--typeset-doc-leading));
+    margin: 0.5em 0;
+    background: linear-gradient(var(--border), var(--border)) center / 100% 1px no-repeat;
+    cursor: default;
+}
+
+.block-editor .ProseMirror a { color: var(--foreground); text-decoration: underline; text-underline-offset: 3px; }
+
+/* 토글: 왼쪽의 세모 단추를 누르면 안쪽이 펴진다 */
+.block-editor .ProseMirror [data-type="details"] { display: flex; gap: 0.25em; }
+.block-editor .ProseMirror [data-type="details"] > button {
+    flex: none;
+    width: 1.5em;
+    height: 1.7em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted-foreground);
+}
+.block-editor .ProseMirror [data-type="details"] > button::before { content: "▸"; transition: transform 120ms ease; }
+.block-editor .ProseMirror [data-type="details"].is-open > button::before { transform: rotate(90deg); }
+.block-editor .ProseMirror [data-type="details"] > div { flex: 1; min-width: 0; }
+.block-editor .ProseMirror [data-type="details"] summary { list-style: none; font-weight: 500; }
+.block-editor .ProseMirror [data-type="details"] summary::-webkit-details-marker { display: none; }
+.block-editor .ProseMirror [data-type="detailsContent"] { margin-top: 0.25em; }
+.block-editor .ProseMirror [data-type="detailsContent"][hidden] { display: none; }
+
+/* 콜아웃: 아이콘과 안쪽 블록이 옅은 판 위에 선다 */
+.block-editor .ProseMirror .block-editor-callout {
+    display: flex;
+    gap: 0.75em;
+    padding: 1em 1.25em;
+    border-radius: 0.75rem;
+    background: var(--muted);
+}
+.block-editor .ProseMirror .block-editor-callout-icon { flex: none; line-height: 1.7; user-select: none; }
+.block-editor .ProseMirror .block-editor-callout-body { flex: 1; min-width: 0; }
+.block-editor .ProseMirror .block-editor-callout-body > * + * { margin-top: 0.5em; }
+.block-editor .ProseMirror [data-type="detailsContent"] > * + * { margin-top: 0.5em; }
+
+/* 빈 줄의 안내 글 */
+.block-editor .ProseMirror .is-empty::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    color: var(--muted-foreground);
+    opacity: 0.6;
+}
+
+/* 블록 왼쪽의 손잡이. 끌어서 블록을 옮긴다 */
+/* 손잡이 칸은 편집기 왼쪽 가장자리까지 빈틈 없이 닿는다(너비 2rem, 왼쪽 -2rem). 빈틈이 있으면 손잡이로 가는 길에 마우스가 틀을 벗어난다.
+   높이는 본문 한 줄과 같아 점이 첫 줄 가운데에 선다 */
+.block-editor-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: calc(var(--typeset-doc-size) * var(--typeset-doc-leading));
+    padding-right: 0.5rem;
+    color: var(--muted-foreground);
+    cursor: grab;
+}
+.block-editor-drag-handle:hover { color: var(--foreground); }
+.block-editor-drag-handle:hover svg { border-radius: 0.25rem; background: var(--muted); outline: 4px solid var(--muted); }
+
+.block-editor .ProseMirror-selectednode { outline: 2px solid color-mix(in oklab, var(--primary) 50%, transparent); border-radius: 0.375rem; }
+
+/* 고른 블록 · 범위 선택의 네모 · 놓을 자리의 선(BlockLayer). 노션처럼 옅은 판과 굵은 선이다 */
+.block-editor-block-selected {
+    border-radius: 0.375rem;
+    background: color-mix(in oklab, var(--primary) 14%, transparent);
+}
+.block-editor-marquee {
+    border: 1px solid color-mix(in oklab, var(--primary) 45%, transparent);
+    background: color-mix(in oklab, var(--primary) 8%, transparent);
+    border-radius: 0.125rem;
+}
+.block-editor-drop-line {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--primary);
+    opacity: 0.8;
+}
+
+/* 블록을 끄는 동안. 글자가 골라지지 않고 손 모양 그대로다 */
+body.block-editor-dragging,
+body.block-editor-dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
+}
+.block-editor-drag-ghost {
+    max-width: 16rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    background: var(--popover);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    opacity: 0.9;
+}
+
+/* 들여 쓴 맨 바깥 블록(노션의 안쪽 블록). 한 단계가 목록의 들여쓰기와 같은 1.5em 이다(rows.ts 의 NEST_INDENT) */
+.block-editor .ProseMirror > [data-indent="1"] { margin-left: 1.5em; }
+.block-editor .ProseMirror > [data-indent="2"] { margin-left: 3em; }
+.block-editor .ProseMirror > [data-indent="3"] { margin-left: 4.5em; }
+.block-editor .ProseMirror > [data-indent="4"] { margin-left: 6em; }
+.block-editor .ProseMirror > [data-indent="5"] { margin-left: 7.5em; }
+.block-editor .ProseMirror > [data-indent="6"] { margin-left: 9em; }
+.block-editor .ProseMirror > [data-indent="7"] { margin-left: 10.5em; }
+.block-editor .ProseMirror > [data-indent="8"] { margin-left: 12em; }
+
+/* 글 안에서 여러 블록에 걸쳐 끄는 동안은 글자 고르기 대신 블록 선택(판)만 보인다 */
+.block-editor .ProseMirror.block-editor-block-mode *::selection { background: transparent; }
+
+/* 손잡이 옆 「+」. 손잡이와 같은 칸이지만 오른쪽 여백 없이 붙는다 */
+.block-editor-add-block { width: 1.5rem; padding-right: 0; }
