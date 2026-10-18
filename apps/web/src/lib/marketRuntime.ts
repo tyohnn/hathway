@@ -27,9 +27,10 @@ export type Market = CompanyDirectory | FinancialPeriods | FilingLedger | Filing
  * ⚠ **service role 키는 저장소에만 쓴다.** 표를 읽는 길에는 그 키가 없다. 롤이 읽을 수 있는 표는 GRANT 가 정한다.
  * ⚠ **접속 문자열이 없으면 실패로 답한다.** 로컬 기본값으로 떨어지지 않는다. 배포에서 값이 빠지면 엉뚱한 주소에
  *    붙으려다 시간만 쓰고, 원인이 오류에 드러나지 않는다.
+ * ⚠ MCP 의 확장 지점(모듈)도 이 층을 받아 쓴다. 요청마다 읽으므로 `runMarket` 을 지나지 않는다.
  * ⚠ 요청과 무관한 어댑터라 풀과 층을 요청마다 다시 만들어도 같은 풀을 쓴다(`postgresPool` 이 주소로 기억한다).
  */
-const marketLayer: Effect.Effect<Layer.Layer<Market>, MarketStoreError> = Effect.suspend(() =>
+export const marketStoreLayer: Effect.Effect<Layer.Layer<Market>, MarketStoreError> = Effect.suspend(() =>
 {
     const connectionString = process.env["WEB_DATABASE_URL"];
 
@@ -57,5 +58,5 @@ const marketLayer: Effect.Effect<Layer.Layer<Market>, MarketStoreError> = Effect
 export const runMarket = async <A, E>(program: Effect.Effect<A, E, Market>): Promise<A> =>
 {
     await connection();
-    return runtime.runPromise(Effect.flatMap(marketLayer, (layer) => program.pipe(Effect.provide(layer))));
+    return runtime.runPromise(Effect.flatMap(marketStoreLayer, (layer) => program.pipe(Effect.provide(layer))));
 };

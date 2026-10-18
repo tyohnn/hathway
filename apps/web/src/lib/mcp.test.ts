@@ -133,6 +133,21 @@ describe("MCP 봉투: 모듈이 더한 것", () =>
 
 describe("MCP 봉투: 두 시대", () =>
 {
+    it("새 판의 목록은 캐시 칸(ttlMs · cacheScope)을 싣는다. 사람마다 다른 답이라 개인 범위이고 바로 낡는다. 옛 판에는 싣지 않는다", () =>
+    {
+        const tools = mcpPlan(modern({ id: 1, method: "tools/list" }), SURFACE);
+        const resources = mcpPlan(modern({ id: 2, method: "resources/list" }), SURFACE);
+        const legacy = mcpPlan({ id: 3, method: "tools/list" }, SURFACE);
+
+        for (const plan of [tools, resources])
+        {
+            assert.strictEqual(plan.kind === "reply" && plan.reply.result?.["ttlMs"], 0);
+            assert.strictEqual(plan.kind === "reply" && plan.reply.result?.["cacheScope"], "private");
+        }
+
+        assert.isFalse(legacy.kind === "reply" && "ttlMs" in (legacy.reply.result ?? {}));
+    });
+
     it("요청마다 판을 싣고 오면 악수 없이 답하고 결과에 resultType 을 적는다", () =>
     {
         const listed = mcpPlan(modern({ id: 1, method: "tools/list" }));

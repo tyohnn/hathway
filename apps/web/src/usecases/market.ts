@@ -1,10 +1,11 @@
 import { Effect } from "effect";
 
-import type { RawSection } from "@hathway/market/domain/rows";
+import type { PeriodType, RawSection } from "@hathway/market/domain/rows";
 import { CompanyDirectory, FilingDocuments, FilingLedger, FinancialPeriods } from "@hathway/market/ports/MarketStore";
 import { divisionCountsOf, NOTE_SECTION_REPORT_CANDIDATES } from "@hathway/market/rules/listing";
 import { annualSummaryOf, conceptSeriesOf, guideGridOf, memberFinancialsOf } from "@hathway/market/rules/periods";
 import { noteSectionsOf, sectionOf } from "@hathway/market/rules/sections";
+import { findCompanies, isListed, peerPoolOf, pickPeers, SCREEN_CAGR_YEARS, screenOf, type ScreenFilters } from "@hathway/market/rules/universe";
 
 /**
  * 종목 · 재무 · 공시 화면의 조립. 포트로 읽고 규칙으로 접는다.
@@ -145,4 +146,112 @@ export const companyPage = (stockCode: string, concepts: ReadonlyArray<string>) 
             themedFilings: themed,
             guideFin: guideGridOf(rows, concepts),
         };
+    });
+
+/** 이름이나 종목코드로 찾는다. 플러그인의 `find_company` 와 멘션이 쓴다 */
+export const searchCompanies = (query: string, limit: number) =>
+    Effect.map(companyIndex(), (index) => findCompanies(index, query, limit));
+
+/**
+ * 종목 하나와 그 기간 행. 없는 종목코드면 `null` 이다.
+ *
+ * ⚠ **TTM 도 읽는다.** 화면의 요약 숫자는 최근 네 분기 합이다. 종목 화면(`companyPage`)은 아직 TTM 을 읽지 않는다.
+ */
+export const companyWithPeriods = (stockCode: string, types: ReadonlyArray<PeriodType>) =>
+    Effect.gen(function*()
+    {
+        const found = yield* company(stockCode);
+
+        if (found === null)
+        {
+            return null;
+        }
+
+        const rows = yield* Effect.flatMap(FinancialPeriods, (periods) => periods.periodsOf(found.corp_code, types));
+
+        return { company: found, rows };
+    });
+
+export const FINANCIAL_PERIOD_TYPES: ReadonlyArray<PeriodType> = [...ALL_PERIODS, "TTM"];
+
+/** 피어 표에서 주인공을 뺀 줄의 기본 수 */
+export const PEER_LIMIT = 5;
+
+/**
+ * 피어 비교. 업종 코드 앞 세 자리가 같은 상장사 가운데 기준 해 매출이 큰 순으로 고르고, 사람이 이름을 댄 회사는 꼭 넣는다.
+ * 기준 해는 주인공의 가장 최근 연간 재무가 있는 해다. 없으면 `null` 이다.
+ *
+ * ⚠ 후보를 넓게 긁는 것까지가 기계의 일이다(AGENTS.md 「sector_code 는 그대로 쓰면 안 된다」). 최종 피어는 모델이 대화에서
+ *    사람과 함께 고르고 `withStockCodes` 로 다시 부른다.
+ */
+export const peerTable = (stockCode: string, options: { readonly withStockCodes: ReadonlyArray<string>; readonly limit: number }) =>
+    Effect.gen(function*()
+    {
+        const index = yield* companyIndex();
+        const focusRow = index.find((row) => row.stock_code === stockCode);
+
+        if (focusRow === undefined)
+        {
+            return null;
+        }
+
+        const named = options.withStockCodes.filter((code) => code !== stockCode);
+        const pool = peerPoolOf(index, focusRow).map((row) => row.stock_code).filter((code) => !named.includes(code));
+        const found = yield* companiesByStockCodes([stockCode, ...named, ...pool]);
+        const focus = found.find((each) => each.stock_code === stockCode);
+
+        if (focus === undefined)
+        {
+            return null;
+        }
+
+        const periods = yield* FinancialPeriods;
+        const focusYears = memberFinancialsOf(yield* periods.periodsOf(focus.corp_code, ["A"])).get(focus.corp_code) ?? [];
+        const year = focusYears.at(-1)?.bsns_year ?? null;
+
+        if (year === null)
+        {
+            return { focus, year: null, rows: [] };
+        }
+
+        const others = found.filter((each) => each.stock_code !== stockCode);
+        const financials = yield* annualByCorpCodes([focus.corp_code, ...others.map((each) => each.corp_code)], [year - 1, year]);
+        const revenueOf = (corpCode: string): number | null =>
+            financials.get(corpCode)?.find((row) => row.bsns_year === year)?.revenue ?? null;
+        const namedRows = others.filter((each) => named.includes(each.stock_code ?? ""));
+        const picked = pickPeers(
+            others.filter((each) => !named.includes(each.stock_code ?? "")).map((each) => ({ company: each, revenue: revenueOf(each.corp_code) })),
+            Math.max(0, options.limit - namedRows.length),
+        ).map((each) => each.company);
+
+        return {
+            focus,
+            year,
+            rows: [focus, ...namedRows, ...picked].map((each) => ({ company: each, financials: financials.get(each.corp_code) ?? [] })),
+        };
+    });
+
+/**
+ * 스크리너. 상장사를 업종 · 시장으로 먼저 좁힌 뒤 기준 해와 그 3년 전의 연간 재무만 읽어 규칙(`screenOf`)에 넘긴다.
+ *
+ * ⚠ **업종 조건 없이 부르면 상장사 전부(약 2,600곳)의 두 해를 읽는다.** 한 번의 질의이고 행은 5천 줄 남짓이다.
+ */
+export const screenCompanies = (filters: ScreenFilters, year: number) =>
+    Effect.gen(function*()
+    {
+        const prefix = filters.sectorPrefix?.trim() ?? "";
+        const candidates = (yield* companies()).filter((each) =>
+            isListed(each.market) && (each.sector_code ?? "").startsWith(prefix));
+        const financials = yield* annualByCorpCodes(candidates.map((each) => each.corp_code), [year - SCREEN_CAGR_YEARS, year]);
+
+        return screenOf(candidates, financials, filters, year);
+    });
+
+/** 종목 하나의 최근 공시. 없는 종목코드면 `null` 이다 */
+export const companyFilings = (stockCode: string, limit: number) =>
+    Effect.gen(function*()
+    {
+        const found = yield* company(stockCode);
+
+        return found === null ? null : { company: found, filings: yield* filings(found.corp_code, limit) };
     });

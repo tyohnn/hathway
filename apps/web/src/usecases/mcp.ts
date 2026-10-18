@@ -5,7 +5,7 @@ import type { NoteStore } from "@hathway/notes/ports/NoteStore";
 
 import { McpSurface } from "@/extensions/McpSurface";
 import { PlanLimits } from "@/extensions/PlanLimits";
-import { headerMismatch, inputRequired, mcpClient, mcpPlan, rpcResult, toolText, type RpcMessage, type RpcReply } from "@/lib/mcp";
+import { cacheableResult, headerMismatch, inputRequired, mcpClient, mcpPlan, rpcResult, toolText, type RpcMessage, type RpcReply } from "@/lib/mcp";
 
 import { createNote, listNotes } from "./notes";
 
@@ -72,7 +72,7 @@ export const answerMcp = (
 
             return answered(contents === null
                 ? { jsonrpc: "2.0", id: plan.id, error: { code: -32602, message: "Resource not found", data: { uri: plan.uri } } }
-                : rpcResult(plan.id, { contents }, client));
+                : cacheableResult(plan.id, { contents }, client));
         }
 
         if (!limits.mcp)
