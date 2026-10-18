@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { connect } from "./mcpConnect";
+import { hostPage, MODERN, said, structured, toolCall, type Rpc } from "./pluginHost";
 
 /**
  * 플러그인이 로컬 스택에서 끝까지 도는가. ChatGPT 가 하는 일을 손으로 밟는다.
@@ -14,60 +15,10 @@ import { connect } from "./mcpConnect";
  *    알아듣는지는 개발자 모드로 붙여 본 사람이 확인한다.
  * ⚠ 보드를 담는 스펙은 제 보드를 새로 연다. 시드의 보드를 고치지 않는다.
  */
-type Rpc = (body: Record<string, unknown>) => Promise<{ result?: Record<string, unknown>; error?: Record<string, unknown> }>;
-
 const connectAs = async (page: Page, request: Parameters<typeof connect>[1], email: string): Promise<Rpc> =>
     await connect(page, request, email) as unknown as Rpc;
 
-const MODERN = {
-    "io.modelcontextprotocol/protocolVersion": "2026-07-28",
-    "io.modelcontextprotocol/clientCapabilities": {},
-};
-
 interface Tool { name: string; title?: string; _meta?: Record<string, unknown> }
-
-const toolCall = (id: number, name: string, args: Record<string, unknown> = {}) =>
-    ({ id, method: "tools/call", params: { name, arguments: args, _meta: MODERN } });
-
-const structured = <T>(answer: { result?: Record<string, unknown> }): T => answer.result?.["structuredContent"] as T;
-
-const said = (answer: { result?: Record<string, unknown> }): string =>
-    ((answer.result?.["content"] ?? []) as Array<{ text?: string }>).map((part) => part.text ?? "").join("\n");
-
-/** 스크립트 안에 끼워 넣을 JSON. 닫는 태그가 들어 있으면 HTML 이 스크립트를 거기서 끊으므로 `<` 를 풀어 적는다 */
-const inline = (value: unknown): string => JSON.stringify(value).replace(/</g, "\\u003c");
-
-/** 호스트를 흉내 낸 창. 화면을 iframe 에 띄우고 MCP Apps 의 악수를 받아 준 뒤 도구의 결과를 넘긴다 */
-const hostPage = (appHtml: string, toolResult: Record<string, unknown>, toolInput: Record<string, unknown>): string => `<!doctype html><title>host</title><iframe id="app" style="width:900px;height:700px;border:0"></iframe><script>
-    window.sent = [];
-    const frame = document.getElementById("app");
-    const post = (message) => frame.contentWindow.postMessage({ jsonrpc: "2.0", ...message }, "*");
-    window.addEventListener("message", (event) =>
-    {
-        if (event.source !== frame.contentWindow) return;
-        const message = event.data;
-        window.sent.push(message);
-        if (message.method === "ui/initialize")
-        {
-            post({ id: message.id, result: {
-                protocolVersion: "2026-01-26",
-                hostInfo: { name: "e2e-host", version: "1.0.0" },
-                hostCapabilities: { message: { text: {} }, updateModelContext: { text: {} } },
-                hostContext: { theme: "dark", displayMode: "inline", availableDisplayModes: ["inline", "fullscreen"] },
-            } });
-        }
-        else if (message.method === "ui/notifications/initialized")
-        {
-            post({ method: "ui/notifications/tool-input", params: { arguments: ${inline(toolInput)} } });
-            post({ method: "ui/notifications/tool-result", params: ${inline(toolResult)} });
-        }
-        else if (message.id !== undefined && message.method !== undefined)
-        {
-            post({ id: message.id, result: {} });
-        }
-    });
-    frame.srcdoc = ${inline(appHtml)};
-</script>`;
 
 const VALUATION = {
     stockCode: "259960",
