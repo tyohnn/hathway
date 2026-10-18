@@ -148,6 +148,13 @@ describe("siteLd", () =>
             publisher: { "@type": "Organization", name: "팍스휴마나" },
         });
     });
+
+    it("첫 화면이 다른 주소로 넘어가는 제품은 WebApplication 의 주소를 넘어간 뒤의 주소로 싣는다", () =>
+    {
+        const [organization, application] = siteLd(SITE, "Hathway", "설명", { name: "팍스휴마나", email: "a@example.test" }, "/stocks");
+
+        expect([organization?.["url"], application?.["url"]]).toEqual([`${SITE}/`, `${SITE}/stocks`]);
+    });
 });
 
 describe("jsonLdScript", () =>

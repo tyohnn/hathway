@@ -14,7 +14,7 @@ import { JsonLd } from "./_components/JsonLd";
  */
 export const metadata: Metadata = { robots: INDEXABLE };
 
-const LD = siteLd(SITE_URL, SITE_INDEX.name, SITE_INDEX.description, { name: LEGAL.operator, email: LEGAL.contact });
+const LD = siteLd(SITE_URL, SITE_INDEX.name, SITE_INDEX.description, { name: LEGAL.operator, email: LEGAL.contact }, SITE_INDEX.pages[0]?.path);
 
 export default function SiteLayout({ children }: { readonly children: React.ReactNode })
 {

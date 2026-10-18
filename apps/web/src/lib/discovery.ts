@@ -119,7 +119,14 @@ export interface Operator
  * 공개 화면의 schema.org `Organization` 과 `WebApplication`. 검색 결과와 AI 가 서비스 이름 · 운영 주체 · 주소를 묶는 근거다.
  * 값은 무료(`offers.price` 0)로 싣는다. 요금을 받게 되면 이 값을 고친다.
  */
-export const siteLd = (site: string, name: string, description: string, operator: Operator): ReadonlyArray<Readonly<Record<string, unknown>>> => [
+export const siteLd = (
+    site: string,
+    name: string,
+    description: string,
+    operator: Operator,
+    /** 서비스의 첫 화면. `/` 가 다른 주소로 넘기는 제품은 넘어간 뒤의 주소를 준다 */
+    entryPath: string = paths.landing(),
+): ReadonlyArray<Readonly<Record<string, unknown>>> => [
     {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -132,7 +139,7 @@ export const siteLd = (site: string, name: string, description: string, operator
         "@type": "WebApplication",
         name,
         description,
-        url: `${site}${paths.landing()}`,
+        url: `${site}${entryPath}`,
         inLanguage: "ko",
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
