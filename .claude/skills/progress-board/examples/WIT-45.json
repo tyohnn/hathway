@@ -1,0 +1,65 @@
+{
+    "issue": "WIT-45",
+    "title": "자문 감사 조회",
+    "pr": 300,
+    "updated": "2026-10-14T06:01:00Z",
+    "needs": "PR #300 리뷰",
+    "stages": {
+        "issue": "done",
+        "spec": "done",
+        "redGreen": "done",
+        "local": "done",
+        "review": "done",
+        "pr": "done",
+        "merge": "todo"
+    },
+    "checks": [
+        {
+            "name": "typecheck",
+            "state": "pass",
+            "detail": "turbo typecheck 오류 0"
+        },
+        {
+            "name": "감사 조회 계약",
+            "state": "pass",
+            "passed": 7,
+            "total": 7,
+            "detail": "메모리 구현과 Postgres 구현이 같은 7건을 지남"
+        },
+        {
+            "name": "적재 대조",
+            "state": "foreign",
+            "passed": 0,
+            "total": 3,
+            "detail": "새 DB 에 적재 뷰가 없어 깨짐. 이번 변경과 무관"
+        },
+        {
+            "name": "build",
+            "state": "todo"
+        },
+        {
+            "name": "CI",
+            "state": "skipped",
+            "detail": "GitHub Actions 결제가 막혀 러너가 뜨지 않음"
+        },
+        {
+            "name": "규약 점검",
+            "state": "na",
+            "detail": "보안 · 코드 규약 점검 지적 없음"
+        }
+    ],
+    "newTests": [
+        {
+            "name": "볼 수 없는 자문의 감사를 물으면 빈 목록으로 답한다",
+            "state": "pass"
+        },
+        {
+            "name": "관리자 우회는 visibleTaskIds 와 같은 결과를 낸다",
+            "state": "pass"
+        },
+        {
+            "name": "advisor_app 은 감사 조회가 쓰는 여덟 칸만 읽는다",
+            "state": "pass"
+        }
+    ]
+}
