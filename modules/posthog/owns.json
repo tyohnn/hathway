@@ -1,0 +1,51 @@
+{
+    "name": "posthog",
+    "title": "제품 분석 (PostHog)",
+    "requires": [],
+    "packages": [
+        "@hathway/analytics",
+        "@hathway/adapters-posthog"
+    ],
+    "imports": [
+        "@/modules/posthog"
+    ],
+    "invariants": "INV-ANALYTICS",
+    "paths": [
+        "modules/posthog/",
+        "packages/analytics/",
+        "packages/adapters-posthog/",
+        "apps/web/src/modules/posthog/",
+        "apps/web/src/app/api/analytics/",
+        "apps/web/e2e/analytics.spec.ts"
+    ],
+    "dependencies": {
+        "apps/web/package.json": [
+            "@hathway/analytics",
+            "@hathway/adapters-posthog",
+            "posthog-js"
+        ]
+    },
+    "skills": [],
+    "env": {
+        "apps/web/.env.example": [
+            "NEXT_PUBLIC_POSTHOG_SINK",
+            "NEXT_PUBLIC_POSTHOG_TOKEN",
+            "NEXT_PUBLIC_POSTHOG_REGION"
+        ]
+    },
+    "schemas": [],
+    "docs": {
+        "CLAUDE.md": [
+            "| `packages/analytics` |",
+            "| `packages/adapters-posthog` |",
+            "| `INV-ANALYTICS-01` |",
+            "PostHog 토큰이 없으면 web 의 제품 분석은"
+        ],
+        "apps/web/CLAUDE.md": [
+            "| `/api/analytics/rehearsal` |",
+            "| `src/modules/posthog/` |",
+            "분석 모듈이 있으면 그 이벤트의",
+            "| `analytics.spec.ts` |"
+        ]
+    }
+}

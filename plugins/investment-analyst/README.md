@@ -92,7 +92,7 @@ python3 skills/company-analysis/scripts/dart.py setup
 ## 구조
 
 ```
-plugin/
+plugins/investment-analyst/
 ├── .claude-plugin/
 │   ├── plugin.json          # Claude Code 플러그인 매니페스트
 │   └── marketplace.json     # Claude Code 마켓플레이스 등록용
@@ -129,7 +129,7 @@ plugin/
 
 ```bash
 claude
-# > /plugin marketplace add /path/to/plugin
+# > /plugin marketplace add /path/to/plugins/investment-analyst
 # > /plugin install investment-analyst@investment-analyst-marketplace
 ```
 
@@ -142,7 +142,7 @@ claude
 
 ```bash
 mkdir -p ~/.cursor/plugins/local
-ln -s /path/to/plugin ~/.cursor/plugins/local/investment-analyst
+ln -s /path/to/plugins/investment-analyst ~/.cursor/plugins/local/investment-analyst
 # Cursor 재시작 또는 Cmd/Ctrl+Shift+P → "Developer: Reload Window"
 ```
 
@@ -156,7 +156,7 @@ ln -s /path/to/plugin ~/.cursor/plugins/local/investment-analyst
 
 ```bash
 mkdir -p ~/.codex/plugins
-cp -r /path/to/plugin ~/.codex/plugins/investment-analyst
+cp -r /path/to/plugins/investment-analyst ~/.codex/plugins/investment-analyst
 
 mkdir -p ~/.agents/plugins   # 개인 스코프. 프로젝트 스코프는 <repo>/.agents/plugins/
 cat > ~/.agents/plugins/marketplace.json <<'EOF'
