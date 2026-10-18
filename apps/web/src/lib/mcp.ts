@@ -167,6 +167,13 @@ export const rpcResult = (id: number | string, result: Record<string, unknown>, 
             : result,
     });
 
+/**
+ * 목록과 자원 읽기의 결과. 새 판은 이 결과마다 캐시해도 되는 시간(`ttlMs`)과 범위(`cacheScope`)를 요구하고, 빠지면 호스트가
+ * 답을 버린다(ChatGPT 가 화면을 띄우지 못했다). 답이 사람마다 다르므로 개인 범위로 두고 바로 낡게 한다.
+ */
+export const cacheableResult = (id: number | string, result: Record<string, unknown>, client: McpClient = LEGACY_CLIENT): RpcReply =>
+    rpcResult(id, client.modern ? { ttlMs: 0, cacheScope: "private", ...result } : result, client);
+
 /** 도구의 답을 MCP 의 글 한 덩이로 싼다 */
 export const toolText = (id: number | string, text: string, isError = false, client: McpClient = LEGACY_CLIENT): RpcReply =>
     rpcResult(id, { content: [{ type: "text", text }], isError }, client);
@@ -282,10 +289,10 @@ export const mcpPlan = (message: RpcMessage, surface: McpSurfaceShape = NO_SURFA
             return reply({});
 
         case "tools/list":
-            return reply({ tools: surface.tools.length === 0 ? TOOLS : [...TOOLS, ...surface.tools] });
+            return { kind: "reply", reply: cacheableResult(id, { tools: surface.tools.length === 0 ? TOOLS : [...TOOLS, ...surface.tools] }, client) };
 
         case "resources/list":
-            return hasResources ? reply({ resources: surface.resources }) : failure(id, -32601, "모르는 메서드다: resources/list", client.modern ? { status: 404 } : {});
+            return hasResources ? { kind: "reply", reply: cacheableResult(id, { resources: surface.resources }, client) } : failure(id, -32601, "모르는 메서드다: resources/list", client.modern ? { status: 404 } : {});
 
         case "resources/read":
         {

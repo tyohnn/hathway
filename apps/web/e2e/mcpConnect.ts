@@ -48,7 +48,8 @@ export const connect = async (page: Page, request: APIRequestContext, email: str
     await page.goto(authorize.toString());
 
     await expect(page).toHaveURL(/\/oauth\/consent\?authorization_id=/);
-    await expect(page.getByText("e2e MCP 클라이언트")).toBeVisible();
+    // 두 번째 연결부터는 앞 동의 화면이 숨은 채 DOM 에 남아 같은 제목이 둘 잡힌다
+    await expect(page.getByText("e2e MCP 클라이언트").locator("visible=true")).toBeVisible();
 
     const callback = page.waitForURL((url) => url.pathname === "/e2e-oauth-callback");
 

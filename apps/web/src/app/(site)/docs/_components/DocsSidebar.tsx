@@ -57,7 +57,7 @@ export function DocsSidebar({ groups, home, links }: {
                             <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                                 <LogoGallery className="size-4" />
                             </div>
-                            <span className="font-medium">Hathway</span>
+                            <span className="font-medium">Hathway 기업분석</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

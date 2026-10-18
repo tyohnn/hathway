@@ -37,4 +37,13 @@ describe("새 보드", () =>
             _tag: "Rejected", message: "제목은 120자까지 쓸 수 있어요.",
         });
     });
+
+    it("종목에서 연 보드는 그 종목코드를 단다. 주지 않으면 칸이 없다", () =>
+    {
+        const related = draftBoard(customerActor("3"), { theme: "stocks", relatedStockCode: "259960" }, () => "id");
+        const plain = draftBoard(customerActor("3"), { theme: "stocks" }, () => "id");
+
+        expect(related).toMatchObject({ _tag: "Drafted", board: { relatedStockCode: "259960" } });
+        expect(plain._tag === "Drafted" && "relatedStockCode" in plain.board).toBe(false);
+    });
 });

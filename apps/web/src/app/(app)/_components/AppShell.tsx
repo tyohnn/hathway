@@ -42,7 +42,7 @@ export function AppShell({ nav, user, children }: { readonly nav: ReactNode; rea
     return (
         <PaletteProvider>
             <AppShellBlock
-                brand={{ mark: "H", name: "Hathway", render: <Link href={paths.home()} /> }}
+                brand={{ mark: "H", name: "Hathway 기업분석", render: <Link href={paths.home()} /> }}
                 groups={GROUPS}
                 nav={nav}
                 tools={<ShellTools />}

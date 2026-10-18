@@ -9,6 +9,8 @@ export interface DraftInput
 {
     readonly theme: BoardTheme;
     readonly title?: string;
+    /** 종목 화면이나 플러그인처럼 한 종목에서 연 보드면 그 종목코드 */
+    readonly relatedStockCode?: string;
 }
 
 export type DraftVerdict =
@@ -42,6 +44,7 @@ export const draftBoard = (actor: Actor, input: DraftInput, newId: (prefix: stri
             theme: input.theme,
             title,
             tagline: "",
+            ...(input.relatedStockCode === undefined ? {} : { relatedStockCode: input.relatedStockCode }),
             groups: [
                 {
                     id: groupId,

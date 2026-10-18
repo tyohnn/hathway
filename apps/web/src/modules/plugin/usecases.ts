@@ -1,394 +1,474 @@
-import { Effect } from "effect";
+import { Effect, Exit, Schema } from "effect";
 
-import type { Actor } from "@hathway/access/domain/Actor";
-import type { NoteStore } from "@hathway/notes/ports/NoteStore";
-import { BODY_MAX } from "@hathway/notes/rules/draft";
-import { DEFAULT_PREFERENCES, type DefaultVisibility, type Preferences } from "@hathway/preferences/domain/Preference";
-import { PreferenceStore } from "@hathway/preferences/ports/PreferenceStore";
-import { planPreferenceUpdate, VISIBILITY_VALUES } from "@hathway/preferences/rules/update";
+import type { CompanyDirectory, FilingLedger, FinancialPeriods } from "@hathway/market/ports/MarketStore";
+import type { ScreenFilters } from "@hathway/market/rules/universe";
+import { valuate, type ValuationInput } from "@hathway/market/rules/valuation";
+import type { BoardStore } from "@hathway/research/ports/BoardStore";
+import { ownsBoard } from "@hathway/research/rules/edit";
 
 import type { SurfaceCall, SurfaceOutcome, SurfaceRead } from "@/extensions/McpSurface";
-import { createNote, listNotes, openNote } from "@/usecases/notes";
+import {
+    company,
+    companyFilings,
+    companyWithPeriods,
+    FINANCIAL_PERIOD_TYPES,
+    PEER_LIMIT,
+    peerTable,
+    screenCompanies,
+    searchCompanies,
+} from "@/usecases/market";
+import { boardsOf, openBoard, saveNoteToBoard } from "@/usecases/research";
 
-import { notePath, webDeepLink } from "./deepLink";
-import { attachForm, composeForm, formAnswer, formRequest, formSupport, pickForm, type Form, type FormSupport } from "./forms";
-import { FORM_TTL_MS, signState, verifyState } from "./requestState";
 import { isUiResource, uiContents } from "./surface";
 import {
+    boardMarkdown,
+    boardsView,
+    companySummary,
+    companyView,
+    DISCLAIMER,
+    filingsView,
+    financialsView,
+    FINANCIAL_FIELD_KEYS,
+    homeView,
     mentionItems,
-    noteCards,
-    noteIdOf,
-    noteMarkdown,
-    noteUri,
-    settingsChanges,
-    settingsReadResult,
-    settingsValues,
-    type NoteCard,
-    type PluginView,
+    peersView,
+    resourceOf,
+    screenView,
+    valuationView,
+    wonText,
+    type FinancialField,
 } from "./views";
 
 /**
- * 플러그인의 도구와 자원의 조립. 라우트가 세운 행위자를 받아 코어의 유스케이스와 설정 저장소를 잇는다.
+ * 플러그인의 도구와 자원의 조립. 라우트가 세운 행위자를 받아 코어의 유스케이스(`usecases/market.ts` · `research.ts`)를 잇는다.
  *
- * ⚠ **쪽지는 코어의 유스케이스(`usecases/notes.ts`)로만 읽고 쓴다.** 쪽지 목록 · 서랍 · 멘션 · 폼의 선택지 · `note://` 자원이
- *    모두 `listNotes` 와 `openNote` 를 지난다. 여기서 저장소를 직접 불러 조건을 적으면 같은 판정이 두 곳에 살고, 밖에서
- *    붙은 세션에만 더 보이는 날이 온다(REQ-02).
- * ⚠ **폼의 답은 밖에서 온 입력이다.** 선택지에 없던 번호와 주소가 올 수 있다. 답을 믿지 않고 유스케이스로 다시 연다.
- * ⚠ **`requestState` 가 확인되지 않으면 아무것도 하지 않는다.** 폼을 받은 적 없는 요청이 답만 지어 보내는 길을 막는다
- *    (`requestState.ts`).
- * ⚠ **모델이 읽는 답에는 실을 것만 싣는다.** 화면이 그리지 않아도 응답에 실리면 밖으로 나간 것이다(`views.ts`).
+ * ⚠ **시장 데이터는 행위자 없이 읽는다.** 공시된 숫자라 웹의 종목 화면처럼 누구에게나 같다. 토큰을 지난 사람이면 누구든 부른다.
+ * ⚠ **보드는 이 사람의 테넌트 것만 담고 모은다.** 담기는 코어의 저장(`saveBoard`)을 지나 같은 판정(`editVerdict`)을 받는다(REQ-02).
+ * ⚠ **인자는 밖에서 온 입력이다.** 모델이 지어낸 종목코드와 값이 올 수 있다. 스키마로 거른 뒤에만 유스케이스에 넘긴다.
+ * ⚠ **모델이 읽는 글(`content`)에는 핵심 숫자와 출처와 다음 걸음만 싣는다.** 카드는 `structuredContent` 로 화면이 그린다.
  */
 export interface PluginConfig
 {
-    /** 폼의 `requestState` 를 서명하는 비밀. 없으면 폼을 내지 않는다 */
-    readonly stateSecret: string | null;
-    /** 디렉터리에 올린 뒤에 아는 플러그인의 id. 있으면 답에 딥링크를 싣는다 */
-    readonly pluginId: string | null;
     /** 화면 자원이 내주는 HTML 한 장 */
     readonly appHtml: string;
+    /** 새 보드와 노트의 식별자. 순수 규칙이 난수를 스스로 읽지 않게 밖에서 받는다 */
+    readonly newId: (prefix: string) => string;
 }
 
-type Stores = NoteStore | PreferenceStore;
+export type PluginStores = CompanyDirectory | FinancialPeriods | FilingLedger | BoardStore;
+
+type Outcome = Effect.Effect<SurfaceOutcome, unknown, PluginStores>;
 
 const text = (value: string): { readonly type: "text"; readonly text: string } => ({ type: "text", text: value });
 
-const done = (result: Record<string, unknown>): SurfaceOutcome => ({ kind: "result", result });
+const done = (message: string, structuredContent?: unknown): SurfaceOutcome => ({
+    kind: "result",
+    result: { content: [text(message)], ...(structuredContent === undefined ? {} : { structuredContent }), isError: false },
+});
 
-const failed = (message: string): SurfaceOutcome => done({ content: [text(message)], isError: true });
+const failed = (message: string): SurfaceOutcome => ({ kind: "result", result: { content: [text(message)], isError: true } });
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === "object" && value !== null && !Array.isArray(value);
-
-const stringOf = (value: unknown): string => (typeof value === "string" ? value : "");
-
-const isVisibility = (value: unknown): value is DefaultVisibility => VISIBILITY_VALUES.some((known) => known === value);
-
-const preferencesFor = (actor: Actor): Effect.Effect<Preferences, unknown, PreferenceStore> =>
-    Effect.flatMap(PreferenceStore, (store) => store.find(actor)).pipe(Effect.map((found) => found ?? DEFAULT_PREFERENCES));
-
-const viewFor = (
-    actor: Actor,
-    page: PluginView["page"],
-    noteId: string | null = null,
-): Effect.Effect<PluginView, unknown, Stores> =>
-    Effect.gen(function*()
-    {
-        const preferences = yield* preferencesFor(actor);
-        const notes = noteCards(yield* listNotes(actor), preferences);
-
-        return {
-            page,
-            notes,
-            preferences,
-            // 펼칠 쪽지는 목록에 있는 것만 받는다. 볼 수 없는 번호를 주면 목록만 선다
-            selectedId: notes.some((card) => card.id === noteId) ? noteId : null,
-            file: null,
-        };
-    });
-
-/** 대화에 끌어올 수 있는 쪽지. 보관한 것은 설정과 상관없이 뺀다 */
-const pickable = (actor: Actor): Effect.Effect<ReadonlyArray<NoteCard>, unknown, NoteStore> =>
-    Effect.map(listNotes(actor), (notes) => noteCards(notes, { ...DEFAULT_PREFERENCES, showArchived: false }));
-
-interface FormPrompt
+/** 스키마를 지나면 값, 아니면 `null` */
+const decode = <S extends Schema.ConstraintDecoder<unknown>>(schema: S, input: unknown): S["Type"] | null =>
 {
-    readonly message: string;
-    readonly form: Form;
-    /** 폼을 띄우지 못하는 클라이언트에서 폼 대신 내는 글 */
-    readonly fallback: string;
-    /** 사람이 폼을 닫았을 때의 답 */
-    readonly dismissed: string;
-    /** 폼을 낼 것이 없을 때의 답. 고를 쪽지가 하나도 없으면 빈 폼을 내지 않는다 */
-    readonly nothing: string | null;
-}
+    const exit = Schema.decodeUnknownExit(schema)(input);
 
-/** 사람이 실제로 만나는 까닭은 폼을 오래 열어 둔 것이다. 고친 상태와 남의 상태도 같은 글로 답해 까닭을 가르지 않는다 */
-const FORM_REFUSED = "시간이 지나 받지 못했어요. 다시 요청해 주세요.";
-
-const NOTHING_TO_PICK = "고를 수 있는 쪽지가 없어요.";
-
-/**
- * 폼으로 되묻는 도구의 뼈대. 처음 부르면 폼을 내고, 답과 서명된 상태가 함께 돌아오면 뒤를 잇는다.
- */
-const withForm = (
-    call: SurfaceCall,
-    config: PluginConfig,
-    prompt: (support: FormSupport) => Effect.Effect<FormPrompt, unknown, Stores>,
-    accepted: (content: Readonly<Record<string, unknown>>) => Effect.Effect<SurfaceOutcome, unknown, Stores>,
-): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    Effect.gen(function*()
-    {
-        const secret = config.stateSecret;
-        const support = secret === null ? "none" : formSupport(call.client);
-        const asked = yield* prompt(support);
-
-        if (asked.nothing !== null)
-        {
-            return done({ content: [text(asked.nothing)], isError: false });
-        }
-
-        if (secret === null || support === "none")
-        {
-            return done({ content: [text(asked.fallback)], isError: false });
-        }
-
-        const sub = `${call.actor.tenantId}:${call.actor.accountId}`;
-        const answer = formAnswer(call.inputResponses);
-
-        if (call.requestState === null || answer === null)
-        {
-            return {
-                kind: "input-required",
-                inputRequests: formRequest(support, asked.message, asked.form),
-                requestState: signState(secret, { sub, tool: call.name, exp: call.now.getTime() + FORM_TTL_MS }),
-            } as const;
-        }
-
-        if (verifyState(secret, call.requestState, { sub, tool: call.name, now: call.now.getTime() }) !== "ok")
-        {
-            return failed(FORM_REFUSED);
-        }
-
-        if (answer.action !== "accept")
-        {
-            return done({ content: [text(asked.dismissed)], structuredContent: { selection: answer.action }, isError: false });
-        }
-
-        return yield* accepted(answer.content);
-    });
-
-/**
- * 폼 대신 글로 낼 때의 선택지. 번호를 함께 적는다. 폼을 모르는 클라이언트는 글만 모델에게 넘기므로, 번호가 글에 없으면
- * 모델이 고른 쪽지를 도구에 넘길 길이 없다.
- */
-const listLines = (cards: ReadonlyArray<NoteCard>): string => cards.map((card) => `- ${card.title} (${card.id}번)`).join("\n");
-
-const pickNote = (call: SurfaceCall, config: PluginConfig): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    withForm(
-        call,
-        config,
-        (support) => Effect.map(pickable(call.actor), (cards) => ({
-            message: "어느 쪽지를 볼까요?",
-            form: pickForm(cards, support),
-            fallback: `어느 쪽지를 볼까요?\n${listLines(cards)}`,
-            dismissed: "쪽지를 고르지 않았어요.",
-            nothing: cards.length === 0 ? NOTHING_TO_PICK : null,
-        })),
-        (content) => Effect.gen(function*()
-        {
-            const note = yield* openNote(call.actor, stringOf(content["note"]));
-
-            if (note === null || note.status !== "active")
-            {
-                return failed("그사이 쪽지가 바뀌었어요. 다시 골라 주세요.");
-            }
-
-            return done({
-                content: [text(noteMarkdown(note))],
-                structuredContent: yield* viewFor(call.actor, "library", note.id),
-                isError: false,
-            });
-        }),
-    );
-
-const composeNote = (call: SurfaceCall, config: PluginConfig): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    withForm(
-        call,
-        config,
-        (support) => Effect.map(preferencesFor(call.actor), (preferences) => ({
-            message: "새 쪽지",
-            form: composeForm(preferences, support),
-            fallback: "제목과 내용을 알려 주세요.",
-            dismissed: "쪽지를 쓰지 않았어요.",
-            nothing: null,
-        })),
-        (content) => Effect.gen(function*()
-        {
-            const preferences = yield* preferencesFor(call.actor);
-            const title = stringOf(content["title"]);
-            const created = yield* createNote(call.actor, {
-                title,
-                body: stringOf(content["body"]),
-                visibility: isVisibility(content["visibility"]) ? content["visibility"] : preferences.defaultVisibility,
-            });
-
-            if (!created.ok)
-            {
-                return failed(created.message);
-            }
-
-            const link = config.pluginId === null ? "" : `\n쪽지 열기: ${webDeepLink({ pluginId: config.pluginId, path: notePath(created.noteId) })}`;
-
-            return done({ content: [text(`쪽지를 썼어요: ${title.trim()}${link}`)], structuredContent: { noteId: created.noteId }, isError: false });
-        }),
-    );
-
-const STALE_CHOICE = "그사이 바뀐 쪽지가 있어요. 다시 골라 주세요.";
-
-const attachNotes = (call: SurfaceCall, config: PluginConfig): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    withForm(
-        call,
-        config,
-        (support) => Effect.map(pickable(call.actor), (cards) => ({
-            message: "대화에 붙일 쪽지를 골라 주세요.",
-            form: attachForm(cards, support),
-            fallback: `대화에 붙일 쪽지를 알려 주세요.\n${listLines(cards)}`,
-            dismissed: "쪽지를 고르지 않았어요.",
-            nothing: cards.length === 0 ? NOTHING_TO_PICK : null,
-        })),
-        (content) => Effect.gen(function*()
-        {
-            const uris = Array.isArray(content["notes"]) ? content["notes"].map(stringOf) : [];
-            const ids = uris.map(noteIdOf);
-
-            if (ids.length === 0)
-            {
-                return failed("쪽지를 고르지 않았어요.");
-            }
-
-            if (ids.some((id) => id === null))
-            {
-                return failed(STALE_CHOICE);
-            }
-
-            const notes = yield* Effect.all(ids.map((id) => openNote(call.actor, id ?? "")));
-            const readable = notes.flatMap((note) => (note === null || note.status !== "active" ? [] : [note]));
-
-            if (readable.length !== notes.length)
-            {
-                return failed(STALE_CHOICE);
-            }
-
-            return done({
-                content: [
-                    text(`쪽지 ${readable.length}개를 대화에 붙였어요.`),
-                    ...readable.map((note) => ({ type: "resource", resource: { uri: noteUri(note.id), mimeType: "text/markdown", text: noteMarkdown(note) } })),
-                ],
-                isError: false,
-            });
-        }),
-    );
-
-const updateSettings = (call: SurfaceCall): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    Effect.gen(function*()
-    {
-        const verdict = planPreferenceUpdate(settingsChanges(call.args["set"]));
-
-        if (verdict._tag === "Rejected")
-        {
-            // 까닭을 가르지 않는다. 스위치를 누른 사람에게 「모르는 칸」과 「어휘 밖의 값」은 뜻이 없다
-            return failed("설정을 바꾸지 못했어요.");
-        }
-
-        const next = yield* Effect.flatMap(PreferenceStore, (store) => store.apply(call.actor, verdict.changes));
-
-        return done({ content: [], structuredContent: { values: settingsValues(next) }, isError: false });
-    });
-
-const IMPORT_FAILED = "쪽지로 가져오지 못했어요.";
-
-const importFile = (call: SurfaceCall): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    Effect.gen(function*()
-    {
-        const { name, text: body } = call.args;
-
-        if (typeof name !== "string" || typeof body !== "string")
-        {
-            return failed(IMPORT_FAILED);
-        }
-
-        const preferences = yield* preferencesFor(call.actor);
-        // 마지막 확장자만 뗀다. `회의록.2026.md` 는 `회의록.2026` 이다
-        const title = name.replace(/\.[^./\\]+$/, "");
-        const created = yield* createNote(call.actor, { title, body, visibility: preferences.defaultVisibility });
-
-        if (created.ok)
-        {
-            return done({ content: [text(`쪽지로 가져왔어요: ${title.trim()}`)], structuredContent: { noteId: created.noteId }, isError: false });
-        }
-
-        // 판정의 글은 폼의 칸을 가리킨다(「제목을 적어 주세요」). 이 화면에는 그 칸이 없으므로 파일의 말로 바꾼다
-        return failed(created.field === "body"
-            ? `파일이 너무 길어서 가져오지 못했어요. 쪽지는 ${BODY_MAX.toLocaleString("ko-KR")}자까지 담을 수 있어요.`
-            : created.field === "title" ? "파일 이름이 비었거나 너무 길어서 가져오지 못했어요." : IMPORT_FAILED);
-    });
-
-/**
- * 연 파일이 사용자의 컴퓨터 어디에 있는지 화면에 돌려준다. 화면이 그 자리로 호스트에게 「원본 열기」를 청한다.
- *
- * ⚠ **자리는 호스트가 호출에 얹은 것(`_meta`)만 쓴다.** 화면은 믿을 수 없는 스크립트가 돌 수 있는 자리라 호스트가 경로를
- *    화면에 직접 주지 않고, 파일 진입점에서 나간 도구 호출에만 얹어 서버로 보낸다. 인자로 받으면 화면이 아무 경로나 넣는다.
- * ⚠ **적어 두지 않는다.** 경로에는 사용자의 계정 이름과 폴더가 들어 있다. 돌려주기만 하고 저장하거나 로그로 남기지 않는다.
- */
-const revealFilePath = (call: SurfaceCall): SurfaceOutcome =>
-{
-    const resource = call.meta["openai/resource"];
-    const path = isRecord(resource) ? stringOf(resource["path"]) : "";
-
-    return path === ""
-        ? failed("파일을 열지 못했어요.")
-        : done({ content: [], structuredContent: { path }, isError: false });
+    return Exit.isSuccess(exit) ? exit.value : null;
 };
 
-const openFile = (call: SurfaceCall): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    Effect.gen(function*()
-    {
-        const file = isRecord(call.args["file"]) ? call.args["file"] : {};
-        const name = stringOf(file["name"]);
-        const resourceUri = stringOf(file["resourceUri"]);
+const StockCode = Schema.String.check(Schema.isPattern(/^[0-9A-Z]{6}$/));
 
-        if (name === "" || resourceUri.trim() === "")
+const Field = Schema.Literals(FINANCIAL_FIELD_KEYS);
+
+const Scenarios = Schema.Struct({ bear: Schema.Finite, base: Schema.Finite, bull: Schema.Finite });
+
+/** 피어 표의 줄 수 상한. 이름을 댄 종목도 이 수를 넘지 못한다 */
+const PEER_LIMIT_MAX = 8;
+
+/** 출처 한 줄. 화면과 모델의 글에 그대로 실리므로 길이를 막는다 */
+const SourceText = Schema.String.check(Schema.isMaxLength(300));
+
+const ValueArgs = Schema.Struct({
+    stockCode: StockCode,
+    targetYear: Schema.Int,
+    method: Schema.optional(Schema.Literals(["per", "psr"])),
+    revenue: Scenarios,
+    netMarginPct: Schema.optional(Scenarios),
+    multiple: Schema.Struct({ low: Schema.Finite, mid: Schema.Finite, high: Schema.Finite }),
+    sharesOutstanding: Schema.Finite,
+    sharesSource: Schema.optional(SourceText),
+    currentPrice: Schema.optional(Schema.Finite),
+    currentPriceSource: Schema.optional(SourceText),
+});
+
+const ScreenArgs = Schema.Struct({
+    sectorPrefix: Schema.optional(Schema.String.check(Schema.isPattern(/^[0-9]{2,5}$/))),
+    market: Schema.optional(Schema.Literals(["KOSPI", "KOSDAQ"])),
+    minOpmPct: Schema.optional(Schema.Finite),
+    minRoePct: Schema.optional(Schema.Finite),
+    minRevenueCagrPct: Schema.optional(Schema.Finite),
+    minRevenue: Schema.optional(Schema.Finite),
+    sortBy: Schema.optional(Schema.Literals(["opm", "roe", "revenueCagr", "revenue"])),
+    year: Schema.optional(Schema.Int),
+    limit: Schema.optional(Schema.Int),
+});
+
+const SaveArgs = Schema.Struct({
+    stockCode: StockCode,
+    title: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(200)),
+    body: Schema.String.check(Schema.isMinLength(1), Schema.isMaxLength(20_000)),
+    boardSlug: Schema.optional(Schema.String.check(Schema.isMaxLength(120))),
+});
+
+const stringArg = (value: unknown): string => (typeof value === "string" ? value : "");
+
+const intArg = (value: unknown, fallback: number, min: number, max: number): number =>
+    (typeof value === "number" && Number.isInteger(value) ? Math.min(max, Math.max(min, value)) : fallback);
+
+const fieldsArg = (value: unknown): ReadonlyArray<FinancialField> =>
+    (Array.isArray(value) ? [...new Set(value.flatMap((each) => decode(Field, each) ?? []))] : []);
+
+const stockCodeArg = (call: SurfaceCall): string | null => decode(StockCode, call.args["stockCode"]);
+
+const NO_STOCK = "종목코드를 알 수 없어요. find_company 로 먼저 종목코드를 찾아 주세요."; // ux-writing: 모델이 읽는 답
+
+const notFound = (stockCode: string): SurfaceOutcome => failed(`종목코드 ${stockCode} 인 회사가 없어요. find_company 로 다시 찾아 주세요.`); // ux-writing: 모델이 읽는 답
+
+const FIND_LIMIT = 8;
+
+const findCompany = (call: SurfaceCall): Outcome =>
+    Effect.map(searchCompanies(stringArg(call.args["query"]), FIND_LIMIT), (hits) =>
+    {
+        if (hits.length === 0)
         {
-            return failed("파일을 열지 못했어요.");
+            return done("맞는 종목이 없어요. 다른 이름이나 종목코드로 찾아 주세요."); // ux-writing: 모델이 읽는 답
         }
 
-        const view: PluginView = { page: "file", notes: [], preferences: yield* preferencesFor(call.actor), selectedId: null, file: { name, resourceUri } };
+        const lines = hits.map((hit) => `- ${hit.name} (${hit.stock_code}, ${hit.market ?? "비상장"})`).join("\n");
 
-        return done({ content: [text(`${name} 파일을 열었어요.`)], structuredContent: view, isError: false });
+        return done(hits.length === 1
+            ? `찾았어요.\n${lines}\nshow_company 로 요약을 보여 줄 수 있어요.`
+            : `${hits.length}곳이 맞아요. 어느 회사인지 사용자에게 물어보세요.\n${lines}`, { companies: hits.map((hit) => ({ stockCode: hit.stock_code, name: hit.name, market: hit.market })) });
     });
 
-const openNotes = (call: SurfaceCall, page: "library" | "tray"): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
-    Effect.map(viewFor(call.actor, page, typeof call.args["noteId"] === "string" ? call.args["noteId"] : null), (view) =>
-        done({ content: [text(view.notes.length === 0 ? "아직 쪽지가 없어요." : `쪽지 ${view.notes.length}개를 열었어요.`)], structuredContent: view, isError: false }));
+const showCompany = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const stockCode = stockCodeArg(call);
 
-export const callTool = (call: SurfaceCall, config: PluginConfig): Effect.Effect<SurfaceOutcome, unknown, Stores> =>
+        if (stockCode === null)
+        {
+            return failed(NO_STOCK);
+        }
+
+        const found = yield* companyWithPeriods(stockCode, ["A", "TTM"]);
+
+        if (found === null)
+        {
+            return notFound(stockCode);
+        }
+
+        const view = companyView(found.company, found.rows);
+
+        return done(`${companySummary(view)}\n다음: 매출 추이(show_financials) · 피어 비교(compare_peers) · 적정가(value_company). ${DISCLAIMER}`, view);
+    });
+
+const financialsOutcome = (stockCode: string, basis: "annual" | "quarter", fields: ReadonlyArray<FinancialField>): Outcome =>
+    Effect.gen(function*()
+    {
+        const found = yield* companyWithPeriods(stockCode, FINANCIAL_PERIOD_TYPES);
+
+        if (found === null)
+        {
+            return notFound(stockCode);
+        }
+
+        const view = financialsView(found.company, found.rows, basis, fields);
+        const lines = view.series.map((series) =>
+            `${series.label}: ${series.points.map((point) => `${point.label} ${series.unit === "won" ? wonText(point.value) : point.value === null ? "–" : `${point.value}%`}`).join(", ")}`);
+
+        return done(`${found.company.name} ${basis === "annual" ? "연간" : "분기"} 추이\n${lines.join("\n")}\n출처: ${view.source}. ${DISCLAIMER}`, view);
+    });
+
+const showFinancials = (call: SurfaceCall): Outcome =>
+{
+    const stockCode = stockCodeArg(call);
+
+    return stockCode === null
+        ? Effect.succeed(failed(NO_STOCK))
+        : financialsOutcome(stockCode, call.args["basis"] === "quarter" ? "quarter" : "annual", fieldsArg(call.args["series"]));
+};
+
+const comparePeers = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const stockCode = stockCodeArg(call);
+
+        if (stockCode === null)
+        {
+            return failed(NO_STOCK);
+        }
+
+        const withStockCodes = Array.isArray(call.args["withStockCodes"])
+            ? call.args["withStockCodes"].flatMap((each) => decode(StockCode, each) ?? []).slice(0, PEER_LIMIT_MAX)
+            : [];
+        const table = yield* peerTable(stockCode, { withStockCodes, limit: intArg(call.args["limit"], PEER_LIMIT, 1, PEER_LIMIT_MAX) });
+
+        if (table === null)
+        {
+            return notFound(stockCode);
+        }
+
+        const view = peersView(table.focus, table.year, table.rows);
+        const lines = view.rows.map((row) =>
+            `- ${row.company.name}: 매출 ${wonText(row.revenue)}, 영업이익률 ${row.opmPct ?? "–"}%, ROE ${row.roePct ?? "–"}%`);
+
+        if (table.year === null)
+        {
+            return done(`${table.focus.name}의 연간 재무가 아직 없어 견줄 해를 정하지 못했어요. show_financials 로 실린 재무부터 확인해 주세요.`, view); // ux-writing: 모델이 읽는 답
+        }
+
+        return done(view.rows.length <= 1
+            ? `${table.focus.name}와 견줄 상장 피어를 찾지 못했어요. withStockCodes 로 비교할 회사를 넣어 주세요.`
+            : `${view.title} · ${view.period}\n${lines.join("\n")}\n출처: ${view.source}. 피어는 업종 코드로 넓게 고른 후보라 사용자와 함께 추려 주세요. ${DISCLAIMER}`, view);
+    });
+
+const valueCompany = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const args = decode(ValueArgs, call.args);
+
+        if (args === null)
+        {
+            return failed("적정가 입력이 맞지 않아요. 매출 · 순이익률 · 배수의 세 갈래와 발행주식수를 숫자로 넣어 주세요."); // ux-writing: 모델이 읽는 답
+        }
+
+        const method = args.method ?? "per";
+
+        // PSR 은 매출에만 배수를 곱하므로 순이익률을 받지 않아도 된다
+        if (method === "per" && args.netMarginPct === undefined)
+        {
+            return failed("PER 로 계산하려면 순이익률의 세 갈래가 있어야 해요. 적자라면 method 를 psr 로 넣어 주세요."); // ux-writing: 모델이 읽는 답
+        }
+
+        const found = yield* company(args.stockCode);
+
+        if (found === null)
+        {
+            return notFound(args.stockCode);
+        }
+
+        const input: ValuationInput = {
+            targetYear: args.targetYear,
+            sharesOutstanding: args.sharesOutstanding,
+            method,
+            revenue: args.revenue,
+            netMarginPct: args.netMarginPct ?? { bear: 0, base: 0, bull: 0 },
+            multiple: args.multiple,
+            currentPrice: args.currentPrice ?? null,
+        };
+        const outcome = valuate(input);
+        const view = valuationView(found, input, outcome, { currentPrice: args.currentPriceSource ?? null, shares: args.sharesSource ?? null });
+
+        if (view.refusal !== null)
+        {
+            return done(view.refusal, view);
+        }
+
+        const gapText = (pct: number): string =>
+            (pct === 0 ? "오늘 주가가 매수가와 같아요." : `오늘 주가는 매수가보다 ${Math.abs(pct)}% ${pct > 0 ? "위" : "아래"}예요.`);
+        const gap = view.gapToBuyPct === null ? "오늘 주가를 넣지 않아 거리는 재지 않았어요." : gapText(view.gapToBuyPct);
+
+        return done(`${found.name} ${view.targetYear}년 기준 적정가 ${view.fairPrice?.toLocaleString("ko-KR") ?? "–"}원, 매수가(÷3) ${view.buyPrice?.toLocaleString("ko-KR") ?? "–"}원. ${gap}\n`
+            + `가정: ${view.assumptions.join(" / ")}\n출처: ${view.source}. ${DISCLAIMER}`, view);
+    });
+
+const FILING_LIMIT = 10;
+
+/** 고른 갈래가 드문 공시(지분 · 주요사항)여도 한도가 차도록 넉넉히 읽은 뒤 거른다 */
+const FILING_READ = 100;
+
+const listFilings = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const stockCode = stockCodeArg(call);
+
+        if (stockCode === null)
+        {
+            return failed(NO_STOCK);
+        }
+
+        const found = yield* companyFilings(stockCode, FILING_READ);
+
+        if (found === null)
+        {
+            return notFound(stockCode);
+        }
+
+        const kind = call.args["kind"] === "regular" || call.args["kind"] === "major" || call.args["kind"] === "ownership" ? call.args["kind"] : "all";
+        const view = filingsView(found.company, found.filings, kind, intArg(call.args["limit"], FILING_LIMIT, 1, 30));
+        const lines = view.items.map((item) => `- ${item.date} ${item.title} (${item.url})`);
+
+        return done(view.items.length === 0
+            ? `${found.company.name}의 그 갈래 공시가 없어요.`
+            : `${found.company.name} 최근 공시 ${view.items.length}건\n${lines.join("\n")}\n출처: ${view.source}.`, view);
+    });
+
+const SCREEN_LIMIT = 20;
+
+const screenStocks = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const args = decode(ScreenArgs, call.args);
+
+        if (args === null)
+        {
+            return failed("스크리너 조건이 맞지 않아요. 업종 코드는 숫자 두~다섯 자리, 비율은 퍼센트 수로 넣어 주세요."); // ux-writing: 모델이 읽는 답
+        }
+
+        const year = args.year ?? call.now.getUTCFullYear() - 1;
+        const filters: ScreenFilters = {
+            ...(args.sectorPrefix === undefined ? {} : { sectorPrefix: args.sectorPrefix }),
+            ...(args.market === undefined ? {} : { market: args.market }),
+            ...(args.minOpmPct === undefined ? {} : { minOpmPct: args.minOpmPct }),
+            ...(args.minRoePct === undefined ? {} : { minRoePct: args.minRoePct }),
+            ...(args.minRevenueCagrPct === undefined ? {} : { minRevenueCagrPct: args.minRevenueCagrPct }),
+            ...(args.minRevenue === undefined ? {} : { minRevenue: args.minRevenue }),
+            sortBy: args.sortBy ?? "opm",
+            limit: intArg(args.limit, SCREEN_LIMIT, 1, 50),
+        };
+        // 해를 말하지 않았는데 지난해 사업보고서가 아직 다 들어오지 않았으면 그 전해로 잰다
+        const rows = yield* screenCompanies(filters, year);
+        const fallback = args.year === undefined && rows.total === 0;
+        const screenedYear = fallback ? year - 1 : year;
+        const view = screenView(filters, screenedYear, fallback ? yield* screenCompanies(filters, screenedYear) : rows);
+        const lines = view.rows.slice(0, 10).map((row) =>
+            `- ${row.company.name} (${row.company.stockCode}): 영업이익률 ${row.opmPct ?? "–"}%, 3년 CAGR ${row.revenueCagrPct ?? "–"}%`);
+
+        return done(view.total === 0
+            ? `조건(${view.filters.join(" · ")})에 맞는 상장사가 없어요. 조건을 넓혀 보세요.`
+            : `조건(${view.filters.join(" · ")})에 맞는 상장사 ${view.total}곳\n${lines.join("\n")}\n출처: ${view.source}. ${DISCLAIMER}`, view);
+    });
+
+/** 홈에 처음 서는 종목. 아직 사람마다 최근에 본 것을 적지 않아서 시드에 있는 두 종목을 둔다 */
+export const FEATURED_STOCK_CODES: ReadonlyArray<string> = ["259960", "247540"];
+
+const openHome = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const boards = yield* boardsOf(call.actor, "stocks");
+        const featured = yield* Effect.all(FEATURED_STOCK_CODES.map((stockCode) => companyWithPeriods(stockCode, ["A", "TTM"])));
+        const view = homeView(true, boards, featured.flatMap((each) => (each === null ? [] : [each])));
+
+        return done(`Hathway 기업분석 홈을 열었어요. 보드 ${view.boards.length}개. 종목 이름을 말하면 요약 카드부터 보여 줄 수 있어요.`, view);
+    });
+
+const openBoardsPanel = (call: SurfaceCall): Outcome =>
+    Effect.map(boardsOf(call.actor, "stocks"), (boards) =>
+    {
+        const view = boardsView(true, boards);
+
+        return done(view.boards.length === 0
+            ? "아직 리서치 보드가 없어요. 분석을 마치고 save_to_board 로 담을 수 있어요."
+            : `리서치 보드 ${view.boards.length}개: ${view.boards.map((board) => `${board.title}(${board.slug})`).join(", ")}`, view);
+    });
+
+const saveToBoard = (call: SurfaceCall, config: PluginConfig): Outcome =>
+    Effect.gen(function*()
+    {
+        const args = decode(SaveArgs, call.args);
+
+        if (args === null)
+        {
+            return failed("담을 노트의 제목과 내용을 넣어 주세요."); // ux-writing: 모델이 읽는 답
+        }
+
+        const found = yield* company(args.stockCode);
+
+        if (found === null)
+        {
+            return notFound(args.stockCode);
+        }
+
+        const saved = yield* saveNoteToBoard(call.actor, {
+            slug: args.boardSlug ?? null,
+            boardTitle: `${found.name} 분석`,
+            ...(found.stock_code === null ? {} : { relatedStockCode: found.stock_code }),
+            note: { groupTitle: found.name, title: args.title, body: args.body },
+        }, config.newId);
+
+        if (!saved.ok)
+        {
+            return failed(saved.message);
+        }
+
+        return done(`「${saved.board.title}」 보드에 담았어요.`, { boardSlug: saved.board.slug, boardTitle: saved.board.title });
+    });
+
+const browseCompany = (call: SurfaceCall): Outcome =>
+{
+    const stockCode = stockCodeArg(call);
+
+    if (stockCode === null)
+    {
+        return Effect.succeed(failed(NO_STOCK));
+    }
+
+    return call.args["view"] === "financials"
+        ? financialsOutcome(stockCode, call.args["basis"] === "quarter" ? "quarter" : "annual", fieldsArg(call.args["series"]))
+        : showCompany(call);
+};
+
+const MENTION_COMPANIES = 12;
+
+const searchMentions = (call: SurfaceCall): Outcome =>
+    Effect.gen(function*()
+    {
+        const query = stringArg(call.args["query"]);
+        const [companies, boards] = yield* Effect.all([searchCompanies(query, MENTION_COMPANIES), boardsOf(call.actor, "stocks")]);
+
+        return { kind: "result", result: { content: [], structuredContent: { items: mentionItems(companies, boards, query) }, isError: false } } as const;
+    });
+
+export const callTool = (call: SurfaceCall, config: PluginConfig): Outcome =>
 {
     switch (call.name)
     {
-        case "open_library":
-            return openNotes(call, "library");
+        case "find_company":
+            return findCompany(call);
 
-        case "open_tray":
-            return openNotes(call, "tray");
+        case "show_company":
+            return showCompany(call);
 
-        case "open_file":
-            return openFile(call);
+        case "show_financials":
+            return showFinancials(call);
 
-        case "read_settings":
-            return Effect.map(preferencesFor(call.actor), (preferences) =>
-                done({ content: [], structuredContent: settingsReadResult(preferences), isError: false }));
+        case "compare_peers":
+            return comparePeers(call);
 
-        case "update_settings":
-            return updateSettings(call);
+        case "value_company":
+            return valueCompany(call);
+
+        case "list_filings":
+            return listFilings(call);
+
+        case "screen_stocks":
+            return screenStocks(call);
+
+        case "open_home":
+            return openHome(call);
+
+        case "open_boards":
+            return openBoardsPanel(call);
+
+        case "save_to_board":
+            return saveToBoard(call, config);
+
+        case "browse_company":
+            return browseCompany(call);
 
         case "search_mentions":
-            return Effect.map(listNotes(call.actor), (notes) =>
-                done({ content: [], structuredContent: { items: mentionItems(notes, stringOf(call.args["query"])) }, isError: false }));
-
-        case "pick_note":
-            return pickNote(call, config);
-
-        case "compose_note":
-            return composeNote(call, config);
-
-        case "attach_notes":
-            return attachNotes(call, config);
-
-        case "import_file":
-            return importFile(call);
-
-        case "reveal_file_path":
-            return Effect.succeed(revealFilePath(call));
+            return searchMentions(call);
 
         default:
             return Effect.succeed(failed(`모르는 도구다: ${call.name}`)); // ux-writing: 봉투가 걸러서 닿지 않는 자리의 프로토콜 오류
@@ -396,24 +476,33 @@ export const callTool = (call: SurfaceCall, config: PluginConfig): Effect.Effect
 };
 
 /**
- * 자원을 읽는다. 화면 자원은 누구에게나 같은 틀이고, 쪽지는 행 단위 판정을 지난 것만 온다.
+ * 자원을 읽는다. 화면 자원은 누구에게나 같은 틀이고, 멘션으로 붙은 종목은 요약 글을, 보드는 그 보드의 글을 낸다.
  *
- * 볼 수 없는 쪽지와 없는 쪽지를 가르지 않고 `null` 로 답한다(INV-NOTE-02).
+ * ⚠ **보드는 이 사람의 테넌트 것만 읽는다.** 보드는 웹에서 누구에게나 보이지만, 멘션은 「내 보드」에서 고른 것이라 같은 술어로 다시 잰다.
  */
 export const readResource = (
     read: SurfaceRead,
     config: PluginConfig,
-): Effect.Effect<ReadonlyArray<Record<string, unknown>> | null, unknown, NoteStore> =>
+): Effect.Effect<ReadonlyArray<Record<string, unknown>> | null, unknown, PluginStores> =>
 {
     if (isUiResource(read.uri))
     {
         return Effect.succeed(uiContents(read.uri, config.appHtml));
     }
 
-    const noteId = noteIdOf(read.uri);
+    const target = resourceOf(read.uri);
 
-    return noteId === null
-        ? Effect.succeed(null)
-        : Effect.map(openNote(read.actor, noteId), (note) =>
-            (note === null ? null : [{ uri: read.uri, mimeType: "text/markdown", text: noteMarkdown(note) }]));
+    if (target === null)
+    {
+        return Effect.succeed(null);
+    }
+
+    if (target.kind === "company")
+    {
+        return Effect.map(companyWithPeriods(target.key, ["A", "TTM"]), (found) =>
+            (found === null ? null : [{ uri: read.uri, mimeType: "text/markdown", text: `# ${found.company.name}\n\n${companySummary(companyView(found.company, found.rows))}` }]));
+    }
+
+    return Effect.map(openBoard(target.key), (board) =>
+        (board === null || !ownsBoard(read.actor, board) ? null : [{ uri: read.uri, mimeType: "text/markdown", text: boardMarkdown(board) }]));
 };

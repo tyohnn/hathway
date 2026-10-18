@@ -16,8 +16,6 @@
 |---|---|---|
 | `apps/web/src/lib/modules.ts` | `import { pluginExtensions } from "@/modules/plugin/extensions";` · `pluginExtensions,` | 확장 지점 `McpSurface` 를 채운다 |
 | `apps/web/next.config.ts` | `"@hathway/preferences",` | 워크스페이스 패키지를 옮겨 쓴다 |
-| `apps/web/playwright.config.ts` | `begin` ~ `end` 블록 | e2e 서버에 폼의 상태를 서명할 비밀을 준다 |
-| `apps/web/.env.example` | `begin` ~ `end` 블록 · 배포 값의 `PLUGIN_STATE_SECRET` 한 줄 | 서명 비밀과 플러그인의 id |
 | `packages/shared/scripts/check-dependencies.mjs` | `LAYER` 의 한 줄 | 새 패키지의 층 |
 | `packages/shared/scripts/check-invariants.mjs` | `CATALOGS` 의 한 줄 · 머리말 한 줄 · `SCAN_ROOTS` 의 한 줄 | `INV-PREFERENCE-*` 카탈로그 |
 | `packages/shared/scripts/check-comments.mjs` | `SCOPE` 의 한 줄 | 새 패키지의 주석을 지침으로 대조한다 |
@@ -47,7 +45,7 @@
 |---|---|
 | 워크스페이스 표 | `packages/preferences` 줄 |
 | 약어 표 | `INV-PREFERENCE-01` 줄 |
-| 로컬 스택 | 「`PLUGIN_STATE_SECRET` 이 없으면」 줄 |
+| 로컬 스택 | 「플러그인(`modules/plugin`)의 도구는」 줄 |
 | 데이터베이스 표 | `preferences` 스키마 줄 |
 
 ### apps/web/CLAUDE.md
@@ -92,4 +90,4 @@
 3. 붙지 않은 조각과 남은 표시 줄을 걷는다. CI 의 조합 목록에서 `plugin` 을 뺀다.
 4. `npm install` 뒤 `acceptance.json` 의 `checks` 와 코어의 검사(turbo typecheck test · web e2e)를 지난다. 이 모듈의
    `unit` · `contract` · `e2e` 는 함께 사라졌으니 돌리지 않는다.
-5. ChatGPT 에 등록한 연결과 디렉터리에 올린 플러그인, 배포 환경의 `PLUGIN_STATE_SECRET` 은 사람이 치운다. 보고에 적는다.
+5. ChatGPT 에 등록한 연결과 디렉터리에 올린 플러그인은 사람이 치운다. 보고에 적는다.

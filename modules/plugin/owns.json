@@ -16,6 +16,7 @@
         "packages/preferences/",
         "packages/adapters-postgres/src/preferences/",
         "apps/web/src/modules/plugin/",
+        "apps/web/src/app/mock/plugin/",
         "apps/web/e2e/plugin.spec.ts",
         "supabase/migrations/20261002040122_create_preferences_schema.sql",
         "docs/decisions/2026-10-02-플러그인-익스텐션은-MCP-위의-표시이고-SDK-없이-얹는다.md"
@@ -30,12 +31,7 @@
         ]
     },
     "skills": [],
-    "env": {
-        "apps/web/.env.example": [
-            "PLUGIN_STATE_SECRET",
-            "PLUGIN_DIRECTORY_ID"
-        ]
-    },
+    "env": {},
     "schemas": [
         "preferences"
     ],
@@ -43,7 +39,7 @@
         "CLAUDE.md": [
             "| `packages/preferences` |",
             "| `INV-PREFERENCE-01` |",
-            "`PLUGIN_STATE_SECRET` 이 없으면 web 의 플러그인은",
+            "플러그인(`modules/plugin`)의 도구는",
             "| `preferences` | 사람이 조직 안에서 고른 설정"
         ],
         "apps/web/CLAUDE.md": [

@@ -3,8 +3,9 @@ import { Effect, Schema } from "effect";
 import type { Actor } from "@hathway/access/domain/Actor";
 import { BoardSlug, BoardTheme, Group, type Board } from "@hathway/research/domain/Board";
 import { BoardStore } from "@hathway/research/ports/BoardStore";
+import { appendNote, type NoteToAppend } from "@hathway/research/rules/append";
 import { draftBoard } from "@hathway/research/rules/draft";
-import { editVerdict, removeVerdict } from "@hathway/research/rules/edit";
+import { editVerdict, ownsBoard, removeVerdict } from "@hathway/research/rules/edit";
 import { limitVerdict } from "@hathway/research/rules/limits";
 
 /**
@@ -72,7 +73,7 @@ export const openBoard = (slug: string) =>
 /** 새 보드. 테넌트와 만든 사람은 입력이 아니라 행위자에게서 온다 */
 export const createBoard = (
     actor: Actor,
-    input: CreateBoardInput,
+    input: CreateBoardInput & { readonly relatedStockCode?: string },
     newId: (prefix: string) => string,
 ): Effect.Effect<BoardActionResult, unknown, BoardStore> =>
     Effect.gen(function*()
@@ -153,4 +154,79 @@ export const removeBoard = (
         return outcome === "removed"
             ? { ok: true } as const
             : { ok: false, reason: "not-found", message: MESSAGES["not-found"] } as const;
+    });
+
+/**
+ * 이 사람의 테넌트가 가진 보드. 플러그인의 홈과 서랍이 「내 보드」로 쓴다. 최근에 고친 것이 먼저다.
+ *
+ * ⚠ 보드는 누구에게나 보이지만(INV-RESEARCH-01) 「내 것」으로 모으는 술어는 고치는 판정과 같은 `ownsBoard` 다.
+ */
+export const boardsOf = (actor: Actor, theme: BoardTheme) =>
+    Effect.map(listBoards(theme), (boards) => boards.filter((board) => ownsBoard(actor, board)));
+
+export interface NoteToBoardInput
+{
+    /** 담을 보드. 없으면 `boardTitle` 로 새 보드를 연다 */
+    readonly slug: string | null;
+    readonly boardTitle: string;
+    /** 새 보드를 열 때 다는 종목코드. 이미 있는 보드에는 손대지 않는다 */
+    readonly relatedStockCode?: string;
+    readonly note: NoteToAppend;
+}
+
+/**
+ * 대화에서 정리한 노트 한 장을 보드에 담는다. 새 보드면 먼저 만들고, 담는 일은 저장(`saveBoard`)을 지나 같은 판정을 받는다.
+ *
+ * ⚠ **남의 테넌트 보드는 없는 보드로 답한다**(`editVerdict` 와 같은 까닭).
+ */
+export const saveNoteToBoard = (
+    actor: Actor,
+    input: NoteToBoardInput,
+    newId: (prefix: string) => string,
+): Effect.Effect<BoardActionResult, unknown, BoardStore> =>
+    Effect.gen(function*()
+    {
+        // 새 보드면 노트를 담은 채로 한 번에 만든다. 두 번 쓰면 둘째가 실패할 때 빈 보드가 남는다
+        if (input.slug === null)
+        {
+            const verdict = draftBoard(actor, {
+                theme: "stocks",
+                title: input.boardTitle,
+                ...(input.relatedStockCode === undefined ? {} : { relatedStockCode: input.relatedStockCode }),
+            }, newId);
+
+            if (verdict._tag === "Rejected")
+            {
+                return { ok: false, reason: "limit", message: verdict.message } as const;
+            }
+
+            const drafted = { ...verdict.board, groups: appendNote(verdict.board.groups, input.note, newId) };
+            // 있는 보드의 저장과 같은 한도를 지난다. 노트 제목과 본문의 길이가 여기서 걸린다
+            const limit = limitVerdict(drafted);
+
+            if (limit._tag === "Over")
+            {
+                return { ok: false, reason: "limit", message: limit.message } as const;
+            }
+
+            const board = yield* Effect.flatMap(BoardStore, (store) => store.create(drafted));
+
+            return { ok: true, board } as const;
+        }
+
+        // 있는 보드는 저장(`saveBoard`)을 지나 행 단위 판정 · 판 충돌을 그대로 받는다
+        const board = yield* openBoard(input.slug);
+
+        if (board === null)
+        {
+            return { ok: false, reason: "not-found", message: MESSAGES["not-found"] } as const;
+        }
+
+        return yield* saveBoard(actor, {
+            slug: board.slug,
+            version: board.version,
+            title: board.title,
+            tagline: board.tagline,
+            groups: appendNote(board.groups, input.note, newId),
+        });
     });

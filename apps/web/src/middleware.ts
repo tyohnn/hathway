@@ -16,10 +16,13 @@ import { supabaseConfig } from "@/lib/supabase/server";
  * ⚠ **소속 판정(`/no-access`)은 여기서 하지 않는다.** 그것은 DB 를 읽어야 하고, 미들웨어는 모든 요청을
  *    지나므로 그 왕복을 매번 붙일 자리가 아니다. 셸의 게이트가 한다.
  */
-// 뒤의 셋은 검색 엔진과 AI 가 읽는 파일이다(`app/robots.ts` · `app/sitemap.ts` · `app/llms.txt/route.ts`)
+// 뒤의 넷은 검색 엔진과 AI 가 읽는 파일이다(`app/robots.ts` · `app/sitemap.ts` · `app/llms.txt/route.ts` · `app/opengraph-image.tsx`)
 const PUBLIC_PATHS = ["/login", "/no-access", "/auth", "/blog", "/docs", "/changelog", "/privacy", "/terms", "/robots.txt", "/sitemap.xml", "/llms.txt",
+    "/opengraph-image",
     // 종목 · 부동산 화면(`app/(market)`)은 로그인하지 않아도 읽는다. 쓰기는 관문(`lib/action.ts`)이 막는다(INV-RESEARCH-01)
-    "/stocks", "/real-estate"];
+    "/stocks", "/real-estate",
+    // 플러그인 화면의 목업. 개발 서버에서만 서고 프로덕션에서는 페이지가 404 를 낸다(`app/mock/plugin/page.tsx`)
+    "/mock"];
 
 /**
  * 쿠키가 아니라 Authorization 헤더로 인증하는 자리. MCP 클라이언트가 부른다.

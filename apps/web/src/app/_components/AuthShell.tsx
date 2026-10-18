@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { AuthScreen } from "@hathway/blocks/auth-screen";
 
 /** 이 앱의 이름. 로그인 화면의 머리와 동의 화면의 그림이 함께 읽는다 */
-export const BRAND = { strong: "Hathway", rest: "Web" } as const;
+export const BRAND = { strong: "Hathway", rest: "기업분석" } as const;
 
 /**
  * 로그인과 「허용되지 않은 계정」이 함께 쓰는 틀. 틀은 블록이 갖고 이 앱은 이름만 넘긴다.

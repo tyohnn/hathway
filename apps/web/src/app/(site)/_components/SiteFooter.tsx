@@ -23,7 +23,7 @@ export function SiteFooter()
     return (
         <footer className="landing-footer">
             <div className="landing-footer-inner">
-                <Link href={paths.landing()} className="font-semibold">Hathway</Link>
+                <Link href={paths.landing()} className="font-semibold">Hathway 기업분석</Link>
                 <nav aria-label="사이트 발치" className="landing-footer-nav">
                     {LINKS.map((link) => (
                         <Link key={link.href} href={link.href} className={"strong" in link ? "font-semibold" : undefined}>{link.label}</Link>

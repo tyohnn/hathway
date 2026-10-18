@@ -30,4 +30,11 @@ test.describe("web 셸", () =>
         await expect(page.getByRole("heading", { name: "로컬 계정으로 로그인" })).toHaveCount(0);
         await expect(page.getByLabel("비밀번호")).toHaveCount(0);
     });
+
+    test("프로덕션 빌드에는 플러그인 목업 페이지가 없다. 개발에서만 서는 자리다", async ({ request }) =>
+    {
+        const response = await request.get("/mock/plugin");
+
+        expect(response.status()).toBe(404);
+    });
 });

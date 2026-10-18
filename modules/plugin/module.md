@@ -29,7 +29,7 @@
 | 로컬 파일 열기 | 파일 뷰어의 「기본 뷰어로 열기」 | `usecases.ts` 의 `revealFilePath` | 데스크톱 |
 | 컴포저 멘션 | `search_mentions` 가 `note://<번호>` 를 돌려준다 | `views.ts` 의 `mentionItems` | 데스크톱 |
 | 리치 폼 | `pick_note` · `compose_note` · `attach_notes` | `forms.ts` · `requestState.ts` | 데스크톱 · 웹 |
-| 온보딩 | `plugin/skills/setup` 이 설정을 묻고 쪽지 목록을 연다 | `plugin/plugin.json` | 전부 |
+| 온보딩 | `plugin/skills/setup` 이 할 수 있는 일을 알리고 홈을 연다 | `plugin/plugin.json` | 전부 |
 
 ## 채우는 확장 지점
 
@@ -57,8 +57,8 @@
 ## 요구하는 것
 
 - 다른 모듈: 없다. 결제 모듈이 있으면 무료 조직은 도구를 부를 때 까닭을 답으로 듣는다.
-- 환경값: `PLUGIN_STATE_SECRET`(폼의 상태를 서명한다. 없으면 폼을 내지 않고 글로 안내한다) · `PLUGIN_DIRECTORY_ID`(선택.
-  넣으면 도구의 답에 그 쪽지로 가는 딥링크가 실린다).
+- 환경값: 따로 없다. 시장 데이터와 보드는 앱의 접속(`WEB_DATABASE_URL`)으로 읽고 쓴다. 폼으로 되묻는 도구가 없어서
+  상태를 서명할 비밀도 두지 않는다(`requestState.ts` 는 그런 도구를 다시 세울 때를 위해 남겼다).
 - 스키마: `preferences`. `web_app` 이 읽고 고친다.
 
 ## 화면을 고칠 때
@@ -109,7 +109,7 @@ node apps/web/src/modules/plugin/preview/server.mjs
 1. 서버를 공개 HTTPS 주소로 띄운다. 배포하거나, 로컬이면 [Secure MCP Tunnel](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels)
    이나 HTTPS 터널을 쓴다.
 2. 원격 Supabase 의 대시보드에서 OAuth 서버와 동적 등록을 켠다(`docs/supabase-migrations/README.md` §3).
-3. 배포 환경에 `PLUGIN_STATE_SECRET` 을 넣는다(`openssl rand -base64 32`).
+3. 배포 환경에 `WEB_DATABASE_URL` 이 있는지 본다. 도구가 시장 데이터를 거기서 읽는다.
 4. ChatGPT 의 설정 › 보안 및 로그인에서 개발자 모드를 켜고, [chatgpt.com/plugins](https://chatgpt.com/plugins) 의 더하기 단추로
    `https://<주소>/api/mcp` 를 등록한다. 로그인하고 허용하면 도구 목록이 뜬다.
 5. 주소창의 `plugin_asdk_app_…` 을 `plugin/.app.json` 의 `apps` 에 `{"<이름>": {"id": "asdk_app_…"}}` 꼴로 적는다.

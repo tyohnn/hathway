@@ -94,6 +94,24 @@ describe("MCP 요청의 조립", () =>
             assert.isDefined(data.reply?.error);
         }));
 
+    it.effect("새 판의 자원 읽기는 캐시 칸을 싣는다. 빠지면 ChatGPT 가 답을 버리고 화면을 띄우지 못한다", () =>
+        Effect.gen(function*()
+        {
+            const answer = yield* ask({
+                id: 1,
+                method: "resources/read",
+                params: {
+                    uri: "ui://board/main",
+                    _meta: { "io.modelcontextprotocol/protocolVersion": MODERN_VERSION, "io.modelcontextprotocol/clientCapabilities": {} },
+                },
+            }, open, MODERN_VERSION);
+
+            assert.strictEqual(answer.reply?.result?.["resultType"], "complete");
+            assert.strictEqual(answer.reply?.result?.["ttlMs"], 0);
+            assert.strictEqual(answer.reply?.result?.["cacheScope"], "private");
+            assert.deepStrictEqual(answer.reply?.result?.["contents"], [{ uri: "ui://board/main", text: "내용" }]);
+        }));
+
     it.effect("없는 자원은 Resource not found 로 답한다. 볼 수 없는 것과 없는 것을 가르지 않는다", () =>
         Effect.gen(function*()
         {

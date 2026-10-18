@@ -2,8 +2,8 @@
 
 # Hathway
 
-기업 투자 분석. 교재의 방법론과 DART 공시 · 재무 데이터로 종목을 읽고 적정주가를 계산한다. 다음 일은 ChatGPT 플러그인에서
-그 분석을 대화로 돌리는 것이다(`chatgpt-plugin-launch`).
+기업 투자 분석. 교재의 방법론과 DART 공시 · 재무 데이터로 종목을 읽고 적정주가를 계산한다. 그 분석은 ChatGPT 앱
+「Hathway 기업분석」의 대화에서도 돈다(`chatgpt-plugin-launch`).
 
 이 저장소는 둘을 함께 담는다. 코드(`apps/*` · `packages/*` · `supabase/`)의 규약은 이 문서가, 교재 · 강의 · 리서치 · 적재
 파이프라인의 규약은 위에서 읽어 들인 `AGENTS.md` 가 갖는다. 2026-10-18 에 코드를 스캐폴드(`tyohnn/scaffold`) 위로 옮겼고,
@@ -13,8 +13,8 @@
 hathway 에서 옮긴 것이고, 예시 도메인 `notes` 와 홈은 스캐폴드의 본보기를 그대로 들고 왔다. 교재 읽기 화면은 옮기지 않았다
 (`교재/` 폴더는 그대로 있다).
 
-⚠ **플러그인 화면은 아직 이 제품의 것이 아니다.** 플러그인 모듈(`modules/plugin`)은 스캐폴드의 쪽지 본보기를 그대로 들고 왔다.
-제품의 일과 명사로 다시 짜는 일은 `/scaffold-fit` 과 `chatgpt-plugin-launch` 1단계가 맡는다.
+플러그인 모듈(`modules/plugin`)은 2026-10-18 에 기업분석의 도구 열둘과 화면 여덟으로 다시 짰다. 흐름표와 시나리오와 화면 짜임은
+`docs/plugin/` 에 있고, 위젯을 눈으로 보는 자리는 개발 서버의 `/mock/plugin` 이다(프로덕션에서는 404).
 
 ## 개발 과정
 
@@ -281,7 +281,7 @@ cp apps/agent/.env.example apps/agent/.env.development.local
   실물 모델을 쓰려면 터미널에서 `apps/agent/.env.local` 에 `AI_GATEWAY_API_KEY` 를 넣고 그 줄을 지웁니다. web 의 쪽지 요약도
   같다(`SUMMARY_RUNNER=rehearsal`).
 - ⚠ **PostHog 토큰이 없으면 web 의 제품 분석은 연습 창구로 돕니다**(`NEXT_PUBLIC_POSTHOG_SINK=rehearsal`). 실물로 보내는 절차는 `modules/posthog/module.md` 에 있습니다.
-- ⚠ **`PLUGIN_STATE_SECRET` 이 없으면 web 의 플러그인은 폼을 내지 않고 글로 안내합니다**(`.env.example` 에 로컬 값이 있습니다). 실물 ChatGPT 에 붙이는 절차는 `modules/plugin/module.md` 에 있습니다.
+- ⚠ **플러그인(`modules/plugin`)의 도구는 시장 데이터를 로그인한 계정 없이도 읽고, 보드에 담기만 그 계정의 조직으로 합니다.** 로컬 스택이 떠 있어야 답합니다. 실물 ChatGPT 에 붙이는 절차는 `modules/plugin/module.md` 에 있습니다.
 
 ## 화면: 정적 껍데기
 

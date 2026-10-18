@@ -14,11 +14,26 @@ export interface SiteIndex
 {
     readonly name: string;
     readonly description: string;
+    /** llms.txt 의 설명 아래에 한 번 더 싣는 고지. 이 제품은 「투자 자문이 아니다」를 여기 적는다 */
+    readonly notice?: string;
+    /**
+     * 글 모음 밖의 공개 화면(종목 · 산업 지도처럼 로그인 없이 읽는 화면). sitemap 의 맨 앞과 llms.txt 의 「화면」에 실린다.
+     * ⚠ `/` 처럼 다른 주소로 넘기는 주소는 싣지 않는다. 넘기는 주소가 sitemap 에 있으면 Search Console 이 오류로 센다.
+     */
+    readonly pages: ReadonlyArray<SitePage>;
     readonly posts: ReadonlyArray<BlogPost>;
     readonly docs: ReadonlyArray<DocPage>;
     readonly releases: ReadonlyArray<Release>;
     /** 개인정보 처리방침과 이용약관의 시행일(YYYY-MM-DD). 두 글은 이 날에 함께 바뀐다 */
     readonly legalEffectiveOn: string;
+}
+
+export interface SitePage
+{
+    /** 앞이 `/` 인 경로. 한글 마디는 `encodeURIComponent` 를 지난 값이다 */
+    readonly path: string;
+    readonly title: string;
+    readonly note?: string;
 }
 
 export interface SitemapEntry
@@ -29,7 +44,7 @@ export interface SitemapEntry
 }
 
 export const sitemapEntries = (site: string, index: SiteIndex): ReadonlyArray<SitemapEntry> => [
-    { url: `${site}${paths.landing()}` },
+    ...index.pages.map((page) => ({ url: `${site}${page.path}` })),
     { url: `${site}${paths.blog()}` },
     ...newestFirst(index.posts).map((post) => ({ url: `${site}${paths.post(post.slug)}`, lastModified: post.date })),
     ...index.docs.map((doc) => ({ url: `${site}${paths.docs(doc.slug)}` })),
@@ -49,6 +64,16 @@ export const llmsText = (site: string, index: SiteIndex): string =>
         `# ${index.name}`,
         "",
         `> ${index.description}`,
+        "",
+        ...(index.notice === undefined ? [] : [index.notice, ""]),
+        "## 화면",
+        "",
+        ...index.pages.map((page) => link(page.title, `${site}${page.path}`, page.note)),
+        "",
+        "## AI 앱 연결",
+        "",
+        `- MCP 엔드포인트: ${site}/api/mcp (Streamable HTTP, OAuth 2.1 로그인)`,
+        `- [연결하는 법](${site}${paths.docs("chatgpt")})`,
         "",
         "## 문서",
         "",
@@ -83,10 +108,44 @@ export const blogPostingLd = (site: string, name: string, post: BlogPost, team: 
     };
 };
 
-/** 첫 화면의 schema.org `Organization` 과 `WebSite`. 검색 결과와 AI 가 서비스 이름과 주소를 묶는 근거다 */
-export const siteLd = (site: string, name: string, description: string): ReadonlyArray<Readonly<Record<string, unknown>>> => [
-    { "@context": "https://schema.org", "@type": "Organization", name, url: `${site}${paths.landing()}` },
-    { "@context": "https://schema.org", "@type": "WebSite", name, description, url: `${site}${paths.landing()}`, inLanguage: "ko" },
+/** 운영 주체. schema.org `Organization` 에 싣는 값이다 */
+export interface Operator
+{
+    readonly name: string;
+    readonly email: string;
+}
+
+/**
+ * 공개 화면의 schema.org `Organization` 과 `WebApplication`. 검색 결과와 AI 가 서비스 이름 · 운영 주체 · 주소를 묶는 근거다.
+ * 값은 무료(`offers.price` 0)로 싣는다. 요금을 받게 되면 이 값을 고친다.
+ */
+export const siteLd = (
+    site: string,
+    name: string,
+    description: string,
+    operator: Operator,
+    /** 서비스의 첫 화면. `/` 가 다른 주소로 넘기는 제품은 넘어간 뒤의 주소를 준다 */
+    entryPath: string = paths.landing(),
+): ReadonlyArray<Readonly<Record<string, unknown>>> => [
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: operator.name,
+        url: `${site}${paths.landing()}`,
+        email: operator.email,
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name,
+        description,
+        url: `${site}${entryPath}`,
+        inLanguage: "ko",
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        offers: { "@type": "Offer", price: 0, priceCurrency: "KRW" },
+        publisher: { "@type": "Organization", name: operator.name },
+    },
 ];
 
 /**

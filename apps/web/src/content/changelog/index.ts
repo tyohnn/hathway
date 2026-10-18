@@ -6,7 +6,7 @@ import type { Release } from "../types";
  * ⚠ 새 소식은 사람이 알아야 할 변화만 적는다. 고친 파일이나 내부 작업은 커밋 기록의 몫이다(`ux-writing` 「개발의 말」).
  */
 export const RELEASES = [
-    { version: "0.1.0", title: "첫 공개", date: "2026-09-29" },
+    { version: "0.1.0", title: "ChatGPT 앱 첫 버전", date: "2026-10-18" },
 ] as const satisfies ReadonlyArray<Release>;
 
 export type ReleaseVersion = (typeof RELEASES)[number]["version"];

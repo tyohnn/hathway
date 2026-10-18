@@ -27,10 +27,6 @@ const SHARED_ENV = {
     WEB_DATABASE_URL: process.env.WEB_DATABASE_URL ?? "postgresql://web_app:postgres@127.0.0.1:54362/postgres",
     // 요약은 키 없이 돈다
     SUMMARY_RUNNER: "rehearsal",
-    // scaffold:module plugin begin
-    // 플러그인의 폼이 상태를 서명한다. e2e 는 폼을 받고 답을 실어 다시 부르는 왕복을 잰다(`e2e/plugin.spec.ts`)
-    PLUGIN_STATE_SECRET: "e2e-plugin-state",
-    // scaffold:module plugin end
     // scaffold:module posthog begin
     // 분석은 연습 창구로 돈다. e2e 는 서버가 모은 이벤트(`/api/analytics/rehearsal`)와 브라우저가 모은 것을 단언한다
     NEXT_PUBLIC_POSTHOG_SINK: "rehearsal",

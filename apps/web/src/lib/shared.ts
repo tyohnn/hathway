@@ -1,4 +1,4 @@
-export const appName = "숫자로 읽는 주식투자";
+export const appName = "Hathway 기업분석";
 
 export const gitConfig = {
     user: "ssota-labs",
