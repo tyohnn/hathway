@@ -57,4 +57,19 @@ export interface Release
     readonly date: string;
     /** 판의 머리에 서는 꼬리표(예: 웹 · MCP) */
     readonly tags?: ReadonlyArray<string>;
+    /** 제목 아래에 크게 서는 그림. 없으면 제목 바로 아래에 본문이 선다 */
+    readonly image?: ReleaseImage;
+}
+
+/**
+ * 새 소식의 큰 그림. 파일은 `public/changelog/` 에 두고 주소는 `/changelog/<파일>` 로 적는다.
+ * ⚠ 폭과 높이는 파일의 실제 픽셀이다. 그림이 뜨기 전에 자리를 잡아 두어 본문이 밀려 내려가지 않게 한다.
+ */
+export interface ReleaseImage
+{
+    readonly src: string;
+    /** 그림이 보여 주는 것. 제목을 되풀이하지 않는다 */
+    readonly alt: string;
+    readonly width: number;
+    readonly height: number;
 }

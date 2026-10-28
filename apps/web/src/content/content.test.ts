@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +8,7 @@ import { POSTS } from "./blog";
 import { RELEASES } from "./changelog";
 import { docGroups, featureFirst, headingId, koreanDate, neighbours, newestFirst, otherPosts } from "./collections";
 import { DOCS } from "./docs";
+import type { Release } from "./types";
 
 /**
  * 저장소의 글과 목록 파일이 어긋나지 않는가. 목록에 없는 MDX 는 화면에 서지 않고, 파일이 없는 목록은 빌드에서야 깨진다.
@@ -33,6 +34,21 @@ describe("저장소의 글", () =>
     {
         assert.deepStrictEqual(mdxIn("changelog"), RELEASES.map((release) => release.version).sort());
         assert.strictEqual(new Set(RELEASES.map((release) => release.version)).size, RELEASES.length);
+    });
+
+    it("새 소식의 큰 그림은 public/changelog 에 파일이 있고 무엇을 보여 주는지 적혀 있다", () =>
+    {
+        for (const release of RELEASES as ReadonlyArray<Release>)
+        {
+            if (release.image === undefined)
+            {
+                continue;
+            }
+
+            assert.match(release.image.src, /^\/changelog\/[^/]+\.(png|jpg|webp)$/, release.version);
+            assert.isTrue(existsSync(join(here, "../../public", release.image.src)), release.image.src);
+            assert.isAbove(release.image.alt.trim().length, 0, release.version);
+        }
     });
 
     it("문서의 MDX 는 모두 목록에 있다. 코드로 그리는 문서는 MDX 가 없어도 된다", () =>
