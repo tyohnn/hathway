@@ -42,6 +42,12 @@ export function H3({ id, children, ...props }: ComponentProps<"h3">)
     return <h3 id={id ?? headingId(textOf(children))} {...props}>{children}</h3>;
 }
 
+/** 새 소식의 피드는 판의 제목이 h2 라서 본문의 제목을 한 칸씩 내린다(`ReleaseEntry`) */
+export function H4({ id, children, ...props }: ComponentProps<"h4">)
+{
+    return <h4 id={id ?? headingId(textOf(children))} {...props}>{children}</h4>;
+}
+
 const LANGUAGE_TITLES: Readonly<Record<string, string>> = {
     bash: "명령",
     sh: "명령",

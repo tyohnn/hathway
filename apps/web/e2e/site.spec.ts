@@ -95,13 +95,23 @@ test.describe("공개 화면", () =>
         await expect(nav.getByRole("link", { name: "시작하기" })).toHaveCount(0);
     });
 
-    test("새 소식의 뿌리는 가장 최근 판으로 가고 판의 제목에 앵커가 있다", async ({ page }) =>
+    test("새 소식은 판마다 날짜와 제목과 본문이 선 피드이고, 제목을 누르면 그 판 하나가 열린다", async ({ page }) =>
     {
         await page.goto("/changelog");
+
+        await expect(page.getByRole("heading", { name: "새 소식", level: 1 })).toBeVisible();
+
+        const entry = page.getByRole("article").first();
+
+        await expect(entry.locator("time")).toBeVisible();
+        await entry.getByRole("heading", { level: 2 }).getByRole("link").click();
 
         await expect(page).toHaveURL(/\/changelog\/[0-9.]+$/);
         await expect(page.getByRole("article").getByRole("heading", { level: 1 })).toBeVisible();
         await expect(page.locator("article h2[id]").first()).toBeVisible();
+
+        await page.getByRole("article").getByRole("link", { name: "새 소식" }).click();
+        await expect(page).toHaveURL(/\/changelog$/);
     });
 
     test("이용약관과 개인정보 처리방침이 로그인 없이 열리고, 발치와 로그인 화면에서 이어진다", async ({ page }) =>
