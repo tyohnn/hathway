@@ -42,6 +42,7 @@ describe("sitemapEntries", () =>
             `${SITE}/blog/new`,
             `${SITE}/blog/old`,
             `${SITE}/docs/getting-started`,
+            `${SITE}/changelog`,
             `${SITE}/changelog/0.1.0`,
             `${SITE}/privacy`,
             `${SITE}/terms`,
@@ -54,6 +55,13 @@ describe("sitemapEntries", () =>
 
         expect(entries.find((entry) => entry.url === `${SITE}/blog/old`)?.lastModified).toBe("2026-09-01");
         expect(entries.find((entry) => entry.url === `${SITE}/changelog/0.1.0`)?.lastModified).toBe("2026-09-29");
+    });
+
+    it("새 소식의 피드는 가장 최근 판의 날을 고친 날로 싣는다", () =>
+    {
+        const entries = sitemapEntries(SITE, { ...index, releases: [release, { version: "0.2.0", title: "둘째 판", date: "2026-10-20" }] });
+
+        expect(entries.find((entry) => entry.url === `${SITE}/changelog`)?.lastModified).toBe("2026-10-20");
     });
 
     it("개인정보 처리방침과 이용약관은 시행일을 고친 날로 싣는다", () =>

@@ -2,20 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import {
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
-} from "@hathway/ui/components/sidebar";
-
 /**
- * 본문의 목차. 문서는 오른쪽 기둥(`TocRail`, docs 템플릿)으로, 새 소식은 오른쪽 사이드바(`TocSidebar`, changelog 템플릿)로 세운다.
+ * 본문의 목차. 문서는 오른쪽 기둥(`TocRail`, docs 템플릿)으로 세운다.
  *
  * 목차는 **그려진 본문에서 줍는다**(`[data-toc-root]` 안의 `id` 가 있는 h2 · h3). 목록 파일에 따로 적으면 본문의 제목을
  * 고치는 날 목차만 옛 글로 남는다. 앵커는 `prose.tsx` 의 `H2` · `H3` 가 짓는다.
@@ -92,57 +80,5 @@ export function TocRail()
                 ))}
             </ul>
         </nav>
-    );
-}
-
-/** 새 소식의 오른쪽 사이드바 안쪽. h2 가 줄이고 그 아래 h3 가 들여 선다 */
-export function TocSidebar()
-{
-    const { headings, active } = useHeadings();
-
-    const groups: Array<{ heading: Heading; children: Array<Heading> }> = [];
-
-    for (const heading of headings)
-    {
-        const last = groups.at(-1);
-
-        if (heading.level === 3 && last !== undefined)
-        {
-            last.children.push(heading);
-        }
-        else
-        {
-            groups.push({ heading, children: [] });
-        }
-    }
-
-    return (
-        <SidebarGroup>
-            <SidebarGroupLabel>목차</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <nav aria-label="목차">
-                    <SidebarMenu>
-                        {groups.map(({ heading, children }) => (
-                            <SidebarMenuItem key={heading.id}>
-                                <SidebarMenuButton isActive={heading.id === active} render={<a href={`#${heading.id}`} />}>
-                                    {heading.label}
-                                </SidebarMenuButton>
-                                {children.length === 0 ? null : (
-                                    <SidebarMenuSub>
-                                        {children.map((child) => (
-                                            <SidebarMenuSubItem key={child.id}>
-                                                <SidebarMenuSubButton isActive={child.id === active} render={<a href={`#${child.id}`} />}>
-                                                    {child.label}
-                                                </SidebarMenuSubButton>
-                                            </SidebarMenuSubItem>
-                                        ))}
-                                    </SidebarMenuSub>
-                                )}
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </nav>
-            </SidebarGroupContent>
-        </SidebarGroup>
     );
 }

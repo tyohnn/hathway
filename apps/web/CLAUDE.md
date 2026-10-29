@@ -17,7 +17,7 @@
 | `/stocks/news` · `/stocks/boards` · `/[boardSlug]` | 전체 뉴스와 리서치 보드. 보드는 테넌트의 구성원만 고치고 지웁니다(INV-RESEARCH-01) |
 | `/blog` · `/blog/[slug]` | 블로그. 글은 `src/content/blog/` |
 | `/docs` · `/docs/[slug]` | 문서. 글은 `src/content/docs/`, 「MCP 도구」는 `TOOLS` 에서 그립니다 |
-| `/changelog` · `/changelog/[version]` | 새 소식. 뿌리는 가장 최근 판으로 갑니다. 글은 `src/content/changelog/` |
+| `/changelog` · `/changelog/[version]` | 새 소식. 뿌리는 판을 모두 세운 피드이고 제목을 누르면 판 하나가 열립니다. 글은 `src/content/changelog/`, 큰 그림은 `public/changelog/` |
 | `/privacy` · `/terms` | 개인정보 처리방침과 이용약관. 글은 `src/content/legal/` 이고 운영자와 시행일은 그 폴더의 `index.ts` 하나가 갖습니다. 대괄호 값은 제품을 세울 때 채웁니다. 모듈이 맡는 문단은 `scaffold:module` 표시가 있어 모듈과 함께 빠집니다. Google OAuth 브랜딩 인증과 ChatGPT 앱 디렉터리가 이 두 주소를 읽습니다 |
 | `/login` · `/no-access` | 셸이 없는 두 화면. 로컬 계정 칸은 개발 서버에서만 섭니다 |
 | `/auth/callback` | 구글 OAuth 가 돌아와 코드를 세션으로 바꾸는 자리 |
@@ -62,7 +62,7 @@
   더합니다. ⚠ 이 묶음에서 조직의 데이터를 읽지 않습니다.
 - 소개 첫 화면(`(marketing)/page.tsx`)은 두지 않았습니다. `/` 가 종목 화면으로 가기 때문입니다. `src/content/landing.ts` 는 사이트 색인(`lib/siteIndex.ts`)이 읽어 남겼습니다.
 - 틀이 셋입니다. 블로그는 `(marketing)`(위 머리 · 아래 발치), 문서는 `docs/layout.tsx`(tyohnn `block-docs`: 왼쪽 사이드바 · 목차 기둥),
-  새 소식은 `changelog/[version]/page.tsx`(tyohnn `block-changelog`: 오른쪽 목차 사이드바)입니다. 템플릿의 스타일은 `site.css` 에 있습니다.
+  새 소식은 `changelog/layout.tsx`(위 머리 · 아래 발치)이고 판마다 왼쪽 날짜 칸 · 제목 · 큰 그림 · 본문이 섭니다(`changelog/_components/ReleaseEntry.tsx`). 템플릿의 스타일은 `site.css` 에 있습니다.
 - 글을 더할 때는 `src/content/<모음>/` 에 MDX 를 두고 그 모음의 `index.ts` 와 `bodies.ts` 에 한 줄씩 더합니다(제목 · 날짜 · 차례는
   `index.ts`). 짝이 어긋나면 타입이, 파일과 목록이 어긋나면 `content.test.ts` 가 막습니다.
 - 본문은 조판 축(`.typeset`)이 그립니다. 제목과 날짜도 그 안에 두고, 비산문 요소에는 `not-typeset` 을 답니다.

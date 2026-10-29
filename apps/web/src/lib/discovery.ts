@@ -8,7 +8,7 @@ import { paths } from "./paths";
  *
  * 주소는 모두 공개 주소(`SITE_URL`)를 앞에 붙인 절대 주소다. 상대 주소는 sitemap 과 llms.txt 를 읽는 쪽이 풀지 못한다.
  * ⚠ 공개 화면만 싣는다. 로그인해야 보이는 화면은 크롤러가 열어도 로그인으로 돌아가므로 실어 봐야 헛걸음이다.
- * ⚠ `/docs` · `/changelog` 는 첫 글로 넘기는 주소라 싣지 않고 글마다 싣는다.
+ * ⚠ `/docs` 는 첫 글로 넘기는 주소라 싣지 않고 글마다 싣는다. `/changelog` 는 판을 모두 세운 피드라 판들과 함께 싣는다.
  */
 export interface SiteIndex
 {
@@ -48,6 +48,7 @@ export const sitemapEntries = (site: string, index: SiteIndex): ReadonlyArray<Si
     { url: `${site}${paths.blog()}` },
     ...newestFirst(index.posts).map((post) => ({ url: `${site}${paths.post(post.slug)}`, lastModified: post.date })),
     ...index.docs.map((doc) => ({ url: `${site}${paths.docs(doc.slug)}` })),
+    { url: `${site}${paths.changelog()}`, lastModified: newestFirst(index.releases)[0]?.date },
     ...newestFirst(index.releases).map((release) => ({ url: `${site}${paths.release(release.version)}`, lastModified: release.date })),
     { url: `${site}${paths.privacy()}`, lastModified: index.legalEffectiveOn },
     { url: `${site}${paths.terms()}`, lastModified: index.legalEffectiveOn },
