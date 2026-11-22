@@ -15,11 +15,11 @@
    ============================================================ */
 
 .cn-dialog-overlay {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-100;
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-(--motion-fast);
 }
 
 .cn-dialog-content {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 max-w-[calc(100%-2rem)] duration-100 sm:max-w-sm;
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-(--motion-enter-scale) data-open:zoom-in-(--motion-enter-scale) max-w-[calc(100%-2rem)] duration-(--motion-fast) sm:max-w-sm data-open:blur-in-(--motion-enter-blur) data-open:ease-(--motion-enter-ease);
 }
 
 /* 닫기 버튼 — 면의 오른쪽 위 모서리에 앉는다. mira: top-2 right-2

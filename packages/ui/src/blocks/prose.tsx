@@ -8,8 +8,8 @@ const SIZE = { md: "text-[length:var(--ui-text-md)]", lg: "text-[length:var(--ui
  * Written text on the system's typeset: headings, paragraphs, lists, quotes and inline code take the system's
  * reading rhythm. `preset="tool"` is text inside a product screen (docs, a release post, notes, a mail's body, a
  * chat reply), `document` a page that is read on its own. `size` sets the text at a UI text step instead of the
- * typeset's own size. It is as wide as the place it is put in — give it a measure with `className`
- * (`max-w-[72ch]`). A component set in the text carries `IN_PROSE` (lib/copy.ts) so the typeset rules leave it alone.
+ * typeset's own size. It is as wide as the place it is put in — `max-w-[var(--typeset-measure)]` gives it the
+ * system's measure for its preset, where no page column already sets one. A component set in the text carries `IN_PROSE` (lib/copy.ts) so the typeset rules leave it alone.
  */
 export const Prose = ({
     as: Tag = "div",

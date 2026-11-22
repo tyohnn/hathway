@@ -47,6 +47,7 @@
        1px 내려앉는다. 메뉴를 여는 버튼(aria-haspopup)은 눌린 채로 머무르므로 뺀다. */
     &:active:not([aria-haspopup]) {
         translate: 0 var(--control-press-offset);
+        scale: var(--control-press-scale);
     }
 }
 
@@ -63,6 +64,7 @@
 
     &:hover {
         background-color: var(--primary-hover, color-mix(in oklab, var(--primary) 80%, transparent));
+        background-image: var(--surface-primary-hover, var(--surface-primary));
     }
 }
 
@@ -76,6 +78,7 @@
 
     &:hover {
         background-color: var(--secondary-hover, color-mix(in oklab, var(--secondary) 95%, var(--foreground)));
+        background-image: var(--surface-control-hover, var(--surface-control));
     }
 }
 
@@ -94,6 +97,7 @@
 
     &:hover {
         background-color: var(--button-outline-hover-fill, var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent)));
+        background-image: var(--surface-control-hover, var(--surface-control));
         color: var(--foreground);
     }
 

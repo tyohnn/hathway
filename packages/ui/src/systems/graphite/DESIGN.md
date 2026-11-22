@@ -10,7 +10,9 @@ three CSS layers). Every file under `styles/` is this system's own; nothing is c
 ## Character
 
 - **Dark first.** The look is designed for `.dark`; the light values only give new slots a
-  matching personality. Put `dark` on `<html>`, never on a subtree (see Clay).
+  matching personality. The blue primary is the one colour both modes share: light uses the same
+  `#3d4ef5` fill, a `#4a5af7` → `#3443ea` clay surface, a `#3443ea` edge and `#3443ea` links.
+  Put `dark` on `<html>`, never on a subtree (see Clay).
 - **Planes, not shadows.** Depth comes from background steps about 4% apart, not from elevation:
   background `#151515`, sidebar `#1a1a1a`, field `#1a1a1a`, raised surface (card, popover) `#1f1f1f`,
   secondary/accent `#262626`.

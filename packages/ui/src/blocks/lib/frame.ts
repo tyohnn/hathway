@@ -93,26 +93,38 @@ export const DOCUMENT_PADDING = "pt-[var(--page-document-padding-start,2rem)] pb
  * The tokens above as data, for what lists them or lets someone try them (the preview's `?frames` panel, a docs
  * page). They are read out of the class strings, so the list cannot disagree with what the frames read. `max` and
  * `step` are a sensible range for a slider, in rem.
+ *
+ * The words are for someone who has not read this file: `title` and `hint` say what a group moves without the
+ * vocabulary of the frames, and a token's `label` is its step in full ("Small"). `prefix` + `key` is the name.
  */
-export type FrameToken = { name: string; rem: number };
-export type FrameTokenGroup = { id: string; title: string; hint: string; max: number; step: number; tokens: FrameToken[] };
+export type FrameToken = { name: string; key: string; label: string; rem: number };
+export type FrameTokenGroup = { id: string; title: string; hint: string; prefix: string; max: number; step: number; tokens: FrameToken[] };
 
-const tokensIn = (classes: string[]): FrameToken[] =>
+const LABEL: Record<string, string> = { xs: "Extra small", sm: "Small", md: "Medium", lg: "Large", xl: "Extra large", start: "Top", end: "Bottom" };
+
+const tokensIn = (prefix: string, classes: string[]): FrameToken[] =>
 {
     const found = new Map<string, FrameToken>();
 
     for (const text of classes)
     {
-        for (const match of text.matchAll(/var\((--page-[a-z-]+),([0-9.]+)rem\)/g)) found.set(match[1], { name: match[1], rem: Number(match[2]) });
+        for (const match of text.matchAll(/var\((--page-[a-z-]+),([0-9.]+)rem\)/g))
+        {
+            const key = match[1].slice(prefix.length);
+
+            found.set(match[1], { name: match[1], key, label: LABEL[key] ?? key, rem: Number(match[2]) });
+        }
     }
 
     return [...found.values()];
 };
 
+const group = (fields: Omit<FrameTokenGroup, "tokens">, classes: string[]): FrameTokenGroup => ({ ...fields, tokens: tokensIn(fields.prefix, classes) });
+
 export const FRAME_TOKEN_GROUPS: FrameTokenGroup[] = [
-    { id: "gutter", title: "Gutter", hint: "between a page and its edge", max: 5, step: 0.25, tokens: tokensIn(Object.values(GUTTER)) },
-    { id: "gap", title: "Gap", hint: "between the blocks of a page", max: 5, step: 0.25, tokens: tokensIn(Object.values(GAP)) },
-    { id: "measure", title: "Measure", hint: "the widest a reading column gets", max: 90, step: 1, tokens: tokensIn(Object.values(MEASURE)) },
-    { id: "aside", title: "Aside", hint: "the narrower pane of a split", max: 40, step: 1, tokens: tokensIn(Object.values(ASIDE_WIDTH)) },
-    { id: "document", title: "Document padding", hint: "above and below a document", max: 8, step: 0.25, tokens: tokensIn([DOCUMENT_PADDING]) },
+    group({ id: "gutter", title: "Page margin", hint: "Space between a page's content and its edges.", prefix: "--page-gutter-", max: 5, step: 0.25 }, Object.values(GUTTER)),
+    group({ id: "gap", title: "Space between blocks", hint: "Gap between items on a page, like a heading and a table.", prefix: "--page-gap-", max: 5, step: 0.25 }, Object.values(GAP)),
+    group({ id: "measure", title: "Reading width", hint: "Maximum width of a text column. Keeps long lines easy to read.", prefix: "--page-measure-", max: 90, step: 1 }, Object.values(MEASURE)),
+    group({ id: "aside", title: "Side panel width", hint: "Width of the narrow panel beside the main content, like a table of contents.", prefix: "--page-aside-", max: 40, step: 1 }, Object.values(ASIDE_WIDTH)),
+    group({ id: "document", title: "Document spacing", hint: "Space above and below a document's content.", prefix: "--page-document-padding-", max: 8, step: 0.25 }, [DOCUMENT_PADDING]),
 ];

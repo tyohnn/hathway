@@ -13,7 +13,7 @@
    ============================================================ */
 
 .cn-tooltip-content {
-    @apply data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2;
+    @apply data-open:animate-in data-open:fade-in-0 data-open:zoom-in-(--motion-enter-scale) data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-(--motion-enter-scale) data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-(--motion-enter-scale) data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:blur-in-(--motion-enter-blur) data-open:ease-(--motion-enter-ease) data-[state=delayed-open]:blur-in-(--motion-enter-blur) data-[state=delayed-open]:ease-(--motion-enter-ease) duration-(--motion-base);
 
     /* 키캡이 있으면 끝쪽 여백을 좁힌다.
        ⚠ 이 두 값(6px 여백, 6px 모서리)은 어느 축에도 걸치지 않는다.

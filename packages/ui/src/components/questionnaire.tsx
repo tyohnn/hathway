@@ -110,7 +110,7 @@ function QuestionnaireChoice({
     <QuestionnairePrimitive.Choice
       data-slot="questionnaire-choice"
       className={cn(
-        "cn-questionnaire-choice group/questionnaire-choice relative flex min-h-11 cursor-pointer items-start text-start transition-colors outline-none select-none",
+        "cn-questionnaire-choice group/questionnaire-choice relative flex cursor-pointer items-start text-start transition-colors outline-none select-none",
         "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className
       )}
@@ -204,7 +204,7 @@ function QuestionnaireActions({
     <div
       data-slot="questionnaire-actions"
       className={cn(
-        "cn-questionnaire-actions grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center sm:min-h-9",
+        "cn-questionnaire-actions grid w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center",
         className
       )}
       {...props}
