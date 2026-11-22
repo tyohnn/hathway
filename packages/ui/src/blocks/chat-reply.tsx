@@ -50,7 +50,7 @@ export const ChatReply = ({
         </MessageAvatar>
         <MessageContent className="min-w-0">
             <MessageHeader>{loading ? <PendingText length={11} /> : name}</MessageHeader>
-            <Prose size="lg" className="max-w-[72ch]">
+            <Prose className="max-w-[var(--typeset-measure)]">
                 {loading ? (
                     <p>
                         {Array.from({ length: lines }, (_, index) => (

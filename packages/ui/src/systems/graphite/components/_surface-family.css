@@ -40,7 +40,7 @@
 /* --------------------------------------------------------
    뒤에 까는 막
    mira: bg-black/80 supports-backdrop-filter:backdrop-blur-xs
-   (100ms 전환은 각 파일의 duration-100 이 갖는다)
+   (전환 길이는 각 파일의 duration-(--motion-fast) 가 갖는다 — mira 의 duration-100)
    -------------------------------------------------------- */
 
 .cn-dialog-overlay,

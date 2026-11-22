@@ -78,6 +78,43 @@
     @apply md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-[var(--surface-radius-lg)] md:peer-data-[variant=inset]:shadow-chip md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2;
 }
 
+/* 본문 판 — inset · floating 변형 옆의 본문(2026-11-20).
+   ⚠ 판은 안쪽을 자른다(overflow: clip). 앱이 본문에 위 띠 · 바닥 같은 불투명한 바탕을 깔면 그 네모난
+      모서리가 판의 둥근 모서리와 그림자를 덮기 때문이다. hidden 이 아니라 clip 이라 스크롤 영역이 생기지
+      않아 안쪽의 sticky 가 산다.
+   떠 있는 사이드바 옆에서는 본문도 판이 될 수 있다(종전에는 loam 에만 있던 규칙). 사이드바가 제 쪽 8px 을
+   갖고, 판은 나머지 세 쪽에 --sidebar-pane-gap 을 두고 --sidebar-pane-radius 로 깎고 안쪽 링
+   (--sidebar-pane-ring-width · --sidebar-pane-ring)으로 테두리를 그린다. 링은 겹이라 레이아웃이 움직이지 않는다.
+   foundation 값은 셋 다 0 이라 업스트림처럼 맨바닥에 붙는다 — 판으로 세우는 것은 시스템의 취향이다.
+   md 아래에서는 사이드바가 시트가 되고 본문은 예전처럼 화면을 채운다. */
+@media (width >= 48rem) {
+    .peer[data-variant="inset"] ~ .cn-sidebar-inset {
+        overflow: clip;
+    }
+
+    .peer[data-variant="floating"] ~ .cn-sidebar-inset {
+        margin: var(--sidebar-pane-gap);
+        margin-inline-start: 0;
+        border-radius: var(--sidebar-pane-radius);
+        overflow: clip;
+        isolation: isolate;
+
+        /* ⚠ 테두리와 빛(--pane-sheen)은 판 자신의 바탕이 아니라 겹이다. 앱이 본문을 불투명하게 칠하면
+           안쪽 그림자와 배경 그림이 가려지기 때문이다. */
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            border-radius: inherit;
+            pointer-events: none;
+            box-shadow: inset 0 0 0 var(--sidebar-pane-ring-width) var(--sidebar-pane-ring, var(--border));
+            background-image: var(--pane-sheen, none);
+            mix-blend-mode: var(--pane-sheen-blend, normal);
+        }
+    }
+}
+
 /* 검색칸. Input 컴포넌트 위에 얹는 예외다 — mira 는 h-8 에 bg-muted/20(1층이 --muted-soft 로
    푼 단)이고 테두리는 --input 이다. 사이드바 안에서 인풋(h-7)보다 한 단 크다. */
 .cn-sidebar-input {
@@ -238,6 +275,16 @@
         & > svg {
             color: var(--sidebar-active-foreground, var(--sidebar-accent-foreground));
         }
+    }
+
+    /* 선택된 항목의 hover. mira 에 없는 규칙을 하나 더한다.
+       이 시스템의 hover 는 --sidebar-item-hover-background 가 transparent 라 **글자가 밝아지는
+       것 하나**뿐인데, 선택된 항목은 그 밝은 글자를 이미 늘 쓴다. 그래서 선택된 줄에 마우스를
+       올리면 바탕도 글자도 그림자도 한 픽셀 바뀌지 않고, 그 줄만 반응이 죽는다(2026-09-20 실측).
+       ⚠ 명시도가 (0,3,0) 이라 .cn-sidebar-menu-button-variant-default:hover(0,2,0)를 이긴다.
+          순서에 기대지 않으므로 이 블록이 파일 어디에 있어도 같다. */
+    &[data-active]:hover {
+        background-color: var(--sidebar-active-hover-background, var(--sidebar-active, var(--sidebar-accent)));
     }
 
     &:focus-visible {

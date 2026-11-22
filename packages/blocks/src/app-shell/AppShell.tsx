@@ -130,7 +130,8 @@ export function AppShell(
                 {layout === "full"
                     ? null
                     : (
-                        <header className="flex h-14 shrink-0 items-center gap-4 border-b border-sidebar-border bg-background px-6">
+                        // ⚠ 위 띠는 본문 판의 것이라 구분선도 본문 쪽 색(--border)이다. 사이드바 색(--sidebar-border)을 쓰지 않는다
+                        <header className="flex h-14 shrink-0 items-center gap-4 border-b px-6">
                             <SidebarTrigger className="-ml-1 text-muted-foreground" aria-label="메뉴 열고 닫기" />
                             <Suspense fallback={<AppShellTitle groups={groups} pathname="" labels={labels} />}>
                                 {title}

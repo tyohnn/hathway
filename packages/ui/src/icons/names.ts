@@ -58,6 +58,7 @@ export const ICON_NAMES = [
     "DeletedPages", // show deleted pages / trash view (sidebar blocks)
     "DollarSign", // revenue / price (block templates)
     "Download", // download / export (preview template)
+    "Expand", // expand to full screen
     "Export", // export (page actions menu) (sidebar blocks)
     "ExternalLink", // open elsewhere / external link (sidebar blocks)
     "Eye", // view / visible (block templates)

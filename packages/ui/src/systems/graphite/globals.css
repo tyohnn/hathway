@@ -217,7 +217,7 @@
     --sidebar-input-fill: color-mix(in oklab, var(--sidebar-accent) 20%, transparent);
 
     /* Primary button border. mira draws the default button with a transparent border. */
-    --primary-border: oklch(0.205 0 0);
+    --primary-border: #3443ea;
     /* Unchecked checkbox border. mira: --input. */
     --checkbox-border: color-mix(in oklab, var(--muted) 76%, var(--muted-foreground));
     /* Sidebar count badge text. mira: the item text colour. */
@@ -228,6 +228,9 @@
     --sidebar-item-border: transparent;
     --sidebar-item-active-border: var(--border-strong);
     --sidebar-item-hover-background: transparent;
+    /* 선택된 줄의 hover 는 제 바탕을 한 단만 밝힌다. 선택이 풀린 것처럼 보이면 안 되고,
+       살아 있다는 것만 알리면 되는 자리다. */
+    --sidebar-active-hover-background: color-mix(in oklab, var(--sidebar-accent) 92%, var(--foreground));
     --sidebar-group-label-foreground: var(--foreground-subtle, var(--ring));
     --sidebar-badge-background: var(--sidebar-accent);
     --sidebar-badge-active-background: var(--sidebar);
@@ -257,8 +260,8 @@
     --clay-surface-top: oklch(1 0 0);
     --clay-surface-bottom: oklch(1 0 0);
     --clay-primary-highlight: rgb(255 255 255 / 0.1);
-    --clay-primary-top: oklch(0.205 0 0);
-    --clay-primary-bottom: oklch(0.205 0 0);
+    --clay-primary-top: #4a5af7;
+    --clay-primary-bottom: #3443ea;
 
     /* shadcn create 의 radius "default". 10px. --radius-md 8px · --radius-lg 10px · --radius-xl 14px 를 낳는다.
        2층의 --control-radius 8px(mira 의 rounded-md)과 같은 계열이다. */
@@ -322,6 +325,9 @@
     --sidebar-item-border: transparent;
     --sidebar-item-active-border: var(--border-strong);
     --sidebar-item-hover-background: transparent;
+    /* 선택된 줄의 hover 는 제 바탕을 한 단만 밝힌다. 선택이 풀린 것처럼 보이면 안 되고,
+       살아 있다는 것만 알리면 되는 자리다. */
+    --sidebar-active-hover-background: color-mix(in oklab, var(--sidebar-accent) 92%, var(--foreground));
     --sidebar-group-label-foreground: var(--foreground-subtle, var(--ring));
     --sidebar-badge-background: var(--sidebar-accent);
     --sidebar-badge-active-background: var(--sidebar);

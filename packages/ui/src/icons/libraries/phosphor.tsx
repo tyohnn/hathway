@@ -60,6 +60,7 @@ import {
     DotsThreeOutlineIcon,
     DotsThreeVerticalIcon,
     DownloadIcon,
+    ArrowsOutSimpleIcon,
     EnvelopeSimpleIcon,
     EyeIcon,
     FileIcon,
@@ -207,6 +208,7 @@ export const Database = icon(DatabaseIcon);
 export const DeletedPages = icon(TrashIcon);
 export const DollarSign = icon(CurrencyDollarIcon);
 export const Download = icon(DownloadIcon);
+export const Expand = icon(ArrowsOutSimpleIcon);
 export const Export = icon(ArrowDownIcon);
 export const ExternalLink = icon(ArrowUpRightIcon);
 export const Eye = icon(EyeIcon);

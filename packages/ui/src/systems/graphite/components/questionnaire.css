@@ -10,8 +10,10 @@
       (--control-indicator-*)을 그대로 읽는다. 값이 이미 16·4·14·8 로
       일치했다 — 축을 새로 만든 것이 아니라 이름을 붙인 것이다.
 
-   ⚠ 세로 리듬(16 · 12 · 6 · 2px)은 리터럴이다. 2층에 폼 세로 리듬 축이
-      없다 — Field 와 같은 사정이다.
+   ⚠ 세로 리듬 가운데 바깥 둘(질문↔단추, 머리↔선택지)은 2층의 --questionnaire-gap ·
+      --questionnaire-item-gap 이 갖는다(2026-09-20, 리터럴에서 축으로). 안쪽 둘
+      (선택지 사이 6, 제목↔설명 2)은 여전히 리터럴이다 — 카드 안의 촘촘한 단이라
+      시스템이 갈아 끼울 일이 없었다.
 
    ⚠ 고른 답의 바탕은 --primary-soft(mira data-checked:bg-primary/10)다. 테두리는
       mira 의 border-primary/40 에 맞는 토큰이 없어 --ring 으로 둔다. 손이 올라간
@@ -19,7 +21,7 @@
    ============================================================ */
 
 .cn-questionnaire {
-    gap: 16px;
+    gap: var(--questionnaire-gap, 16px);
 }
 
 .cn-questionnaire-progress {
@@ -32,7 +34,7 @@
 .cn-questionnaire-item {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--questionnaire-item-gap, 12px);
 }
 
 /* mira: text-sm font-semibold [&:not(:has(~[data-slot=questionnaire-description]))]:mb-3
@@ -65,27 +67,43 @@
          data-invalid:border-destructive gap-2.5 rounded-xl border px-3 py-2.5 text-xs/relaxed
    모서리는 컨트롤(8)이 아니라 rounded-xl(14)이라 면 축의 --surface-radius-lg 를 읽는다.
    바탕은 없다 — nova 의 dark:bg-input/20 을 mira 가 뺐다.
-   ⚠ 좌우 12px · 상하 10px · 간격 10px 은 리터럴이다. control 축은 높이가 정본이라
-      세로 패딩 단계를 갖지 않고, 이 카드는 설명이 두 줄이 될 수 있어 높이를 고정할 수 없다.
+   ⚠ 좌우 · 상하 · 간격 · 모서리는 2층의 --questionnaire-choice-* 축이 갖는다. control 축을
+      쓰지 않는 것은 그쪽은 높이가 정본이라 세로 패딩 단계가 없고, 이 카드는 설명이 두 줄이 될 수
+      있어 높이를 고정할 수 없기 때문이다(2026-09-20, 리터럴에서 축으로).
    ⚠ 켜짐은 shadcn 의 data-checked 변형과 같은 두 형태를 본다([data-state=checked] ·
       [data-checked]). 손으로 옮기면서 하나를 빠뜨리면 구현에 따라 색이 안 켜진다. */
 .cn-questionnaire-choice {
-    gap: 10px;
-    padding-inline: 12px;
-    padding-block: 10px;
+    gap: var(--questionnaire-choice-gap);
+    padding-inline: var(--questionnaire-choice-padding-x);
+    padding-block: var(--questionnaire-choice-padding-y);
     border: var(--control-border-width) solid var(--input);
-    border-radius: var(--surface-radius-lg);
+    border-radius: var(--questionnaire-choice-radius);
     background-color: var(--questionnaire-choice-fill, transparent);
     font-size: var(--ui-text-md);
     letter-spacing: var(--ui-letter-spacing);
     line-height: var(--ui-line-height-md);
+
+    /* 누를 자리의 바닥 44px 은 업스트림(min-h-11)의 것이다.
+       ⚠ **높이가 아니라 여백으로 넓힌다.** 카드는 `items-start` 라(설명이 두 줄일 때 지시자를
+          첫 줄에 맞추려는 것이다) min-height 로 넓히면 남는 높이가 **전부 아래로** 몰려 글자가
+          상자 위쪽에 붙는다 — graphite 는 여백이 6px 이라 10px 이 떴다(2026-09-20 실측).
+          위아래 11px 이면 --ui-line-height-md(20)와 테두리 둘을 더해 정확히 44px 이고, 여백이
+          대칭이라 글과 지시자가 상자 가운데 앉는다.
+       ⚠ min-height 는 안전망으로 남긴다. 위 계산이 맞으면 닿지 않는다. */
+    padding-block: 11px;
+    min-height: 2.75rem;
+
+    @media (width >= 40rem) {
+        padding-block: var(--questionnaire-choice-padding-y);
+        min-height: var(--questionnaire-choice-min-height, 2.75rem);
+    }
 
     &:hover {
         background-color: var(--input-fill-hover, color-mix(in oklab, var(--input) 50%, transparent));
     }
 
     &:is([data-state="checked"], [data-checked]:not([data-checked="false"])) {
-        border-color: var(--ring);
+        border-color: var(--questionnaire-choice-checked-border, var(--ring));
         /* mira: data-checked:bg-primary/10 — 필드 라벨의 /5 보다 한 단 진하다 */
         background-color: var(--primary-soft-strong, color-mix(in oklab, var(--primary) 10%, transparent));
     }
@@ -202,10 +220,14 @@
 /* ⚠ 이 규칙은 2026-09-05 토큰화 4차에서 실수로 빠졌다가 되살렸다. 컴포넌트가
    `grid-cols-[minmax(0,1fr)_auto_auto]` 만 갖고 열 간격은 여기서 주므로, 빠지면
    '건너뛰기'와 '다음' 버튼이 맞닿는다. 지우지 말 것.
-   mira: gap-1.5 sm:min-h-7 — sm 이상의 최소 높이는 컴포넌트의 min-h-11 유틸리티가 이겨
-   실제로는 닿지 않는다. 규칙만 mira 대로 적어 둔다. */
+   mira: gap-1.5 sm:min-h-7. */
 .cn-questionnaire-actions {
     gap: 6px;
+
+    /* 누를 자리의 바닥 44px 은 업스트림(min-h-11)의 것이라 리터럴이다. sm 위의 높이는 아래
+       미디어 질의가 정한다 — 종전에는 컴포넌트의 sm:min-h-9(36px)가 이겨 이 줄이 죽어 있었다
+       (2026-09-20). 업스트림 참조는 sm:min-h-7 이었으므로 컴포넌트 쪽이 어긋나 있었다. */
+    min-height: 2.75rem;
 
     @media (width >= 40rem) {
         min-height: var(--control-height-md);

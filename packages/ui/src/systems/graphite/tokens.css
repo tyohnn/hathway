@@ -105,16 +105,23 @@
     --control-font-weight-regular: 400;
     --control-letter-spacing: -0.01em;
 
-    /* 모션 축 — 세 단과 한 곡선. 시스템의 빠릿함이 여기서 갈린다. 11종 모두 같은 값으로 시작한다. */
-    --motion-fast: 100ms;    /* 작은 표면이 나타났다 사라지는 속도(툴팁 · 팝오버) */
-    --motion-base: 150ms;    /* 컨트롤의 색·테두리·그림자 전환 */
-    --motion-slow: 200ms;    /* 큰 패널이 밀려 들어오는 속도(sheet · drawer) */
+    /* 모션 축 — 세 단, 한 곡선, 등장 방식, 눌림. 시스템의 빠릿함이 여기서 갈린다.
+       다섯 성격 중 하나를 고른다(DESIGN.md §5 「Motion」). graphite: 즉각형 — 거의 바로 나타나고, 크기는 변하지 않는다. */
+    --motion-fast: 60ms;   /* 작은 표면이 나타났다 사라지는 속도(팝오버 · 메뉴 · 다이얼로그 · 막) */
+    --motion-base: 100ms;  /* 컨트롤의 색·테두리·그림자 전환, 툴팁 */
+    --motion-slow: 160ms;  /* 큰 패널이 밀려 들어오는 속도(sheet · drawer) */
     --motion-ease: var(--ease-out);
+    /* 떠 있는 면이 나타날 때 — 시작 크기(1 = 크기 변화 없음), 걷히는 흐림, 곡선.
+       닫힐 때도 같은 크기로 돌아간다. 곡선은 여는 쪽에만 걸린다(튕기는 곡선이 닫힘에 걸리면 넘친다). */
+    --motion-enter-scale: 1;
+    --motion-enter-blur: 0px;
+    --motion-enter-ease: ease;
     /* 컨트롤이 읽는 이름은 그대로 둔다 — 3층 209곳이 이 둘만 읽는다. */
     --control-duration: var(--motion-base);
     --control-ease: var(--motion-ease);
-    /* 눌림 — mira 는 scale 이 아니라 active:translate-y-px 로 1px 내려앉는다. */
+    /* 눌림 — 내려앉는 깊이와 줄어드는 비율. mira 는 active:translate-y-px 로 1px 내려앉고 줄지 않는다. */
     --control-press-offset: 1px;
+    --control-press-scale: 1;
 
     /* Icon button box and glyph. mira sizes the md icon button from the control height axis. */
     --control-icon-button-size-md: 29px;
@@ -139,6 +146,19 @@
     --checkbox-indeterminate-shadow: none;
     --surface-control: linear-gradient(to bottom, var(--clay-surface-top, transparent), var(--clay-surface-bottom, transparent));
     --surface-primary: linear-gradient(to bottom, var(--clay-primary-top, transparent), var(--clay-primary-bottom, transparent));
+
+    /* 손 올린 컨트롤의 면.
+       ⚠ background-image 는 언제나 background-color 위에 칠해진다. graphite 는 컨트롤을
+          그라디언트로 채우는 유일한 시스템이라(clay), 단추의 :hover 색이 통째로 덮여
+          보이지 않았다(2026-09-20 실측: default · secondary · outline 셋 다).
+       ⚠ --surface-control 은 위아래가 같은 색이다(#191919 → #191919). 기울기가 없는 단색
+          덮개이므로 none 으로 두어도 잃는 것이 없고, 각 variant 가 제 손 올림 색을 되찾는다.
+       ⚠ --surface-primary 는 진짜 기울기가 있으므로(#4a5af7 → #3443ea) 모양을 지키고 한 단만
+          어둡게 한다. 1층 재료를 그대로 읽으므로 색을 갈면 따라온다. */
+    --surface-control-hover: none;
+    --surface-primary-hover: linear-gradient(to bottom,
+        color-mix(in oklab, var(--clay-primary-top, transparent) 90%, #000),
+        color-mix(in oklab, var(--clay-primary-bottom, transparent) 90%, #000));
     --tag-shadow: none;
 
     /* 지시자 — 체크박스·라디오. mira: size-4 · rounded-[4px] · 체크 [&>svg]:size-3.5 · 라디오 점 size-2 */
@@ -398,17 +418,17 @@
        -------------------------------------------------------- */
 
     /* 읽는 문서 */
-    --typeset-doc-size: 18px;
-    --typeset-doc-leading: 1.8;
+    --typeset-doc-size: 16px;
+    --typeset-doc-leading: 1.7;
     --typeset-doc-flow: 0.9em;
-    --typeset-doc-measure: 720px;
+    --typeset-doc-measure: 660px;
     --typeset-doc-scale-h1: 1.9em;
     --typeset-doc-scale-h2: 1.556em;
     --typeset-doc-scale-h3: 1.222em;
 
     /* 도구 화면 */
-    --typeset-tool-size: 16px;
-    --typeset-tool-leading: 1.75;
+    --typeset-tool-size: 14px;
+    --typeset-tool-leading: 1.6;
     --typeset-tool-flow: 1em;
     --typeset-tool-measure: 672px;
     --typeset-tool-scale-h1: 1.8em;
@@ -487,6 +507,25 @@
     --bubble-line-height: var(--ui-line-height-md);
     --chart-tooltip-radius: var(--surface-radius);
     --empty-radius: var(--surface-radius-lg);
+
+    /* 설문 선택 카드 — 여백 · 간격 · 모서리 · 데스크톱 바닥.
+       ⚠ 이 넷은 mira 의 12/10/10 · rounded-xl 을 3층 리터럴로 물려받은 것이라 graphite 의 촘촘한
+          결과 어긋나 있었다(2026-09-20 실측 44px). 위아래 6px 에 --ui-line-height-md(20)와 테두리
+          둘을 더해 34px 다 — 컨트롤(28)과 표 줄(41) 사이에 앉는다. */
+    --questionnaire-choice-padding-x: 10px;
+    --questionnaire-choice-padding-y: 6px;
+    --questionnaire-choice-gap: 8px;
+    --questionnaire-choice-radius: var(--surface-radius);
+    --questionnaire-choice-min-height: 34px;
+    /* 설문의 세로 리듬 — 질문과 단추 사이, 머리와 선택지 사이.
+       ⚠ mira 의 16 · 12 를 3층 리터럴로 물려받아 12px 여백의 카드 안에서 헐거웠다. 와이어
+          프레임의 9px 한 리듬으로 맞춘다(2026-09-20). */
+    --questionnaire-gap: 9px;
+    --questionnaire-item-gap: 9px;
+    /* 고른 답의 테두리. ⚠ 3층이 마땅한 토큰이 없어 --ring 으로 두고 있었는데, graphite 의
+       --ring 은 채도 0 의 회색이라 고른 답이 파랗게 서지 않았다(2026-09-20 실측 lab(48.5 0 0)).
+       주 단추의 가장자리와 같은 --primary-border(#5460e0)로 맞춘다 — 와이어프레임의 값이다. */
+    --questionnaire-choice-checked-border: var(--primary-border);
     --sheet-padding: var(--surface-padding-lg);
     --accordion-border-width: var(--surface-border-width);
     --tabs-list-height: var(--control-height-lg);
@@ -505,6 +544,10 @@
     --sidebar-separator-margin-inline: var(--sidebar-item-padding-x);
     --sidebar-badge-font-weight: var(--ui-font-weight);
     --sidebar-part-radius: var(--sidebar-item-radius);
+    /* graphite: 떠 있는 사이드바 옆 본문도 판이다. 모서리는 떠 있는 사이드바와 같은 --surface-radius. */
+    --sidebar-pane-gap: 8px;
+    --sidebar-pane-radius: var(--surface-radius);
+    --sidebar-pane-ring-width: var(--surface-border-width);
 }
 
 :root {
@@ -554,4 +597,18 @@
     /* The card's shadow, drawn after its ring. mira: none (the theme's --shadow-card is empty).
        rhea adds shadow-sm, sera · vega · luma their own card shadow. */
     --card-shadow: var(--shadow-card);
+}
+
+/* 동작 줄이기 — 사용자가 OS 에서 켰다면 시스템의 성격과 상관없이 모션을 끈다.
+   길이를 0 으로 두면 애니메이션은 끝 상태로 바로 간다. */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --motion-fast: 0ms;
+        --motion-base: 0ms;
+        --motion-slow: 0ms;
+        --motion-enter-scale: 1;
+        --motion-enter-blur: 0px;
+        --control-press-offset: 0px;
+        --control-press-scale: 1;
+    }
 }
